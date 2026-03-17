@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "session-start": "hooks/session-start",
+    "pre-implementation": "hooks/pre-implementation",
+    "post-implementation": "hooks/post-implementation",
+    "pre-review": "hooks/pre-review",
+    "post-review": "hooks/post-review"
+  },
+  "enabled": true
+}

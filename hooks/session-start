@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# LingFlow Session Start Hook
+# 在新会话开始时自动加载
+
+echo "🚀 LingFlow 智能工作流引擎已启动"
+echo ""
+echo "📚 可用技能系统:"
+echo "   • brainstorming - 头脑风暴与设计"
+echo "   • writing-plans - 编写实施计划"
+echo "   • test-driven-development - 测试驱动开发"
+echo "   • systematic-debugging - 系统化调试"
+echo "   • subagent-driven-development - 子代理驱动开发"
+echo ""
+echo "📋 工作流程: 设计 → 计划 → 执行 → 测试 → 审查 → 完成"
+echo ""
+echo "💡 提示: 技能会根据上下文自动触发"
+echo ""
