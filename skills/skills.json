@@ -130,6 +130,98 @@
         "concurrent",
         "simultaneous"
       ]
+    },
+    {
+      "name": "skill-creator",
+      "description": "创建新业务技能",
+      "path": "skills/skill-creator/SKILL.md",
+      "triggers": [
+        "create skill",
+        "new skill",
+        "modify skill",
+        "update skill",
+        "skill configuration",
+        "skill template"
+      ],
+      "depends_on": ["brainstorming", "writing-plans"]
+    },
+    {
+      "name": "workflow-executor",
+      "description": "执行YAML/JSON定义的工作流",
+      "path": "skills/workflow-executor/SKILL.md",
+      "triggers": [
+        "run workflow",
+        "execute workflow",
+        "workflow run",
+        "workflow execute",
+        "run workflow file"
+      ],
+      "depends_on": ["task-runner"]
+    },
+    {
+      "name": "task-runner",
+      "description": "执行单个任务（技能调用）",
+      "path": "skills/task-runner/SKILL.md",
+      "triggers": [
+        "run task",
+        "execute task",
+        "run skill",
+        "execute skill",
+        "call skill"
+      ],
+      "depends_on": []
+    },
+    {
+      "name": "conditional-branch",
+      "description": "工作流中的条件判断",
+      "path": "skills/conditional-branch/SKILL.md",
+      "triggers": [
+        "conditional branch",
+        "if condition",
+        "branch condition",
+        "condition check",
+        "conditional execution"
+      ],
+      "depends_on": ["task-runner"]
+    },
+    {
+      "name": "loop-iterator",
+      "description": "工作流中的循环执行",
+      "path": "skills/loop-iterator/SKILL.md",
+      "triggers": [
+        "loop",
+        "iterate",
+        "for each",
+        "loop over",
+        "repeat"
+      ],
+      "depends_on": ["task-runner"]
+    },
+    {
+      "name": "error-handler",
+      "description": "任务失败时的重试和降级",
+      "path": "skills/error-handler/SKILL.md",
+      "triggers": [
+        "error handling",
+        "retry task",
+        "fallback",
+        "error recovery",
+        "fault tolerance"
+      ],
+      "depends_on": ["task-runner"]
+    },
+    {
+      "name": "code-review",
+      "description": "执行代码审查",
+      "path": "skills/code-review/SKILL.md",
+      "triggers": [
+        "code review",
+        "review code",
+        "code quality",
+        "code analysis",
+        "code inspection"
+      ],
+      "depends_on": []
     }
   ],
   "settings": {

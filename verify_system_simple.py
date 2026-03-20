@@ -2,7 +2,7 @@
 """LingFlow v1.1.0 简单验证脚本"""
 
 import sys
-from agent_coordinator import AgentCoordinator
+from lingflow.coordination import AgentCoordinator
 
 def main():
     print("=" * 70)

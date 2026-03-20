@@ -1,0 +1,37 @@
+name: test_workflow
+description: 测试工作流
+tasks:
+  - name: task1
+    skill: task-runner
+    params:
+      skill: code-review
+      params:
+        code: "def hello():\n    print(\"Hello world\")"
+  - name: task2
+    skill: conditional-branch
+    params:
+      branches:
+        - condition: "True"
+          tasks:
+            - skill: task-runner
+              params:
+                skill: loop-iterator
+                params:
+                  items: [1, 2, 3]
+                  tasks:
+                    - skill: task-runner
+                      params:
+                        skill: error-handler
+                        params:
+                          task:
+                            skill: task-runner
+                            params:
+                              skill: code-review
+                              params:
+                                code: "def test():\n    print(\"Test\")"
+  - name: task3
+    skill: task-runner
+    params:
+      skill: code-review
+      params:
+        code: "def goodbye():\n    print(\"Goodbye\")"

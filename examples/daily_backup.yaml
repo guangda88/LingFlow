@@ -1,0 +1,29 @@
+# examples/daily_backup.yaml
+name: 每日数据备份
+description: 导出数据库并上传到115网盘
+
+# 全局配置
+config:
+  timeout: 300
+  retry: 2
+
+tasks:
+  - name: 导出数据
+    skill: database_export
+    params:
+      format: csv
+      output: "./backup/{{date}}.csv"
+  
+  - name: 上传备份
+    skill: upload_115
+    params:
+      file: "{{tasks.导出数据.output}}"
+      target: "/诊疗备份/"
+    depends_on: [导出数据]
+  
+  - name: 发送通知
+    skill: notification
+    params:
+      channel: wechat
+      message: "✅ 备份完成：{{date}}"
+    depends_on: [上传备份]

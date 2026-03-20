@@ -13,11 +13,9 @@ LingFlow v1.1.0 全面测试脚本
 
 import asyncio
 import sys
-from agent_coordinator import (
-    AgentCoordinator,
-    Task,
-    TaskPriority
-)
+from lingflow.coordination import AgentCoordinator
+from lingflow.workflow import WorkflowOrchestrator
+from lingflow.common import Task, TaskPriority
 
 
 class TestRunner:
@@ -25,6 +23,7 @@ class TestRunner:
 
     def __init__(self):
         self.coordinator = AgentCoordinator()
+        self.orchestrator = WorkflowOrchestrator(self.coordinator)
         self.passed = 0
         self.failed = 0
         self.errors = []
@@ -237,7 +236,7 @@ class TestRunner:
 
         # 执行工作流
         try:
-            results = await self.coordinator.execute_workflow(workflow_tasks, max_parallel=2)
+            results = await self.orchestrator.execute_workflow(workflow_tasks, max_parallel=2)
 
             # 验证结果
             self.print_result(
