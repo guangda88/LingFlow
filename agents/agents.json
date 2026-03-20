@@ -1,0 +1,107 @@
+{
+  "agents": [
+    {
+      "name": "implementation",
+      "description": "Agent for implementing features based on detailed plans",
+      "capabilities": [
+        "code_generation",
+        "testing",
+        "documentation",
+        "refactoring"
+      ],
+      "max_tasks": 3,
+      "context_limit": 8000,
+      "timeout": 300,
+      "parallel_safe": true,
+      "requires_isolation": false
+    },
+    {
+      "name": "review",
+      "description": "Agent for code and design review with quality assurance",
+      "capabilities": [
+        "code_review",
+        "design_review",
+        "security_check",
+        "quality_analysis"
+      ],
+      "max_tasks": 2,
+      "context_limit": 12000,
+      "timeout": 180,
+      "parallel_safe": true,
+      "requires_isolation": false
+    },
+    {
+      "name": "testing",
+      "description": "Agent for writing and running comprehensive tests",
+      "capabilities": [
+        "test_generation",
+        "test_execution",
+        "coverage_analysis",
+        "performance_testing"
+      ],
+      "max_tasks": 2,
+      "context_limit": 6000,
+      "timeout": 600,
+      "parallel_safe": true,
+      "requires_isolation": false
+    },
+    {
+      "name": "debugging",
+      "description": "Agent for debugging and troubleshooting complex issues",
+      "capabilities": [
+        "error_analysis",
+        "root_cause",
+        "fix_generation",
+        "log_analysis"
+      ],
+      "max_tasks": 1,
+      "context_limit": 10000,
+      "timeout": 300,
+      "parallel_safe": false,
+      "requires_isolation": false
+    },
+    {
+      "name": "architecture",
+      "description": "Agent for system design and architecture planning",
+      "capabilities": [
+        "system_design",
+        "architecture_review",
+        "api_design",
+        "schema_design"
+      ],
+      "max_tasks": 1,
+      "context_limit": 15000,
+      "timeout": 600,
+      "parallel_safe": true,
+      "requires_isolation": false
+    },
+    {
+      "name": "documentation",
+      "description": "Agent for generating and maintaining documentation",
+      "capabilities": [
+        "doc_generation",
+        "api_doc_writing",
+        "tutorial_creation",
+        "readme_generation"
+      ],
+      "max_tasks": 2,
+      "context_limit": 5000,
+      "timeout": 300,
+      "parallel_safe": true,
+      "requires_isolation": false
+    }
+  ],
+  "settings": {
+    "default_max_parallel": 3,
+    "task_timeout": 300,
+    "retry_failed_tasks": true,
+    "max_retries": 2,
+    "compression_enabled": true,
+    "compression_target_tokens": 4000,
+    "context_preserve_sections": [
+      "requirements",
+      "constraints",
+      "critical_requirements"
+    ]
+  }
+}

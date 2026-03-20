@@ -1,0 +1,4 @@
+pyyaml>=6.0
+click>=8.0
+flask>=2.0  # 可选，用于HTTP API
+pytest>=7.0  # 开发用

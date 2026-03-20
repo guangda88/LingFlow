@@ -1,0 +1,241 @@
+{
+  "skills": [
+    {
+      "name": "brainstorming",
+      "description": "在任何创造性工作前必须使用 - 创建功能、构建组件、添加功能或修改行为。在实施前探索用户意图、需求和设计。",
+      "path": "skills/brainstorming/SKILL.md",
+      "triggers": [
+        "feature",
+        "build",
+        "create",
+        "implement",
+        "add functionality",
+        "modify behavior"
+      ]
+    },
+    {
+      "name": "writing-plans",
+      "description": "当你有规格或需求需要多步骤任务时，在接触代码之前使用",
+      "path": "skills/writing-plans/SKILL.md",
+      "triggers": [
+        "plan",
+        "implementation plan",
+        "break down",
+        "spec"
+      ],
+      "depends_on": ["brainstorming"]
+    },
+    {
+      "name": "test-driven-development",
+      "description": "强制 RED-GREEN-REFACTOR：写失败的测试，看着它失败，写最少代码，看着它通过，提交",
+      "path": "skills/test-driven-development/SKILL.md",
+      "triggers": [
+        "test",
+        "write test",
+        "implement",
+        "code"
+      ],
+      "depends_on": ["writing-plans"]
+    },
+    {
+      "name": "systematic-debugging",
+      "description": "4 阶段根本原因过程（观察、隔离、假设、验证）",
+      "path": "skills/systematic-debugging/SKILL.md",
+      "triggers": [
+        "debug",
+        "fix",
+        "error",
+        "issue",
+        "broken",
+        "not working"
+      ]
+    },
+    {
+      "name": "subagent-driven-development",
+      "description": "快速迭代配合两阶段审查（规范符合性，然后代码质量）",
+      "path": "skills/subagent-driven-development/SKILL.md",
+      "triggers": [
+        "execute plan",
+        "implement plan",
+        "start coding"
+      ],
+      "depends_on": ["writing-plans"]
+    },
+    {
+      "name": "verification-before-completion",
+      "description": "确保问题真正修复，不要假设",
+      "path": "skills/verification-before-completion/SKILL.md",
+      "triggers": [
+        "verify",
+        "check",
+        "confirm fix"
+      ]
+    },
+    {
+      "name": "using-git-worktrees",
+      "description": "为功能开发创建隔离的工作空间，实现安全的并行开发",
+      "path": "skills/using-git-worktrees/SKILL.md",
+      "triggers": [
+        "new branch",
+        "start work",
+        "begin development"
+      ],
+      "depends_on": ["brainstorming"]
+    },
+    {
+      "name": "finishing-a-development-branch",
+      "description": "验证测试，展示选项（合并/PR/保留/丢弃），清理工作树",
+      "path": "skills/finishing-a-development-branch/SKILL.md",
+      "triggers": [
+        "done",
+        "complete",
+        "finish",
+        "ready to merge"
+      ]
+    },
+    {
+      "name": "requesting-code-review",
+      "description": "根据计划进行代码审查，按严重程度报告问题",
+      "path": "skills/requesting-code-review/SKILL.md",
+      "triggers": [
+        "review",
+        "code review",
+        "check code"
+      ]
+    },
+    {
+      "name": "receiving-code-review",
+      "description": "响应代码审查反馈（未来实现）",
+      "path": "skills/receiving-code-review/SKILL.md",
+      "triggers": [
+        "respond to review",
+        "address feedback"
+      ]
+    },
+    {
+      "name": "executing-plans",
+      "description": "带检查点的批量执行（未来实现）",
+      "path": "skills/executing-plans/SKILL.md",
+      "triggers": [
+        "execute batch",
+        "run tasks"
+      ]
+    },
+    {
+      "name": "dispatching-parallel-agents",
+      "description": "并发子代理工作流 - 高级多代理协调，支持并行执行、依赖感知调度和上下文压缩",
+      "path": "skills/dispatching-parallel-agents/SKILL.md",
+      "triggers": [
+        "parallel",
+        "concurrent",
+        "simultaneous"
+      ]
+    },
+    {
+      "name": "skill-creator",
+      "description": "创建新业务技能",
+      "path": "skills/skill-creator/SKILL.md",
+      "triggers": [
+        "create skill",
+        "new skill",
+        "modify skill",
+        "update skill",
+        "skill configuration",
+        "skill template"
+      ],
+      "depends_on": ["brainstorming", "writing-plans"]
+    },
+    {
+      "name": "workflow-executor",
+      "description": "执行YAML/JSON定义的工作流",
+      "path": "skills/workflow-executor/SKILL.md",
+      "triggers": [
+        "run workflow",
+        "execute workflow",
+        "workflow run",
+        "workflow execute",
+        "run workflow file"
+      ],
+      "depends_on": ["task-runner"]
+    },
+    {
+      "name": "task-runner",
+      "description": "执行单个任务（技能调用）",
+      "path": "skills/task-runner/SKILL.md",
+      "triggers": [
+        "run task",
+        "execute task",
+        "run skill",
+        "execute skill",
+        "call skill"
+      ],
+      "depends_on": []
+    },
+    {
+      "name": "conditional-branch",
+      "description": "工作流中的条件判断",
+      "path": "skills/conditional-branch/SKILL.md",
+      "triggers": [
+        "conditional branch",
+        "if condition",
+        "branch condition",
+        "condition check",
+        "conditional execution"
+      ],
+      "depends_on": ["task-runner"]
+    },
+    {
+      "name": "loop-iterator",
+      "description": "工作流中的循环执行",
+      "path": "skills/loop-iterator/SKILL.md",
+      "triggers": [
+        "loop",
+        "iterate",
+        "for each",
+        "loop over",
+        "repeat"
+      ],
+      "depends_on": ["task-runner"]
+    },
+    {
+      "name": "error-handler",
+      "description": "任务失败时的重试和降级",
+      "path": "skills/error-handler/SKILL.md",
+      "triggers": [
+        "error handling",
+        "retry task",
+        "fallback",
+        "error recovery",
+        "fault tolerance"
+      ],
+      "depends_on": ["task-runner"]
+    },
+    {
+      "name": "code-review",
+      "description": "执行代码审查",
+      "path": "skills/code-review/SKILL.md",
+      "triggers": [
+        "code review",
+        "review code",
+        "code quality",
+        "code analysis",
+        "code inspection"
+      ],
+      "depends_on": []
+    }
+  ],
+  "settings": {
+    "auto_trigger": true,
+    "strict_mode": true,
+    "require_approval": {
+      "brainstorming": false,
+      "writing-plans": true,
+      "test-driven-development": false,
+      "subagent-driven-development": true
+    },
+    "documentation_paths": {
+      "specs": "docs/superpowers/specs",
+      "plans": "docs/superpowers/plans"
+    }
+  }
+}
