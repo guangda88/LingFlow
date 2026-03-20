@@ -3,7 +3,7 @@
 import asyncio
 from typing import Dict, List, Any
 from lingflow.coordination.coordinator import AgentCoordinator
-from lingflow.common.models import Task, TaskResult
+from lingflow.common.models import Task, TaskResult, TaskPriority
 
 
 class WorkflowOrchestrator:
@@ -67,10 +67,20 @@ class WorkflowOrchestrator:
 
     def execute(self, tasks: list):
         """执行工作流"""
-        # 这里可以添加工作流执行逻辑
-        # 目前返回一个模拟结果
+        # 直接执行技能，不通过代理
+        results = {}
+        for task_dict in tasks:
+            task_id = task_dict['id']
+            skill = task_dict.get('skill')
+            params = task_dict.get('params', {})
+            
+            if skill:
+                result = self.coordinator.execute_skill(skill, params)
+                results[task_id] = result
+        
         return {
             "tasks": [task['id'] for task in tasks],
             "status": "completed",
-            "result": "Workflow executed successfully"
+            "result": "Workflow executed successfully",
+            "details": results
         }

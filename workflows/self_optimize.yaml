@@ -1,6 +1,5 @@
 name: LingFlow 自我优化
 description: 用 LingFlow 分析并优化自己的代码
-
 tasks:
   # 阶段1：代码分析
   - id: analyze_codebase
@@ -73,11 +72,7 @@ tasks:
   
   # 阶段6：生成报告
   - id: generate_report
-    skill: report-generator
+    skill: notification
     params:
-      data:
-        before: "{{tasks.analyze_codebase.output}}"
-        after: "{{tasks.verify_optimization.output}}"
-        changes: "{{tasks.apply_optimizations.output.changes}}"
-      format: markdown
+      message: "LingFlow 自我优化完成"
     depends_on: [verify_optimization]
