@@ -16,7 +16,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "lingflow=cli:cli",
+            "lingflow=lingflow.cli:cli",
         ],
     },
     python_requires=">=3.8",
