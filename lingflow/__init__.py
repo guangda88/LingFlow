@@ -23,3 +23,9 @@ class LingFlow:
         with open(filepath, encoding='utf-8') as f:
             workflow_def = yaml.safe_load(f)
         return self._orchestrator.execute(workflow_def['tasks'])
+    
+    # 直接执行工作流定义
+    def run_workflow(self, workflow_def: dict):
+        """直接执行工作流定义"""
+        tasks = workflow_def.get('tasks', [])
+        return self._orchestrator.execute(tasks)

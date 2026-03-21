@@ -5,14 +5,22 @@ import subprocess
 
 def run_tests(params):
     """运行测试"""
-    file = params.get('file')
+    file = params.get('file') or params.get('target')
     test_type = params.get('test_type', 'unit')
+    
+    # 构建 pytest 命令
+    cmd = ['python', '-m', 'pytest']
+    if file:
+        cmd.append(file)
+    cmd.extend(['-v', '--tb=short', '--ignore=test_output.txt'])
     
     # 运行 pytest 或特定测试
     result = subprocess.run(
-        ['pytest', file, '-v', '--tb=short'],
+        cmd,
         capture_output=True,
-        text=True
+        text=True,
+        encoding='utf-8',
+        errors='replace'
     )
     
     return {
