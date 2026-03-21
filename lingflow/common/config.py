@@ -1,0 +1,148 @@
+"""LingFlow 配置管理模块"""
+
+import os
+import yaml
+from pathlib import Path
+
+# 默认配置
+DEFAULT_CONFIG = {
+    # 工作流配置
+    'workflow': {
+        'max_iterations': 100,
+        'sleep_interval': 0.01,
+        'max_parallel': 2
+    },
+    # 技能配置
+    'skills': {
+        'path': 'skills',
+        'default_timeout': 30
+    },
+    # 代理配置
+    'agents': {
+        'default_agents': [
+            {
+                'name': 'implementation',
+                'description': 'Code implementation agent',
+                'capabilities': ['code_generation', 'testing', 'documentation']
+            },
+            {
+                'name': 'review',
+                'description': 'Code review agent',
+                'capabilities': ['code_review', 'design_review', 'security_check']
+            },
+            {
+                'name': 'testing',
+                'description': 'Testing agent',
+                'capabilities': ['test_generation', 'test_execution', 'coverage_analysis']
+            },
+            {
+                'name': 'debugging',
+                'description': 'Debugging agent',
+                'capabilities': ['error_analysis', 'root_cause', 'fix_generation']
+            },
+            {
+                'name': 'architecture',
+                'description': 'Architecture agent',
+                'capabilities': ['system_design', 'architecture_review', 'api_design']
+            },
+            {
+                'name': 'documentation',
+                'description': 'Documentation agent',
+                'capabilities': ['doc_generation', 'api_doc_writing', 'readme_generation']
+            }
+        ]
+    },
+    # 压缩配置
+    'compression': {
+        'enabled': True,
+        'max_length': 10000
+    },
+    # 日志配置
+    'logging': {
+        'level': 'INFO',
+        'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        'date_format': '%Y-%m-%d %H:%M:%S'
+    }
+}
+
+class ConfigManager:
+    """配置管理器"""
+    
+    def __init__(self, config_file: str = None):
+        self.config_file = config_file or os.path.join(os.getcwd(), 'config.yaml')
+        self.config = self._load_config()
+    
+    def _load_config(self) -> dict:
+        """加载配置"""
+        config = DEFAULT_CONFIG.copy()
+        
+        # 加载配置文件
+        if os.path.exists(self.config_file):
+            try:
+                with open(self.config_file, 'r', encoding='utf-8') as f:
+                    file_config = yaml.safe_load(f)
+                if file_config:
+                    self._merge_config(config, file_config)
+            except Exception as e:
+                print(f"加载配置文件失败: {str(e)}")
+        
+        return config
+    
+    def _merge_config(self, base: dict, override: dict):
+        """合并配置"""
+        for key, value in override.items():
+            if key in base and isinstance(base[key], dict) and isinstance(value, dict):
+                self._merge_config(base[key], value)
+            else:
+                base[key] = value
+    
+    def get(self, key: str, default=None):
+        """获取配置"""
+        keys = key.split('.')
+        value = self.config
+        
+        for k in keys:
+            if isinstance(value, dict) and k in value:
+                value = value[k]
+            else:
+                return default
+        
+        return value
+    
+    def set(self, key: str, value):
+        """设置配置"""
+        keys = key.split('.')
+        config = self.config
+        
+        for k in keys[:-1]:
+            if k not in config:
+                config[k] = {}
+            config = config[k]
+        
+        config[keys[-1]] = value
+    
+    def save(self):
+        """保存配置"""
+        try:
+            with open(self.config_file, 'w', encoding='utf-8') as f:
+                yaml.dump(self.config, f, default_flow_style=False, allow_unicode=True)
+            return True
+        except Exception as e:
+            print(f"保存配置文件失败: {str(e)}")
+            return False
+
+# 创建全局配置实例
+config_manager = ConfigManager()
+
+# 导出配置获取函数
+def get_config(key: str, default=None):
+    """获取配置"""
+    return config_manager.get(key, default)
+
+def set_config(key: str, value):
+    """设置配置"""
+    config_manager.set(key, value)
+
+def save_config():
+    """保存配置"""
+    return config_manager.save()

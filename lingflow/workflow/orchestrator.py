@@ -4,6 +4,7 @@ import asyncio
 from typing import Dict, List, Any
 from lingflow.coordination.coordinator import AgentCoordinator
 from lingflow.common.models import Task, TaskResult, TaskPriority
+from lingflow.common.config import get_config
 
 
 class WorkflowOrchestrator:
@@ -12,33 +13,36 @@ class WorkflowOrchestrator:
     def __init__(self, coordinator: AgentCoordinator):
         self.coordinator = coordinator
 
-    async def execute_workflow(self, tasks: List[Task], max_parallel: int = 2) -> Dict[str, TaskResult]:
+    async def execute_workflow(self, tasks: List[Task], max_parallel: int = None) -> Dict[str, TaskResult]:
         """执行工作流（带依赖关系）"""
         results = {}
-
+        task_event = asyncio.Event()
+        
+        # 从配置获取最大并行数
+        if max_parallel is None:
+            max_parallel = get_config('workflow.max_parallel', 2)
+        
         # 初始化任务状态
         for task in tasks:
             self.coordinator.submit_task(task)
 
         # 持续调度直到所有任务完成或失败
-        max_iterations = 100  # 防止无限循环
-        iteration = 0
-
-        while len(self.coordinator.completed_tasks) + len(self.coordinator.failed_tasks) < len(tasks) and iteration < max_iterations:
-            iteration += 1
-
+        while len(self.coordinator.completed_tasks) + len(self.coordinator.failed_tasks) < len(tasks):
             # 查找准备执行的任务
             ready_tasks = self._get_ready_tasks(tasks)
 
             if not ready_tasks:
-                break
+                # 等待任务完成事件
+                await asyncio.wait_for(task_event.wait(), timeout=5.0)
+                task_event.clear()
+                continue
 
             # 并行执行准备好的任务
             batch_results = await self.coordinator.execute_tasks_parallel(ready_tasks, max_parallel)
             results.update(batch_results)
 
-            # 短暂延迟
-            await asyncio.sleep(0.01)
+            # 触发任务完成事件
+            task_event.set()
 
         return results
 

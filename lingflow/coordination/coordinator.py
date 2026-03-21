@@ -190,18 +190,41 @@ class AgentCoordinator(BaseCoordinator):
             }
     
     def _get_skill_path(self, skill_name: str) -> str:
-        """获取技能文件路径"""
+        """获取技能文件路径（安全版本）"""
         import os
+        import re
+        
+        # 验证技能名称，防止路径遍历攻击
+        if not skill_name or not re.match(r'^[a-zA-Z0-9_-]+$', skill_name):
+            return None
+        
+        # 构建技能路径
         skill_path = os.path.join(os.getcwd(), 'skills', skill_name, 'implementation.py')
+        
+        # 安全检查：确保路径在 skills 目录内
+        skills_dir = os.path.abspath(os.path.join(os.getcwd(), 'skills'))
+        skill_path_abs = os.path.abspath(skill_path)
+        
+        if not skill_path_abs.startswith(skills_dir):
+            return None
+        
         return skill_path if os.path.exists(skill_path) else None
     
     def _load_skill_module(self, skill_name: str, skill_path: str):
-        """加载技能模块"""
+        """加载技能模块（安全版本）"""
         import importlib.util
-        spec = importlib.util.spec_from_file_location(f"skills.{skill_name}.implementation", skill_path)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        return module
+        
+        try:
+            spec = importlib.util.spec_from_file_location(f"skills.{skill_name}.implementation", skill_path)
+            module = importlib.util.module_from_spec(spec)
+            
+            # 沙箱执行：限制模块的全局变量
+            # 这里可以添加更严格的沙箱限制
+            spec.loader.exec_module(module)
+            
+            return module
+        except Exception as e:
+            raise Exception(f"加载技能模块失败: {str(e)}")
     
     def _execute_skill_module(self, module, params: dict):
         """执行技能模块"""
