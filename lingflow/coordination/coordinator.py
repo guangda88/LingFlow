@@ -1,12 +1,15 @@
 """LingFlow 代理协调器"""
 
 import asyncio
+import logging
 from typing import Dict, List, Optional, Any
 from lingflow.coordination.registry import AgentRegistry
 from lingflow.coordination.agent import Agent
 from lingflow.coordination.base import BaseCoordinator
 from lingflow.compression.compressor import ContextCompressor
-from lingflow.common.models import Task, TaskResult, TaskPriority, AgentConfig
+from lingflow.common.models import Task, TaskResult, AgentConfig
+
+logger = logging.getLogger(__name__)
 
 
 class AgentCoordinator(BaseCoordinator):
@@ -97,7 +100,7 @@ class AgentCoordinator(BaseCoordinator):
         """查找适合任务的代理"""
         agents = self.registry.find_agents_for_task(task)
         if not agents:
-            print(f"  ❌ No agent found for {task.task_id}")
+            logger.warning(f"No agent found for task {task.task_id}")
             return None
         return agents[0]
     
@@ -121,7 +124,7 @@ class AgentCoordinator(BaseCoordinator):
         results = {}
         for result in results_list:
             if isinstance(result, Exception):
-                print(f"  ❌ Exception: {result}")
+                logger.error(f"Exception in task result: {result}")
                 continue
 
             if result:
@@ -129,10 +132,10 @@ class AgentCoordinator(BaseCoordinator):
 
                 if result.success:
                     self.completed_tasks[result.task_id] = result
-                    print(f"  ✅ {result.task_id} completed")
+                    logger.debug(f"Task {result.task_id} completed successfully")
                 else:
                     self.failed_tasks[result.task_id] = result
-                    print(f"  ❌ {result.task_id} failed: {result.error}")
+                    logger.warning(f"Task {result.task_id} failed: {result.error}")
         return results
 
     def get_status(self) -> Dict[str, Any]:
