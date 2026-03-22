@@ -55,6 +55,7 @@ class TestRunner:
         agents = self.coordinator.registry.list_agents()
         expected_count = 6
         actual_count = len(agents)
+        assert actual_count == expected_count, f"Expected {expected_count} agents, got {actual_count}"
         self.print_result(
             f"代理数量 ({actual_count} == {expected_count})",
             actual_count == expected_count
@@ -63,6 +64,7 @@ class TestRunner:
         # 测试代理类型
         agent_names = [a['name'] for a in agents]
         expected_names = ['implementation', 'review', 'testing', 'debugging', 'architecture', 'documentation']
+        assert set(agent_names) == set(expected_names), f"Agent names mismatch: {agent_names}"
         self.print_result(
             f"代理类型正确",
             set(agent_names) == set(expected_names)
@@ -92,6 +94,7 @@ class TestRunner:
         # 测试简单上下文
         simple_context = {"key": "value"}
         compressed = self.coordinator.compressor.compress(simple_context)
+        assert isinstance(compressed, dict), "Compressed context should be a dict"
         self.print_result(
             "简单上下文压缩",
             isinstance(compressed, dict)
@@ -160,23 +163,24 @@ class TestRunner:
         ]
 
         # 执行并行任务
-        try:
-            results = asyncio.run(
-                self.coordinator.execute_tasks_parallel(tasks, max_parallel=2)
-            )
+        results = asyncio.run(
+            self.coordinator.execute_tasks_parallel(tasks, max_parallel=2)
+        )
 
-            # 验证结果
-            self.print_result(
-                f"所有任务返回结果 ({len(results)} == {len(tasks)})",
-                len(results) == len(tasks)
-            )
+        # 验证结果
+        assert len(results) == len(tasks), f"Expected {len(tasks)} results, got {len(results)}"
+        self.print_result(
+            f"所有任务返回结果 ({len(results)} == {len(tasks)})",
+            len(results) == len(tasks)
+        )
 
-            # 验证成功任务
-            success_count = sum(1 for r in results.values() if r.success)
-            self.print_result(
-                f"成功任务数 ({success_count})",
-                success_count >= 2  # 至少 2 个成功（task_2 会失败）
-            )
+        # 验证成功任务
+        success_count = sum(1 for r in results.values() if r.success)
+        assert success_count >= 2, f"Expected at least 2 successful tasks, got {success_count}"
+        self.print_result(
+            f"成功任务数 ({success_count})",
+            success_count >= 2  # 至少 2 个成功（task_2 会失败）
+        )
 
             # 验证任务执行时间
             for result in results.values():
@@ -235,21 +239,22 @@ class TestRunner:
         ]
 
         # 执行工作流
-        try:
-            results = await self.orchestrator.execute_workflow(workflow_tasks, max_parallel=2)
+        results = await self.orchestrator.execute_workflow(workflow_tasks, max_parallel=2)
 
-            # 验证结果
-            self.print_result(
-                f"工作流执行返回结果 ({len(results)})",
-                len(results) > 0
-            )
+        # 验证结果
+        assert len(results) > 0, "Workflow should return results"
+        self.print_result(
+            f"工作流执行返回结果 ({len(results)})",
+            len(results) > 0
+        )
 
-            # 验证依赖顺序
-            setup_done = "setup" in self.coordinator.completed_tasks
-            self.print_result(
-                "Setup 任务先完成",
-                setup_done
-            )
+        # 验证依赖顺序
+        setup_done = "setup" in self.coordinator.completed_tasks
+        assert setup_done, "Setup task should be completed first"
+        self.print_result(
+            "Setup 任务先完成",
+            setup_done
+        )
 
             # 验证并行执行（doc_task 和 dev_task 可以并行）
             dev_done = "dev_task" in self.coordinator.completed_tasks
@@ -272,12 +277,14 @@ class TestRunner:
         # 验证状态字段
         required_fields = ['total_tasks', 'completed_tasks', 'failed_tasks', 'agents', 'compression_stats']
         for field in required_fields:
+            assert field in status, f"Status should contain {field} field"
             self.print_result(
                 f"状态包含 {field} 字段",
                 field in status
             )
 
         # 验证状态值
+        assert status['agents'] == 6, f"Expected 6 agents, got {status['agents']}"
         self.print_result(
             "代理数量正确 (6)",
             status['agents'] == 6
@@ -302,20 +309,18 @@ class TestRunner:
             context={"data": "test"}
         )
 
-        try:
-            results = asyncio.run(
-                self.coordinator.execute_tasks_parallel([invalid_task], max_parallel=1)
-            )
+        results = asyncio.run(
+            self.coordinator.execute_tasks_parallel([invalid_task], max_parallel=1)
+        )
 
-            # 验证错误处理
-            result = results.get('invalid_task')
-            self.print_result(
-                "无效代理类型返回错误",
-                result and not result.success and 'No suitable agent' in (result.error or '')
-            )
-
-        except Exception as e:
-            self.print_result("错误处理", False, str(e))
+        # 验证错误处理
+        result = results.get('invalid_task')
+        assert result and not result.success and 'No suitable agent' in (result.error or ''), \
+            "Invalid agent type should return error"
+        self.print_result(
+            "无效代理类型返回错误",
+            result and not result.success and 'No suitable agent' in (result.error or '')
+        )
 
         # 测试执行中的错误（task_2 会失败）
         error_task = Task(
