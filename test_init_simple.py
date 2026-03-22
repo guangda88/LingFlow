@@ -12,52 +12,44 @@ sys.path.insert(0, str(lingflow_path))
 def test_imports():
     """Test all main imports"""
     print("[TEST] Testing imports...")
-    try:
-        from agent_coordinator import (
-            AgentCoordinator,
-            Task,
-            TaskPriority,
-            AgentConfig,
-            AgentStatus
-        )
-        print("[PASS] All main classes imported successfully")
-        return True
-    except Exception as e:
-        print(f"[FAIL] Import error: {e}")
-        return False
+    from agent_coordinator import (
+        AgentCoordinator,
+        Task,
+        TaskPriority,
+        AgentConfig,
+        AgentStatus
+    )
+    print("[PASS] All main classes imported successfully")
+    return True
 
 def test_coordinator_init():
     """Test coordinator initialization"""
     print("\n[TEST] Testing coordinator initialization...")
-    try:
-        from agent_coordinator import AgentCoordinator
-        coordinator = AgentCoordinator()
-        print("[PASS] AgentCoordinator initialized")
-        print(f"       - Config loaded from agents/agents.json")
-        return True
-    except Exception as e:
-        print(f"[FAIL] Initialization error: {e}")
-        return False
+    from agent_coordinator import AgentCoordinator
+    coordinator = AgentCoordinator()
+    assert coordinator is not None, "Coordinator should be initialized"
+    print("[PASS] AgentCoordinator initialized")
+    print(f"       - Config loaded from agents/agents.json")
+    return True
 
 def test_task_creation():
     """Test task creation"""
     print("\n[TEST] Testing task creation...")
-    try:
-        from agent_coordinator import Task, TaskPriority
+    from agent_coordinator import Task, TaskPriority
 
-        task = Task(
-            task_id="test-1",
-            name="Test Task",
-            description="A simple test task",
-            priority=TaskPriority.NORMAL,
-            agent_type="implementation",
-            context={}
-        )
-        print(f"[PASS] Task created: {task.task_id}")
-        return True
-    except Exception as e:
-        print(f"[FAIL] Task creation error: {e}")
-        return False
+    task = Task(
+        task_id="test-1",
+        name="Test Task",
+        description="A simple test task",
+        priority=TaskPriority.NORMAL,
+        agent_type="implementation",
+        context={}
+    )
+    assert task.task_id == "test-1", "Task ID should match"
+    assert task.name == "Test Task", "Task name should match"
+    assert task.priority == TaskPriority.NORMAL, "Task priority should match"
+    print(f"[PASS] Task created: {task.task_id}")
+    return True
 
 def main():
     """Run all tests"""

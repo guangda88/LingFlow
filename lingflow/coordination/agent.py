@@ -2,7 +2,7 @@
 
 import asyncio
 import time
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from lingflow.common.models import AgentStatus, AgentConfig, Task, TaskResult
 from lingflow.coordination.base import BaseAgent
 
