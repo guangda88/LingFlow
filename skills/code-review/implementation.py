@@ -322,7 +322,7 @@ def review_performance(file: Path, content: str, lines: List[str], tree: ast.AST
             if nested_loops > 2:
                 result['performance']['issues'].append({
                     'file': str(file),
-                    'issue': f'检测到 {nested_lops} 层嵌套循环',
+                    'issue': f'检测到 {nested_loops} 层嵌套循环',
                     'severity': 'medium',
                     'line': node.lineno
                 })
