@@ -2,7 +2,7 @@
 
 import asyncio
 import logging
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Tuple
 from lingflow.coordination.registry import AgentRegistry
 from lingflow.coordination.agent import Agent
 from lingflow.coordination.base import BaseCoordinator
@@ -24,7 +24,7 @@ class AgentCoordinator(BaseCoordinator):
         self.compressor = ContextCompressor()
         self._register_default_agents()
 
-    def _register_default_agents(self):
+    def _register_default_agents(self) -> None:
         """注册默认代理"""
         configs = [
             AgentConfig(
@@ -62,7 +62,7 @@ class AgentCoordinator(BaseCoordinator):
         for config in configs:
             self.registry.register_agent(Agent(config))
 
-    def submit_task(self, task: Task):
+    def submit_task(self, task: Task) -> None:
         """提交任务"""
         self.task_queue.append(task)
 
@@ -81,7 +81,7 @@ class AgentCoordinator(BaseCoordinator):
         results = self._process_task_results(results_list)
         return results
     
-    async def _execute_one_task(self, task: Task, semaphore):
+    async def _execute_one_task(self, task: Task, semaphore: asyncio.Semaphore) -> TaskResult:
         """执行单个任务"""
         async with semaphore:
             # 查找代理
@@ -96,7 +96,7 @@ class AgentCoordinator(BaseCoordinator):
             result = await agent.execute_task(task, compressed_context)
             return result
     
-    def _find_agent_for_task(self, task: Task):
+    def _find_agent_for_task(self, task: Task) -> Optional[Agent]:
         """查找适合任务的代理"""
         agents = self.registry.find_agents_for_task(task)
         if not agents:
@@ -104,7 +104,7 @@ class AgentCoordinator(BaseCoordinator):
             return None
         return agents[0]
     
-    def _compress_context(self, context: dict):
+    def _compress_context(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """压缩上下文"""
         try:
             return self.compressor.compress(context)
@@ -119,7 +119,7 @@ class AgentCoordinator(BaseCoordinator):
             error=error
         )
     
-    def _process_task_results(self, results_list) -> Dict[str, TaskResult]:
+    def _process_task_results(self, results_list: List[Any]) -> Dict[str, TaskResult]:
         """处理任务结果"""
         results = {}
         for result in results_list:
@@ -148,13 +148,13 @@ class AgentCoordinator(BaseCoordinator):
             'compression_stats': self.compressor.get_stats()
         }
 
-    def reset(self):
+    def reset(self) -> None:
         """重置状态"""
         self.task_queue.clear()
         self.completed_tasks.clear()
         self.failed_tasks.clear()
 
-    def execute_skill(self, skill_name: str, params: dict):
+    def execute_skill(self, skill_name: str, params: Dict[str, Any]) -> Dict[str, Any]:
         """执行单个技能"""
         try:
             skill_path = self._get_skill_path(skill_name)
@@ -192,7 +192,7 @@ class AgentCoordinator(BaseCoordinator):
                 "error": f"执行技能时出错: {str(e)}"
             }
     
-    def _get_skill_path(self, skill_name: str) -> str:
+    def _get_skill_path(self, skill_name: str) -> Optional[str]:
         """获取技能文件路径（安全版本）"""
         import os
         import re
@@ -213,7 +213,7 @@ class AgentCoordinator(BaseCoordinator):
         
         return skill_path if os.path.exists(skill_path) else None
     
-    def _load_skill_module(self, skill_name: str, skill_path: str):
+    def _load_skill_module(self, skill_name: str, skill_path: str) -> Optional[Any]:
         """加载技能模块（安全版本）"""
         import importlib.util
         
@@ -229,14 +229,14 @@ class AgentCoordinator(BaseCoordinator):
         except Exception as e:
             raise Exception(f"加载技能模块失败: {str(e)}")
     
-    def _execute_skill_module(self, module, params: dict):
+    def _execute_skill_module(self, module: Any, params: Dict[str, Any]) -> Any:
         """执行技能模块"""
         if hasattr(module, 'execute_skill'):
             return module.execute_skill(params)
         else:
             raise Exception("技能模块中没有 execute_skill 函数")
 
-    def list_skills(self):
+    def list_skills(self) -> List[str]:
         """列出所有可用技能"""
         # 这里可以返回实际的技能列表
         return ["database_export", "upload_115", "notification", "code_analysis", "code_optimization"]

@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class WorkflowOrchestrator:
     """工作流编排器"""
 
-    def __init__(self, coordinator: AgentCoordinator):
+    def __init__(self, coordinator: AgentCoordinator) -> None:
         self.coordinator = coordinator
 
     async def execute_workflow(self, tasks: List[Task], max_parallel: int = DEFAULT_MAX_PARALLEL) -> Dict[str, TaskResult]:

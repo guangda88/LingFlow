@@ -217,7 +217,7 @@ class SkillTrigger:
         return True
 
 
-def main():
+def main() -> None:
     """Main entry point for testing the skill trigger system."""
 
     # Initialize trigger system
