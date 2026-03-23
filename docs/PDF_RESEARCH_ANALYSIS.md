@@ -501,6 +501,6 @@ LingFlow v3.3.0 should integrate these insights to provide a framework that bala
 
 ---
 
-**Document Version**: 1.0
+**Document Version**: v3.3.0
 **Last Updated**: March 23, 2026
 **Prepared for**: LingFlow v3.3.0 Development
