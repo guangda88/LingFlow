@@ -63,11 +63,23 @@ class AgentCoordinator(BaseCoordinator):
             self.registry.register_agent(Agent(config))
 
     def submit_task(self, task: Task) -> None:
-        """提交任务"""
+        """Submit a task to the coordinator.
+
+        Args:
+            task: The task to submit
+        """
         self.task_queue.append(task)
 
     async def execute_tasks_parallel(self, tasks: List[Task], max_parallel: int = 2) -> Dict[str, TaskResult]:
-        """并行执行任务"""
+        """Execute multiple tasks in parallel.
+
+        Args:
+            tasks: List of tasks to execute
+            max_parallel: Maximum number of parallel executions
+
+        Returns:
+            Dictionary mapping task IDs to their results
+        """
         results = {}
         semaphore = asyncio.Semaphore(max_parallel)
 
@@ -139,7 +151,16 @@ class AgentCoordinator(BaseCoordinator):
         return results
 
     def get_status(self) -> Dict[str, Any]:
-        """获取状态"""
+        """Get the current status of the coordinator.
+
+        Returns:
+            Dictionary containing status information including:
+            - total_tasks: Total number of tasks
+            - completed_tasks: Number of completed tasks
+            - failed_tasks: Number of failed tasks
+            - agents: Number of registered agents
+            - compression_stats: Context compression statistics
+        """
         return {
             'total_tasks': len(self.task_queue) + len(self.completed_tasks),
             'completed_tasks': len(self.completed_tasks),
@@ -149,13 +170,28 @@ class AgentCoordinator(BaseCoordinator):
         }
 
     def reset(self) -> None:
-        """重置状态"""
+        """Reset the coordinator state.
+
+        Clears all task queues, completed tasks, and failed tasks.
+        """
         self.task_queue.clear()
         self.completed_tasks.clear()
         self.failed_tasks.clear()
 
     def execute_skill(self, skill_name: str, params: Dict[str, Any]) -> Dict[str, Any]:
-        """执行单个技能"""
+        """Execute a single skill with given parameters.
+
+        Args:
+            skill_name: Name of the skill to execute
+            params: Parameters to pass to the skill
+
+        Returns:
+            Dictionary containing:
+            - skill: Name of the executed skill
+            - params: Parameters passed to the skill
+            - result: Execution result (if successful)
+            - error: Error message (if failed)
+        """
         try:
             skill_path = self._get_skill_path(skill_name)
             if not skill_path:
@@ -237,6 +273,10 @@ class AgentCoordinator(BaseCoordinator):
             raise Exception("技能模块中没有 execute_skill 函数")
 
     def list_skills(self) -> List[str]:
-        """列出所有可用技能"""
+        """List all available skills.
+
+        Returns:
+            List of skill names that can be executed
+        """
         # 这里可以返回实际的技能列表
         return ["database_export", "upload_115", "notification", "code_analysis", "code_optimization"]

@@ -4,15 +4,36 @@ from typing import Dict, Any
 
 
 class ContextCompressor:
-    """简化的上下文压缩器"""
+    """Simplified context compressor for reducing token usage.
+
+    This compressor reduces token usage by prioritizing important fields
+    and truncating long text content.
+    """
 
     def __init__(self, target_tokens: int = 4000) -> None:
+        """Initialize the context compressor.
+
+        Args:
+            target_tokens: Target token count for compression
+        """
         self.target_tokens: int = target_tokens
         self.compressions_count: int = 0
         self.tokens_saved: int = 0
 
     def compress(self, context: Dict[str, Any], max_tokens: int = 4000) -> Dict[str, Any]:
-        """压缩上下文"""
+        """Compress the context to reduce token usage.
+
+        Priority fields (requirements, specification, description) are preserved
+        with a 1000 character limit. Other fields are limited to 3 items with
+        a 500 character limit each.
+
+        Args:
+            context: The context dictionary to compress
+            max_tokens: Maximum token count (not currently used)
+
+        Returns:
+            Compressed context dictionary
+        """
         if not context:
             return context
 
@@ -50,7 +71,13 @@ class ContextCompressor:
         return len(text) // 4  # 简单估算：4 字符/token
 
     def get_stats(self) -> Dict[str, int]:
-        """获取统计信息"""
+        """Get compression statistics.
+
+        Returns:
+            Dictionary containing:
+            - total_compressions: Total number of compressions performed
+            - tokens_saved: Total number of tokens saved
+        """
         return {
             'total_compressions': self.compressions_count,
             'tokens_saved': self.tokens_saved

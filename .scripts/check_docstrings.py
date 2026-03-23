@@ -19,22 +19,24 @@ class DocstringChecker(ast.NodeVisitor):
     def visit_ClassDef(self, node):
         """Visit class definition."""
         class_name = node.name
-        self.classes[class_name] = []
+        class_info = {'methods': [], 'has_docstring': False}
 
         # Check class docstring
         class_doc = ast.get_docstring(node)
+        if class_doc:
+            class_info['has_docstring'] = True
 
-        # Save current class context
-        old_methods = self.functions
+        # Save current methods list
+        old_functions = self.functions
         self.functions = []
 
         # Visit methods
         self.generic_visit(node)
 
-        # Restore
-        self.classes[class_name] = self.functions[:]
-        self.classes[class_name]['_class_doc'] = class_doc
-        self.functions = old_methods
+        # Save methods for this class
+        class_info['methods'] = self.functions[:]
+        self.classes[class_name] = class_info
+        self.functions = old_functions
 
     def visit_FunctionDef(self, node):
         """Visit function definition."""
@@ -99,17 +101,18 @@ def main():
                 })
 
         # Check class methods
-        for class_name, methods in classes.items():
+        for class_name, class_info in classes.items():
             # Check class docstring
-            if not methods.get('_class_doc'):
+            if not class_info.get('has_docstring'):
                 issues.append({
                     'file': filepath,
                     'type': 'class',
                     'name': class_name,
-                    'line': methods[0]['line'] if methods else 1
+                    'line': class_info['methods'][0]['line'] if class_info['methods'] else 1
                 })
 
             # Check methods
+            methods = class_info.get('methods', [])
             for method in methods:
                 # Skip __magic__ methods
                 if method['name'].startswith('__') and method['name'].endswith('__'):

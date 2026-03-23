@@ -16,21 +16,37 @@ logger = logging.getLogger(__name__)
 
 
 class WorkflowOrchestrator:
-    """工作流编排器"""
+    """Workflow orchestrator for managing task dependencies and parallel execution.
+
+    This orchestrator handles task scheduling based on dependencies,
+    enabling parallel execution of independent tasks while respecting
+    dependency constraints.
+    """
 
     def __init__(self, coordinator: AgentCoordinator) -> None:
+        """Initialize the workflow orchestrator.
+
+        Args:
+            coordinator: The agent coordinator to use for task execution
+        """
         self.coordinator = coordinator
 
     async def execute_workflow(self, tasks: List[Task], max_parallel: int = DEFAULT_MAX_PARALLEL) -> Dict[str, TaskResult]:
-        """
-        执行工作流（带依赖关系）
+        """Execute a workflow with task dependencies.
+
+        Tasks are scheduled based on their dependencies. Independent tasks
+        can be executed in parallel, while dependent tasks wait for their
+        prerequisites to complete.
 
         Args:
-            tasks: 要执行的任务列表
-            max_parallel: 最大并行执行数
+            tasks: List of tasks to execute
+            max_parallel: Maximum number of parallel executions
 
         Returns:
-            任务ID到结果的映射
+            Dictionary mapping task IDs to their results
+
+        Raises:
+            RuntimeError: If workflow execution fails
         """
         if not tasks:
             logger.warning("No tasks provided to execute_workflow")

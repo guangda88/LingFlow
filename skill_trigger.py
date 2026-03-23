@@ -17,7 +17,13 @@ logger = logging.getLogger(__name__)
 
 
 class SkillTrigger:
-    """Determines which skills should be triggered based on context."""
+    """Determines which skills should be triggered based on context.
+
+    This class analyzes context, task types, and development phases
+    to automatically determine which LingFlow skills should be invoked.
+    It supports keyword-based triggers, phase-based triggers, and
+    explicit skill mentions.
+    """
 
     def __init__(self, skills_config_path: str = "skills/skills.json"):
         """Initialize the skill trigger system.
