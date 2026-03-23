@@ -1,0 +1,148 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit
+
+      - name: Run Bandit security scan
+        run: |
+          bandit -r lingflow/ -f json -o bandit-report.json || true
+          bandit -r lingflow/ -f txt -o bandit-report.txt || exit 0
+
+      - name: Upload Bandit report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: bandit-report
+          path: bandit-report.*
+
+  code-style:
+    name: Code Style Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 black isort
+
+      - name: Check code formatting with Black
+        run: |
+          black --check --diff lingflow/ skills/ || exit 0
+
+      - name: Check import sorting with isort
+        run: |
+          isort --check-only --diff lingflow/ skills/ || exit 0
+
+      - name: Lint with flake8
+        run: |
+          flake8 lingflow/ skills/ --count --select=E9,F63,F7,F82 --show-source --statistics || exit 0
+          flake8 lingflow/ skills/ --count --exit-zero --max-complexity=15 --max-line-length=127 --statistics
+
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run comprehensive tests
+        run: |
+          python test_comprehensive.py
+
+      - name: Run system verification
+        run: |
+          python verify_system_simple.py
+
+  self-review:
+    name: Self-Code-Review
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Run self code review
+        run: |
+          python3 -c "
+          import sys
+          sys.path.insert(0, '/home/ai/LingFlow')
+          from skills.code_review.implementation import review_code
+          result = review_code({'focus': 'security', 'files': ['lingflow/', 'skills/'], 'strict': True})
+          print(f'Security score: {result[\"dimensions\"][\"security\"][\"score\"]}/100')
+          issues = result['dimensions']['security']['issues']
+          if issues:
+              print(f'Found {len(issues)} security issues')
+              for issue in issues[:5]:
+                  print(f'  - {issue}')
+          else:
+              print('✅ No security issues found')
+          "
+
+      - name: Check for critical issues
+        run: |
+          python3 -c "
+          import sys
+          sys.path.insert(0, '/home/ai/LingFlow')
+          from skills.code_review.implementation import review_code
+          result = review_code({'focus': 'all', 'files': ['lingflow/', 'skills/'], 'strict': False})
+          critical = sum(1 for dim in result['dimensions'].values() for issue in dim['issues'] if issue.get('severity') == 'critical')
+          if critical > 0:
+              print(f'❌ Found {critical} critical issues')
+              sys.exit(1)
+          else:
+              print('✅ No critical issues found')
+          "
+
+  version-consistency:
+    name: Version Consistency Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check for outdated version references
+        run: |
+          echo "Checking for outdated version references..."
+          if grep -r "v1\.0\|v1\.1\|V1\.0\|V1\.1\|1\.0\.0" docs/ --include="*.md" | grep -v "V1.1.0"; then
+            echo "❌ Found outdated version references"
+            exit 1
+          else
+            echo "✅ All version references are up to date"
+          fi

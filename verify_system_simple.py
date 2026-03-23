@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
-"""LingFlow v1.1.0 简单验证脚本"""
+"""LingFlow v3.3.0 简单验证脚本"""
 
 import sys
+from typing import Tuple
 from lingflow.coordination import AgentCoordinator
 
-def main():
+
+def main() -> int:
+    """验证 LingFlow 系统功能是否正常。
+
+    Returns:
+        int: 0 表示成功，1 表示失败
+    """
     print("=" * 70)
-    print("  LingFlow v1.1.0 系统验证")
+    print("  LingFlow v3.3.0 系统验证")
     print("=" * 70)
 
     try:
@@ -34,9 +41,9 @@ def main():
         print("\n" + "=" * 70)
         print("✅ 所有测试通过！")
         print("=" * 70)
-        print("\nLingFlow v1.1.0 系统已就绪。")
+        print("\nLingFlow v3.3.0 系统已就绪。")
         print("\n下一步:")
-        print("  1. 查看 docs/V1.1.0_IMPLEMENTATION_SUMMARY.md")
+        print("  1. 查看 docs/LINGFLOW_SELF_REVIEW_REPORT.md")
         print("  2. 运行 python agent_coordinator.py 查看完整演示")
         return 0
 

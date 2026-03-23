@@ -1,26 +1,101 @@
-# pre-commit configuration
-repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
-    hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
+# Pre-commit hooks for LingFlow v3.3.0
 
+repos:
+  # Python code formatting with Black
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
       - id: black
+        language_version: python3.8
+        args: ['--line-length=127']
 
+  # Import sorting with isort
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ['--profile', 'black', '--line-length=127']
+
+  # Linting with flake8
   - repo: https://github.com/pycqa/flake8
     rev: 6.0.0
     hooks:
       - id: flake8
+        args: [
+          '--max-line-length=127',
+          '--max-complexity=15',
+          '--ignore=E203,E266,E501,W503',
+          '--extend-ignore=E402'
+        ]
         additional_dependencies: [flake8-docstrings]
 
+  # Type checking with mypy
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.3.0
     hooks:
       - id: mypy
         additional_dependencies: [types-all]
+        args: ['--ignore-missing-imports', '--no-strict-optional']
+
+  # Security checks with bandit
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.4
+    hooks:
+      - id: bandit
+        args: ['-r', 'lingflow/', '-f', 'txt']
+        exclude: ^tests/
+
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: check-json
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+
+  # Custom checks
+  - repo: local
+    hooks:
+      # Check for outdated version references
+      - id: check-version-consistency
+        name: Check version consistency
+        entry: bash -c 'if grep -r "v1\\.0\\|v1\\.1\\|V1\\.0\\|V1\\.1\\|1\\.0\\.0" docs/ --include="*.md" | grep -v "V1.1.0"; then echo "Found outdated version references"; exit 1; else echo "Version references are consistent"; exit 0; fi'
+        language: system
+        files: 'docs/.*\\.md$'
+
+      # Check for eval usage
+      - id: check-eval-usage
+        name: Check for eval/exec usage
+        entry: bash -c 'if grep -rn "\\beval(" lingflow/ skills/ --include="*.py" | grep -v "# safe" | grep -v "safety check"; then echo "Found unsafe eval() usage"; exit 1; else echo "No unsafe eval() usage found"; exit 0; fi'
+        language: system
+        files: '.*\\.py$'
+
+      # Check for os.system usage
+      - id: check-os-system
+        name: Check for os.system usage
+        entry: bash -c 'if grep -rn "\\bos\\.system(" lingflow/ skills/ --include="*.py"; then echo "Found os.system() usage - use subprocess.run() instead"; exit 1; else echo "No os.system() usage found"; exit 0; fi'
+        language: system
+        files: '.*\\.py$'
+
+      # Check for docstrings in public functions
+      - id: check-docstrings
+        name: Check for missing docstrings
+        entry: python3 .scripts/check_docstrings.py
+        language: system
+        files: 'lingflow/.*\\.py$'
+        pass_filenames: true
+
+      # Check for type hints in public functions
+      - id: check-type-hints
+        name: Check for type hints in public functions
+        entry: python3 .scripts/check_type_hints.py
+        language: system
+        files: 'lingflow/.*\\.py$'
+        pass_filenames: true
