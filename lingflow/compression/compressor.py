@@ -6,10 +6,10 @@ from typing import Dict, Any
 class ContextCompressor:
     """简化的上下文压缩器"""
 
-    def __init__(self, target_tokens: int = 4000):
-        self.target_tokens = target_tokens
-        self.compressions_count = 0
-        self.tokens_saved = 0
+    def __init__(self, target_tokens: int = 4000) -> None:
+        self.target_tokens: int = target_tokens
+        self.compressions_count: int = 0
+        self.tokens_saved: int = 0
 
     def compress(self, context: Dict[str, Any], max_tokens: int = 4000) -> Dict[str, Any]:
         """压缩上下文"""
