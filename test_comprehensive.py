@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LingFlow v1.1.0 全面测试脚本
+LingFlow v3.3.0 全面测试脚本
 
 测试覆盖:
 - 代理注册和发现
@@ -13,29 +13,49 @@ LingFlow v1.1.0 全面测试脚本
 
 import asyncio
 import sys
+from typing import List, Optional, Tuple, Any
 from lingflow.coordination import AgentCoordinator
 from lingflow.workflow import WorkflowOrchestrator
 from lingflow.common import Task, TaskPriority
 
 
 class TestRunner:
-    """测试运行器"""
+    """测试运行器
+    
+    Attributes:
+        coordinator: Agent coordinator instance
+        orchestrator: Workflow orchestrator instance
+        passed: Number of passed tests
+        failed: Number of failed tests
+        errors: List of error messages
+    """
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initialize test runner."""
         self.coordinator = AgentCoordinator()
         self.orchestrator = WorkflowOrchestrator(self.coordinator)
         self.passed = 0
         self.failed = 0
-        self.errors = []
+        self.errors: List[Tuple[str, str]] = []
 
-    def print_header(self, title):
-        """打印测试标题"""
+    def print_header(self, title: str) -> None:
+        """打印测试标题
+
+        Args:
+            title: Header title
+        """
         print("\n" + "=" * 70)
         print(f"  {title}")
         print("=" * 70)
 
-    def print_result(self, test_name, passed, error=None):
-        """打印测试结果"""
+    def print_result(self, test_name: str, passed: bool, error: Optional[str] = None) -> None:
+        """打印测试结果
+
+        Args:
+            test_name: Name of the test
+            passed: Whether the test passed
+            error: Optional error message
+        """
         status = "✅ PASS" if passed else "❌ FAIL"
         print(f"  {status} {test_name}")
 
@@ -47,8 +67,8 @@ class TestRunner:
                 self.errors.append((test_name, error))
                 print(f"         错误: {error}")
 
-    def test_1_agent_registration(self):
-        """测试 1: 代理注册"""
+    def test_1_agent_registration(self) -> None:
+        """测试 1: 代理注册和发现"""
         self.print_header("测试 1: 代理注册和发现")
 
         # 测试代理数量
@@ -87,7 +107,7 @@ class TestRunner:
             implementation is not None
         )
 
-    def test_2_context_compression(self):
+    def test_2_context_compression(self) -> None:
         """测试 2: 上下文压缩"""
         self.print_header("测试 2: 上下文压缩")
 
@@ -130,7 +150,7 @@ class TestRunner:
             'total_compressions' in stats and 'tokens_saved' in stats
         )
 
-    def test_3_parallel_execution(self):
+    def test_3_parallel_execution(self) -> None:
         """测试 3: 并行任务执行"""
         self.print_header("测试 3: 并行任务执行")
 
@@ -162,25 +182,26 @@ class TestRunner:
             )
         ]
 
-        # 执行并行任务
-        results = asyncio.run(
-            self.coordinator.execute_tasks_parallel(tasks, max_parallel=2)
-        )
+        try:
+            # 执行并行任务
+            results = asyncio.run(
+                self.coordinator.execute_tasks_parallel(tasks, max_parallel=2)
+            )
 
-        # 验证结果
-        assert len(results) == len(tasks), f"Expected {len(tasks)} results, got {len(results)}"
-        self.print_result(
-            f"所有任务返回结果 ({len(results)} == {len(tasks)})",
-            len(results) == len(tasks)
-        )
+            # 验证结果
+            assert len(results) == len(tasks), f"Expected {len(tasks)} results, got {len(results)}"
+            self.print_result(
+                f"所有任务返回结果 ({len(results)} == {len(tasks)})",
+                len(results) == len(tasks)
+            )
 
-        # 验证成功任务
-        success_count = sum(1 for r in results.values() if r.success)
-        assert success_count >= 2, f"Expected at least 2 successful tasks, got {success_count}"
-        self.print_result(
-            f"成功任务数 ({success_count})",
-            success_count >= 2  # 至少 2 个成功（task_2 会失败）
-        )
+            # 验证成功任务
+            success_count = sum(1 for r in results.values() if r.success)
+            assert success_count >= 2, f"Expected at least 2 successful tasks, got {success_count}"
+            self.print_result(
+                f"成功任务数 ({success_count})",
+                success_count >= 2  # 至少 2 个成功（task_2 会失败）
+            )
 
             # 验证任务执行时间
             for result in results.values():
@@ -192,69 +213,70 @@ class TestRunner:
         except Exception as e:
             self.print_result("并行执行", False, str(e))
 
-    async def test_4_workflow_execution(self):
+    async def test_4_workflow_execution(self) -> None:
         """测试 4: 工作流执行"""
         self.print_header("测试 4: 工作流执行（依赖）")
 
-        # 重置协调器
-        self.coordinator.reset()
+        try:
+            # 重置协调器
+            self.coordinator.reset()
 
-        # 创建带依赖的任务
-        workflow_tasks = [
-            Task(
-                task_id="setup",
-                name="Setup Task",
-                description="Initial setup",
-                priority=TaskPriority.HIGH,
-                agent_type="implementation",
-                context={"data": "setup"}
-            ),
-            Task(
-                task_id="dev_task",
-                name="Development Task",
-                description="Development work",
-                priority=TaskPriority.HIGH,
-                agent_type="testing",
-                dependencies=["setup"],
-                context={"data": "dev"}
-            ),
-            Task(
-                task_id="review_task",
-                name="Review Task",
-                description="Code review",
-                priority=TaskPriority.NORMAL,
-                agent_type="review",
-                dependencies=["dev_task"],
-                context={"data": "review"}
-            ),
-            Task(
-                task_id="doc_task",
-                name="Documentation Task",
-                description="Write documentation",
-                priority=TaskPriority.LOW,
-                agent_type="documentation",
-                dependencies=["setup"],  # 只依赖 setup，可以与 dev_task 并行
-                context={"data": "doc"}
+            # 创建带依赖的任务
+            workflow_tasks = [
+                Task(
+                    task_id="setup",
+                    name="Setup Task",
+                    description="Initial setup",
+                    priority=TaskPriority.HIGH,
+                    agent_type="implementation",
+                    context={"data": "setup"}
+                ),
+                Task(
+                    task_id="dev_task",
+                    name="Development Task",
+                    description="Development work",
+                    priority=TaskPriority.HIGH,
+                    agent_type="testing",
+                    dependencies=["setup"],
+                    context={"data": "dev"}
+                ),
+                Task(
+                    task_id="review_task",
+                    name="Review Task",
+                    description="Code review",
+                    priority=TaskPriority.NORMAL,
+                    agent_type="review",
+                    dependencies=["dev_task"],
+                    context={"data": "review"}
+                ),
+                Task(
+                    task_id="doc_task",
+                    name="Documentation Task",
+                    description="Write documentation",
+                    priority=TaskPriority.LOW,
+                    agent_type="documentation",
+                    dependencies=["setup"],  # 只依赖 setup，可以与 dev_task 并行
+                    context={"data": "doc"}
+                )
+            ]
+
+            # 执行工作流
+            results = await self.orchestrator.execute_workflow(workflow_tasks, max_parallel=2)
+
+            # 验证结果
+            assert len(results) > 0, "Workflow should return results"
+            self.print_result(
+                f"工作流执行返回结果 ({len(results)})",
+                len(results) > 0
             )
-        ]
 
-        # 执行工作流
-        results = await self.orchestrator.execute_workflow(workflow_tasks, max_parallel=2)
-
-        # 验证结果
-        assert len(results) > 0, "Workflow should return results"
-        self.print_result(
-            f"工作流执行返回结果 ({len(results)})",
-            len(results) > 0
-        )
-
-        # 验证依赖顺序
-        setup_done = "setup" in self.coordinator.completed_tasks
-        assert setup_done, "Setup task should be completed first"
-        self.print_result(
-            "Setup 任务先完成",
-            setup_done
-        )
+            # 验证依赖顺序
+            setup_done = "setup" in self.coordinator.completed_tasks
+            assert setup_done, "Setup task should be completed first"
+            self.print_result(
+                "Setup 任务先完成",
+                setup_done
+            )
 
             # 验证并行执行（doc_task 和 dev_task 可以并行）
             dev_done = "dev_task" in self.coordinator.completed_tasks
@@ -267,7 +289,7 @@ class TestRunner:
         except Exception as e:
             self.print_result("工作流执行", False, str(e))
 
-    def test_5_status_monitoring(self):
+    def test_5_status_monitoring(self) -> None:
         """测试 5: 状态监控"""
         self.print_header("测试 5: 状态监控")
 
@@ -295,7 +317,7 @@ class TestRunner:
             isinstance(status['compression_stats'], dict)
         )
 
-    def test_6_error_handling(self):
+    def test_6_error_handling(self) -> None:
         """测试 6: 错误处理"""
         self.print_header("测试 6: 错误处理")
 
@@ -347,10 +369,14 @@ class TestRunner:
         except Exception as e:
             self.print_result("错误捕获", False, str(e))
 
-    def run_all_tests(self):
-        """运行所有测试"""
+    def run_all_tests(self) -> bool:
+        """运行所有测试
+
+        Returns:
+            bool: True if all tests passed, False otherwise
+        """
         print("=" * 70)
-        print("  LingFlow v1.1.0 全面测试")
+        print("  LingFlow v3.3.0 全面测试")
         print("=" * 70)
 
         # 运行测试
@@ -363,10 +389,13 @@ class TestRunner:
 
         # 打印总结
         self.print_header("测试总结")
-        print(f"\n  总测试数: {self.passed + self.failed}")
+        total_tests = self.passed + self.failed
+        success_rate = (self.passed / total_tests * 100) if total_tests > 0 else 0
+        
+        print(f"\n  总测试数: {total_tests}")
         print(f"  通过: {self.passed} ✅")
         print(f"  失败: {self.failed} ❌")
-        print(f"  成功率: {self.passed / (self.passed + self.failed) * 100:.1f}%")
+        print(f"  成功率: {success_rate:.1f}%")
 
         if self.errors:
             print("\n  失败详情:")
@@ -383,8 +412,12 @@ class TestRunner:
         return self.failed == 0
 
 
-def main():
-    """主函数"""
+def main() -> int:
+    """主函数
+
+    Returns:
+        int: 0 if all tests passed, 1 otherwise
+    """
     runner = TestRunner()
     success = runner.run_all_tests()
     return 0 if success else 1
