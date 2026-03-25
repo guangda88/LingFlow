@@ -1,8 +1,8 @@
 # LingFlow Agent Guide
 
-**Version**: v3.1.0
+**Version**: v3.5.0
 **Status**: Production Ready
-**Last Updated**: 2026-03-17
+**Last Updated**: 2026-03-25
 
 ---
 
@@ -47,12 +47,15 @@ python agent_coordinator.py
 ### Git Operations
 
 ```bash
-# Push code and tags to remote
+# Push to both GitHub and Gitea
+git push origin master --tags    # Gitea
+git push github master --tags    # GitHub
+
+# Or use pushall script (if configured)
 ./push_to_remote.sh
 
-# Manual push
-git push -u origin master
-git push origin v3.1.0
+# Check remotes
+git remote -v
 
 # Check status
 git status
