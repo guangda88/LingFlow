@@ -1,0 +1,105 @@
+{
+  "metadata": {
+    "test_name": "complex_code_analysis",
+    "created_at": "2026-03-25T00:35:22.452238",
+    "updated_at": null,
+    "version": "1.0.0",
+    "description": "快照测试: complex_code_analysis"
+  },
+  "data": {
+    "classes": [
+      {
+        "bases": [],
+        "lineno": 6,
+        "methods": [
+          "__init__",
+          "load_data",
+          "process_item",
+          "batch_process"
+        ],
+        "name": "DataProcessor"
+      }
+    ],
+    "complexity": 4,
+    "functions": [
+      {
+        "args": [
+          "self",
+          "config"
+        ],
+        "decorators": [],
+        "has_return": false,
+        "lineno": 7,
+        "name": "__init__"
+      },
+      {
+        "args": [
+          "self",
+          "path"
+        ],
+        "decorators": [],
+        "has_return": true,
+        "lineno": 12,
+        "name": "load_data"
+      },
+      {
+        "args": [
+          "self",
+          "item"
+        ],
+        "decorators": [],
+        "has_return": true,
+        "lineno": 19,
+        "name": "process_item"
+      },
+      {
+        "args": [
+          "self",
+          "items"
+        ],
+        "decorators": [],
+        "has_return": true,
+        "lineno": 26,
+        "name": "batch_process"
+      }
+    ],
+    "imports": [
+      {
+        "alias": null,
+        "lineno": 2,
+        "module": "typing",
+        "name": "List"
+      },
+      {
+        "alias": null,
+        "lineno": 2,
+        "module": "typing",
+        "name": "Dict"
+      },
+      {
+        "alias": null,
+        "lineno": 2,
+        "module": "typing",
+        "name": "Optional"
+      },
+      {
+        "alias": null,
+        "lineno": 3,
+        "module": "os"
+      },
+      {
+        "alias": null,
+        "lineno": 4,
+        "module": "sys"
+      }
+    ],
+    "stats": {
+      "blank_lines": 5,
+      "code_lines": 27,
+      "comment_lines": 0,
+      "total_lines": 32
+    },
+    "success": true,
+    "warnings": []
+  }
+}

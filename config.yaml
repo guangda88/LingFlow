@@ -1,0 +1,56 @@
+agents:
+  default_agents:
+  - capabilities:
+    - code_generation
+    - testing
+    - documentation
+    description: Code implementation agent
+    name: implementation
+  - capabilities:
+    - code_review
+    - design_review
+    - security_check
+    description: Code review agent
+    name: review
+  - capabilities:
+    - test_generation
+    - test_execution
+    - coverage_analysis
+    description: Testing agent
+    name: testing
+  - capabilities:
+    - error_analysis
+    - root_cause
+    - fix_generation
+    description: Debugging agent
+    name: debugging
+  - capabilities:
+    - system_design
+    - architecture_review
+    - api_design
+    description: Architecture agent
+    name: architecture
+  - capabilities:
+    - doc_generation
+    - api_doc_writing
+    - readme_generation
+    description: Documentation agent
+    name: documentation
+compression:
+  enabled: true
+  max_length: 10000
+logging:
+  date_format: '%Y-%m-%d %H:%M:%S'
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  level: INFO
+skills:
+  default_timeout: 60
+  path: /custom/skills
+test:
+  global:
+    key: global_value
+workflow:
+  max_iterations: 500
+  max_parallel: 8
+  new_key: new_value
+  sleep_interval: 0.01

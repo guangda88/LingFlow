@@ -1,8 +1,8 @@
 """LingFlow Coordination模块"""
 
 from .agent import Agent
-from .registry import AgentRegistry
-from .coordinator import AgentCoordinator
 from .base import BaseAgent, BaseCoordinator
+from .coordinator import AgentCoordinator
+from .registry import AgentRegistry
 
-__all__ = ['Agent', 'AgentRegistry', 'AgentCoordinator', 'BaseAgent', 'BaseCoordinator']
+__all__ = ["Agent", "AgentRegistry", "AgentCoordinator", "BaseAgent", "BaseCoordinator"]

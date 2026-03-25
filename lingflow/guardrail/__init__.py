@@ -12,19 +12,20 @@ Key Features:
 - Deployment gate enforcement
 """
 
-import re
 import ast
 import logging
-from typing import List, Dict, Optional, Any, Tuple
+import re
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
 
 class ValidationLevel(Enum):
     """Validation level in the pipeline"""
+
     SYNTAX = "syntax"
     POLICY = "policy"
     SEMANTICS = "semantics"
@@ -33,6 +34,7 @@ class ValidationLevel(Enum):
 
 class Severity(Enum):
     """Severity level for violations"""
+
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"
@@ -42,6 +44,7 @@ class Severity(Enum):
 @dataclass
 class Violation:
     """A security violation detected by guardrail"""
+
     level: ValidationLevel
     severity: Severity
     code: str
@@ -55,6 +58,7 @@ class Violation:
 @dataclass
 class ValidationResult:
     """Result of a validation step"""
+
     level: ValidationLevel
     is_passed: bool
     violations: List[Violation] = field(default_factory=list)
@@ -65,6 +69,7 @@ class ValidationResult:
 @dataclass
 class SecurityReport:
     """Complete security report with risk score"""
+
     overall_score: float  # 0-100, lower is riskier
     risk_level: str  # LOW, MEDIUM, HIGH, CRITICAL
     is_approved: bool
@@ -83,7 +88,7 @@ class SecurityReport:
             "total_violations": self.total_violations,
             "critical_violations": self.critical_violations,
             "high_violations": self.high_violations,
-            "execution_time": f"{self.execution_time:.3f}s"
+            "execution_time": f"{self.execution_time:.3f}s",
         }
 
 
@@ -125,13 +130,14 @@ class GuardrailValidator:
             "policy_checks": True,
             "semantic_checks": True,
             "risk_scoring": True,
-            "enforce_must_principles": True
+            "enforce_must_principles": True,
         }
 
         if Path(self.config_path).exists():
             try:
                 import yaml
-                with open(self.config_path, 'r') as f:
+
+                with open(self.config_path, "r") as f:
                     config.update(yaml.safe_load(f))
             except Exception as e:
                 logger.error(f"Error loading guardrail config: {e}")
@@ -148,7 +154,11 @@ class GuardrailValidator:
             ],
             "hardcoded_api_keys": [
                 (r'api[_-]?key\s*=\s*["\'][a-zA-Z0-9]{32,}["\']', Severity.CRITICAL, "CWE-798"),
-                (r'access[_-]?token\s*=\s*["\'][a-zA-Z0-9]{32,}["\']', Severity.CRITICAL, "CWE-798"),
+                (
+                    r'access[_-]?token\s*=\s*["\'][a-zA-Z0-9]{32,}["\']',
+                    Severity.CRITICAL,
+                    "CWE-798",
+                ),
             ],
             "sql_injection_patterns": [
                 (r'execute\s*\(\s*["\'].*\+\s*\w+\s*\)', Severity.CRITICAL, "CWE-89"),
@@ -156,28 +166,30 @@ class GuardrailValidator:
                 (r'format\s*\(\s*["\'].*SELECT.*\{.*\}', Severity.HIGH, "CWE-89"),
             ],
             "xss_patterns": [
-                (r'dangerouslySetInnerHTML\s*=', Severity.CRITICAL, "CWE-79"),
-                (r'innerHTML\s*=\s*.*\+\s*\w+', Severity.HIGH, "CWE-79"),
-                (r'document\.write\s*\(', Severity.HIGH, "CWE-79"),
+                (r"dangerouslySetInnerHTML\s*=", Severity.CRITICAL, "CWE-79"),
+                (r"innerHTML\s*=\s*.*\+\s*\w+", Severity.HIGH, "CWE-79"),
+                (r"document\.write\s*\(", Severity.HIGH, "CWE-79"),
             ],
             "weak_crypto": [
-                (r'MD5|md5', Severity.MEDIUM, "CWE-327"),
-                (r'SHA1|sha1', Severity.MEDIUM, "CWE-327"),
-                (r'DES|des', Severity.HIGH, "CWE-327"),
-                (r'RC4|rc4', Severity.HIGH, "CWE-327"),
+                (r"MD5|md5", Severity.MEDIUM, "CWE-327"),
+                (r"SHA1|sha1", Severity.MEDIUM, "CWE-327"),
+                (r"DES|des", Severity.HIGH, "CWE-327"),
+                (r"RC4|rc4", Severity.HIGH, "CWE-327"),
             ],
             "debug_info": [
-                (r'console\.log\s*\(\s*.*password', Severity.MEDIUM, None),
-                (r'print\s*\(\s*.*password', Severity.MEDIUM, None),
-                (r'pprint\s*\(\s*.*token', Severity.MEDIUM, None),
+                (r"console\.log\s*\(\s*.*password", Severity.MEDIUM, None),
+                (r"print\s*\(\s*.*password", Severity.MEDIUM, None),
+                (r"pprint\s*\(\s*.*token", Severity.MEDIUM, None),
             ],
             "eval_usage": [
-                (r'eval\s*\(', Severity.CRITICAL, None),
-                (r'exec\s*\(', Severity.CRITICAL, None),
+                (r"eval\s*\(", Severity.CRITICAL, None),
+                (r"exec\s*\(", Severity.CRITICAL, None),
             ],
         }
 
-    def validate_agcef(self, code: str, file_path: str, context: Optional[Dict[str, Any]] = None) -> SecurityReport:
+    def validate_agcef(
+        self, code: str, file_path: str, context: Optional[Dict[str, Any]] = None
+    ) -> SecurityReport:
         """
         Run complete AGCEF validation pipeline (7 steps)
 
@@ -190,13 +202,11 @@ class GuardrailValidator:
             Complete security report
         """
         import time
+
         start_time = time.time()
 
         report = SecurityReport(
-            overall_score=0.0,
-            risk_level="UNKNOWN",
-            is_approved=False,
-            execution_time=0.0
+            overall_score=0.0, risk_level="UNKNOWN", is_approved=False, execution_time=0.0
         )
 
         # Step 1: Syntax validation
@@ -249,59 +259,61 @@ class GuardrailValidator:
 
         Checks for syntax errors, formatting issues, and basic code quality.
         """
-        result = ValidationResult(
-            level=ValidationLevel.SYNTAX,
-            is_passed=True,
-            score=100.0
-        )
+        result = ValidationResult(level=ValidationLevel.SYNTAX, is_passed=True, score=100.0)
 
         # Check Python syntax
-        if file_path.endswith('.py'):
+        if file_path.endswith(".py"):
             try:
                 ast.parse(code)
             except SyntaxError as e:
                 result.is_passed = False
                 result.score = 0.0
-                result.violations.append(Violation(
-                    level=ValidationLevel.SYNTAX,
-                    severity=Severity.CRITICAL,
-                    code="SYNTAX_ERROR",
-                    description=f"Syntax error: {e.msg}",
-                    location=file_path,
-                    line_number=e.lineno,
-                    suggestion="Fix the syntax error before proceeding"
-                ))
+                result.violations.append(
+                    Violation(
+                        level=ValidationLevel.SYNTAX,
+                        severity=Severity.CRITICAL,
+                        code="SYNTAX_ERROR",
+                        description=f"Syntax error: {e.msg}",
+                        location=file_path,
+                        line_number=e.lineno,
+                        suggestion="Fix the syntax error before proceeding",
+                    )
+                )
                 return result
 
         # Check for common syntax issues
-        lines = code.split('\n')
+        lines = code.split("\n")
 
         # Check for mixed tabs and spaces
         for i, line in enumerate(lines, 1):
-            if '\t' in line and '    ' in line[:len(line.lstrip())]:
-                result.violations.append(Violation(
-                    level=ValidationLevel.SYNTAX,
-                    severity=Severity.LOW,
-                    code="MIXED_INDENTATION",
-                    description="Mixed tabs and spaces",
-                    location=file_path,
-                    line_number=i,
-                    suggestion="Use consistent indentation (4 spaces recommended)"
-                ))
+            if "\t" in line and "    " in line[: len(line.lstrip())]:
+                result.violations.append(
+                    Violation(
+                        level=ValidationLevel.SYNTAX,
+                        severity=Severity.LOW,
+                        code="MIXED_INDENTATION",
+                        description="Mixed tabs and spaces",
+                        location=file_path,
+                        line_number=i,
+                        suggestion="Use consistent indentation (4 spaces recommended)",
+                    )
+                )
                 result.score -= 5
 
         # Check for overly long lines
         for i, line in enumerate(lines, 1):
             if len(line) > 100:
-                result.violations.append(Violation(
-                    level=ValidationLevel.SYNTAX,
-                    severity=Severity.LOW,
-                    code="LONG_LINE",
-                    description=f"Line too long ({len(line)} characters)",
-                    location=file_path,
-                    line_number=i,
-                    suggestion="Break long lines for readability"
-                ))
+                result.violations.append(
+                    Violation(
+                        level=ValidationLevel.SYNTAX,
+                        severity=Severity.LOW,
+                        code="LONG_LINE",
+                        description=f"Line too long ({len(line)} characters)",
+                        location=file_path,
+                        line_number=i,
+                        suggestion="Break long lines for readability",
+                    )
+                )
                 result.score -= 2
 
         # Normalize score
@@ -315,13 +327,9 @@ class GuardrailValidator:
 
         Checks for policy violations using pattern matching.
         """
-        result = ValidationResult(
-            level=ValidationLevel.POLICY,
-            is_passed=True,
-            score=100.0
-        )
+        result = ValidationResult(level=ValidationLevel.POLICY, is_passed=True, score=100.0)
 
-        lines = code.split('\n')
+        lines = code.split("\n")
         penalty = 0
 
         # Check each policy pattern category
@@ -330,20 +338,22 @@ class GuardrailValidator:
                 for i, line in enumerate(lines, 1):
                     # Skip comments
                     stripped = line.strip()
-                    if stripped.startswith('#') or stripped.startswith('//'):
+                    if stripped.startswith("#") or stripped.startswith("//"):
                         continue
 
                     if re.search(pattern, line, re.IGNORECASE):
-                        result.violations.append(Violation(
-                            level=ValidationLevel.POLICY,
-                            severity=severity,
-                            code=category.upper(),
-                            description=f"Policy violation: {category}",
-                            location=file_path,
-                            line_number=i,
-                            suggestion=self._get_policy_suggestion(category),
-                            cwe_id=cwe_id
-                        ))
+                        result.violations.append(
+                            Violation(
+                                level=ValidationLevel.POLICY,
+                                severity=severity,
+                                code=category.upper(),
+                                description=f"Policy violation: {category}",
+                                location=file_path,
+                                line_number=i,
+                                suggestion=self._get_policy_suggestion(category),
+                                cwe_id=cwe_id,
+                            )
+                        )
 
                         # Calculate penalty based on severity
                         if severity == Severity.CRITICAL:
@@ -370,16 +380,12 @@ class GuardrailValidator:
 
         Performs deeper analysis of code logic and behavior.
         """
-        result = ValidationResult(
-            level=ValidationLevel.SEMANTICS,
-            is_passed=True,
-            score=100.0
-        )
+        result = ValidationResult(level=ValidationLevel.SEMANTICS, is_passed=True, score=100.0)
 
         # Parse code for semantic analysis
         try:
             tree = ast.parse(code)
-        except:
+        except SyntaxError:
             # If we can't parse, skip semantic checks
             return result
 
@@ -387,69 +393,73 @@ class GuardrailValidator:
         for node in ast.walk(tree):
             # Check for bare except clauses
             if isinstance(node, ast.ExceptHandler) and node.type is None:
-                result.violations.append(Violation(
-                    level=ValidationLevel.SEMANTICS,
-                    severity=Severity.MEDIUM,
-                    code="BARE_EXCEPT",
-                    description="Bare except clause can hide errors",
-                    location=file_path,
-                    line_number=node.lineno,
-                    suggestion="Specify exception types to catch"
-                ))
+                result.violations.append(
+                    Violation(
+                        level=ValidationLevel.SEMANTICS,
+                        severity=Severity.MEDIUM,
+                        code="BARE_EXCEPT",
+                        description="Bare except clause can hide errors",
+                        location=file_path,
+                        line_number=node.lineno,
+                        suggestion="Specify exception types to catch",
+                    )
+                )
                 result.score -= 5
 
             # Check for use of exec/eval
             if isinstance(node, (ast.Call, ast.Name)):
-                code_str = ast.unparse(node) if hasattr(ast, 'unparse') else ""
-                if 'exec(' in code_str or 'eval(' in code_str:
-                    result.violations.append(Violation(
-                        level=ValidationLevel.SEMANTICS,
-                        severity=Severity.CRITICAL,
-                        code="DANGEROUS_EXEC",
-                        description=f"Use of {code_str} can execute arbitrary code",
-                        location=file_path,
-                        line_number=getattr(node, 'lineno', None),
-                        suggestion="Avoid exec/eval, use safer alternatives"
-                    ))
+                code_str = ast.unparse(node) if hasattr(ast, "unparse") else ""
+                if "exec(" in code_str or "eval(" in code_str:
+                    result.violations.append(
+                        Violation(
+                            level=ValidationLevel.SEMANTICS,
+                            severity=Severity.CRITICAL,
+                            code="DANGEROUS_EXEC",
+                            description=f"Use of {code_str} can execute arbitrary code",
+                            location=file_path,
+                            line_number=getattr(node, "lineno", None),
+                            suggestion="Avoid exec/eval, use safer alternatives",
+                        )
+                    )
                     result.score -= 20
 
         # Check for functions without docstrings
         for node in ast.walk(tree):
             if isinstance(node, ast.FunctionDef):
-                if not ast.get_docstring(node) and not node.name.startswith('_'):
-                    result.violations.append(Violation(
-                        level=ValidationLevel.SEMANTICS,
-                        severity=Severity.LOW,
-                        code="NO_DOCSTRING",
-                        description=f"Function '{node.name}' lacks docstring",
-                        location=file_path,
-                        line_number=node.lineno,
-                        suggestion="Add docstring for better documentation"
-                    ))
+                if not ast.get_docstring(node) and not node.name.startswith("_"):
+                    result.violations.append(
+                        Violation(
+                            level=ValidationLevel.SEMANTICS,
+                            severity=Severity.LOW,
+                            code="NO_DOCSTRING",
+                            description=f"Function '{node.name}' lacks docstring",
+                            location=file_path,
+                            line_number=node.lineno,
+                            suggestion="Add docstring for better documentation",
+                        )
+                    )
                     result.score -= 2
 
         result.score = max(0.0, min(100.0, result.score))
 
         return result
 
-    def assess_risk(self, validation_results: Dict[ValidationLevel, ValidationResult]) -> ValidationResult:
+    def assess_risk(
+        self, validation_results: Dict[ValidationLevel, ValidationResult]
+    ) -> ValidationResult:
         """
         Step 4: Assess overall risk
 
         Combines all validation results into a comprehensive risk score.
         """
-        result = ValidationResult(
-            level=ValidationLevel.RISK,
-            is_passed=True,
-            score=100.0
-        )
+        result = ValidationResult(level=ValidationLevel.RISK, is_passed=True, score=100.0)
 
         # Weight each validation level
         weights = {
             ValidationLevel.SYNTAX: 0.1,
             ValidationLevel.POLICY: 0.4,
             ValidationLevel.SEMANTICS: 0.3,
-            ValidationLevel.RISK: 0.2
+            ValidationLevel.RISK: 0.2,
         }
 
         # Calculate weighted score
@@ -513,7 +523,7 @@ class GuardrailValidator:
             "xss_patterns": "Use context-aware encoding and avoid innerHTML",
             "weak_crypto": "Use strong algorithms (SHA-256, AES-256, bcrypt)",
             "debug_info": "Remove debug statements before production",
-            "eval_usage": "Avoid eval/exec - use safer alternatives"
+            "eval_usage": "Avoid eval/exec - use safer alternatives",
         }
         return suggestions.get(category, "Review and fix security issue")
 
@@ -544,16 +554,23 @@ class GuardrailValidator:
         ]
 
         # Add validation results
-        for level in [ValidationLevel.SYNTAX, ValidationLevel.POLICY, ValidationLevel.SEMANTICS, ValidationLevel.RISK]:
+        for level in [
+            ValidationLevel.SYNTAX,
+            ValidationLevel.POLICY,
+            ValidationLevel.SEMANTICS,
+            ValidationLevel.RISK,
+        ]:
             if level in report.validation_results:
                 result = report.validation_results[level]
-                lines.extend([
-                    f"## {level.value.title()} Validation",
-                    "",
-                    f"**Status**: {'✅ Passed' if result.is_passed else '❌ Failed'}",
-                    f"**Score**: {result.score:.2f}",
-                    ""
-                ])
+                lines.extend(
+                    [
+                        f"## {level.value.title()} Validation",
+                        "",
+                        f"**Status**: {'✅ Passed' if result.is_passed else '❌ Failed'}",
+                        f"**Score**: {result.score:.2f}",
+                        "",
+                    ]
+                )
 
                 if result.violations:
                     lines.append("### Violations")
@@ -563,14 +580,20 @@ class GuardrailValidator:
                             Severity.CRITICAL: "🔴",
                             Severity.HIGH: "🟠",
                             Severity.MEDIUM: "🟡",
-                            Severity.LOW: "🟢"
+                            Severity.LOW: "🟢",
                         }.get(v.severity, "⚪")
 
-                        lines.extend([
-                            f"- {severity_icon} **{v.code}** ({v.severity.value})",
-                            f"  - Description: {v.description}",
-                            f"  - Location: {v.location}:{v.line_number}" if v.line_number else f"  - Location: {v.location}",
-                        ])
+                        lines.extend(
+                            [
+                                f"- {severity_icon} **{v.code}** ({v.severity.value})",
+                                f"  - Description: {v.description}",
+                                (
+                                    f"  - Location: {v.location}:{v.line_number}"
+                                    if v.line_number
+                                    else f"  - Location: {v.location}"
+                                ),
+                            ]
+                        )
 
                         if v.suggestion:
                             lines.append(f"  - Suggestion: {v.suggestion}")
@@ -598,14 +621,11 @@ class DeploymentGate:
             "test_coverage": {"min": 80.0},
             "paper_tests": {"max": 0},
             "security_violations": {"max": 0, "must_principles": 0},
-            "critical_violations": {"max": 0}
+            "critical_violations": {"max": 0},
         }
 
     def check_deployment_readiness(
-        self,
-        security_report: SecurityReport,
-        test_coverage: float = 0.0,
-        paper_tests: int = 0
+        self, security_report: SecurityReport, test_coverage: float = 0.0, paper_tests: int = 0
     ) -> Tuple[bool, List[str]]:
         """
         Check if code is ready for deployment

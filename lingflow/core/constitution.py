@@ -11,27 +11,30 @@ Key Features:
 - Multi-level enforcement (MUST/SHOULD/MAY)
 """
 
-import yaml
-import re
 import logging
-from typing import List, Dict, Optional, Any
+import re
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import yaml
 
 logger = logging.getLogger(__name__)
 
 
 class EnforcementLevel(Enum):
     """Enforcement level for security principles"""
-    MUST = "MUST"      # Non-negotiable requirements
+
+    MUST = "MUST"  # Non-negotiable requirements
     SHOULD = "SHOULD"  # Recommended but with exceptions
-    MAY = "MAY"        # Optional guidelines
+    MAY = "MAY"  # Optional guidelines
 
 
 @dataclass
 class ConstitutionalPrinciple:
     """A single constitutional security principle"""
+
     id: str
     cwe: str
     name: str
@@ -47,6 +50,7 @@ class ConstitutionalPrinciple:
 @dataclass
 class Violation:
     """A compliance violation"""
+
     principle_id: str
     principle_name: str
     severity: EnforcementLevel
@@ -59,6 +63,7 @@ class Violation:
 @dataclass
 class ComplianceReport:
     """Report of compliance validation"""
+
     is_compliant: bool
     total_principles: int
     compliant_principles: int
@@ -78,8 +83,12 @@ class ComplianceReport:
             "compliant_principles": self.compliant_principles,
             "violations_count": len(self.violations),
             "coverage": f"{self.coverage:.2%}",
-            "must_violations": sum(1 for v in self.violations if v.severity == EnforcementLevel.MUST),
-            "should_violations": sum(1 for v in self.violations if v.severity == EnforcementLevel.SHOULD),
+            "must_violations": sum(
+                1 for v in self.violations if v.severity == EnforcementLevel.MUST
+            ),
+            "should_violations": sum(
+                1 for v in self.violations if v.severity == EnforcementLevel.SHOULD
+            ),
             "may_violations": sum(1 for v in self.violations if v.severity == EnforcementLevel.MAY),
         }
 
@@ -101,7 +110,7 @@ class Constitution:
             level=EnforcementLevel.MUST,
             constraint="All user-supplied data MUST be contextually encoded before rendering",
             implementation_pattern="Use JSX auto-escaping, DOMPurify, or equivalent",
-            rationale="Prevents malicious script injection through user input"
+            rationale="Prevents malicious script injection through user input",
         ),
         ConstitutionalPrinciple(
             id="SEC-002",
@@ -110,7 +119,7 @@ class Constitution:
             level=EnforcementLevel.MUST,
             constraint="Database queries MUST use parameterized statements or ORM methods exclusively",
             implementation_pattern="SQLAlchemy, parameterized queries, prepared statements",
-            rationale="Prevents arbitrary SQL command execution via user input"
+            rationale="Prevents arbitrary SQL command execution via user input",
         ),
         ConstitutionalPrinciple(
             id="SEC-003",
@@ -119,7 +128,7 @@ class Constitution:
             level=EnforcementLevel.MUST,
             constraint="All state-changing operations MUST include valid CSRF tokens",
             implementation_pattern="Use SameSite cookies, CSRF token validation",
-            rationale="Prevents unauthorized state changes from malicious sites"
+            rationale="Prevents unauthorized state changes from malicious sites",
         ),
         ConstitutionalPrinciple(
             id="SEC-004",
@@ -128,7 +137,7 @@ class Constitution:
             level=EnforcementLevel.MUST,
             constraint="MUST use strong cryptographic algorithms (AES-256, RSA-2048+)",
             implementation_pattern="Use cryptography library, avoid self-implemented encryption",
-            rationale="Weak encryption can be easily broken by attackers"
+            rationale="Weak encryption can be easily broken by attackers",
         ),
         ConstitutionalPrinciple(
             id="SEC-005",
@@ -137,7 +146,7 @@ class Constitution:
             level=EnforcementLevel.MUST,
             constraint="MUST NOT hardcode any credentials or keys in code",
             implementation_pattern="Use environment variables, key management services",
-            rationale="Hardcoded credentials are easily discovered and exploited"
+            rationale="Hardcoded credentials are easily discovered and exploited",
         ),
         ConstitutionalPrinciple(
             id="SEC-006",
@@ -146,7 +155,7 @@ class Constitution:
             level=EnforcementLevel.MUST,
             constraint="MUST validate and sanitize all file path inputs",
             implementation_pattern="Use os.path.abspath, validate file paths against allowed directories",
-            rationale="Prevents unauthorized file system access"
+            rationale="Prevents unauthorized file system access",
         ),
         ConstitutionalPrinciple(
             id="SEC-007",
@@ -155,7 +164,7 @@ class Constitution:
             level=EnforcementLevel.SHOULD,
             constraint="SHOULD implement rate limiting and resource quotas",
             implementation_pattern="Use rate limiting middleware, set resource limits",
-            rationale="Prevents DoS attacks and resource exhaustion"
+            rationale="Prevents DoS attacks and resource exhaustion",
         ),
         ConstitutionalPrinciple(
             id="SEC-008",
@@ -164,7 +173,7 @@ class Constitution:
             level=EnforcementLevel.MUST,
             constraint="MUST avoid deserializing untrusted data",
             implementation_pattern="Use safe serialization formats (JSON), validate serialized data",
-            rationale="Deserialization can lead to arbitrary code execution"
+            rationale="Deserialization can lead to arbitrary code execution",
         ),
         ConstitutionalPrinciple(
             id="SEC-009",
@@ -173,7 +182,7 @@ class Constitution:
             level=EnforcementLevel.MUST,
             constraint="MUST implement proper authentication mechanisms",
             implementation_pattern="Use session-based or token-based authentication with timeouts",
-            rationale="Weak authentication allows unauthorized access"
+            rationale="Weak authentication allows unauthorized access",
         ),
         ConstitutionalPrinciple(
             id="SEC-010",
@@ -182,7 +191,7 @@ class Constitution:
             level=EnforcementLevel.SHOULD,
             constraint="SHOULD validate all inputs against expected patterns",
             implementation_pattern="Use regex validation, schema validation (e.g., Pydantic)",
-            rationale="Input validation reduces attack surface"
+            rationale="Input validation reduces attack surface",
         ),
     ]
 
@@ -208,24 +217,33 @@ class Constitution:
             if p.cwe not in self._principles_by_cwe:
                 self._principles_by_cwe[p.cwe] = []
             self._principles_by_cwe[p.cwe].append(p)
+        
+        # Cache for compiled regex patterns
+        self._compiled_patterns: Dict[str, re.Pattern] = {}
+
+    def _compile_pattern(self, pattern: str) -> re.Pattern:
+        """Compile and cache regex patterns for performance"""
+        if pattern not in self._compiled_patterns:
+            self._compiled_patterns[pattern] = re.compile(pattern, re.IGNORECASE)
+        return self._compiled_patterns[pattern]
 
     def _load_from_file(self, path: str):
         """Load constitution from YAML file"""
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, "r", encoding="utf-8") as f:
                 data = yaml.safe_load(f)
 
-            if 'principles' in data:
+            if "principles" in data:
                 self.principles = []
-                for p_data in data['principles']:
+                for p_data in data["principles"]:
                     principle = ConstitutionalPrinciple(
-                        id=p_data['id'],
-                        cwe=p_data['cwe'],
-                        name=p_data['name'],
-                        level=EnforcementLevel(p_data['level']),
-                        constraint=p_data['constraint'],
-                        implementation_pattern=p_data['implementation_pattern'],
-                        rationale=p_data['rationale']
+                        id=p_data["id"],
+                        cwe=p_data["cwe"],
+                        name=p_data["name"],
+                        level=EnforcementLevel(p_data["level"]),
+                        constraint=p_data["constraint"],
+                        implementation_pattern=p_data["implementation_pattern"],
+                        rationale=p_data["rationale"],
                     )
                     self.principles.append(principle)
         except Exception as e:
@@ -233,7 +251,9 @@ class Constitution:
             logger.info("Using default principles")
             self.principles = self.DEFAULT_PRINCIPLES.copy()
 
-    def get_principles(self, level: Optional[EnforcementLevel] = None) -> List[ConstitutionalPrinciple]:
+    def get_principles(
+        self, level: Optional[EnforcementLevel] = None
+    ) -> List[ConstitutionalPrinciple]:
         """
         Get principles by enforcement level
 
@@ -269,9 +289,7 @@ class Constitution:
             ComplianceReport with violations
         """
         report = ComplianceReport(
-            is_compliant=True,
-            total_principles=len(self.principles),
-            compliant_principles=0
+            is_compliant=True, total_principles=len(self.principles), compliant_principles=0
         )
 
         # Check each MUST principle (non-negotiable)
@@ -296,15 +314,16 @@ class Constitution:
                 report.compliant_principles += 1
 
         # Calculate coverage
-        report.coverage = report.compliant_principles / report.total_principles if report.total_principles > 0 else 0
+        report.coverage = (
+            report.compliant_principles / report.total_principles
+            if report.total_principles > 0
+            else 0
+        )
 
         return report
 
     def _check_principle(
-        self,
-        code: str,
-        principle: ConstitutionalPrinciple,
-        file_path: str
+        self, code: str, principle: ConstitutionalPrinciple, file_path: str
     ) -> List[Violation]:
         """
         Check a single principle against code
@@ -336,69 +355,100 @@ class Constitution:
 
         return violations
 
-    def _check_xss(self, code: str, principle: ConstitutionalPrinciple, file_path: str) -> List[Violation]:
+    def _check_xss(
+        self, code: str, principle: ConstitutionalPrinciple, file_path: str
+    ) -> List[Violation]:
         """Check for XSS vulnerabilities"""
         violations = []
 
         # Check for dangerous patterns
         dangerous_patterns = [
-            r'dangerouslySetInnerHTML',
-            r'innerHTML\s*=.*\+',  # innerHTML with user input
-            r'document\.write\s*\(',
-            r'eval\s*\(',
-            r'<script[^>]*>',  # Script tags
+            r"dangerouslySetInnerHTML",
+            r"innerHTML\s*=.*\+",  # innerHTML with user input
+            r"document\.write\s*\(",
+            r"eval\s*\(",
+            r"<script[^>]*>",  # Script tags
         ]
 
-        lines = code.split('\n')
+        lines = code.split("\n")
         for i, line in enumerate(lines, 1):
             for pattern in dangerous_patterns:
                 if re.search(pattern, line, re.IGNORECASE):
-                    violations.append(Violation(
-                        principle_id=principle.id,
-                        principle_name=principle.name,
-                        severity=principle.level,
-                        description=f"Potential XSS vulnerability detected: {pattern}",
-                        location=file_path,
-                        line_number=i,
-                        suggested_fix=principle.implementation_pattern
-                    ))
+                    violations.append(
+                        Violation(
+                            principle_id=principle.id,
+                            principle_name=principle.name,
+                            severity=principle.level,
+                            description=f"Potential XSS vulnerability detected: {pattern}",
+                            location=file_path,
+                            line_number=i,
+                            suggested_fix=principle.implementation_pattern,
+                        )
+                    )
                     break  # One violation per line
 
         return violations
 
-    def _check_sql_injection(self, code: str, principle: ConstitutionalPrinciple, file_path: str) -> List[Violation]:
-        """Check for SQL injection vulnerabilities"""
+    def _check_sql_injection(
+        self, code: str, principle: ConstitutionalPrinciple, file_path: str
+    ) -> List[Violation]:
+        """Check for SQL injection vulnerabilities - Enhanced version"""
         violations = []
 
-        # Check for string concatenation in SQL queries
+        # Enhanced dangerous patterns for SQL injection
         dangerous_patterns = [
-            r'execute\s*\(\s*["\'].*\+\s*',  # execute("SELECT..." + variable)
-            r'query\s*\(\s*["\'].*\+\s*',  # query("SELECT..." + variable)
-            r'format\s*\(\s*["\'].*\{.*\}',  # format("SELECT...{}", variable)
-            r'f["\'].*SELECT.*\{',  # f-string with SQL
+            # String concatenation
+            r'execute\s*\(\s*["\'].*SELECT.*\+\s*\w',
+            r'query\s*\(\s*["\'].*SELECT.*\+\s*\w',
+            r'cursor\.execute\s*\(\s*["\'].*\+\s*',
+            # f-strings with SQL
+            r'f["\'].*(?:SELECT|INSERT|UPDATE|DELETE|DROP|ALTER).*\{',
+            # format method
+            r'\.format\s*\(\s*.*(?:SELECT|INSERT|UPDATE|DELETE)',
+            # % formatting
+            r'["\'].*(?:SELECT|INSERT|UPDATE|DELETE).*%\s*\w',
         ]
 
-        lines = code.split('\n')
+        # Safe patterns (parameterized queries)
+        safe_patterns = [
+            r'%s',           # PostgreSQL/MySQL placeholder
+            r'%\(\w+\)s',  # Named placeholder
+            r':\w+',         # SQLite/PostgreSQL named param
+            r'\?',           # SQLite/MySQL positional param
+            r'\$\d+',        # PostgreSQL positional param
+        ]
+
+        lines = code.split("\n")
         for i, line in enumerate(lines, 1):
             for pattern in dangerous_patterns:
-                if re.search(pattern, line, re.IGNORECASE):
-                    # Exclude parameterized queries
-                    if re.search(r'[?:@:%]\w+', line):  # Has parameter markers
-                        continue
-                    violations.append(Violation(
-                        principle_id=principle.id,
-                        principle_name=principle.name,
-                        severity=principle.level,
-                        description=f"Potential SQL injection vulnerability detected",
-                        location=file_path,
-                        line_number=i,
-                        suggested_fix=principle.implementation_pattern
-                    ))
+                compiled = self._compile_pattern(pattern)
+                if compiled.search(line):
+                    # Check if it's a safe parameterized query
+                    is_safe = any(re.search(safe, line) for safe in safe_patterns)
+                    
+                    # Also check for common safe function names
+                    if any(safe_func in line for safe_func in ['escape', 'quote', 'parameterize']):
+                        is_safe = True
+                    
+                    if not is_safe:
+                        violations.append(
+                            Violation(
+                                principle_id=principle.id,
+                                principle_name=principle.name,
+                                severity=principle.level,
+                                description=f"Potential SQL injection vulnerability: {line.strip()}",
+                                location=file_path,
+                                line_number=i,
+                                suggested_fix=principle.implementation_pattern,
+                            )
+                        )
                     break
 
         return violations
 
-    def _check_hardcoded_credentials(self, code: str, principle: ConstitutionalPrinciple, file_path: str) -> List[Violation]:
+    def _check_hardcoded_credentials(
+        self, code: str, principle: ConstitutionalPrinciple, file_path: str
+    ) -> List[Violation]:
         """Check for hardcoded credentials"""
         violations = []
 
@@ -410,89 +460,99 @@ class Constitution:
             r'token\s*=\s*["\'][^"\']+["\']',  # token = "value"
         ]
 
-        lines = code.split('\n')
+        lines = code.split("\n")
         for i, line in enumerate(lines, 1):
             for pattern in dangerous_patterns:
                 if re.search(pattern, line, re.IGNORECASE):
                     # Skip comments and environment variable references
-                    if '#' in line or '$' in line or 'os.environ' in line:
+                    if "#" in line or "$" in line or "os.environ" in line:
                         continue
 
-                    violations.append(Violation(
-                        principle_id=principle.id,
-                        principle_name=principle.name,
-                        severity=principle.level,
-                        description=f"Potential hardcoded credential detected",
-                        location=file_path,
-                        line_number=i,
-                        suggested_fix=principle.implementation_pattern
-                    ))
+                    violations.append(
+                        Violation(
+                            principle_id=principle.id,
+                            principle_name=principle.name,
+                            severity=principle.level,
+                            description="Potential hardcoded credential detected",
+                            location=file_path,
+                            line_number=i,
+                            suggested_fix=principle.implementation_pattern,
+                        )
+                    )
                     break
 
         return violations
 
-    def _check_path_traversal(self, code: str, principle: ConstitutionalPrinciple, file_path: str) -> List[Violation]:
+    def _check_path_traversal(
+        self, code: str, principle: ConstitutionalPrinciple, file_path: str
+    ) -> List[Violation]:
         """Check for path traversal vulnerabilities"""
         violations = []
 
         # Check for dangerous file operations
         dangerous_patterns = [
-            r'open\s*\(\s*\+\s*',  # open( + variable)
+            r"open\s*\(\s*\+\s*",  # open( + variable)
             r'open\s*\(\s*["\'].*\+\s*',  # open("path" + variable)
-            r'\.read\s*\(\s*\+\s*',  # read( + variable)
+            r"\.read\s*\(\s*\+\s*",  # read( + variable)
         ]
 
-        lines = code.split('\n')
+        lines = code.split("\n")
         for i, line in enumerate(lines, 1):
             for pattern in dangerous_patterns:
                 if re.search(pattern, line, re.IGNORECASE):
                     # Check if there's validation
-                    if 'validate' in line or 'sanitize' in line or 'os.path.abspath' in line:
+                    if "validate" in line or "sanitize" in line or "os.path.abspath" in line:
                         continue
 
-                    violations.append(Violation(
-                        principle_id=principle.id,
-                        principle_name=principle.name,
-                        severity=principle.level,
-                        description=f"Potential path traversal vulnerability detected",
-                        location=file_path,
-                        line_number=i,
-                        suggested_fix=principle.implementation_pattern
-                    ))
+                    violations.append(
+                        Violation(
+                            principle_id=principle.id,
+                            principle_name=principle.name,
+                            severity=principle.level,
+                            description="Potential path traversal vulnerability detected",
+                            location=file_path,
+                            line_number=i,
+                            suggested_fix=principle.implementation_pattern,
+                        )
+                    )
                     break
 
         return violations
 
-    def _check_weak_crypto(self, code: str, principle: ConstitutionalPrinciple, file_path: str) -> List[Violation]:
+    def _check_weak_crypto(
+        self, code: str, principle: ConstitutionalPrinciple, file_path: str
+    ) -> List[Violation]:
         """Check for weak cryptographic algorithms"""
         violations = []
 
         # Check for weak algorithms
         weak_algorithms = [
-            r'MD5',
-            r'SHA1',
-            r'DES',
-            r'RC4',
-            r'Blowfish',
+            r"MD5",
+            r"SHA1",
+            r"DES",
+            r"RC4",
+            r"Blowfish",
         ]
 
-        lines = code.split('\n')
+        lines = code.split("\n")
         for i, line in enumerate(lines, 1):
             for algo in weak_algorithms:
                 if re.search(algo, line, re.IGNORECASE):
                     # Skip comments
-                    if '#' in line:
+                    if "#" in line:
                         continue
 
-                    violations.append(Violation(
-                        principle_id=principle.id,
-                        principle_name=principle.name,
-                        severity=principle.level,
-                        description=f"Weak cryptographic algorithm detected: {algo}",
-                        location=file_path,
-                        line_number=i,
-                        suggested_fix=principle.implementation_pattern
-                    ))
+                    violations.append(
+                        Violation(
+                            principle_id=principle.id,
+                            principle_name=principle.name,
+                            severity=principle.level,
+                            description=f"Weak cryptographic algorithm detected: {algo}",
+                            location=file_path,
+                            line_number=i,
+                            suggested_fix=principle.implementation_pattern,
+                        )
+                    )
                     break
 
         return violations
@@ -535,20 +595,22 @@ class Constitution:
             f"**Compliant Principles**: {report.compliant_principles}/{report.total_principles}",
             "",
             "## Violations",
-            ""
+            "",
         ]
 
         if not report.violations:
             lines.append("✅ No violations detected")
         else:
             for violation in report.violations:
-                lines.extend([
-                    f"### {violation.principle_id}: {violation.principle_name}",
-                    f"- **Severity**: {violation.severity.value}",
-                    f"- **Location**: {violation.location}:{violation.line_number}",
-                    f"- **Description**: {violation.description}",
-                    f"- **Suggested Fix**: {violation.suggested_fix}",
-                    ""
-                ])
+                lines.extend(
+                    [
+                        f"### {violation.principle_id}: {violation.principle_name}",
+                        f"- **Severity**: {violation.severity.value}",
+                        f"- **Location**: {violation.location}:{violation.line_number}",
+                        f"- **Description**: {violation.description}",
+                        f"- **Suggested Fix**: {violation.suggested_fix}",
+                        "",
+                    ]
+                )
 
         return "\n".join(lines)

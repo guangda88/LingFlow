@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "test_name": "update_test",
+    "created_at": "2026-03-25T01:26:04.904348",
+    "updated_at": null,
+    "version": "1.0.0",
+    "description": "快照测试: update_test"
+  },
+  "data": {
+    "classes": [],
+    "complexity": 1,
+    "functions": [
+      {
+        "args": [],
+        "decorators": [],
+        "has_return": true,
+        "lineno": 1,
+        "name": "update_test"
+      }
+    ],
+    "imports": [],
+    "stats": {
+      "blank_lines": 0,
+      "code_lines": 1,
+      "comment_lines": 0,
+      "total_lines": 1
+    },
+    "success": true,
+    "warnings": []
+  }
+}

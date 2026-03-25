@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "test_name": "class_analysis",
+    "created_at": "2026-03-25T00:35:22.450360",
+    "updated_at": null,
+    "version": "1.0.0",
+    "description": "快照测试: class_analysis"
+  },
+  "data": {
+    "classes": [
+      {
+        "bases": [],
+        "lineno": 2,
+        "methods": [
+          "__init__",
+          "add",
+          "subtract"
+        ],
+        "name": "Calculator"
+      }
+    ],
+    "complexity": 3,
+    "functions": [
+      {
+        "args": [
+          "self"
+        ],
+        "decorators": [],
+        "has_return": false,
+        "lineno": 3,
+        "name": "__init__"
+      },
+      {
+        "args": [
+          "self",
+          "x"
+        ],
+        "decorators": [],
+        "has_return": true,
+        "lineno": 6,
+        "name": "add"
+      },
+      {
+        "args": [
+          "self",
+          "x"
+        ],
+        "decorators": [],
+        "has_return": true,
+        "lineno": 10,
+        "name": "subtract"
+      }
+    ],
+    "imports": [],
+    "stats": {
+      "blank_lines": 3,
+      "code_lines": 9,
+      "comment_lines": 0,
+      "total_lines": 12
+    },
+    "success": true,
+    "warnings": []
+  }
+}

@@ -11,15 +11,14 @@ Key Features:
 - Performance statistics and reporting
 """
 
-import time
-import logging
 import functools
-from typing import Dict, List, Optional, Callable, Any
-from dataclasses import dataclass, field
+import logging
+import time
 from collections import defaultdict
+from dataclasses import dataclass, field
 from datetime import datetime
 from functools import lru_cache
-import traceback
+from typing import Any, Callable, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +26,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class PerformanceMetric:
     """Single performance measurement"""
+
     name: str
     execution_time: float  # seconds
     timestamp: datetime
@@ -44,12 +44,24 @@ class PerformanceMonitor:
 
     def track(self, metric_name: str = None):
         """
-        Decorator to track function performance
+        装饰器：追踪函数性能
+
+        记录函数的执行时间，并将结果存储在性能监控器中。
 
         Args:
-            metric_name: Name for the metric (defaults to function name)
+            metric_name: 指标名称（默认为函数名）
         """
+
         def decorator(func: Callable) -> Callable:
+            """
+            装饰器函数
+
+            Args:
+                func: 要装饰的函数
+
+            Returns:
+                包装后的函数，带有性能追踪功能
+            """
             @functools.wraps(func)
             def wrapper(*args, **kwargs):
                 if not self._enabled:
@@ -76,7 +88,7 @@ class PerformanceMonitor:
                     execution_time=execution_time,
                     timestamp=datetime.utcnow(),
                     success=success,
-                    error_message=error_message
+                    error_message=error_message,
                 )
 
                 self.metrics[name].append(metric)
@@ -88,6 +100,7 @@ class PerformanceMonitor:
                 return result
 
             return wrapper
+
         return decorator
 
     def get_stats(self, metric_name: str) -> Dict[str, Any]:
@@ -121,7 +134,7 @@ class PerformanceMonitor:
             "min_time": min(execution_times),
             "max_time": max(execution_times),
             "total_time": sum(execution_times),
-            "last_execution": metrics[-1].timestamp.isoformat() if metrics else None
+            "last_execution": metrics[-1].timestamp.isoformat() if metrics else None,
         }
 
     def get_all_stats(self) -> Dict[str, Dict[str, Any]]:
@@ -189,10 +202,10 @@ performance_monitor = PerformanceMonitor()
 # Convenience decorator
 def track_performance(metric_name: str = None):
     """
-    Convenience decorator for tracking performance using the global monitor
+    便捷装饰器：使用全局监控器追踪性能
 
     Args:
-        metric_name: Name for the metric (defaults to function name)
+        metric_name: 指标名称（默认为函数名）
     """
     return performance_monitor.track(metric_name)
 
@@ -200,21 +213,21 @@ def track_performance(metric_name: str = None):
 # Cache decorator with monitoring
 def cached_with_monitor(maxsize: int = 128, metric_name: str = None):
     """
-    LRU cache decorator with performance monitoring
+    带性能监控的 LRU 缓存装饰器
+
+    结合 functools.lru_cache 和性能监控功能。
 
     Args:
-        maxsize: Maximum cache size
-        metric_name: Name for cache hit/miss metrics
+        maxsize: 最大缓存大小
+        metric_name: 缓存命中/未命中指标名称
     """
+
     def decorator(func: Callable) -> Callable:
         # Apply LRU cache
         cached_func = lru_cache(maxsize=maxsize)(func)
 
         # Track cache statistics
-        cache_stats = {
-            "hits": 0,
-            "misses": 0
-        }
+        cache_stats = {"hits": 0, "misses": 0}
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -242,6 +255,7 @@ def cached_with_monitor(maxsize: int = 128, metric_name: str = None):
         wrapper._cache_stats = cache_stats
 
         return wrapper
+
     return decorator
 
 
@@ -255,17 +269,17 @@ def get_cache_stats(func: Callable) -> Dict[str, Any]:
     Returns:
         Dictionary with cache statistics
     """
-    if not hasattr(func, '_cache_stats'):
+    if not hasattr(func, "_cache_stats"):
         return {}
 
     stats = func._cache_stats
-    total = stats['hits'] + stats['misses']
+    total = stats["hits"] + stats["misses"]
 
     return {
-        "hits": stats['hits'],
-        "misses": stats['misses'],
+        "hits": stats["hits"],
+        "misses": stats["misses"],
         "total_requests": total,
-        "hit_rate": stats['hits'] / total * 100 if total > 0 else 0.0
+        "hit_rate": stats["hits"] / total * 100 if total > 0 else 0.0,
     }
 
 
@@ -306,7 +320,7 @@ class ContextTimer:
             execution_time=execution_time,
             timestamp=datetime.utcnow(),
             success=self.success,
-            error_message=self.error_message
+            error_message=self.error_message,
         )
 
         self.monitor.metrics[self.name].append(metric)

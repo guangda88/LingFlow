@@ -2,12 +2,14 @@
 
 import asyncio
 import logging
-from typing import Dict, List, Optional, Any, Tuple
-from lingflow.coordination.registry import AgentRegistry
+from typing import Any, Dict, List, Optional
+
+from lingflow.common.models import AgentConfig, Task, TaskResult
+from lingflow.compression.compressor import ContextCompressor
 from lingflow.coordination.agent import Agent
 from lingflow.coordination.base import BaseCoordinator
-from lingflow.compression.compressor import ContextCompressor
-from lingflow.common.models import Task, TaskResult, AgentConfig
+from lingflow.coordination.registry import AgentRegistry
+from lingflow.common.sandbox import SkillSandbox, SandboxError, SandboxTimeoutError
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +24,7 @@ class AgentCoordinator(BaseCoordinator):
         self.completed_tasks: Dict[str, TaskResult] = {}
         self.failed_tasks: Dict[str, TaskResult] = {}
         self.compressor = ContextCompressor()
+        self.sandbox = SkillSandbox(timeout=30.0, memory_limit=100 * 1024 * 1024)  # 100MB
         self._register_default_agents()
 
     def _register_default_agents(self) -> None:
@@ -30,33 +33,33 @@ class AgentCoordinator(BaseCoordinator):
             AgentConfig(
                 name="implementation",
                 description="Code implementation agent",
-                capabilities=["code_generation", "testing", "documentation"]
+                capabilities=["code_generation", "testing", "documentation"],
             ),
             AgentConfig(
                 name="review",
                 description="Code review agent",
-                capabilities=["code_review", "design_review", "security_check"]
+                capabilities=["code_review", "design_review", "security_check"],
             ),
             AgentConfig(
                 name="testing",
                 description="Testing agent",
-                capabilities=["test_generation", "test_execution", "coverage_analysis"]
+                capabilities=["test_generation", "test_execution", "coverage_analysis"],
             ),
             AgentConfig(
                 name="debugging",
                 description="Debugging agent",
-                capabilities=["error_analysis", "root_cause", "fix_generation"]
+                capabilities=["error_analysis", "root_cause", "fix_generation"],
             ),
             AgentConfig(
                 name="architecture",
                 description="Architecture agent",
-                capabilities=["system_design", "architecture_review", "api_design"]
+                capabilities=["system_design", "architecture_review", "api_design"],
             ),
             AgentConfig(
                 name="documentation",
                 description="Documentation agent",
-                capabilities=["doc_generation", "api_doc_writing", "readme_generation"]
-            )
+                capabilities=["doc_generation", "api_doc_writing", "readme_generation"],
+            ),
         ]
 
         for config in configs:
@@ -70,7 +73,9 @@ class AgentCoordinator(BaseCoordinator):
         """
         self.task_queue.append(task)
 
-    async def execute_tasks_parallel(self, tasks: List[Task], max_parallel: int = 2) -> Dict[str, TaskResult]:
+    async def execute_tasks_parallel(
+        self, tasks: List[Task], max_parallel: int = 2
+    ) -> Dict[str, TaskResult]:
         """Execute multiple tasks in parallel.
 
         Args:
@@ -85,14 +90,13 @@ class AgentCoordinator(BaseCoordinator):
 
         # 并行执行所有任务
         results_list = await asyncio.gather(
-            *[self._execute_one_task(task, semaphore) for task in tasks],
-            return_exceptions=True
+            *[self._execute_one_task(task, semaphore) for task in tasks], return_exceptions=True
         )
 
         # 处理结果
         results = self._process_task_results(results_list)
         return results
-    
+
     async def _execute_one_task(self, task: Task, semaphore: asyncio.Semaphore) -> TaskResult:
         """执行单个任务"""
         async with semaphore:
@@ -107,7 +111,7 @@ class AgentCoordinator(BaseCoordinator):
             # 执行任务
             result = await agent.execute_task(task, compressed_context)
             return result
-    
+
     def _find_agent_for_task(self, task: Task) -> Optional[Agent]:
         """查找适合任务的代理"""
         agents = self.registry.find_agents_for_task(task)
@@ -115,22 +119,22 @@ class AgentCoordinator(BaseCoordinator):
             logger.warning(f"No agent found for task {task.task_id}")
             return None
         return agents[0]
-    
+
     def _compress_context(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """压缩上下文"""
+        """压缩上下文 - 安全版本"""
         try:
             return self.compressor.compress(context)
-        except Exception:
+        except (ValueError, KeyError, TypeError) as e:
+            logger.warning(f"Context compression failed: {e}")
             return context
-    
+        except Exception as e:
+            logger.error(f"Unexpected error during compression: {e}")
+            return context
+
     def _create_error_result(self, task: Task, error: str) -> TaskResult:
         """创建错误结果"""
-        return TaskResult(
-            task_id=task.task_id,
-            success=False,
-            error=error
-        )
-    
+        return TaskResult(task_id=task.task_id, success=False, error=error)
+
     def _process_task_results(self, results_list: List[Any]) -> Dict[str, TaskResult]:
         """处理任务结果"""
         results = {}
@@ -162,11 +166,11 @@ class AgentCoordinator(BaseCoordinator):
             - compression_stats: Context compression statistics
         """
         return {
-            'total_tasks': len(self.task_queue) + len(self.completed_tasks),
-            'completed_tasks': len(self.completed_tasks),
-            'failed_tasks': len(self.failed_tasks),
-            'agents': len(self.registry.agents),
-            'compression_stats': self.compressor.get_stats()
+            "total_tasks": len(self.task_queue) + len(self.completed_tasks),
+            "completed_tasks": len(self.completed_tasks),
+            "failed_tasks": len(self.failed_tasks),
+            "agents": len(self.registry.agents),
+            "compression_stats": self.compressor.get_stats(),
         }
 
     def reset(self) -> None:
@@ -198,76 +202,156 @@ class AgentCoordinator(BaseCoordinator):
                 return {
                     "skill": skill_name,
                     "params": params,
-                    "error": f"技能文件不存在: {skill_name}"
+                    "error": f"技能文件不存在: {skill_name}",
                 }
-            
+
             module = self._load_skill_module(skill_name, skill_path)
             if not module:
                 return {
                     "skill": skill_name,
                     "params": params,
-                    "error": f"加载技能模块失败: {skill_name}"
+                    "error": f"加载技能模块失败: {skill_name}",
                 }
-            
+
             result = self._execute_skill_module(module, params)
-            return {
-                "skill": skill_name,
-                "params": params,
-                "result": result
-            }
+            return {"skill": skill_name, "params": params, "result": result}
         except ImportError as e:
-            return {
-                "skill": skill_name,
-                "params": params,
-                "error": f"导入技能模块失败: {str(e)}"
-            }
+            return {"skill": skill_name, "params": params, "error": f"导入技能模块失败: {str(e)}"}
         except Exception as e:
-            return {
-                "skill": skill_name,
-                "params": params,
-                "error": f"执行技能时出错: {str(e)}"
-            }
-    
+            return {"skill": skill_name, "params": params, "error": f"执行技能时出错: {str(e)}"}
+
     def _get_skill_path(self, skill_name: str) -> Optional[str]:
-        """获取技能文件路径（安全版本）"""
+        """获取技能文件路径（增强安全版本）"""
         import os
         import re
-        
-        # 验证技能名称，防止路径遍历攻击
-        if not skill_name or not re.match(r'^[a-zA-Z0-9_-]+$', skill_name):
+        import pathlib
+
+        # 严格验证技能名称
+        if not skill_name:
             return None
         
-        # 构建技能路径
-        skill_path = os.path.join(os.getcwd(), 'skills', skill_name, 'implementation.py')
-        
-        # 安全检查：确保路径在 skills 目录内
-        skills_dir = os.path.abspath(os.path.join(os.getcwd(), 'skills'))
-        skill_path_abs = os.path.abspath(skill_path)
-        
-        if not skill_path_abs.startswith(skills_dir):
+        if not (3 <= len(skill_name) <= 50):
+            logger.warning(f"Invalid skill name length: {skill_name}")
             return None
         
-        return skill_path if os.path.exists(skill_path) else None
-    
-    def _load_skill_module(self, skill_name: str, skill_path: str) -> Optional[Any]:
-        """加载技能模块（安全版本）"""
-        import importlib.util
-        
+        if not re.match(r"^[a-z0-9_-]+$", skill_name):
+            logger.warning(f"Invalid skill name format: {skill_name}")
+            return None
+
+        # 构建并验证路径
+        skills_dir = pathlib.Path(os.getcwd()) / "skills"
         try:
-            spec = importlib.util.spec_from_file_location(f"skills.{skill_name}.implementation", skill_path)
-            module = importlib.util.module_from_spec(spec)
-            
-            # 沙箱执行：限制模块的全局变量
-            # 这里可以添加更严格的沙箱限制
-            spec.loader.exec_module(module)
-            
-            return module
+            skills_dir = skills_dir.resolve()
         except Exception as e:
-            raise Exception(f"加载技能模块失败: {str(e)}")
-    
+            logger.error(f"Failed to resolve skills directory: {e}")
+            return None
+
+        skill_path = (skills_dir / skill_name / "implementation.py")
+        
+        # 规范化路径并验证存在性
+        try:
+            skill_path = skill_path.resolve(strict=True)
+        except (FileNotFoundError, RuntimeError) as e:
+            logger.warning(f"Skill file not found: {skill_path}")
+            return None
+
+        # 确保路径在 skills 目录内（防止路径遍历攻击）
+        try:
+            skill_path.relative_to(skills_dir)
+        except ValueError:
+            logger.warning(f"Path traversal attempt detected: {skill_path}")
+            return None
+
+        return str(skill_path)
+
+    def _load_skill_module(self, skill_name: str, skill_path: str) -> Optional[Any]:
+        """加载技能模块（使用沙箱安全验证）
+
+        安全特性：
+        - 使用进程隔离的沙箱环境验证技能代码
+        - 限制技能代码的超时时间（默认30秒）
+        - 限制技能代码的内存使用（默认100MB）
+        - 模块白名单，只允许访问安全的模块
+        - 验证技能代码不包含危险操作
+
+        已实施的安全限制：
+        - 进程隔离：技能代码验证在独立的进程中执行
+        - 超时限制：防止无限循环和长时间运行
+        - 内存限制：防止内存耗尽攻击
+        - 代码验证：检查危险的导入和函数调用
+        - 模块白名单：只允许访问 typing, dataclasses, datetime, math, time
+
+        Args:
+            skill_name: 技能名称
+            skill_path: 技能文件路径
+
+        Returns:
+            加载的模块，失败时返回 None
+
+        Raises:
+            SkillLoadError: 加载失败时抛出
+        """
+        import importlib.util
+        import types
+        from lingflow.common.exceptions import SkillLoadError
+
+        try:
+            # 读取技能文件内容
+            with open(skill_path, 'r', encoding='utf-8') as f:
+                skill_code = f.read()
+
+            # 验证代码安全性
+            if not self.sandbox.validate_code(skill_code):
+                raise SkillLoadError(f"Skill {skill_name} contains unsafe code")
+
+            # 在沙箱中执行代码以验证语法和基本安全性
+            try:
+                self.sandbox.execute_code(skill_code)
+            except SandboxTimeoutError as e:
+                raise SkillLoadError(f"Skill {skill_name} execution timed out: {str(e)}")
+            except SandboxError as e:
+                raise SkillLoadError(f"Sandbox error loading skill {skill_name}: {str(e)}")
+
+            # 使用 importlib 正常加载模块
+            spec = importlib.util.spec_from_file_location(
+                f"skills.{skill_name}.implementation", skill_path
+            )
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+
+            # 验证必须的函数存在
+            if not hasattr(module, "execute_skill"):
+                raise SkillLoadError(f"Skill {skill_name} missing required execute_skill function")
+
+            # 创建包装模块，确保 execute_skill 在沙箱中执行
+            execute_func = module.execute_skill
+
+            class SandboxModule(types.ModuleType):
+                """沙箱模块包装器"""
+
+                def __init__(self, name: str):
+                    super().__init__(name)
+
+                def execute_skill(self, params: Dict[str, Any]) -> Any:
+                    """在沙箱中执行技能"""
+                    return self.sandbox.execute(execute_func, params)
+
+            # 创建并返回包装模块
+            sandbox_module = SandboxModule(f"skills.{skill_name}.implementation")
+            sandbox_module.sandbox = self.sandbox
+
+            return sandbox_module
+
+        except IOError as e:
+            raise SkillLoadError(f"Failed to read skill file {skill_path}: {str(e)}")
+        except SyntaxError as e:
+            raise SkillLoadError(f"Syntax error in skill {skill_name}: {str(e)}")
+        except Exception as e:
+            raise SkillLoadError(f"Failed to load skill module {skill_name}: {str(e)}")
+
     def _execute_skill_module(self, module: Any, params: Dict[str, Any]) -> Any:
         """执行技能模块"""
-        if hasattr(module, 'execute_skill'):
+        if hasattr(module, "execute_skill"):
             return module.execute_skill(params)
         else:
             raise Exception("技能模块中没有 execute_skill 函数")
@@ -279,4 +363,10 @@ class AgentCoordinator(BaseCoordinator):
             List of skill names that can be executed
         """
         # 这里可以返回实际的技能列表
-        return ["database_export", "upload_115", "notification", "code_analysis", "code_optimization"]
+        return [
+            "database_export",
+            "upload_115",
+            "notification",
+            "code_analysis",
+            "code_optimization",
+        ]

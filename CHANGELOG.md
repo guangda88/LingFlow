@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.5.0] - 2026-03-25
+
+### Added
+- **Version Management**: Added VERSION file for version tracking
+- **Version Export**: Added `__version__` to lingflow/__init__.py
+- **Comprehensive Testing**: Enhanced test coverage across modules
+- **Documentation Updates**: Updated AGENTS.md and API documentation
+
+### Changed
+- Project structure optimization
+- Enhanced code quality and maintainability
+
+### Security
+- Security audit improvements
+- Best practices enforcement
+
+---
+
 ## [3.3.0] - 2026-03-23
 
 ### Added
