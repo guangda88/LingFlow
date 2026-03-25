@@ -10,9 +10,12 @@ import subprocess
 import json
 import re
 import asyncio
+import logging
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 class SeverityLevel:
@@ -348,8 +351,9 @@ class JavaScriptCodeReviewSkill:
                         with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                             lines = f.readlines()
                             total_lines += len(lines)
-                    except:
-                        pass
+                    except (IOError, OSError, UnicodeDecodeError) as e:
+                        # 跳过无法读取的文件，记录日志
+                        logger.debug(f"跳过文件 {file_path}: {e}")
         
         self.stats['files_count'] = len(js_files)
         self.stats['lines_count'] = total_lines

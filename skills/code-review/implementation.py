@@ -3,9 +3,40 @@
 import os
 import re
 import ast
+import logging
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
+
+
+# ============== 常量配置 ==============
+COMPLEXITY_THRESHOLD = 10
+MAX_FILE_LINES = 300
+MAX_METHODS_IN_CLASS = 15
+MAX_IMPORTS = 20
+
+# 严重程度权重
+SEVERITY_WEIGHTS = {
+    'critical': 10.0,
+    'high': 5.0,
+    'medium': 2.0,
+    'low': 0.5,
+    'warning': 0.2
+}
+
+# 维度权重
+DIMENSION_WEIGHTS = {
+    'security': 0.30,      # 安全性权重最高
+    'bugs': 0.25,          # Bug 次之
+    'code_quality': 0.20,
+    'architecture': 0.10,
+    'performance': 0.05,
+    'maintainability': 0.05,
+    'best_practices': 0.03,
+    'autoresearch_consistency': 0.02,
+}
 
 
 def review_code(params):
@@ -53,7 +84,7 @@ def review_code(params):
         try:
             file = Path(file_path)
             if not file.exists():
-                print(f"文件不存在: {file_path}")
+                logger.warning(f"文件不存在: {file_path}")
                 continue
 
             # 检查是文件还是目录
@@ -68,7 +99,7 @@ def review_code(params):
                     result['reviewed_files'].append(str(py_file))
                     merge_dimensions(result['dimensions'], review_result)
         except Exception as e:
-            print(f"审查文件时出错: {str(e)}")
+            logger.error(f"审查文件时出错: {str(e)}")
 
     # 计算得分
     calculate_scores(result)
@@ -92,31 +123,37 @@ def merge_dimensions(target_dimensions: Dict, source_result: Dict):
 
 
 def calculate_scores(result: Dict):
-    """计算各维度得分"""
-    total_score = 0
-    dimension_count = 0
+    """计算各维度得分 - 使用加权评分系统"""
+    dimension_scores = {}
 
     for dimension, data in result['dimensions'].items():
-        issues = len(data['issues'])
-        suggestions = len(data['suggestions'])
+        issues = data['issues']
+        suggestions = data['suggestions']
 
-        # 简单的得分算法：5分满分
-        if issues == 0 and suggestions == 0:
-            score = 5.0
-        elif issues == 0:
-            score = 4.0
-        elif issues < 3:
-            score = 3.0
-        elif issues < 5:
-            score = 2.0
-        else:
-            score = 1.0
+        # 计算加权分数
+        penalty = 0.0
+        for issue in issues:
+            severity = issue.get('severity', 'low')
+            penalty += SEVERITY_WEIGHTS.get(severity, 0.5)
 
-        data['score'] = score
-        total_score += score
-        dimension_count += 1
+        for suggestion in suggestions:
+            priority = suggestion.get('priority', 'low')
+            penalty += SEVERITY_WEIGHTS.get(priority, 0.3)
 
-    result['overall_score'] = total_score / dimension_count if dimension_count > 0 else 0
+        # 5分满分，扣分制
+        base_score = 5.0
+        final_score = max(0.0, base_score - penalty)
+
+        dimension_scores[dimension] = final_score
+        data['score'] = final_score
+
+    # 计算加权总分
+    weighted_score = sum(
+        dimension_scores[dim] * DIMENSION_WEIGHTS.get(dim, 0.1)
+        for dim in dimension_scores
+    )
+
+    result['overall_score'] = weighted_score
 
 
 def generate_summary(result: Dict, focus: str) -> str:
@@ -228,7 +265,7 @@ def review_file(file: Path, focus: str, strict: bool) -> Dict:
             review_bug_analysis(file, content, lines, tree, result)
 
     except Exception as e:
-        print(f"审查文件 {file} 时出错: {str(e)}")
+        logger.error(f"审查文件 {file} 时出错: {str(e)}")
 
     return result
 
@@ -240,7 +277,7 @@ def review_code_quality(file: Path, content: str, lines: List[str], tree: ast.AS
         if isinstance(node, ast.FunctionDef):
             # 计算圈复杂度（简化版）
             complexity = calculate_complexity(node)
-            if complexity > 10:
+            if complexity > COMPLEXITY_THRESHOLD:
                 result['code_quality']['issues'].append({
                     'file': str(file),
                     'issue': f'函数 {node.name} 复杂度过高 ({complexity})',
@@ -264,7 +301,7 @@ def review_code_quality(file: Path, content: str, lines: List[str], tree: ast.AS
         })
 
     # 3. 检查代码行数
-    if len(lines) > 300:
+    if len(lines) > MAX_FILE_LINES:
         result['code_quality']['issues'].append({
             'file': str(file),
             'issue': f'文件过长 ({len(lines)} 行)',
@@ -284,7 +321,7 @@ def review_architecture(file: Path, content: str, lines: List[str], tree: ast.AS
     for node in ast.walk(tree):
         if isinstance(node, ast.ClassDef):
             methods = [n for n in node.body if isinstance(n, ast.FunctionDef)]
-            if len(methods) > 15:
+            if len(methods) > MAX_METHODS_IN_CLASS:
                 result['architecture']['issues'].append({
                     'file': str(file),
                     'issue': f'类 {node.name} 方法过多 ({len(methods)} 个)',
@@ -299,7 +336,7 @@ def review_architecture(file: Path, content: str, lines: List[str], tree: ast.AS
 
     # 2. 检查导入依赖
     imports = [node for node in ast.walk(tree) if isinstance(node, (ast.Import, ast.ImportFrom))]
-    if len(imports) > 20:
+    if len(imports) > MAX_IMPORTS:
         result['architecture']['issues'].append({
             'file': str(file),
             'issue': f'导入过多 ({len(imports)} 个)',

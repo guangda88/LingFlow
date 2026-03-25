@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "test_name": "statistics_calculation",
+    "created_at": "2026-03-25T00:35:22.457419",
+    "updated_at": null,
+    "version": "1.0.0",
+    "description": "快照测试: statistics_calculation"
+  },
+  "data": {
+    "classes": [
+      {
+        "bases": [],
+        "lineno": 11,
+        "methods": [],
+        "name": "MyClass"
+      }
+    ],
+    "complexity": 2,
+    "functions": [
+      {
+        "args": [],
+        "decorators": [],
+        "has_return": false,
+        "lineno": 3,
+        "name": "function1"
+      },
+      {
+        "args": [],
+        "decorators": [],
+        "has_return": true,
+        "lineno": 7,
+        "name": "function2"
+      }
+    ],
+    "imports": [],
+    "stats": {
+      "blank_lines": 4,
+      "code_lines": 7,
+      "comment_lines": 1,
+      "total_lines": 12
+    },
+    "success": true,
+    "warnings": []
+  }
+}

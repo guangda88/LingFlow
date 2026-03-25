@@ -1,17 +1,18 @@
 """LingFlow 代理注册表"""
 
-from typing import Dict, List, Optional, Any
-from lingflow.coordination.agent import Agent
+from typing import Any, Dict, List, Optional
+
 from lingflow.common.models import Task
+from lingflow.coordination.agent import Agent
 
 
 class AgentRegistry:
     """简化的代理注册表"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.agents: Dict[str, Agent] = {}
 
-    def register_agent(self, agent: Agent):
+    def register_agent(self, agent: Agent) -> None:
         """注册代理"""
         self.agents[agent.config.name] = agent
 

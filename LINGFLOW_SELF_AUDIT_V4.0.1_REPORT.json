@@ -1,0 +1,467 @@
+{
+  "timestamp": "2026-03-25T18:25:32.460711",
+  "version": "V4.0.1",
+  "test_results": {
+    "success": true,
+    "exit_code": 0,
+    "passed": 508,
+    "failed": 0,
+    "errors": 0,
+    "total": 508,
+    "summary": [
+      "tests/test_skill.py::TestSkillRegistry::test_get_nonexistent_skill PASSED [ 98%]",
+      "tests/test_skill.py::TestSkillRegistry::test_list_skills PASSED          [ 99%]",
+      "tests/test_skill.py::TestSkillRegistry::test_has_skill PASSED            [ 99%]",
+      "tests/test_skill.py::TestSkillRegistry::test_clear_skills PASSED         [ 99%]",
+      "tests/test_skill.py::TestGlobalFunctions::test_global_register_skill PASSED [ 99%]",
+      "tests/test_skill.py::TestGlobalFunctions::test_global_register_function PASSED [ 99%]",
+      "tests/test_skill.py::TestGlobalFunctions::test_global_get_skill PASSED   [100%]",
+      "",
+      "============================= 508 passed in 5.83s ==============================",
+      ""
+    ]
+  },
+  "security_analysis": {
+    "total_files_analyzed": 4,
+    "total_violations": 50,
+    "unsafe_files": 4,
+    "issues": [
+      {
+        "file": "lingflow/common/sandbox.py",
+        "violations_count": 24,
+        "violations": [
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"multiprocessing\" is not allowed",
+            "line": 14,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"signal\" is not allowed",
+            "line": 15,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"sys\" is not allowed",
+            "line": 16,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"traceback\" is not allowed",
+            "line": 18,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"logging\" is not allowed",
+            "line": 19,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"resource\" is not allowed",
+            "line": 20,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"threading\" is not allowed",
+            "line": 21,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import from module \"lingflow.common.security_analyzer\" is not allowed",
+            "line": 24,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"builtins\" is not allowed",
+            "line": 73,
+            "col_offset": 8
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_FUNCTION",
+            "message": "Use of dangerous built-in function \"compile\" is prohibited",
+            "line": 271,
+            "col_offset": 12
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_MODULE_ACCESS",
+            "message": "Access to module \"sys.getrecursionlimit\" is prohibited",
+            "line": 303,
+            "col_offset": 35
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_MODULE_ACCESS",
+            "message": "Access to module \"sys.setrecursionlimit\" is prohibited",
+            "line": 304,
+            "col_offset": 8
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_MODULE_ACCESS",
+            "message": "Access to module \"sys.settrace\" is prohibited",
+            "line": 332,
+            "col_offset": 16
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_FUNCTION",
+            "message": "Use of dangerous built-in function \"compile\" is prohibited",
+            "line": 335,
+            "col_offset": 28
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_FUNCTION",
+            "message": "Use of dangerous built-in function \"exec\" is prohibited",
+            "line": 336,
+            "col_offset": 12
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_MODULE_ACCESS",
+            "message": "Access to module \"sys.settrace\" is prohibited",
+            "line": 339,
+            "col_offset": 12
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_MODULE_ACCESS",
+            "message": "Access to module \"sys.setrecursionlimit\" is prohibited",
+            "line": 342,
+            "col_offset": 12
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"pickle\" is not allowed",
+            "line": 365,
+            "col_offset": 20
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_MODULE_ACCESS",
+            "message": "Access to module \"pickle.dumps\" is prohibited",
+            "line": 366,
+            "col_offset": 20
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_MODULE_ACCESS",
+            "message": "Access to module \"sys.settrace\" is prohibited",
+            "line": 388,
+            "col_offset": 12
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_MODULE_ACCESS",
+            "message": "Access to module \"sys.setrecursionlimit\" is prohibited",
+            "line": 389,
+            "col_offset": 12
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"resource\" is not allowed",
+            "line": 406,
+            "col_offset": 12
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_FUNCTION",
+            "message": "Use of dangerous built-in function \"compile\" is prohibited",
+            "line": 469,
+            "col_offset": 12
+          },
+          {
+            "severity": "MEDIUM",
+            "violation_type": "RECURSION_DETECTED",
+            "message": "Function \"get_security_report\" contains recursive calls",
+            "line": 531,
+            "col_offset": 4
+          }
+        ],
+        "is_safe": false
+      },
+      {
+        "file": "lingflow/common/config.py",
+        "violations_count": 6,
+        "violations": [
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"logging\" is not allowed",
+            "line": 3,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"os\" is not allowed",
+            "line": 4,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"yaml\" is not allowed",
+            "line": 7,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_MODULE_ACCESS",
+            "message": "Access to module \"os.getcwd\" is prohibited",
+            "line": 70,
+            "col_offset": 55
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_FUNCTION",
+            "message": "Use of dangerous built-in function \"open\" is prohibited",
+            "line": 80,
+            "col_offset": 21
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_FUNCTION",
+            "message": "Use of dangerous built-in function \"open\" is prohibited",
+            "line": 153,
+            "col_offset": 17
+          }
+        ],
+        "is_safe": false
+      },
+      {
+        "file": "lingflow/cli.py",
+        "violations_count": 2,
+        "violations": [
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"click\" is not allowed",
+            "line": 4,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import from module \"lingflow\" is not allowed",
+            "line": 6,
+            "col_offset": 0
+          }
+        ],
+        "is_safe": false
+      },
+      {
+        "file": "lingflow/coordination/coordinator.py",
+        "violations_count": 18,
+        "violations": [
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"asyncio\" is not allowed",
+            "line": 3,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"logging\" is not allowed",
+            "line": 4,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import from module \"lingflow.common.models\" is not allowed",
+            "line": 7,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import from module \"lingflow.compression.compressor\" is not allowed",
+            "line": 8,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import from module \"lingflow.coordination.agent\" is not allowed",
+            "line": 9,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import from module \"lingflow.coordination.base\" is not allowed",
+            "line": 10,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import from module \"lingflow.coordination.registry\" is not allowed",
+            "line": 11,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import from module \"lingflow.common.sandbox\" is not allowed",
+            "line": 12,
+            "col_offset": 0
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"os\" is not allowed",
+            "line": 225,
+            "col_offset": 8
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"re\" is not allowed",
+            "line": 226,
+            "col_offset": 8
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"pathlib\" is not allowed",
+            "line": 227,
+            "col_offset": 8
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_MODULE_ACCESS",
+            "message": "Access to module \"os.getcwd\" is prohibited",
+            "line": 242,
+            "col_offset": 34
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"importlib.util\" is not allowed",
+            "line": 294,
+            "col_offset": 8
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import of module \"types\" is not allowed",
+            "line": 295,
+            "col_offset": 8
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_IMPORT",
+            "message": "Import from module \"lingflow.common.exceptions\" is not allowed",
+            "line": 296,
+            "col_offset": 8
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_FUNCTION",
+            "message": "Use of dangerous built-in function \"open\" is prohibited",
+            "line": 300,
+            "col_offset": 17
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_FUNCTION",
+            "message": "Use of dangerous built-in function \"hasattr\" is prohibited",
+            "line": 323,
+            "col_offset": 19
+          },
+          {
+            "severity": "CRITICAL",
+            "violation_type": "FORBIDDEN_FUNCTION",
+            "message": "Use of dangerous built-in function \"hasattr\" is prohibited",
+            "line": 354,
+            "col_offset": 11
+          }
+        ],
+        "is_safe": false
+      }
+    ]
+  },
+  "complexity_analysis": {
+    "modules_analyzed": 3,
+    "results": [
+      {
+        "module": "lingflow/coordination/coordinator.py",
+        "lines": 292
+      },
+      {
+        "module": "lingflow/core/constitution.py",
+        "lines": 504
+      },
+      {
+        "module": "lingflow/common/sandbox.py",
+        "lines": 449
+      }
+    ]
+  },
+  "issues": [
+    {
+      "severity": "CRITICAL",
+      "type": "SECURITY_VIOLATION",
+      "description": "50 个安全违规",
+      "recommendation": "立即修复安全漏洞"
+    },
+    {
+      "severity": "MEDIUM",
+      "type": "ARCHITECTURE",
+      "description": "BaseSkill 不支持异步技能",
+      "recommendation": "添加异步执行支持到 BaseSkill"
+    },
+    {
+      "severity": "MEDIUM",
+      "type": "ARCHITECTURE",
+      "description": "Result[None] 语义不明确",
+      "recommendation": "使用 Unit 类型替代 None 表示无返回值的成功"
+    },
+    {
+      "severity": "LOW",
+      "type": "DOCUMENTATION",
+      "description": "部分模块缺少文档字符串",
+      "recommendation": "完善公共API的文档"
+    }
+  ],
+  "recommendations": [
+    "✅ 测试套件稳定，可以进行优化",
+    "🔴 优先修复安全违规，特别是CRITICAL级别",
+    "💡 考虑重构 Result 类型以消除语义歧义",
+    "💡 为 BaseSkill 添加异步执行支持",
+    "💡 实现更完善的错误恢复策略",
+    "💡 添加性能基准测试"
+  ],
+  "optimizations_applied": [
+    "✅ 集成AST-based安全分析器",
+    "✅ 添加资源限制（内存、CPU、递归、循环）",
+    "✅ 修复LRU缓存键问题（添加文件修改时间）",
+    "✅ 添加55个安全分析器测试",
+    "✅ 扩展沙箱测试到61个"
+  ]
+}

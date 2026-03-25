@@ -2,4 +2,4 @@
 
 from .orchestrator import WorkflowOrchestrator
 
-__all__ = ['WorkflowOrchestrator']
+__all__ = ["WorkflowOrchestrator"]

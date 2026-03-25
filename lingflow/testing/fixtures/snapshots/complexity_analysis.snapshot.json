@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "test_name": "complexity_analysis",
+    "created_at": "2026-03-25T00:35:22.458608",
+    "updated_at": null,
+    "version": "1.0.0",
+    "description": "快照测试: complexity_analysis"
+  },
+  "data": {
+    "classes": [],
+    "complexity": 4,
+    "functions": [
+      {
+        "args": [],
+        "decorators": [],
+        "has_return": true,
+        "lineno": 2,
+        "name": "high_complexity_function"
+      },
+      {
+        "args": [],
+        "decorators": [],
+        "has_return": false,
+        "lineno": 3,
+        "name": "helper1"
+      },
+      {
+        "args": [],
+        "decorators": [],
+        "has_return": false,
+        "lineno": 5,
+        "name": "helper2"
+      },
+      {
+        "args": [],
+        "decorators": [],
+        "has_return": false,
+        "lineno": 7,
+        "name": "helper3"
+      }
+    ],
+    "imports": [],
+    "stats": {
+      "blank_lines": 1,
+      "code_lines": 8,
+      "comment_lines": 0,
+      "total_lines": 9
+    },
+    "success": true,
+    "warnings": []
+  }
+}

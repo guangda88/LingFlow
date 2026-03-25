@@ -2,10 +2,11 @@
 
 import asyncio
 import logging
-from typing import Dict, List, Optional
-from lingflow.coordination.coordinator import AgentCoordinator
-from lingflow.common.models import Task, TaskResult, TaskPriority
+from typing import Dict, List
+
 from lingflow.common.config import get_config
+from lingflow.common.models import Task, TaskResult
+from lingflow.coordination.coordinator import AgentCoordinator
 
 # 常量定义（消除魔法值）
 MAX_SCHEDULING_ITERATIONS = 100  # 最大调度迭代次数
@@ -31,7 +32,9 @@ class WorkflowOrchestrator:
         """
         self.coordinator = coordinator
 
-    async def execute_workflow(self, tasks: List[Task], max_parallel: int = DEFAULT_MAX_PARALLEL) -> Dict[str, TaskResult]:
+    async def execute_workflow(
+        self, tasks: List[Task], max_parallel: int = DEFAULT_MAX_PARALLEL
+    ) -> Dict[str, TaskResult]:
         """Execute a workflow with task dependencies.
 
         Tasks are scheduled based on their dependencies. Independent tasks
@@ -52,14 +55,15 @@ class WorkflowOrchestrator:
             logger.warning("No tasks provided to execute_workflow")
             return {}
 
-        logger.info(f"Starting workflow execution with {len(tasks)} tasks, max_parallel={max_parallel}")
+        logger.info(
+            f"Starting workflow execution with {len(tasks)} tasks, max_parallel={max_parallel}"
+        )
         results = {}
-        task_event = asyncio.Event()
-        
+
         # 从配置获取最大并行数
         if max_parallel is None:
-            max_parallel = get_config('workflow.max_parallel', 2)
-        
+            max_parallel = get_config("workflow.max_parallel", 2)
+
         # 初始化任务状态
         for task in tasks:
             try:
@@ -67,14 +71,15 @@ class WorkflowOrchestrator:
             except Exception as e:
                 logger.error(f"Failed to submit task {task.task_id}: {e}")
                 results[task.task_id] = TaskResult(
-                    task_id=task.task_id,
-                    success=False,
-                    error=str(e)
+                    task_id=task.task_id, success=False, error=str(e)
                 )
 
         # 持续调度直到所有任务完成或失败
         iteration = 0
-        while len(self.coordinator.completed_tasks) + len(self.coordinator.failed_tasks) < len(tasks) and iteration < MAX_SCHEDULING_ITERATIONS:
+        while (
+            len(self.coordinator.completed_tasks) + len(self.coordinator.failed_tasks) < len(tasks)
+            and iteration < MAX_SCHEDULING_ITERATIONS
+        ):
             iteration += 1
             # 查找准备执行的任务
             ready_tasks = self._get_ready_tasks(tasks)
@@ -87,7 +92,9 @@ class WorkflowOrchestrator:
 
             # 并行执行准备好的任务
             try:
-                batch_results = await self.coordinator.execute_tasks_parallel(ready_tasks, max_parallel)
+                batch_results = await self.coordinator.execute_tasks_parallel(
+                    ready_tasks, max_parallel
+                )
                 results.update(batch_results)
             except Exception as e:
                 logger.error(f"Failed to execute batch of tasks: {e}")
@@ -125,13 +132,15 @@ class WorkflowOrchestrator:
 
         for task in all_tasks:
             # 跳过已完成或已失败的任务
-            if task.task_id in self.coordinator.completed_tasks or task.task_id in self.coordinator.failed_tasks:
+            if (
+                task.task_id in self.coordinator.completed_tasks
+                or task.task_id in self.coordinator.failed_tasks
+            ):
                 continue
 
             # 检查依赖是否满足
             dependencies_met = all(
-                dep_id in self.coordinator.completed_tasks
-                for dep_id in task.dependencies
+                dep_id in self.coordinator.completed_tasks for dep_id in task.dependencies
             )
 
             if dependencies_met:
@@ -142,7 +151,12 @@ class WorkflowOrchestrator:
 
         return ready_tasks
 
-    def execute(self, tasks: List[Task], max_parallel: int = DEFAULT_MAX_PARALLEL, async_execution: bool = False) -> Dict[str, TaskResult]:
+    def execute(
+        self,
+        tasks: List[Task],
+        max_parallel: int = DEFAULT_MAX_PARALLEL,
+        async_execution: bool = False,
+    ) -> Dict[str, TaskResult]:
         """
         执行工作流（同步接口，内部使用异步执行）
 

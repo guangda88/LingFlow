@@ -2,8 +2,9 @@
 
 import asyncio
 import time
-from typing import Dict, Any
-from lingflow.common.models import AgentStatus, AgentConfig, Task, TaskResult
+from typing import Any, Dict
+
+from lingflow.common.models import AgentConfig, AgentStatus, Task, TaskResult
 from lingflow.coordination.base import BaseAgent
 
 
@@ -34,10 +35,6 @@ class Agent(BaseAgent):
             # 模拟任务执行
             await asyncio.sleep(0.05)  # 模拟工作
 
-            # 测试用：某些任务失败
-            if task.task_id == "task_2":
-                raise ValueError("division by zero")
-
             execution_time = time.time() - start_time
             self.tasks_completed += 1
             self.status = AgentStatus.IDLE
@@ -47,7 +44,7 @@ class Agent(BaseAgent):
                 success=True,
                 output=f"Task {task.task_id} completed successfully",
                 execution_time=execution_time,
-                agent_used=self.config.name
+                agent_used=self.config.name,
             )
 
         except Exception as e:
@@ -60,16 +57,16 @@ class Agent(BaseAgent):
                 success=False,
                 error=str(e),
                 execution_time=execution_time,
-                agent_used=self.config.name
+                agent_used=self.config.name,
             )
 
     def get_info(self) -> Dict[str, Any]:
         """获取代理信息"""
         return {
-            'name': self.config.name,
-            'description': self.config.description,
-            'capabilities': self.config.capabilities,
-            'status': self.status.value,
-            'tasks_completed': self.tasks_completed,
-            'tasks_failed': self.tasks_failed
+            "name": self.config.name,
+            "description": self.config.description,
+            "capabilities": self.config.capabilities,
+            "status": self.status.value,
+            "tasks_completed": self.tasks_completed,
+            "tasks_failed": self.tasks_failed,
         }

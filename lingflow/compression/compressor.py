@@ -1,6 +1,6 @@
 """LingFlow 上下文压缩器"""
 
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 class ContextCompressor:
@@ -42,7 +42,7 @@ class ContextCompressor:
 
         # 简化策略：保留关键字段，截断长文本
         compressed = {}
-        priority_keys = ['requirements', 'specification', 'description']
+        priority_keys = ["requirements", "specification", "description"]
 
         # 优先保留高优先级字段
         for key in priority_keys:
@@ -78,7 +78,4 @@ class ContextCompressor:
             - total_compressions: Total number of compressions performed
             - tokens_saved: Total number of tokens saved
         """
-        return {
-            'total_compressions': self.compressions_count,
-            'tokens_saved': self.tokens_saved
-        }
+        return {"total_compressions": self.compressions_count, "tokens_saved": self.tokens_saved}

@@ -1,0 +1,12 @@
+{
+  "metadata": {
+    "test_name": "metadata_test",
+    "created_at": "2024-01-01T00:00:00",
+    "updated_at": null,
+    "version": "1.0.0",
+    "description": "测试元数据保留"
+  },
+  "data": {
+    "value": 42
+  }
+}

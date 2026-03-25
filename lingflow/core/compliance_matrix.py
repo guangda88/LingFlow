@@ -9,20 +9,21 @@ Based on Constitutional Spec-Driven Development research:
 - Continuous compliance tracking
 """
 
-import json
 import hashlib
+import json
 import logging
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
-from pathlib import Path
 from enum import Enum
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
 
 class VerificationStatus(Enum):
     """Verification status for implementation"""
+
     UNVERIFIED = "unverified"
     PENDING = "pending"
     VERIFIED = "verified"
@@ -32,6 +33,7 @@ class VerificationStatus(Enum):
 @dataclass
 class Implementation:
     """An implementation of a security principle"""
+
     file: str
     lines: List[int]
     technique: str
@@ -53,6 +55,7 @@ class Implementation:
 @dataclass
 class ComplianceEntry:
     """A single entry in the compliance matrix"""
+
     principle_id: str
     cwe: str
     principle_name: str
@@ -83,7 +86,7 @@ class ComplianceEntry:
             "total_implementations": len(self.implementations),
             "verified_implementations": sum(1 for imp in self.implementations if imp.is_verified()),
             "coverage": f"{self.coverage:.2%}",
-            "last_verified": self.last_verified
+            "last_verified": self.last_verified,
         }
 
 
@@ -110,24 +113,24 @@ class ComplianceMatrix:
         """Load compliance matrix from file"""
         if Path(self.path).exists():
             try:
-                with open(self.path, 'r', encoding='utf-8') as f:
+                with open(self.path, "r", encoding="utf-8") as f:
                     data = json.load(f)
 
                 self.entries = {}
-                for entry_data in data.get('entries', []):
+                for entry_data in data.get("entries", []):
                     implementations = [
                         Implementation(**imp_data)
-                        for imp_data in entry_data.get('implementations', [])
+                        for imp_data in entry_data.get("implementations", [])
                     ]
 
                     entry = ComplianceEntry(
-                        principle_id=entry_data['principle_id'],
-                        cwe=entry_data['cwe'],
-                        principle_name=entry_data['principle_name'],
-                        level=entry_data['level'],
+                        principle_id=entry_data["principle_id"],
+                        cwe=entry_data["cwe"],
+                        principle_name=entry_data["principle_name"],
+                        level=entry_data["level"],
                         implementations=implementations,
-                        last_verified=entry_data.get('last_verified'),
-                        coverage=entry_data.get('coverage', 0.0)
+                        last_verified=entry_data.get("last_verified"),
+                        coverage=entry_data.get("coverage", 0.0),
                     )
                     self.entries[entry.principle_id] = entry
             except Exception as e:
@@ -141,38 +144,37 @@ class ComplianceMatrix:
         data = {
             "version": "1.0.0",
             "generated_at": datetime.utcnow().isoformat(),
-            "entries": [self._entry_to_dict(entry) for entry in self.entries.values()]
+            "entries": [self._entry_to_dict(entry) for entry in self.entries.values()],
         }
 
-        with open(self.path, 'w', encoding='utf-8') as f:
+        with open(self.path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
     def _entry_to_dict(self, entry: ComplianceEntry) -> Dict[str, Any]:
         """Convert compliance entry to dictionary"""
+        def implementation_to_dict(imp: Implementation) -> Dict[str, Any]:
+            """Convert implementation to dictionary with enum serialization"""
+            imp_dict = asdict(imp)
+            imp_dict["status"] = imp.status.value if isinstance(imp.status, VerificationStatus) else imp.status
+            return imp_dict
+
         return {
             "principle_id": entry.principle_id,
             "cwe": entry.cwe,
             "principle_name": entry.principle_name,
             "level": entry.level,
-            "implementations": [asdict(imp) for imp in entry.implementations],
+            "implementations": [implementation_to_dict(imp) for imp in entry.implementations],
             "last_verified": entry.last_verified,
-            "coverage": entry.coverage
+            "coverage": entry.coverage,
         }
 
     def get_or_create_entry(
-        self,
-        principle_id: str,
-        cwe: str,
-        principle_name: str,
-        level: str
+        self, principle_id: str, cwe: str, principle_name: str, level: str
     ) -> ComplianceEntry:
         """Get existing entry or create new one"""
         if principle_id not in self.entries:
             self.entries[principle_id] = ComplianceEntry(
-                principle_id=principle_id,
-                cwe=cwe,
-                principle_name=principle_name,
-                level=level
+                principle_id=principle_id, cwe=cwe, principle_name=principle_name, level=level
             )
         return self.entries[principle_id]
 
@@ -185,7 +187,7 @@ class ComplianceMatrix:
         file_path: str,
         lines: List[int],
         technique: str,
-        content: Optional[str] = None
+        content: Optional[str] = None,
     ) -> Implementation:
         """
         Add an implementation to the compliance matrix
@@ -206,10 +208,7 @@ class ComplianceMatrix:
         entry = self.get_or_create_entry(principle_id, cwe, principle_name, level)
 
         implementation = Implementation(
-            file=file_path,
-            lines=lines,
-            technique=technique,
-            status=VerificationStatus.PENDING
+            file=file_path, lines=lines, technique=technique, status=VerificationStatus.PENDING
         )
 
         if content:
@@ -226,7 +225,7 @@ class ComplianceMatrix:
         file_path: str,
         lines: List[int],
         verified_by: str,
-        notes: Optional[str] = None
+        notes: Optional[str] = None,
     ) -> bool:
         """
         Mark an implementation as verified
@@ -286,39 +285,38 @@ class ComplianceMatrix:
             return {
                 "total_principles": 0,
                 "principles_with_implementations": 0,
-                "average_coverage": 0.0,
-                "verified_principles": 0
+                "average_coverage": "0.00%",
+                "verified_principles": 0,
+                "verification_rate": "0%",
             }
 
         total_principles = len(self.entries)
         principles_with_implementations = sum(
-            1 for entry in self.entries.values()
-            if entry.implementations
+            1 for entry in self.entries.values() if entry.implementations
         )
 
-        average_coverage = sum(
-            entry.coverage for entry in self.entries.values()
-        ) / total_principles if total_principles > 0 else 0
-
-        verified_principles = sum(
-            1 for entry in self.entries.values()
-            if entry.coverage >= 1.0
+        average_coverage = (
+            sum(entry.coverage for entry in self.entries.values()) / total_principles
+            if total_principles > 0
+            else 0.0
         )
+
+        verified_principles = sum(1 for entry in self.entries.values() if entry.coverage >= 1.0)
 
         return {
             "total_principles": total_principles,
             "principles_with_implementations": principles_with_implementations,
             "average_coverage": f"{average_coverage:.2%}",
             "verified_principles": verified_principles,
-            "verification_rate": f"{verified_principles / total_principles:.2%}" if total_principles > 0 else "0%"
+            "verification_rate": (
+                f"{verified_principles / total_principles:.2%}" if total_principles > 0 else "0%"
+            ),
         }
 
     def get_unverified_principles(self) -> List[str]:
         """Get list of principles with unverified implementations"""
         return [
-            principle_id
-            for principle_id, entry in self.entries.items()
-            if entry.coverage < 1.0
+            principle_id for principle_id, entry in self.entries.items() if entry.coverage < 1.0
         ]
 
     def get_violated_principles(self) -> List[str]:
@@ -332,25 +330,24 @@ class ComplianceMatrix:
     def _add_overall_status(self, lines: list):
         """Add overall compliance status to report"""
         overall = self.get_overall_compliance()
-        lines.extend([
-            "## Overall Status",
-            "",
-            f"- **Total Principles**: {overall['total_principles']}",
-            f"- **Principles with Implementations**: {overall['principles_with_implementations']}",
-            f"- **Verified Principles**: {overall['verified_principles']}",
-            f"- **Average Coverage**: {overall['average_coverage']}",
-            f"- **Verification Rate**: {overall['verification_rate']}",
-            "",
-        ])
+        lines.extend(
+            [
+                "## Overall Status",
+                "",
+                f"- **Total Principles**: {overall['total_principles']}",
+                f"- **Principles with Implementations**: {overall['principles_with_implementations']}",
+                f"- **Verified Principles**: {overall['verified_principles']}",
+                f"- **Average Coverage**: {overall['average_coverage']}",
+                f"- **Verification Rate**: {overall['verification_rate']}",
+                "",
+            ]
+        )
 
     def _add_violated_principles(self, lines: list):
         """Add violated principles section to report"""
         violated = self.get_violated_principles()
         if violated:
-            lines.extend([
-                "## ⚠️ Violated Principles (No Implementations)",
-                ""
-            ])
+            lines.extend(["## ⚠️ Violated Principles (No Implementations)", ""])
             for principle_id in violated:
                 entry = self.entries[principle_id]
                 lines.append(f"- **{principle_id}**: {entry.principle_name} ({entry.level})")
@@ -360,47 +357,42 @@ class ComplianceMatrix:
         """Add unverified principles section to report"""
         unverified = self.get_unverified_principles()
         if unverified:
-            lines.extend([
-                "## 🔍 Unverified Principles",
-                ""
-            ])
+            lines.extend(["## 🔍 Unverified Principles", ""])
             for principle_id in unverified:
                 entry = self.entries[principle_id]
-                lines.extend([
-                    f"### {principle_id}: {entry.principle_name}",
-                    f"- **Level**: {entry.level}",
-                    f"- **Coverage**: {entry.coverage:.2%}",
-                    f"- **Last Verified**: {entry.last_verified or 'Never'}",
-                    ""
-                ])
+                lines.extend(
+                    [
+                        f"### {principle_id}: {entry.principle_name}",
+                        f"- **Level**: {entry.level}",
+                        f"- **Coverage**: {entry.coverage:.2%}",
+                        f"- **Last Verified**: {entry.last_verified or 'Never'}",
+                        "",
+                    ]
+                )
             lines.append("")
 
     def _add_entry_details(self, lines: list):
         """Add detailed entry information to report"""
         for principle_id, entry in sorted(self.entries.items()):
-            lines.extend([
-                f"### {principle_id}: {entry.principle_name}",
-                f"- **CWE**: {entry.cwe}",
-                f"- **Level**: {entry.level}",
-                f"- **Coverage**: {entry.coverage:.2%}",
-                f"- **Last Verified**: {entry.last_verified or 'Never'}",
-                ""
-            ])
+            lines.extend(
+                [
+                    f"### {principle_id}: {entry.principle_name}",
+                    f"- **CWE**: {entry.cwe}",
+                    f"- **Level**: {entry.level}",
+                    f"- **Coverage**: {entry.coverage:.2%}",
+                    f"- **Last Verified**: {entry.last_verified or 'Never'}",
+                    "",
+                ]
+            )
 
             if entry.implementations:
                 self._add_implementations(lines, entry.implementations)
             else:
-                lines.extend([
-                    "❌ No implementations",
-                    ""
-                ])
+                lines.extend(["❌ No implementations", ""])
 
     def _add_implementations(self, lines: list, implementations):
         """Add implementation details to report"""
-        lines.extend([
-            "**Implementations**:",
-            ""
-        ])
+        lines.extend(["**Implementations**:", ""])
         for imp in implementations:
             status_icon = "✅" if imp.is_verified() else "⏳"
             lines.append(
@@ -431,10 +423,7 @@ class ComplianceMatrix:
         self._add_violated_principles(lines)
         self._add_unverified_principles(lines)
 
-        lines.extend([
-            "## Detailed Compliance Matrix",
-            ""
-        ])
+        lines.extend(["## Detailed Compliance Matrix", ""])
 
         self._add_entry_details(lines)
 
@@ -442,51 +431,57 @@ class ComplianceMatrix:
 
     def _write_csv_header(self, writer):
         """Write CSV header row"""
-        writer.writerow([
-            'Principle ID',
-            'CWE',
-            'Principle Name',
-            'Level',
-            'File',
-            'Lines',
-            'Technique',
-            'Status',
-            'Verified At',
-            'Verified By',
-            'Notes'
-        ])
+        writer.writerow(
+            [
+                "Principle ID",
+                "CWE",
+                "Principle Name",
+                "Level",
+                "File",
+                "Lines",
+                "Technique",
+                "Status",
+                "Verified At",
+                "Verified By",
+                "Notes",
+            ]
+        )
 
     def _write_no_implementation_row(self, writer, principle_id, entry):
         """Write CSV row for principle with no implementation"""
-        writer.writerow([
-            principle_id,
-            entry.cwe,
-            entry.principle_name,
-            entry.level,
-            '',
-            '',
-            '',
-            'No Implementation',
-            '',
-            '',
-            ''
-        ])
+        writer.writerow(
+            [
+                principle_id,
+                entry.cwe,
+                entry.principle_name,
+                entry.level,
+                "",
+                "",
+                "",
+                "No Implementation",
+                "",
+                "",
+                "",
+            ]
+        )
 
     def _write_implementation_row(self, writer, principle_id, entry, imp):
         """Write CSV row for an implementation"""
-        writer.writerow([
-            principle_id,
-            entry.cwe,
-            entry.principle_name,
-            entry.level,
-            imp.file,
-            ','.join(map(str, imp.lines)),
-            imp.technique,
-            imp.status.value,
-            imp.verified_at or '',
-            imp.verified_by or '',
-            imp.notes or ''
-        ])
+        writer.writerow(
+            [
+                principle_id,
+                entry.cwe,
+                entry.principle_name,
+                entry.level,
+                imp.file,
+                ",".join(map(str, imp.lines)),
+                imp.technique,
+                imp.status.value,
+                imp.verified_at or "",
+                imp.verified_by or "",
+                imp.notes or "",
+            ]
+        )
 
     def export_to_csv(self, output_path: str):
         """
@@ -497,7 +492,7 @@ class ComplianceMatrix:
         """
         import csv
 
-        with open(output_path, 'w', newline='', encoding='utf-8') as f:
+        with open(output_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
 
             self._write_csv_header(writer)
@@ -509,12 +504,7 @@ class ComplianceMatrix:
                     for imp in entry.implementations:
                         self._write_implementation_row(writer, principle_id, entry, imp)
 
-    def track_code_changes(
-        self,
-        old_content: str,
-        new_content: str,
-        file_path: str
-    ) -> List[str]:
+    def track_code_changes(self, old_content: str, new_content: str, file_path: str) -> List[str]:
         """
         Track code changes and identify which principles are affected
 
@@ -562,13 +552,17 @@ class ComplianceMatrix:
         for principle_id, entry in self.entries.items():
             for imp in entry.implementations:
                 if imp.file == file_path:
-                    principles.append({
-                        "principle_id": principle_id,
-                        "principle_name": entry.principle_name,
-                        "level": entry.level,
-                        "lines": imp.lines,
-                        "technique": imp.technique,
-                        "status": imp.status.value
-                    })
+                    # Handle both enum and string status
+                    status_value = imp.status.value if isinstance(imp.status, VerificationStatus) else imp.status
+                    principles.append(
+                        {
+                            "principle_id": principle_id,
+                            "principle_name": entry.principle_name,
+                            "level": entry.level,
+                            "lines": imp.lines,
+                            "technique": imp.technique,
+                            "status": status_value,
+                        }
+                    )
 
         return principles
