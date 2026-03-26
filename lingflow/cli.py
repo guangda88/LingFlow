@@ -6,6 +6,7 @@ Uses Click for CLI argument parsing and command organization.
 """
 import json
 import sys
+from typing import Optional
 
 import click
 
@@ -20,7 +21,8 @@ lf = LingFlow()
 
 
 @click.group()
-def cli():
+def cli() -> None:
+    """LingFlow CLI 主入口"""
     pass
 
 

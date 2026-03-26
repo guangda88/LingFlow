@@ -73,7 +73,7 @@ class FeedbackCollector:
         storage_dir: Optional[str] = None,
         auto_report: bool = False,
         report_url: Optional[str] = None,
-    ):
+    ) -> None:
         """初始化反馈收集器
 
         Args:
@@ -89,7 +89,7 @@ class FeedbackCollector:
         self._feedbacks: List[Feedback] = []
         self._load_feedbacks()
 
-    def _load_feedbacks(self):
+    def _load_feedbacks(self) -> None:
         """从存储加载反馈"""
         feedback_file = self.storage_dir / "feedbacks.json"
         if feedback_file.exists():
@@ -121,7 +121,7 @@ class FeedbackCollector:
             resolved_at=data.get("resolved_at"),
         )
 
-    def _save_feedbacks(self):
+    def _save_feedbacks(self) -> None:
         """保存反馈到存储"""
         feedback_file = self.storage_dir / "feedbacks.json"
         data = {

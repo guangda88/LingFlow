@@ -16,7 +16,7 @@ class LingFlowError(Exception):
         message: str,
         code: str = DEFAULT_CODE,
         details: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> None:
         """初始化异常。
 
         Args:
