@@ -38,9 +38,36 @@ class PerformanceMetric:
 class PerformanceMonitor:
     """Performance monitoring system"""
 
-    def __init__(self):
+    # 最大保留的指标数量（防止内存泄漏）
+    MAX_METRICS_PER_KEY = 1000
+    # 最大总指标数量
+    MAX_TOTAL_METRICS = 10000
+
+    def __init__(self, max_metrics_per_key: int = MAX_METRICS_PER_KEY):
         self.metrics: Dict[str, List[PerformanceMetric]] = defaultdict(list)
         self._enabled = True
+        self._max_metrics_per_key = max_metrics_per_key
+        self._total_metrics_count = 0
+
+    def _trim_metrics(self, key: str) -> None:
+        """修剪指定键的指标，防止内存泄漏"""
+        if len(self.metrics[key]) > self._max_metrics_per_key:
+            # 保留最新的指标
+            removed = len(self.metrics[key]) - self._max_metrics_per_key
+            self.metrics[key] = self.metrics[key][-self._max_metrics_per_key:]
+            self._total_metrics_count -= removed
+            logger.debug(f"Trimmed {removed} metrics for {key}")
+
+    def _check_total_limit(self) -> None:
+        """检查总指标数量限制"""
+        while self._total_metrics_count > self.MAX_TOTAL_METRICS:
+            # 删除最旧的指标
+            for key in list(self.metrics.keys()):
+                if self.metrics[key]:
+                    self.metrics[key].pop(0)
+                    self._total_metrics_count -= 1
+                    if self._total_metrics_count <= self.MAX_TOTAL_METRICS:
+                        break
 
     def track(self, metric_name: str = None):
         """
@@ -92,6 +119,11 @@ class PerformanceMonitor:
                 )
 
                 self.metrics[name].append(metric)
+                self._total_metrics_count += 1
+
+                # 修剪旧指标
+                self._trim_metrics(name)
+                self._check_total_limit()
 
                 # Log slow operations (>1 second)
                 if execution_time > 1.0:

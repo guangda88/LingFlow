@@ -1,0 +1,521 @@
+{
+  "$schema": "./skill-schema-v2.json",
+  "version": "2.0",
+  "description": "LingFlow Skill Configuration v2.0 - Workflow-focused skills with agent mapping",
+  "skills": [
+    {
+      "name": "brainstorming",
+      "description": "在任何创造性工作前必须使用 - 创建功能、构建组件、添加功能或修改行为",
+      "version": "2.0",
+      "category": "development-workflow",
+      "triggers": ["feature", "build", "create", "implement", "add functionality", "modify behavior"],
+      "phase": "requirements",
+      "requires_capability": null,
+      "preferred_agent": null,
+      "depends_on": [],
+      "config": {
+        "exploration_depth": "standard"
+      }
+    },
+    {
+      "name": "writing-plans",
+      "description": "当你有规格或需求需要多步骤任务时，在接触代码之前使用",
+      "version": "2.0",
+      "category": "development-workflow",
+      "triggers": ["plan", "implementation plan", "break down", "spec"],
+      "phase": "design",
+      "requires_capability": "system_design",
+      "preferred_agent": "architect",
+      "depends_on": ["brainstorming"],
+      "config": {
+        "granularity": "task-level"
+      }
+    },
+    {
+      "name": "test-driven-development",
+      "description": "强制 RED-GREEN-REFACTOR：写失败的测试，看着它失败，写最少代码，看着它通过，提交",
+      "version": "2.0",
+      "category": "development-workflow",
+      "triggers": ["test", "write test", "implement", "code"],
+      "phase": "testing",
+      "requires_capability": ["test_generation", "test_execution"],
+      "preferred_agent": "tester",
+      "fallback_agents": ["implementation"],
+      "depends_on": ["writing-plans"],
+      "config": {
+        "cycle": "red-green-refactor",
+        "enforce_order": true
+      }
+    },
+    {
+      "name": "systematic-debugging",
+      "description": "4 阶段根本原因过程（观察、隔离、假设、验证）",
+      "version": "2.0",
+      "category": "development-workflow",
+      "triggers": ["debug", "fix", "error", "issue", "broken", "not working"],
+      "phase": "debugging",
+      "requires_capability": ["error_analysis", "log_analysis"],
+      "preferred_agent": "debugger",
+      "depends_on": [],
+      "config": {
+        "phases": ["observe", "isolate", "hypothesize", "verify"],
+        "require_verification": true
+      }
+    },
+    {
+      "name": "subagent-driven-development",
+      "description": "快速迭代配合两阶段审查（规范符合性，然后代码质量）",
+      "version": "2.0",
+      "category": "development-workflow",
+      "triggers": ["execute plan", "implement plan", "start coding"],
+      "phase": "implementation",
+      "requires_capability": "code_generation",
+      "preferred_agent": "implementation",
+      "depends_on": ["writing-plans"],
+      "config": {
+        "review_stages": ["spec_compliance", "code_quality"],
+        "iteration_mode": "rapid"
+      }
+    },
+    {
+      "name": "verification-before-completion",
+      "description": "确保问题真正修复，不要假设",
+      "version": "2.0",
+      "category": "development-workflow",
+      "triggers": ["verify", "check", "confirm fix"],
+      "phase": "testing",
+      "requires_capability": "test_execution",
+      "preferred_agent": "tester",
+      "depends_on": [],
+      "config": {
+        "require_actual_test": true
+      }
+    },
+    {
+      "name": "test-runner",
+      "description": "运行测试套件",
+      "version": "2.0",
+      "category": "development-workflow",
+      "triggers": ["test", "pytest", "测试", "run tests"],
+      "phase": "testing",
+      "requires_capability": "test_execution",
+      "preferred_agent": "tester",
+      "depends_on": [],
+      "config": {
+        "parallel": true,
+        "coverage": true
+      }
+    },
+    {
+      "name": "using-git-worktrees",
+      "description": "为功能开发创建隔离的工作空间，实现安全的并行开发",
+      "version": "2.0",
+      "category": "version-control",
+      "triggers": ["new branch", "start work", "begin development"],
+      "phase": "setup",
+      "requires_capability": null,
+      "preferred_agent": null,
+      "depends_on": ["brainstorming"],
+      "config": {
+        "isolation": "worktree",
+        "cleanup_on_merge": true
+      }
+    },
+    {
+      "name": "finishing-a-development-branch",
+      "description": "验证测试，展示选项（合并/PR/保留/丢弃），清理工作树",
+      "version": "2.0",
+      "category": "version-control",
+      "triggers": ["done", "complete", "finish", "ready to merge"],
+      "phase": "completion",
+      "requires_capability": null,
+      "preferred_agent": null,
+      "depends_on": [],
+      "config": {
+        "cleanup_options": ["merge", "pr", "keep", "discard"]
+      }
+    },
+    {
+      "name": "code-review",
+      "description": "执行代码审查 - 支持 8 维度分析",
+      "version": "2.0",
+      "category": "code-quality",
+      "triggers": ["code review", "review code", "code quality", "code analysis", "code inspection"],
+      "phase": "review",
+      "requires_capability": "code_review",
+      "preferred_agent": "reviewer",
+      "depends_on": [],
+      "config": {
+        "depth": "standard",
+        "severity_threshold": "medium",
+        "dimensions": [
+          "code_quality",
+          "architecture",
+          "performance",
+          "security",
+          "maintainability",
+          "best_practices",
+          "consistency",
+          "bug_analysis"
+        ]
+      },
+      "replaces": ["requesting-code-review", "code-analysis"]
+    },
+    {
+      "name": "code-refactor",
+      "description": "执行代码重构 - 改善代码结构和可维护性",
+      "version": "2.0",
+      "category": "code-quality",
+      "triggers": ["refactor", "重构", "优化代码", "improve code"],
+      "phase": "implementation",
+      "requires_capability": "code_refactoring",
+      "preferred_agent": "implementation",
+      "depends_on": ["code-review"],
+      "config": {
+        "preserve_behavior": true,
+        "apply_best_practices": true
+      },
+      "replaces": ["code-optimizer"]
+    },
+    {
+      "name": "code-review-js",
+      "description": "JavaScript/TypeScript 专项代码审查",
+      "version": "2.0",
+      "category": "code-quality",
+      "triggers": ["javascript review", "js review", "typescript review", "ts review"],
+      "phase": "review",
+      "requires_capability": "code_review",
+      "preferred_agent": "reviewer",
+      "depends_on": [],
+      "config": {
+        "language": "javascript",
+        "frameworks": ["react", "vue", "angular", "node"],
+        "es_checks": true,
+        "typescript_checks": true
+      }
+    },
+    {
+      "name": "dispatching-parallel-agents",
+      "description": "并发子代理工作流 - 高级多代理协调，支持并行执行、依赖感知调度和上下文压缩",
+      "version": "2.0",
+      "category": "workflow-control",
+      "triggers": ["parallel", "concurrent", "simultaneous"],
+      "phase": "orchestration",
+      "requires_capability": null,
+      "preferred_agent": null,
+      "depends_on": [],
+      "config": {
+        "max_parallel": 3,
+        "dependency_aware": true,
+        "compression_enabled": true
+      }
+    },
+    {
+      "name": "workflow-executor",
+      "description": "执行YAML/JSON定义的工作流",
+      "version": "2.0",
+      "category": "workflow-control",
+      "triggers": ["run workflow", "execute workflow", "workflow run", "workflow execute"],
+      "phase": "orchestration",
+      "requires_capability": null,
+      "preferred_agent": null,
+      "depends_on": ["task-runner"],
+      "config": {
+        "formats": ["yaml", "json"],
+        "support_dry_run": true
+      }
+    },
+    {
+      "name": "task-runner",
+      "description": "执行单个任务（技能调用）",
+      "version": "2.0",
+      "category": "workflow-control",
+      "triggers": ["run task", "execute task", "run skill", "execute skill", "call skill"],
+      "phase": "orchestration",
+      "requires_capability": null,
+      "preferred_agent": null,
+      "depends_on": [],
+      "config": {
+        "timeout": 300,
+        "retry_on_failure": true
+      }
+    },
+    {
+      "name": "conditional-branch",
+      "description": "工作流中的条件判断",
+      "version": "2.0",
+      "category": "workflow-control",
+      "triggers": ["conditional branch", "if condition", "branch condition", "condition check"],
+      "phase": "orchestration",
+      "requires_capability": null,
+      "preferred_agent": null,
+      "depends_on": ["task-runner"],
+      "config": {
+        "operators": ["eq", "ne", "gt", "lt", "contains", "exists"]
+      }
+    },
+    {
+      "name": "loop-iterator",
+      "description": "工作流中的循环执行",
+      "version": "2.0",
+      "category": "workflow-control",
+      "triggers": ["loop", "iterate", "for each", "loop over", "repeat"],
+      "phase": "orchestration",
+      "requires_capability": null,
+      "preferred_agent": null,
+      "depends_on": ["task-runner"],
+      "config": {
+        "max_iterations": 100,
+        "break_on_error": false
+      }
+    },
+    {
+      "name": "error-handler",
+      "description": "任务失败时的重试和降级",
+      "version": "2.0",
+      "category": "workflow-control",
+      "triggers": ["error handling", "retry task", "fallback", "error recovery"],
+      "phase": "orchestration",
+      "requires_capability": null,
+      "preferred_agent": null,
+      "depends_on": ["task-runner"],
+      "config": {
+        "max_retries": 3,
+        "fallback_strategy": "skip"
+      }
+    },
+    {
+      "name": "notification",
+      "description": "发送通知 - 支持多种级别和渠道",
+      "version": "2.0",
+      "category": "integration",
+      "triggers": ["send notification", "notification", "send message", "alert", "notify"],
+      "phase": "any",
+      "requires_capability": null,
+      "preferred_agent": null,
+      "depends_on": [],
+      "config": {
+        "levels": ["info", "warning", "error", "critical"],
+        "channels": ["console", "log", "webhook"]
+      }
+    },
+    {
+      "name": "skill-creator",
+      "description": "统一技能管理工具 - 创建、集成、分类、模板、测试和版本管理技能",
+      "version": "3.0",
+      "category": "skill-management",
+      "triggers": ["create skill", "new skill", "modify skill", "skill configuration", "integrate skill", "skill template", "skill test", "skill version"],
+      "phase": "development",
+      "requires_capability": "doc_generation",
+      "preferred_agent": "documentation",
+      "depends_on": ["brainstorming", "writing-plans"],
+      "config": {
+        "template_based": true,
+        "generate_tests": true,
+        "auto_integration": true,
+        "auto_categorization": true,
+        "semantic_versioning": true,
+        "replaces": ["skill-integration", "skill-categorization", "skill-versioning", "skill-templates", "skill-testing"]
+      }
+    },
+    {
+      "name": "database-export",
+      "description": "数据库数据导出 - 支持多种格式",
+      "version": "2.0",
+      "category": "data",
+      "triggers": ["export database", "database export", "export data", "backup database"],
+      "phase": "any",
+      "requires_capability": null,
+      "preferred_agent": null,
+      "depends_on": [],
+      "config": {
+        "formats": ["csv", "json", "excel", "sql"],
+        "batch_size": 1000
+      }
+    },
+    {
+      "name": "database-schema-designer",
+      "description": "从业务需求设计数据库表结构 - 支持实体识别、关系分析、DDL生成和ER图",
+      "version": "1.0.0",
+      "category": "data",
+      "triggers": ["database design", "schema design", "table design", "设计数据库", "表结构设计", "ER图设计", "数据库架构"],
+      "phase": "design",
+      "requires_capability": "database_design",
+      "preferred_agent": "db-developer",
+      "depends_on": ["brainstorming", "writing-plans"],
+      "config": {
+        "supported_databases": ["mysql", "postgresql", "sqlite"],
+        "naming_conventions": ["snake_case", "camelCase", "PascalCase"],
+        "er_diagram_format": "mermaid"
+      }
+    },
+    {
+      "name": "api-doc-generator",
+      "description": "API 文档自动生成器 - 从代码生成 OpenAPI/Swagger 文档",
+      "version": "1.0.0",
+      "category": "design",
+      "triggers": ["api doc", "接口文档", "openapi", "swagger", "generate api documentation"],
+      "phase": "design",
+      "requires_capability": "api_design",
+      "preferred_agent": "documentation",
+      "depends_on": ["brainstorming", "writing-plans"],
+      "config": {
+        "supported_frameworks": ["fastapi", "flask", "django", "express"],
+        "output_formats": ["json", "yaml", "html", "markdown"],
+        "include_examples": true
+      }
+    },
+    {
+      "name": "ui-mockup-generator",
+      "description": "UI 原型设计生成器 - 从需求描述生成 HTML/CSS 原型",
+      "version": "1.0.0",
+      "category": "design",
+      "triggers": ["ui mockup", "ui prototype", "原型设计", "界面设计", "mockup generator"],
+      "phase": "design",
+      "requires_capability": "ui_design",
+      "preferred_agent": "frontend",
+      "depends_on": ["brainstorming", "writing-plans"],
+      "config": {
+        "page_types": ["dashboard", "form", "list", "detail"],
+        "styles": ["minimal", "modern", "corporate"],
+        "responsive": true
+      }
+    },
+    {
+      "name": "ci-cd-orchestrator",
+      "description": "CI/CD 流水线编排器 - 自动化生成 GitHub Actions、Jenkins Pipeline、GitLab CI 等配置",
+      "version": "1.0.0",
+      "category": "devops",
+      "triggers": ["ci cd", "pipeline", "workflow", "continuous integration", "continuous deployment", "github actions", "jenkins pipeline", "gitlab ci", "azure pipelines", "circleci", "generate pipeline", "setup ci cd"],
+      "phase": "setup",
+      "requires_capability": "devops_configuration",
+      "preferred_agent": "cicd-developer",
+      "depends_on": [],
+      "config": {
+        "supported_platforms": ["github", "jenkins", "gitlab", "azure", "circleci"],
+        "supported_languages": ["python", "javascript", "go", "rust", "java"],
+        "deploy_targets": ["docker", "kubernetes", "serverless", "static"],
+        "stages": ["test", "build", "deploy"]
+      }
+    },
+    {
+      "name": "deployment-automation",
+      "description": "自动化部署 - Docker 镜像构建、K8s 部署、蓝绿发布",
+      "version": "1.0.0",
+      "category": "devops",
+      "triggers": ["deploy", "部署", "发布", "auto deploy", "kubernetes deploy"],
+      "phase": "deployment",
+      "requires_capability": "deployment",
+      "preferred_agent": "devops",
+      "depends_on": ["ci-cd-orchestrator"],
+      "config": {
+        "deploy_targets": ["docker", "kubernetes", "serverless", "vm"],
+        "strategies": ["rolling", "blue_green", "canary"],
+        "include_rollback": true
+      }
+    },
+    {
+      "name": "environment-manager",
+      "description": "环境配置管理 - 多环境配置、差异检测、密钥管理",
+      "version": "1.0.0",
+      "category": "devops",
+      "triggers": ["environment", "环境配置", "env config", "环境管理"],
+      "phase": "setup",
+      "requires_capability": "configuration_management",
+      "preferred_agent": "devops",
+      "depends_on": [],
+      "config": {
+        "env_types": ["dev", "staging", "prod"],
+        "config_formats": [".env", "yaml", "json"],
+        "include_validation": true
+      }
+    },
+    {
+      "name": "skill-analytics",
+      "description": "技能使用分析 - 统计和分析技能使用情况",
+      "version": "2.0",
+      "category": "skill-management",
+      "triggers": ["analytics", "statistic", "统计", "skill usage", "skill analysis"],
+      "phase": "monitoring",
+      "requires_capability": "analytics",
+      "preferred_agent": null,
+      "depends_on": [],
+      "config": {
+        "track_usage": true,
+        "generate_reports": true
+      }
+    }
+  ],
+  "settings": {
+    "auto_trigger": true,
+    "strict_mode": true,
+    "require_approval": {
+      "brainstorming": false,
+      "writing-plans": true,
+      "test-driven-development": false,
+      "subagent-driven-development": true
+    },
+    "documentation_paths": {
+      "specs": "docs/superpowers/specs",
+      "plans": "docs/superpowers/plans"
+    },
+    "agent_mapping": {
+      "strategy": "capability_match",
+      "fallback_enabled": true,
+      "load_balancing": true
+    }
+  },
+  "deprecated": {
+    "skills": [
+      {
+        "name": "requesting-code-review",
+        "replaced_by": "code-review",
+        "since": "v2.0",
+        "removed_in": "v3.5.0",
+        "status": "deleted"
+      },
+      {
+        "name": "receiving-code-review",
+        "replaced_by": "code-review",
+        "since": "v2.0",
+        "removed_in": "v3.5.0",
+        "status": "deleted"
+      },
+      {
+        "name": "executing-plans",
+        "replaced_by": "subagent-driven-development",
+        "since": "v2.0",
+        "removed_in": "v3.5.0",
+        "status": "deleted"
+      },
+      {
+        "name": "code-analysis",
+        "replaced_by": "code-review",
+        "since": "v2.0",
+        "removed_in": "v3.5.0",
+        "status": "deleted",
+        "note": "功能合并到 code-review"
+      },
+      {
+        "name": "code-optimizer",
+        "replaced_by": "code-review, code-refactor",
+        "since": "v2.0",
+        "removed_in": "v3.5.0",
+        "status": "deleted",
+        "note": "功能分流到 code-review 和 code-refactor"
+      },
+      {
+        "name": "skill-automation",
+        "replaced_by": "skill-creator",
+        "since": "v2.0",
+        "removed_in": "v3.5.0",
+        "status": "deleted",
+        "note": "合并到 skill-creator"
+      }
+    ]
+  },
+  "layer_configuration": {
+    "file": "skills-layer-configuration.yaml",
+    "description": "三层架构配置文件"
+  }
+}

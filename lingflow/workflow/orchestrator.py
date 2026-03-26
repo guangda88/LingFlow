@@ -176,21 +176,11 @@ class WorkflowOrchestrator:
         if async_execution:
             # 直接返回coroutine，由调用者处理
             return self.execute_workflow(tasks, max_parallel)
-        else:
-            # 同步执行，等待完成
-            try:
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    # 如果已经在事件循环中，使用create_task
-                    # 注意：这种情况下需要由调用者处理异步逻辑
-                    logger.warning("Called from within event loop, returning coroutine")
-                    return self.execute_workflow(tasks, max_parallel)
-                else:
-                    # 创建新的事件循环执行
-                    return loop.run_until_complete(self.execute_workflow(tasks, max_parallel))
-            except RuntimeError:
-                # 没有事件循环，创建新的
-                return asyncio.run(self.execute_workflow(tasks, max_parallel))
-            except Exception as e:
-                logger.error(f"Workflow execution failed: {e}")
-                raise RuntimeError(f"Failed to execute workflow: {e}") from e
+
+        # 同步执行：创建新的事件循环执行
+        # 这样可以避免在已有事件循环中的冲突
+        try:
+            return asyncio.run(self.execute_workflow(tasks, max_parallel))
+        except Exception as e:
+            logger.error(f"Workflow execution failed: {e}")
+            raise RuntimeError(f"Failed to execute workflow: {e}") from e

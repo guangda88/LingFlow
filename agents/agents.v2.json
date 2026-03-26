@@ -1,0 +1,224 @@
+{
+  "$schema": "./agent-schema-v2.json",
+  "version": "2.0",
+  "description": "LingFlow Agent Configuration v2.0 - Capability-based agent definitions",
+  "agents": [
+    {
+      "name": "implementation",
+      "description": "代码实现执行者 - 负责代码生成、重构和基础测试",
+      "capabilities": {
+        "code_generation": {
+          "description": "生成符合规范的代码",
+          "context_limit": 8000,
+          "timeout": 300,
+          "languages": ["python", "javascript", "typescript", "java", "go", "rust"]
+        },
+        "refactoring": {
+          "description": "重构现有代码",
+          "context_limit": 10000,
+          "timeout": 240
+        },
+        "testing": {
+          "description": "编写基础测试",
+          "context_limit": 6000,
+          "timeout": 180
+        },
+        "documentation": {
+          "description": "生成代码文档",
+          "context_limit": 5000,
+          "timeout": 120
+        }
+      },
+      "constraints": {
+        "max_concurrent": 3,
+        "parallel_safe": true,
+        "requires_isolation": false
+      }
+    },
+    {
+      "name": "reviewer",
+      "description": "代码审查执行者 - 负责代码质量、安全性和设计审查",
+      "capabilities": {
+        "code_review": {
+          "description": "执行代码审查，发现问题和改进建议",
+          "context_limit": 12000,
+          "timeout": 180,
+          "languages": ["python", "javascript", "typescript", "java", "go", "rust", "cpp"],
+          "review_dimensions": [
+            "code_quality",
+            "architecture",
+            "performance",
+            "security",
+            "maintainability",
+            "best_practices",
+            "consistency",
+            "bug_analysis"
+          ]
+        },
+        "design_review": {
+          "description": "审查系统设计",
+          "context_limit": 8000,
+          "timeout": 300
+        },
+        "security_check": {
+          "description": "安全漏洞检测",
+          "context_limit": 10000,
+          "timeout": 240,
+          "severity_levels": ["critical", "high", "medium", "low"]
+        },
+        "quality_analysis": {
+          "description": "代码质量分析",
+          "context_limit": 8000,
+          "timeout": 180
+        }
+      },
+      "constraints": {
+        "max_concurrent": 2,
+        "parallel_safe": true,
+        "requires_isolation": false
+      }
+    },
+    {
+      "name": "tester",
+      "description": "测试执行者 - 负责测试生成、执行和覆盖率分析",
+      "capabilities": {
+        "test_generation": {
+          "description": "生成单元测试、集成测试",
+          "context_limit": 6000,
+          "timeout": 300,
+          "frameworks": ["pytest", "jest", "junit", "go-test"]
+        },
+        "test_execution": {
+          "description": "执行测试并收集结果",
+          "context_limit": 4000,
+          "timeout": 600
+        },
+        "coverage_analysis": {
+          "description": "分析测试覆盖率",
+          "context_limit": 5000,
+          "timeout": 180
+        },
+        "performance_testing": {
+          "description": "性能测试和基准分析",
+          "context_limit": 8000,
+          "timeout": 400
+        }
+      },
+      "constraints": {
+        "max_concurrent": 2,
+        "parallel_safe": true,
+        "requires_isolation": false
+      }
+    },
+    {
+      "name": "debugger",
+      "description": "调试执行者 - 负责错误分析和问题排查",
+      "capabilities": {
+        "error_analysis": {
+          "description": "分析错误信息和堆栈跟踪",
+          "context_limit": 10000,
+          "timeout": 300
+        },
+        "root_cause": {
+          "description": "定位根本原因",
+          "context_limit": 12000,
+          "timeout": 400
+        },
+        "fix_generation": {
+          "description": "生成修复方案",
+          "context_limit": 8000,
+          "timeout": 240
+        },
+        "log_analysis": {
+          "description": "分析日志文件",
+          "context_limit": 15000,
+          "timeout": 300
+        }
+      },
+      "constraints": {
+        "max_concurrent": 1,
+        "parallel_safe": false,
+        "requires_isolation": false
+      }
+    },
+    {
+      "name": "architect",
+      "description": "架构设计执行者 - 负责系统设计和架构规划",
+      "capabilities": {
+        "system_design": {
+          "description": "设计系统架构",
+          "context_limit": 15000,
+          "timeout": 600
+        },
+        "architecture_review": {
+          "description": "审查架构设计",
+          "context_limit": 12000,
+          "timeout": 400
+        },
+        "api_design": {
+          "description": "设计 API 接口",
+          "context_limit": 8000,
+          "timeout": 300
+        },
+        "schema_design": {
+          "description": "设计数据库结构",
+          "context_limit": 10000,
+          "timeout": 400
+        }
+      },
+      "constraints": {
+        "max_concurrent": 1,
+        "parallel_safe": true,
+        "requires_isolation": false
+      }
+    },
+    {
+      "name": "documentation",
+      "description": "文档执行者 - 负责生成和维护文档",
+      "capabilities": {
+        "doc_generation": {
+          "description": "生成技术文档",
+          "context_limit": 5000,
+          "timeout": 300
+        },
+        "api_doc_writing": {
+          "description": "编写 API 文档",
+          "context_limit": 6000,
+          "timeout": 240
+        },
+        "tutorial_creation": {
+          "description": "创建教程",
+          "context_limit": 8000,
+          "timeout": 400
+        },
+        "readme_generation": {
+          "description": "生成 README",
+          "context_limit": 4000,
+          "timeout": 180
+        }
+      },
+      "constraints": {
+        "max_concurrent": 2,
+        "parallel_safe": true,
+        "requires_isolation": false
+      }
+    }
+  ],
+  "settings": {
+    "default_max_parallel": 3,
+    "task_timeout": 300,
+    "retry_failed_tasks": true,
+    "max_retries": 2,
+    "compression_enabled": true,
+    "compression_target_tokens": 4000,
+    "context_preserve_sections": [
+      "requirements",
+      "constraints",
+      "critical_requirements"
+    ],
+    "capability_matching": {
+      "strategy": "exact_or_broader",
+      "fallback_enabled": true
+    }
+  }
+}
