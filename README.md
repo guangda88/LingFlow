@@ -1,17 +1,18 @@
 # LingFlow
 
-[![version](https://img.shields.io/badge/version-3.5.1-blue)](https://github.com/guangda88/LingFlow)
+[![version](https://img.shields.io/badge/version-3.5.2-blue)](https://github.com/guangda88/LingFlow)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![sdlc](https://img.shields.io/badge/SDLC%20Alignment-85%25-brightgreen)](https://github.com/guangda88/LingFlow)
 
-LingFlow 是一个强大的工作流执行系统，支持多智能体协调、分层技能架构和运维监控等功能。
+LingFlow 是一个强大的工作流执行系统，支持多智能体协调、分层技能架构、智能上下文压缩和运维监控等功能。
 
 ## 核心特性
 
 - **分层技能架构**：三层技能设计（L1 核心调度、L2 专业能力、L3 扩展能力）
 - **工作流编排**：支持基于 YAML/JSON 的工作流定义，包括任务依赖、条件分支和循环执行
 - **多智能体协调**：支持多个智能体的并行执行和协调
-- **上下文压缩**：智能压缩上下文，节省 Token 消耗
+- **智能上下文压缩**：精确 Token 计数、消息重要性评分、分层压缩策略，防止会话中断
+- **会话自动恢复**：支持跨会话上下文恢复，任务状态持久化
 - **运维监控**：内置健康检查、告警规则和性能监控
 - **代码审查**：8 维度代码审查框架（质量、架构、性能、安全、可维护性等）
 - **测试框架**：完整的单元测试、集成测试和 E2E 测试支持
@@ -90,6 +91,42 @@ lingflow run code-review --params '{"target": "./lingflow/"}'
 lingflow list-skills
 ```
 
+### 智能上下文压缩
+
+```bash
+# 查看上下文状态
+lingflow context status
+
+# 估算 Token 数量
+lingflow context estimate "Your text here"
+lingflow context estimate --file README.md
+
+# 立即压缩上下文
+lingflow context compress
+lingflow context compress --mode aggressive
+
+# 任务管理
+lingflow context add-task "实现新功能"
+lingflow context complete-task "完成功能"
+lingflow context recovery  # 查看恢复摘要
+```
+
+**Python API:**
+
+```python
+from lingflow.compression import get_smart_compressor, estimate_tokens
+
+# 获取压缩器
+compressor = get_smart_compressor()
+
+# 估算 Token
+messages = [{"role": "user", "content": "..."}]
+count = estimate_tokens(messages)
+
+# 检查并压缩
+did_compress, result = compressor.check_and_compress(messages)
+```
+
 ### 执行工作流
 
 ```bash
@@ -136,6 +173,29 @@ LingFlow/
 ```
 
 ## 版本历史
+
+### 3.5.2 (2026-03-27)
+
+**智能上下文压缩**
+- 新增 `SmartContextCompressor` 智能压缩器
+  - 精确 Token 计数（支持 tiktoken）
+  - 消息重要性评分系统（角色/内容/时间/长度）
+  - 分层压缩策略（保留/重要/压缩/摘要/删除）
+  - 对话摘要生成
+- 新增 `TokenEstimator` - 精确 Token 计数器
+- 新增 `MessageScorer` - 消息重要性评分器
+- 新增 `ConversationSummarizer` - 对话摘要生成器
+- CLI 新增 `context` 命令组（status/compress/estimate/add-task 等）
+
+**会话自动恢复**
+- 新增 `auto_resume` 模块，启动时自动显示上次会话
+- 新增 `ContextManager` 对话上下文管理器
+- 支持任务状态持久化和恢复
+- 修复 `session.py` 中 `'task'` 键不存在的问题
+
+**测试完善**
+- 新增 `test_smart_compression.py` 完整测试套件
+- 26 个测试用例全部通过
 
 ### 3.5.1 (2026-03-26)
 

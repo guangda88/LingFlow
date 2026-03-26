@@ -6,7 +6,11 @@ import types
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from lingflow.common.models import AgentConfig, Task, TaskResult
-from lingflow.compression.compressor import ContextCompressor
+from lingflow.compression.compressor import (
+    ContextCompressor,
+    AdvancedContextCompressor,
+    CompressionLevel,
+)
 from lingflow.coordination.base import BaseCoordinator
 from lingflow.coordination.registry import AgentRegistry
 from lingflow.common.sandbox import SkillSandbox, SandboxError, SandboxTimeoutError
@@ -24,7 +28,11 @@ class AgentCoordinator(BaseCoordinator):
         self.task_queue: List[Task] = []
         self.completed_tasks: Dict[str, TaskResult] = {}
         self.failed_tasks: Dict[str, TaskResult] = {}
-        self.compressor = ContextCompressor()
+        # 启用高级上下文压缩功能
+        self.compressor = ContextCompressor(
+            target_tokens=4000,
+            level=CompressionLevel.ADVANCED
+        )
         self.sandbox = SkillSandbox(timeout=30.0, memory_limit=100 * 1024 * 1024)  # 100MB
         self._register_default_agents()
 
