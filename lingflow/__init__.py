@@ -5,8 +5,24 @@ from typing import Any, Dict, Optional
 
 from .coordination.coordinator import AgentCoordinator
 from .workflow.orchestrator import WorkflowOrchestrator
+from .compression import enable_smart_compression
+from .context import get_context_manager, track_context, compress_context
 
-__version__ = "3.5.1"
+__version__ = "3.5.2"
+
+# 导入时自动启用智能上下文压缩，防止对话因 token 限制中断
+# 默认配置: 180k max tokens, 75% 警告, 85% 压缩
+_smart_compressor = enable_smart_compression(
+    max_tokens=180000,
+    warning_threshold=0.75,
+    compress_threshold=0.85
+)
+
+# 初始化对话上下文管理器
+_context_manager = get_context_manager()
+
+# 导入自动恢复模块（会在导入时显示上次会话）
+from .context import auto_resume  # noqa: F401
 
 
 class LingFlow:
@@ -16,8 +32,14 @@ class LingFlow:
         """初始化 LingFlow
 
         Args:
-            config: 配置字典
+            config: 配置字典，可包含:
+                - compression_enabled: 是否启用压缩 (默认 True)
+                - compression_target_tokens: 压缩目标 token 数 (默认 4000)
         """
+        # 解析配置
+        config = config or {}
+
+        # 初始化协调器（已启用高级压缩）
         self._coordinator = AgentCoordinator()
         self._orchestrator = WorkflowOrchestrator(self._coordinator)
 

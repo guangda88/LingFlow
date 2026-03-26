@@ -149,28 +149,99 @@ class FeedbackCollector:
         """提交用户反馈
 
         Args:
-            category: 反馈类别
-            severity: 严重性
-            title: 标题
+            category: 反馈类别（Bug/Feature/Improvement等）
+            severity: 严重性级别（Low/Medium/High/Critical）
+            title: 简短的反馈标题
             description: 详细描述
             user: 用户标识
             email: 联系邮箱
-            reproduction_steps: 复现步骤
-            environment: 环境信息
-            logs: 相关日志
-            stack_trace: 堆栈跟踪
+            reproduction_steps: 复现问题的步骤列表
+            environment: 环境信息字典
+            logs: 相关日志文本
+            stack_trace: 错误堆栈跟踪
 
         Returns:
-            创建的反馈对象
-        """
-        import uuid
+            创建的 Feedback 对象
 
-        feedback = Feedback(
-            id=str(uuid.uuid4())[:8],
+        Raises:
+            ValueError: 如果必填参数为空
+
+        Example:
+            >>> collector.submit_feedback(
+            ...     category=FeedbackCategory.BUG,
+            ...     severity=FeedbackSeverity.HIGH,
+            ...     title="登录失败",
+            ...     description="用户无法登录系统"
+            ... )
+        """
+        # 验证必填参数
+        self._validate_feedback_input(title, description)
+
+        # 创建反馈对象
+        feedback = self._create_feedback(
             category=category,
             severity=severity,
             title=title,
             description=description,
+            user=user,
+            email=email,
+            reproduction_steps=reproduction_steps,
+            environment=environment,
+            logs=logs,
+            stack_trace=stack_trace,
+        )
+
+        # 存储并上报
+        self._store_feedback(feedback)
+        self._auto_report_if_enabled(feedback)
+
+        logger.info(f"收到反馈: [{feedback.id}] {feedback.title}")
+        return feedback
+
+    def _validate_feedback_input(self, title: str, description: str) -> None:
+        """验证反馈输入参数
+
+        Args:
+            title: 反馈标题
+            description: 反馈描述
+
+        Raises:
+            ValueError: 如果必填参数为空
+        """
+        if not title or not title.strip():
+            raise ValueError("反馈标题不能为空")
+        if not description or not description.strip():
+            raise ValueError("反馈描述不能为空")
+
+    def _create_feedback(
+        self,
+        category: FeedbackCategory,
+        severity: FeedbackSeverity,
+        title: str,
+        description: str,
+        user: Optional[str] = None,
+        email: Optional[str] = None,
+        reproduction_steps: Optional[List[str]] = None,
+        environment: Optional[Dict[str, Any]] = None,
+        logs: Optional[str] = None,
+        stack_trace: Optional[str] = None,
+    ) -> Feedback:
+        """创建反馈对象
+
+        Args:
+            与 submit_feedback 相同
+
+        Returns:
+            新创建的 Feedback 对象
+        """
+        import uuid
+
+        return Feedback(
+            id=str(uuid.uuid4())[:8],
+            category=category,
+            severity=severity,
+            title=title.strip(),
+            description=description.strip(),
             timestamp=datetime.now().isoformat(),
             user=user,
             email=email,
@@ -180,15 +251,23 @@ class FeedbackCollector:
             stack_trace=stack_trace,
         )
 
+    def _store_feedback(self, feedback: Feedback) -> None:
+        """存储反馈到内存和持久化存储
+
+        Args:
+            feedback: 要存储的反馈对象
+        """
         self._feedbacks.append(feedback)
         self._save_feedbacks()
 
-        # 自动上报
+    def _auto_report_if_enabled(self, feedback: Feedback) -> None:
+        """如果启用了自动上报，则上报反馈
+
+        Args:
+            feedback: 要上报的反馈对象
+        """
         if self.auto_report and self.report_url:
             self._report_to_remote(feedback)
-
-        logger.info(f"收到反馈: [{feedback.id}] {feedback.title}")
-        return feedback
 
     def submit_bug_report(
         self,
