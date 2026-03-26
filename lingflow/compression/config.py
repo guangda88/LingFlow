@@ -36,7 +36,7 @@ class CompressionConfig:
         ]
     }
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None) -> None:
         """初始化压缩配置
 
         Args:
@@ -84,7 +84,7 @@ class ConversationCompressor:
     # 估算 token 的比率 (约 4 字符 = 1 token)
     CHAR_TO_TOKEN_RATIO = 0.25
 
-    def __init__(self, config: Optional[CompressionConfig] = None):
+    def __init__(self, config: Optional[CompressionConfig] = None) -> None:
         """初始化对话压缩器
 
         Args:
