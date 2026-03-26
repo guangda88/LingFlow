@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional
 from .coordination.coordinator import AgentCoordinator
 from .workflow.orchestrator import WorkflowOrchestrator
 
-__version__ = "3.5.0"
+__version__ = "3.5.1"
 
 
 class LingFlow:

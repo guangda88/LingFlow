@@ -7,6 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.5.1] - 2026-03-26
+
+### Added
+
+**Architecture**
+- **Layered Skill Architecture**: Three-layer skill loading system (L1/L2/L3)
+  - L1: Core scheduling layer (5 skills) - Never unload
+  - L2: Professional capabilities layer (12 skills) - Resident
+  - L3: Extended capabilities layer (11 skills) - Lazy load/unload
+- **Skill Router**: Trigger-based skill routing with mutex group support
+- **Dynamic Skill Loading**: Load L3 skills on-demand, unload after task completion
+
+**Monitoring & Operations**
+- **Operations Monitor**: Application-level monitoring system
+  - Health checks for memory, disk, CPU, and skill loader
+  - Alert rules with severity levels (INFO, WARNING, ERROR, CRITICAL)
+  - Notification handlers (log, console)
+  - Monitoring loop for periodic checks
+
+**New Skills**
+- **api-doc-generator**: Auto-generate OpenAPI/Swagger documentation from code
+- **ui-mockup-generator**: Generate UI prototypes from requirements
+- **database-schema-designer**: Design database schema from business requirements
+- **ci-cd-orchestrator**: CI/CD pipeline orchestration (GitHub, Jenkins, GitLab)
+- **deployment-automation**: Automated deployment (Docker, Kubernetes)
+- **environment-manager**: Environment configuration management
+
+### Changed
+
+**Optimization**
+- **Skill Count**: Reduced from 33 to 28 skills by merging related skills
+  - Merged skill-integration, skill-categorization, skill-versioning, skill-templates, skill-testing into skill-creator v3.0
+- **Project Structure**: Cleaned up root directory (61 MD files → 3)
+  - Moved reports to `docs/reports/`
+  - Moved test docs to `docs/testing/`
+  - Moved audit reports to `docs/reports/audits/`
+
+**Documentation**
+- Enhanced README.md with new architecture overview
+- Added `skills-layer-configuration.yaml` for skill routing
+- Updated skills.v2.json with optimized skill list
+
+**Metrics**
+- **SDLC Alignment**: Improved from 82% to 85%
+- **Monitoring Coverage**: Improved from 60% to 70% (operations phase)
+- **Test Coverage**: 40 tests for new modules (all passing)
+
+### Fixed
+
+- Added missing docstring for Config class in tool_definition.py
+- Improved code documentation across core modules
+
+### Technical Debt
+
+- Removed 6 deprecated/merged skills from codebase
+- Organized 30+ report files into proper documentation structure
+- Cleaned up temporary test scripts and files
+
+---
+
 ## [3.5.0] - 2026-03-25
 
 ### Added

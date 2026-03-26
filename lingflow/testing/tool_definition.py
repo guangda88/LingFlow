@@ -78,6 +78,10 @@ class ToolResponse(BaseModel):
     execution_time: float = Field(..., description="执行时间（秒）")
 
     class Config:
+        """Pydantic 模型配置
+
+        定义工具响应的 JSON schema 示例和额外配置。
+        """
         json_schema_extra = {
             "example": {
                 "success": True,

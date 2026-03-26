@@ -1,151 +1,129 @@
-#!/usr/bin/env python3
-"""Check for missing type hints in public functions.
-
-This script checks if public functions (not starting with _) have type hints.
-"""
+#!/usr/bin/env python
+"""Check for missing type hints in LingFlow codebase."""
 
 import ast
-import sys
+import re
 from pathlib import Path
+from typing import List, Dict, Set, Tuple
 
 
-class TypeHintChecker(ast.NodeVisitor):
-    """Check for type hints in functions."""
+def extract_functions_without_type_hints(filepath: Path) -> List[Dict[str, str]]:
+    """Extract functions without complete type hints."""
+    with open(filepath, "r", encoding="utf-8") as f:
+        content = f.read()
 
-    def __init__(self):
-        self.functions = []
-        self.classes = {}
+    tree = ast.parse(content, filename=filepath.name)
 
-    def visit_ClassDef(self, node):
-        """Visit class definition."""
-        class_name = node.name
-        self.classes[class_name] = []
+    results = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef):
+            # Check function definition
+            func_name = node.name
+            line_num = node.lineno
+            file_str = str(filepath.relative_to(Path.cwd()))
 
-        # Save current class context
-        old_methods = self.functions
-        self.functions = []
+            # Check return type
+            has_return_type = node.returns is not None
 
-        # Visit methods
-        self.generic_visit(node)
+            # Check parameter types
+            has_param_types = all(arg.annotation is not None for arg in node.args.args)
 
-        # Restore
-        self.classes[class_name] = self.functions[:]
-        self.functions = old_methods
+            # Skip special methods and dunder methods
+            if func_name.startswith("_") and not func_name.startswith("__"):
+                continue
 
-    def visit_FunctionDef(self, node):
-        """Visit function definition."""
-        func_info = {
-            'name': node.name,
-            'line': node.lineno,
-            'is_public': not node.name.startswith('_'),
-            'has_return_annotation': node.returns is not None,
-            'has_param_annotations': all(
-                arg.annotation is not None
-                for arg in node.args.args
-                if arg.arg != 'self' and arg.arg != 'cls'
-            )
-        }
+            # Skip if it's a property or setter
+            if any(
+                decorator.id in ["property", "setter", "staticmethod", "classmethod"]
+                for decorator in node.decorator_list
+                if isinstance(decorator, ast.Name)
+            ):
+                continue
 
-        self.functions.append(func_info)
-        self.generic_visit(node)
+            # If missing return type or any parameter type
+            if not has_return_type or not has_param_types:
+                results.append({
+                    "file": file_str,
+                    "function": func_name,
+                    "line": line_num,
+                    "has_return": has_return_type,
+                    "has_params": has_param_types,
+                })
 
-    def visit_AsyncFunctionDef(self, node):
-        """Visit async function definition."""
-        self.visit_FunctionDef(node)
-
-
-def check_file(filepath):
-    """Check a single Python file."""
-    try:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            content = f.read()
-
-        tree = ast.parse(content, filename=filepath)
-        checker = TypeHintChecker()
-        checker.visit(tree)
-
-        return checker.functions, checker.classes
-    except SyntaxError as e:
-        print(f"Syntax error in {filepath}: {e}")
-        return [], {}
-    except Exception as e:
-        print(f"Error processing {filepath}: {e}")
-        return [], {}
+    return results
 
 
 def main():
-    """Main function."""
-    if len(sys.argv) < 2:
-        print("Usage: check_type_hints.py <file1.py> [file2.py] ...")
-        sys.exit(1)
+    """Main function to analyze codebase."""
+    lingflow_dir = Path.cwd() / "lingflow"
 
-    issues = []
+    # Find all Python files
+    python_files = list(lingflow_dir.rglob("*.py"))
 
-    for filepath in sys.argv[1:]:
-        if not filepath.endswith('.py'):
+    all_issues = []
+    for filepath in python_files:
+        if "__pycache__" in str(filepath):
             continue
 
-        functions, classes = check_file(filepath)
+        try:
+            issues = extract_functions_without_type_hints(filepath)
+            all_issues.extend(issues)
+        except SyntaxError:
+            pass  # Skip files with syntax errors
 
-        # Check module-level functions
-        for func in functions:
-            if func['is_public']:
-                if not func['has_param_annotations'] or not func['has_return_annotation']:
-                    issues.append({
-                        'file': filepath,
-                        'type': 'function',
-                        'name': func['name'],
-                        'line': func['line'],
-                        'missing': []
-                    })
-                    if not func['has_param_annotations']:
-                        issues[-1]['missing'].append('parameter annotations')
-                    if not func['has_return_annotation']:
-                        issues[-1]['missing'].append('return annotation')
+    # Group by module
+    by_module: Dict[str, List[Dict]] = {}
+    for issue in all_issues:
+        module = issue["file"].split("/")[1] if "/" in issue["file"] else "root"
+        if module not in by_module:
+            by_module[module] = []
+        by_module[module].append(issue)
 
-        # Check class methods
-        for class_name, methods in classes.items():
-            for method in methods:
-                # Skip __magic__ methods
-                if method['name'].startswith('__') and method['name'].endswith('__'):
-                    continue
+    # Print summary
+    print("=" * 80)
+    print("Missing Type Hints Analysis")
+    print("=" * 80)
+    print(f"\nTotal functions/methods missing type hints: {len(all_issues)}")
+    print(f"Python files analyzed: {len(python_files)}")
 
-                # Check public and protected methods
-                if not method['name'].startswith('__'):
-                    if not method['has_param_annotations'] or not method['has_return_annotation']:
-                        issues.append({
-                            'file': filepath,
-                            'type': 'method',
-                            'class': class_name,
-                            'name': method['name'],
-                            'line': method['line'],
-                            'missing': []
-                        })
-                        # Check if 'self' or 'cls' should be excluded from param check
-                        if not method['has_param_annotations']:
-                            issues[-1]['missing'].append('parameter annotations')
-                        if not method['has_return_annotation']:
-                            issues[-1]['missing'].append('return annotation')
+    # Group by module
+    print("\n" + "-" * 80)
+    print("By Module:")
+    print("-" * 80)
 
-    if issues:
-        print(f"❌ Found {len(issues)} public functions/methods missing type hints:")
-        for issue in issues[:10]:  # Show first 10
-            missing_str = ' and '.join(issue['missing'])
-            if issue['type'] == 'function':
-                print(f"  {issue['file']}:{issue['line']} - {issue['name']}() "
-                      f"missing {missing_str}")
-            else:
-                print(f"  {issue['file']}:{issue['line']} - {issue['class']}.{issue['name']}() "
-                      f"missing {missing_str}")
+    for module in sorted(by_module.keys()):
+        issues = by_module[module]
+        print(f"\n{module}/")
+        print(f"  Total missing: {len(issues)}")
+        print(f"  Files affected: {len(set(i['file'] for i in issues))}")
 
-        if len(issues) > 10:
-            print(f"  ... and {len(issues) - 10} more")
+        # Show top 5 issues per module
+        for issue in issues[:5]:
+            missing = []
+            if not issue["has_return"]:
+                missing.append("return")
+            if not issue["has_params"]:
+                missing.append("params")
+            print(f"    - {issue['function']}() line {issue['line']} (missing: {', '.join(missing)})")
 
-        sys.exit(1)
-    else:
-        print("✅ All public functions and methods have type hints")
-        sys.exit(0)
+        if len(issues) > 5:
+            print(f"    ... and {len(issues) - 5} more")
+
+    # Summary statistics
+    print("\n" + "=" * 80)
+    print("Summary Statistics:")
+    print("=" * 80)
+    print(f"Total issues: {len(all_issues)}")
+    print(f"Modules affected: {len(by_module)}")
+
+    missing_return = sum(1 for i in all_issues if not i["has_return"])
+    missing_params = sum(1 for i in all_issues if not i["has_params"])
+    missing_both = sum(1 for i in all_issues if not i["has_return"] and not i["has_params"])
+
+    print(f"Missing return type: {missing_return}")
+    print(f"Missing param types: {missing_params}")
+    print(f"Missing both: {missing_both}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

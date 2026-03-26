@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="lingflow",
-    version="3.3.0",
+    version="3.5.1",
     description="多智能体工作流引擎 - 灵通工作流",
     author="Guangda",
     packages=find_packages(),

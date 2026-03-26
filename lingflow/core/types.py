@@ -5,33 +5,10 @@ This module provides standardized types for the LingFlow framework.
 
 from typing import Any, Dict, Generic, Optional, TypeVar, Union
 
+from lingflow.common.exceptions import LingFlowError
+
 
 T = TypeVar("T")
-
-
-class LingFlowError(Exception):
-    """Base exception for all LingFlow errors."""
-
-    def __init__(
-        self,
-        message: str,
-        code: str = "LF_ERROR",
-        details: Optional[Dict[str, Any]] = None,
-    ):
-        """Initialize LingFlowError.
-
-        Args:
-            message: Error message
-            code: Error code
-            details: Additional error details
-        """
-        super().__init__(message)
-        self.message = message
-        self.code = code
-        self.details = details or {}
-
-    def __str__(self) -> str:
-        return f"[{self.code}] {self.message}"
 
 
 class Result(Generic[T]):

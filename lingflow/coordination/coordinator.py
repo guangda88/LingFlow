@@ -2,14 +2,17 @@
 
 import asyncio
 import logging
-from typing import Any, Dict, List, Optional
+import types
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from lingflow.common.models import AgentConfig, Task, TaskResult
 from lingflow.compression.compressor import ContextCompressor
-from lingflow.coordination.agent import Agent
 from lingflow.coordination.base import BaseCoordinator
 from lingflow.coordination.registry import AgentRegistry
 from lingflow.common.sandbox import SkillSandbox, SandboxError, SandboxTimeoutError
+
+if TYPE_CHECKING:
+    from lingflow.coordination.agent import Agent
 
 logger = logging.getLogger(__name__)
 
@@ -89,9 +92,10 @@ class AgentCoordinator(BaseCoordinator):
         semaphore = asyncio.Semaphore(max_parallel)
 
         # 并行执行所有任务
-        results_list = await asyncio.gather(
-            *[self._execute_one_task(task, semaphore) for task in tasks], return_exceptions=True
-        )
+        # 使用 Task.result() 处理可能的异常
+        tasks_to_execute = [asyncio.create_task(self._execute_one_task(task, semaphore))
+                           for task in tasks]
+        results_list = await asyncio.gather(*tasks_to_execute, return_exceptions=True)
 
         # 处理结果
         results = self._process_task_results(results_list)
@@ -112,7 +116,15 @@ class AgentCoordinator(BaseCoordinator):
             result = await agent.execute_task(task, compressed_context)
             return result
 
-    def _find_agent_for_task(self, task: Task) -> Optional[Agent]:
+    def _find_agent_for_task(self, task: Task) -> Optional["Agent"]:
+        """查找适合任务的代理
+
+        Args:
+            task: 要执行的任务
+
+        Returns:
+            找到的代理，如果没有合适的则返回 None
+        """
         """查找适合任务的代理"""
         agents = self.registry.find_agents_for_task(task)
         if not agents:
@@ -135,7 +147,7 @@ class AgentCoordinator(BaseCoordinator):
         """创建错误结果"""
         return TaskResult(task_id=task.task_id, success=False, error=error)
 
-    def _process_task_results(self, results_list: List[Any]) -> Dict[str, TaskResult]:
+    def _process_task_results(self, results_list: List[TaskResult]) -> Dict[str, TaskResult]:
         """处理任务结果"""
         results = {}
         for result in results_list:
@@ -221,6 +233,14 @@ class AgentCoordinator(BaseCoordinator):
             return {"skill": skill_name, "params": params, "error": f"执行技能时出错: {str(e)}"}
 
     def _get_skill_path(self, skill_name: str) -> Optional[str]:
+        """获取技能文件路径（增强安全版本）
+
+        Args:
+            skill_name: 技能名称（只允许小写字母、数字、下划线和连字符）
+
+        Returns:
+            技能文件的绝对路径，如果验证失败则返回 None
+        """
         """获取技能文件路径（增强安全版本）"""
         import os
         import re
@@ -264,7 +284,9 @@ class AgentCoordinator(BaseCoordinator):
 
         return str(skill_path)
 
-    def _load_skill_module(self, skill_name: str, skill_path: str) -> Optional[Any]:
+    def _load_skill_module(
+        self, skill_name: str, skill_path: str
+    ) -> Optional[types.ModuleType]:
         """加载技能模块（使用沙箱安全验证）
 
         安全特性：
@@ -329,16 +351,21 @@ class AgentCoordinator(BaseCoordinator):
             class SandboxModule(types.ModuleType):
                 """沙箱模块包装器"""
 
-                def __init__(self, name: str):
+                def __init__(self, name: str, sandbox: SkillSandbox, func: Any):
                     super().__init__(name)
+                    self.sandbox = sandbox
+                    self._execute_func = func
 
-                def execute_skill(self, params: Dict[str, Any]) -> Any:
+                def execute_skill(self, params: Dict[str, Any]) -> Dict[str, Any]:
                     """在沙箱中执行技能"""
-                    return self.sandbox.execute(execute_func, params)
+                    return self.sandbox.execute(self._execute_func, params)
 
             # 创建并返回包装模块
-            sandbox_module = SandboxModule(f"skills.{skill_name}.implementation")
-            sandbox_module.sandbox = self.sandbox
+            sandbox_module = SandboxModule(
+                f"skills.{skill_name}.implementation",
+                self.sandbox,
+                execute_func
+            )
 
             return sandbox_module
 
@@ -349,7 +376,7 @@ class AgentCoordinator(BaseCoordinator):
         except Exception as e:
             raise SkillLoadError(f"Failed to load skill module {skill_name}: {str(e)}")
 
-    def _execute_skill_module(self, module: Any, params: Dict[str, Any]) -> Any:
+    def _execute_skill_module(self, module: Any, params: Dict[str, Any]) -> Dict[str, Any]:
         """执行技能模块"""
         if hasattr(module, "execute_skill"):
             return module.execute_skill(params)
@@ -365,7 +392,6 @@ class AgentCoordinator(BaseCoordinator):
         # 这里可以返回实际的技能列表
         return [
             "database_export",
-            "upload_115",
             "notification",
             "code_analysis",
             "code_optimization",

@@ -1,8 +1,8 @@
 # LingFlow Agent Guide
 
-**Version**: v3.5.0
+**Version**: v3.5.1
 **Status**: Production Ready
-**Last Updated**: 2026-03-25
+**Last Updated**: 2026-03-26
 
 ---
 

@@ -1,11 +1,22 @@
 """LingFlow Core Module"""
 
+from lingflow.common.exceptions import LingFlowError
 from lingflow.core.compliance_matrix import ComplianceMatrix
 from lingflow.core.config import LingFlowConfig
 from lingflow.core.constitution import (
     ComplianceReport,
     Constitution,
     ConstitutionalPrinciple,
+)
+from lingflow.core.layered_skill_loader import (
+    LayeredSkillLoader,
+    get_layered_loader,
+    get_layer_stats,
+    get_memory_usage,
+    load_skill as layered_load_skill,
+    mark_task_complete,
+    route_skill,
+    unload_skill as layered_unload_skill,
 )
 from lingflow.core.skill import (
     BaseSkill,
@@ -16,7 +27,7 @@ from lingflow.core.skill import (
     register_function,
     register_skill,
 )
-from lingflow.core.types import LingFlowError, Result
+from lingflow.core.types import Result
 
 __all__ = [
     "Constitution",
@@ -34,4 +45,13 @@ __all__ = [
     "get_skill",
     "register_function",
     "register_skill",
+    # Layered skill loader
+    "LayeredSkillLoader",
+    "get_layered_loader",
+    "get_layer_stats",
+    "get_memory_usage",
+    "layered_load_skill",
+    "layered_unload_skill",
+    "mark_task_complete",
+    "route_skill",
 ]

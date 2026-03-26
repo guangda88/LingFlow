@@ -1,0 +1,28 @@
+# Blue-Green Deployment Template - Blue
+# This is a reference template - actual generation is in implementation.py
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${APP_NAME}-blue
+  namespace: ${NAMESPACE}
+  labels:
+    app: ${APP_NAME}
+    color: blue
+spec:
+  replicas: ${REPLICAS}
+  selector:
+    matchLabels:
+      app: ${APP_NAME}
+      color: blue
+  template:
+    metadata:
+      labels:
+        app: ${APP_NAME}
+        color: blue
+    spec:
+      containers:
+      - name: ${APP_NAME}
+        image: ${IMAGE_NAME}:blue
+        ports:
+        - containerPort: ${CONTAINER_PORT}

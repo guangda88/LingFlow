@@ -1,0 +1,420 @@
+# LingFlow Skills 分层架构配置
+#
+# 此配置定义技能的三层架构：
+# - L1: 核心调度层 (5个) - 永不卸载
+# - L2: 专业能力层 (12个) - 常驻内存
+# - L3: 扩展能力层 (按需加载) - 任务完成后卸载
+#
+# 版本: 2.0
+# 日期: 2026-03-26
+
+version: "2.0"
+description: "LingFlow Skills Three-Layer Architecture Configuration"
+
+# ============================================================================
+# LAYER 1: 核心调度层
+# 职责：工作流编排、任务执行、流程控制
+# 加载策略：eager (启动时加载)
+# 卸载策略：never (永不卸载)
+# ============================================================================
+L1:
+  description: "核心调度层 - 工作流编排和流程控制"
+  loading_strategy: "eager"
+  unloading_strategy: "never"
+  memory_priority: "critical"
+  skills:
+    - name: workflow-executor
+      description: "执行 YAML/JSON 定义的工作流"
+      triggers: ["workflow", "yaml", "流水线", "批量", "多任务"]
+      timeout: 600
+      dependencies: ["task-runner"]
+
+    - name: task-runner
+      description: "执行单个任务（技能调用）"
+      triggers: ["run", "execute", "call", "执行"]
+      timeout: 300
+      dependencies: []
+
+    - name: conditional-branch
+      description: "工作流中的条件判断"
+      triggers: ["if", "branch", "switch", "条件"]
+      timeout: 60
+      dependencies: ["task-runner"]
+
+    - name: loop-iterator
+      description: "工作流中的循环执行"
+      triggers: ["for", "while", "each", "loop", "迭代"]
+      timeout: 300
+      max_iterations: 100
+      dependencies: ["task-runner"]
+
+    - name: error-handler
+      description: "任务失败时的重试和降级"
+      triggers: ["retry", "fallback", "error", "重试"]
+      timeout: 120
+      max_retries: 3
+      dependencies: ["task-runner"]
+
+# ============================================================================
+# LAYER 2: 专业能力层
+# 职责：特定领域的专业能力
+# 加载策略：eager (启动时加载)
+# 卸载策略：never (常驻内存)
+# ============================================================================
+L2:
+  description: "专业能力层 - 核心开发能力常驻内存"
+  loading_strategy: "eager"
+  unloading_strategy: "never"
+  memory_priority: "high"
+
+  # 代码质量组 - 互斥组（同时只能激活一个）
+  groups:
+    code_quality:
+      type: "mutex"
+      description: "代码质量相关技能，互斥执行"
+      skills:
+        - name: code-review
+          description: "8 维度代码审查"
+          triggers: ["review", "审查", "检查", "code quality", "代码质量"]
+          priority: 10
+          dimensions:
+            - code_quality
+            - architecture
+            - performance
+            - security
+            - maintainability
+            - best_practices
+            - consistency
+            - bug_analysis
+
+        - name: code-refactor
+          description: "执行代码重构"
+          triggers: ["refactor", "重构", "优化代码"]
+          priority: 9
+          require_after: "code-review"  # 需要先审查
+
+    # 开发流程组 - 顺序组（按阶段流动）
+    development_flow:
+      type: "ordered"
+      description: "开发流程技能，按阶段流动"
+      chain: ["brainstorming", "systematic-debugging", "verification-before-completion"]
+      skills:
+        - name: brainstorming
+          description: "头脑风暴 - 探索用户意图和需求"
+          triggers: ["plan", "design", "思路", "方案", "新功能"]
+          phase: "requirements"
+          can_transition_to: ["systematic-debugging", "code-review"]
+
+        - name: systematic-debugging
+          description: "系统化调试 - 4 阶段根因分析"
+          triggers: ["debug", "fix", "bug", "错误", "异常"]
+          phase: "debugging"
+          can_transition_to: ["verification-before-completion"]
+          phases: ["observe", "isolate", "hypothesize", "verify"]
+
+        - name: verification-before-completion
+          description: "完成前验证"
+          triggers: ["verify", "check", "验证", "确认"]
+          phase: "completion"
+          can_transition_to: []
+
+    # 测试验证组 - 互斥组
+    testing:
+      type: "mutex"
+      description: "测试相关技能，互斥执行"
+      skills:
+        - name: test-runner
+          description: "运行测试"
+          triggers: ["test", "pytest", "测试"]
+          priority: 8
+
+        - name: test-driven-development
+          description: "TDD 流程 - 红绿重构循环"
+          triggers: ["tdd", "红绿灯重构", "test-driven"]
+          priority: 7
+          cycle: ["red", "green", "refactor"]
+
+    # 版本控制组 - 互斥组
+    version_control:
+      type: "mutex"
+      description: "Git 版本控制技能"
+      skills:
+        - name: using-git-worktrees
+          description: "创建 Git 工作树进行隔离开发"
+          triggers: ["new branch", "worktree", "新分支"]
+          action: "create"
+
+        - name: finishing-a-development-branch
+          description: "完成开发分支，清理工作树"
+          triggers: ["done", "finish", "merge", "完成"]
+          action: "complete"
+          cleanup_options: ["merge", "pr", "keep", "discard"]
+
+    # 通用服务 - 可组合组
+    common_services:
+      type: "composable"
+      description: "可与其他技能组合使用的服务"
+      skills:
+        - name: notification
+          description: "发送通知"
+          triggers: ["notify", "alert", "通知"]
+          levels: ["info", "warning", "error", "critical"]
+          channels: ["console", "log", "webhook"]
+
+        - name: skill-creator
+          description: "创建新技能"
+          triggers: ["create skill", "new skill", "新技能"]
+          template_based: true
+          generate_tests: true
+
+# ============================================================================
+# LAYER 3: 扩展能力层
+# 职责：特定场景的专业能力
+# 加载策略：lazy (按需加载)
+# 卸载策略：after_task (任务完成后卸载)
+# ============================================================================
+L3:
+  description: "扩展能力层 - 按需加载特定技能"
+  loading_strategy: "lazy"
+  unloading_strategy: "after_task"
+  memory_priority: "normal"
+  unload_timeout: 300  # 5分钟无活动后卸载
+
+  # 按类别组织扩展技能
+  categories:
+    design:
+      description: "设计工具类技能"
+      trigger_keywords: ["api", "ui", "database", "design", "schema", "mockup"]
+      skills:
+        - name: writing-plans
+          description: "编写实现计划"
+          triggers: ["plan", "implementation plan", "break down"]
+          phase: "design"
+
+        - name: api-doc-generator
+          description: "API 文档自动生成"
+          triggers: ["api doc", "接口文档", "openapi", "swagger"]
+          version: "1.0.0"
+          supported_frameworks: ["fastapi", "flask", "django"]
+          output_formats: ["json", "yaml", "html", "markdown"]
+
+        - name: ui-mockup-generator
+          description: "UI 原型设计生成"
+          triggers: ["ui", "mockup", "原型", "界面"]
+          version: "1.0.0"
+          page_types: ["dashboard", "form", "list", "detail"]
+          styles: ["minimal", "modern", "corporate"]
+
+        - name: database-schema-designer
+          description: "数据库结构设计"
+          triggers: ["database design", "schema design", "表结构"]
+          version: "1.0.0"
+          supported_databases: ["mysql", "postgresql", "sqlite"]
+          er_diagram_format: "mermaid"
+
+    devops:
+      description: "DevOps 相关技能"
+      trigger_keywords: ["ci", "cd", "deploy", "pipeline", "environment"]
+      skills:
+        - name: ci-cd-orchestrator
+          description: "CI/CD 流水线编排"
+          triggers: ["ci cd", "pipeline", "github actions", "jenkins"]
+          version: "1.0.0"
+          supported_platforms: ["github", "jenkins", "gitlab", "azure", "circleci"]
+          stages: ["test", "build", "deploy"]
+
+        - name: deployment-automation
+          description: "自动化部署"
+          triggers: ["deploy", "部署", "发布"]
+          version: "1.0.0"
+          deploy_targets: ["docker", "kubernetes", "serverless", "static"]
+
+        - name: environment-manager
+          description: "环境配置管理"
+          triggers: ["env", "environment", "环境"]
+          version: "1.0.0"
+          env_types: ["dev", "staging", "prod"]
+
+    data:
+      description: "数据处理技能"
+      trigger_keywords: ["export", "database", "backup"]
+      skills:
+        - name: database-export
+          description: "数据库数据导出"
+          triggers: ["export database", "数据库导出"]
+          version: "2.0"
+          formats: ["csv", "json", "excel", "sql"]
+
+    workflow_advanced:
+      description: "高级工作流技能"
+      trigger_keywords: ["parallel", "concurrent", "agent"]
+      skills:
+        - name: dispatching-parallel-agents
+          description: "并行多代理协调"
+          triggers: ["parallel", "concurrent", "simultaneous"]
+          version: "2.0"
+          max_parallel: 3
+          dependency_aware: true
+
+        - name: subagent-driven-development
+          description: "子代理驱动的快速迭代"
+          triggers: ["execute plan", "implement plan"]
+          version: "2.0"
+          review_stages: ["spec_compliance", "code_quality"]
+
+    skill_management:
+      description: "技能管理工具"
+      trigger_keywords: ["skill", "integration", "version", "template"]
+      skills:
+        - name: skill-integration
+          description: "技能集成"
+          triggers: ["integrate skill", "skill integration"]
+
+        - name: skill-categorization
+          description: "技能分类管理"
+          triggers: ["categorize skill", "skill category"]
+
+        - name: skill-versioning
+          description: "技能版本管理"
+          triggers: ["skill version", "version skill"]
+
+        - name: skill-analytics
+          description: "技能使用分析"
+          triggers: ["analytics", "statistic", "统计"]
+
+        - name: skill-templates
+          description: "技能模板管理"
+          triggers: ["skill template", "template"]
+
+        - name: skill-testing
+          description: "技能测试"
+          triggers: ["test skill", "skill test"]
+
+    specialized:
+      description: "专项技能"
+      skills:
+        - name: code-review-js
+          description: "JavaScript/TypeScript 专项代码审查"
+          triggers: ["javascript review", "js review", "typescript review"]
+          version: "2.0"
+          languages: ["javascript", "typescript"]
+          frameworks: ["react", "vue", "angular", "node"]
+
+# ============================================================================
+# 路由规则配置
+# ============================================================================
+routing:
+  # 触发词优先级
+  priority_rules:
+    - pattern: "workflow|yaml|流水线"
+      route: "L1.workflow-executor"
+      priority: 10
+
+    - pattern: "review|审查|检查"
+      route: "L2.code_review"
+      group: "code_quality"
+      priority: 9
+
+    - pattern: "debug|bug|错误"
+      route: "L2.systematic_debugging"
+      phase: "debugging"
+      priority: 9
+
+    - pattern: "api.*doc|接口文档"
+      route: "L3.api_doc_generator"
+      category: "design"
+      priority: 7
+
+    - pattern: "ui|mockup|原型"
+      route: "L3.ui_mockup_generator"
+      category: "design"
+      priority: 7
+
+    - pattern: "database.*design|schema"
+      route: "L3.database_schema_designer"
+      category: "design"
+      priority: 7
+
+    - pattern: "ci.*cd|pipeline"
+      route: "L3.ci_cd_orchestrator"
+      category: "devops"
+      priority: 7
+
+    - pattern: "deploy|部署"
+      route: "L3.deployment_automation"
+      category: "devops"
+      priority: 7
+
+  # 互斥组约束
+  mutex_constraints:
+    code_quality:
+      - "code-review"
+      - "code-refactor"
+
+    testing:
+      - "test-runner"
+      - "test-driven-development"
+
+    git:
+      - "using-git-worktrees"
+      - "finishing-a-development-branch"
+
+  # 依赖链约束
+  dependency_chains:
+    - ["brainstorming", "systematic-debugging", "verification-before-completion"]
+    - ["code-review", "code-refactor"]
+    - ["workflow-executor", "task-runner"]
+
+  # 回退链配置
+  fallback_chains:
+    code-review:
+      - primary: "code-review"
+      - fallback1: "code-analysis"  # 简化版分析
+      - fallback2: "notification"   # 通知用户无法完成
+
+    task-runner:
+      - primary: "task-runner"
+      - fallback1: "error-handler"  # 重试
+      - fallback2: "notification"   # 通知失败
+
+# ============================================================================
+# 性能配置
+# ============================================================================
+performance:
+  # 上下文管理
+  context:
+    max_context_per_skill: 2000  # tokens
+    compression_threshold: 5000  # tokens
+
+  # 加载策略
+  loading:
+    l3_preload: []  # 预加载的 L3 技能（通常为空）
+    load_timeout: 30  # seconds
+
+  # 卸载策略
+  unloading:
+    idle_timeout: 300  # 5分钟无活动
+    force_unload_on_memory_pressure: true
+    memory_threshold: 80  # 百分比
+
+# ============================================================================
+# 监控配置
+# ============================================================================
+monitoring:
+  # 记录指标
+  metrics:
+    - "skill_load_time"
+    - "skill_execution_time"
+    - "skill_error_rate"
+    - "l3_load_count"
+    - "context_usage"
+
+  # 告警规则
+  alerts:
+    - condition: "skill_error_rate > 10%"
+      level: "warning"
+      action: "notify"
+
+    - condition: "l3_load_count > 100"
+      level: "info"
+      action: "consider_promoting_to_l2"

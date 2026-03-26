@@ -1,0 +1,275 @@
+// Jenkins Pipeline Template
+// This template provides a complete CI/CD workflow for your project
+
+pipeline {
+    agent any
+
+    // Environment variables
+    environment {
+        PROJECT_NAME = "${PROJECT_NAME:-my-project}"
+        BRANCH_NAME = "${env.GIT_BRANCH ?: 'main'}"
+        BUILD_NUMBER = "${env.BUILD_NUMBER ?: '1'}"
+        DOCKER_REGISTRY = credentials('docker-registry')
+        DOCKER_CREDENTIALS = credentials('docker-credentials')
+    }
+
+    // Build parameters
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'main', description: 'Git branch to build')
+        choice(name: 'DEPLOY_ENV', choices: ['staging', 'production'], description: 'Deployment environment')
+        booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip running tests')
+        booleanParam(name: 'FORCE_DEPLOY', defaultValue: false, description: 'Force deployment even if tests fail')
+    }
+
+    // Build triggers
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
+        timeout(time: 30, unit: 'MINUTES')
+        timestamps()
+    }
+
+    stages {
+
+        // ============================================
+        // Setup Stage - Prepare build environment
+        // ============================================
+        stage("Setup") {
+            steps {
+                script {
+                    echo "==========================================="
+                    echo "Building ${PROJECT_NAME}"
+                    echo "Branch: ${params.BRANCH}"
+                    echo "Environment: ${params.DEPLOY_ENV}"
+                    echo "==========================================="
+                }
+
+                sh '''
+                    git checkout ${params.BRANCH}
+                    git fetch --tags
+                    git clean -fdx
+                '''
+
+                script {
+                    env.GIT_COMMIT_SHORT = sh(
+                        script: "git rev-parse --short HEAD",
+                        returnStdout: true
+                    ).trim()
+                    env.GIT_DESCRIBE = sh(
+                        script: "git describe --tags --always",
+                        returnStdout: true
+                    ).trim()
+                }
+            }
+        }
+
+        // ============================================
+        // Test Stage - Run tests
+        // ============================================
+        stage("Test") {
+            when {
+                expression { !params.SKIP_TESTS }
+            }
+
+            parallel {
+                stage("Unit Tests") {
+                    steps {
+                        echo 'Running unit tests...'
+                        sh '''
+                            python -m venv venv
+                            . venv/bin/activate
+                            pip install -e .[test]
+                            pytest --cov=. --cov-report=xml --cov-report=html
+                        '''
+                    }
+                    post {
+                        always {
+                            junit 'test-results.xml'
+                            publishHTML([
+                                reportDir: 'htmlcov',
+                                reportFiles: 'index.html',
+                                reportName: 'Coverage Report',
+                                keepAll: true
+                            ])
+                        }
+                    }
+                }
+
+                stage("Linting") {
+                    steps {
+                        echo 'Running code quality checks...'
+                        sh '''
+                            python -m venv venv
+                            . venv/bin/activate
+                            pip install flake8 mypy pylint
+                            flake8 . --max-line-length=127
+                            mypy . || true
+                            pylint **/*.py || true
+                        '''
+                    }
+                }
+
+                stage("Security Scan") {
+                    steps {
+                        echo 'Running security scan...'
+                        sh '''
+                            pip install safety bandit
+                            safety check --json > safety-report.json || true
+                            bandit -r . -f json -o bandit-report.json || true
+                        '''
+                    }
+                }
+            }
+        }
+
+        // ============================================
+        // Build Stage - Build artifacts
+        // ============================================
+        stage("Build") {
+            steps {
+                echo 'Building project...'
+
+                sh '''
+                    python -m venv venv
+                    . venv/bin/activate
+                    pip install build twine
+                    python -m build
+                    twine check dist/*
+                '''
+
+                script {
+                    env.BUILD_VERSION = sh(
+                        script: "python setup.py --version 2>/dev/null || echo ${env.GIT_DESCRIBE}",
+                        returnStdout: true
+                    ).trim()
+                }
+            }
+        }
+
+        // ============================================
+        // Package Stage - Create Docker image
+        // ============================================
+        stage("Package") {
+            steps {
+                echo 'Building Docker image...'
+
+                script {
+                    def image = docker.build("${PROJECT_NAME}:${BUILD_NUMBER}")
+                    docker.withRegistry("https://${DOCKER_REGISTRY}", 'docker-credentials') {
+                        image.push("${BUILD_NUMBER}")
+                        image.push("latest")
+                        image.push("${params.DEPLOY_ENV}")
+                    }
+                }
+            }
+        }
+
+        // ============================================
+        // Deploy Stage - Deploy to environment
+        // ============================================
+        stage("Deploy") {
+            when {
+                anyOf {
+                    branch 'main'
+                    expression { params.FORCE_DEPLOY }
+                }
+                beforeAgent true
+            }
+
+            steps {
+                script {
+                    def deployEnv = params.DEPLOY_ENV
+                    echo "Deploying to ${deployEnv}..."
+
+                    if (deployEnv == 'staging') {
+                        // Deploy to staging
+                        sh """
+                            kubectl set image deployment/${PROJECT_NAME} \
+                                ${PROJECT_NAME}=${DOCKER_REGISTRY}/${PROJECT_NAME}:${BUILD_NUMBER} \
+                                --namespace=staging
+                        """
+                    } else if (deployEnv == 'production') {
+                        // Deploy to production with manual approval
+                        input message: 'Deploy to production?', ok: 'Deploy'
+                        sh """
+                            kubectl set image deployment/${PROJECT_NAME} \
+                                ${PROJECT_NAME}=${DOCKER_REGISTRY}/${PROJECT_NAME}:${BUILD_NUMBER} \
+                                --namespace=production
+                        """
+                    }
+                }
+            }
+        }
+
+        // ============================================
+        // Smoke Tests - Verify deployment
+        // ============================================
+        stage("Smoke Tests") {
+            when {
+                branch 'main'
+            }
+
+            steps {
+                echo 'Running smoke tests...'
+
+                sh """
+                    # Health check
+                    curl -f http://${PROJECT_NAME}.${params.DEPLOY_ENV}.svc.cluster.local/health || exit 1
+
+                    # Version check
+                    curl -f http://${PROJECT_NAME}.${params.DEPLOY_ENV}.svc.cluster.local/version | grep ${BUILD_NUMBER}
+                """
+            }
+        }
+    }
+
+    // ============================================
+    // Post Actions
+    // ============================================
+    post {
+        always {
+            echo 'Pipeline completed...'
+            cleanWs()
+        }
+
+        success {
+            script {
+                emailext(
+                    subject: "✅ SUCCESS: ${PROJECT_NAME} - Build #${BUILD_NUMBER}",
+                    body: """
+                        <h2>Build Successful</h2>
+                        <p>Project: ${PROJECT_NAME}</p>
+                        <p>Build: #${BUILD_NUMBER}</p>
+                        <p>Branch: ${params.BRANCH}</p>
+                        <p>Environment: ${params.DEPLOY_ENV}</p>
+                        <p>Duration: ${currentBuild.durationString}</p>
+                        <p><a href="${env.BUILD_URL}">View Build</a></p>
+                    """,
+                    to: "${env.NOTIFICATION_EMAIL ?: 'team@example.com'}",
+                    mimeType: 'text/html'
+                )
+            }
+        }
+
+        failure {
+            script {
+                emailext(
+                    subject: "❌ FAILURE: ${PROJECT_NAME} - Build #${BUILD_NUMBER}",
+                    body: """
+                        <h2>Build Failed</h2>
+                        <p>Project: ${PROJECT_NAME}</p>
+                        <p>Build: #${BUILD_NUMBER}</p>
+                        <p>Branch: ${params.BRANCH}</p>
+                        <p><a href="${env.BUILD_URL}console">View Logs</a></p>
+                    """,
+                    to: "${env.NOTIFICATION_EMAIL ?: 'team@example.com'}",
+                    mimeType: 'text/html'
+                )
+            }
+        }
+    }
+}
