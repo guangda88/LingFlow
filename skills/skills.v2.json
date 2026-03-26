@@ -437,7 +437,7 @@
       "category": "skill-management",
       "triggers": ["analytics", "statistic", "统计", "skill usage", "skill analysis"],
       "phase": "monitoring",
-      "requires_capability": "analytics",
+      "requires_capability": null,
       "preferred_agent": null,
       "depends_on": [],
       "config": {

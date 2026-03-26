@@ -69,7 +69,7 @@ class PerformanceMonitor:
                     if self._total_metrics_count <= self.MAX_TOTAL_METRICS:
                         break
 
-    def track(self, metric_name: str = None):
+    def track(self, metric_name: Optional[str] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
         """
         装饰器：追踪函数性能
 
@@ -79,7 +79,7 @@ class PerformanceMonitor:
             metric_name: 指标名称（默认为函数名）
         """
 
-        def decorator(func: Callable) -> Callable:
+        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
             """
             装饰器函数
 
@@ -90,7 +90,7 @@ class PerformanceMonitor:
                 包装后的函数，带有性能追踪功能
             """
             @functools.wraps(func)
-            def wrapper(*args, **kwargs):
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 if not self._enabled:
                     return func(*args, **kwargs)
 
@@ -178,7 +178,7 @@ class PerformanceMonitor:
         """
         return {name: self.get_stats(name) for name in self.metrics.keys()}
 
-    def print_report(self):
+    def print_report(self) -> None:
         """Print a formatted performance report"""
         stats = self.get_all_stats()
 
@@ -201,7 +201,7 @@ class PerformanceMonitor:
 
         logger.info("=" * 60)
 
-    def clear(self, metric_name: Optional[str] = None):
+    def clear(self, metric_name: Optional[str] = None) -> None:
         """
         Clear metrics
 
@@ -216,12 +216,12 @@ class PerformanceMonitor:
             self.metrics.clear()
             logger.info("Cleared all metrics")
 
-    def enable(self):
+    def enable(self) -> None:
         """Enable performance monitoring"""
         self._enabled = True
         logger.info("Performance monitoring enabled")
 
-    def disable(self):
+    def disable(self) -> None:
         """Disable performance monitoring"""
         self._enabled = False
         logger.info("Performance monitoring disabled")
@@ -232,7 +232,7 @@ performance_monitor = PerformanceMonitor()
 
 
 # Convenience decorator
-def track_performance(metric_name: str = None):
+def track_performance(metric_name: Optional[str] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
     便捷装饰器：使用全局监控器追踪性能
 
@@ -243,7 +243,7 @@ def track_performance(metric_name: str = None):
 
 
 # Cache decorator with monitoring
-def cached_with_monitor(maxsize: int = 128, metric_name: str = None):
+def cached_with_monitor(maxsize: int = 128, metric_name: Optional[str] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
     带性能监控的 LRU 缓存装饰器
 
@@ -254,7 +254,7 @@ def cached_with_monitor(maxsize: int = 128, metric_name: str = None):
         metric_name: 缓存命中/未命中指标名称
     """
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         # Apply LRU cache
         cached_func = lru_cache(maxsize=maxsize)(func)
 
@@ -262,7 +262,7 @@ def cached_with_monitor(maxsize: int = 128, metric_name: str = None):
         cache_stats = {"hits": 0, "misses": 0}
 
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             # Check cache_info before and after to detect hits/misses
             before_info = cached_func.cache_info()
 
@@ -332,11 +332,11 @@ class ContextTimer:
         self.success = True
         self.error_message = None
 
-    def __enter__(self):
+    def __enter__(self) -> "ContextTimer":
         self.start_time = time.perf_counter()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> bool:
         if self.start_time is None:
             return
 

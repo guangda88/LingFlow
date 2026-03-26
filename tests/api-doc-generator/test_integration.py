@@ -67,7 +67,7 @@ def item_detail(item_id):
         })
 
         assert result['success'] is True
-        assert result['routes_count'] == 4  # GET, POST, GET, PUT, DELETE
+        assert result['routes_count'] == 5  # GET, POST + GET, PUT, DELETE
 
     def test_execute_skill_with_directory(self, temp_fastapi_project):
         """Test executing skill with directory"""

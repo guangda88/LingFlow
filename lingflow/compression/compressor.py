@@ -69,7 +69,7 @@ class AdvancedContextCompressor:
         """
         self.target_ratio = target_ratio
         self.preserve_keywords = preserve_keywords
-        self.keywords = set(DEFAULT_KEYWORDS + (custom_keywords or []))
+        self.keywords = set(self.DEFAULT_KEYWORDS + (custom_keywords or []))
         self.strategies = strategies or [
             CompressionStrategy.DENSITY,
             CompressionStrategy.SEMANTIC,
