@@ -1,8 +1,37 @@
 """LingFlow 异常模块"""
 
+from typing import Any, Dict, Optional
+
 
 class LingFlowError(Exception):
-    """LingFlow 基础异常"""
+    """LingFlow 基础异常
+
+    支持错误码和详细信息。
+    """
+
+    DEFAULT_CODE = "LF_ERROR"
+
+    def __init__(
+        self,
+        message: str,
+        code: str = DEFAULT_CODE,
+        details: Optional[Dict[str, Any]] = None,
+    ):
+        """初始化异常。
+
+        Args:
+            message: 错误消息
+            code: 错误码（默认为 LF_ERROR）
+            details: 额外详细信息
+        """
+        super().__init__(message)
+        self.message = message
+        self.code = code
+        self.details = details or {}
+
+    def __str__(self) -> str:
+        """返回格式化的错误字符串。"""
+        return f"[{self.code}] {self.message}"
 
 
 class SkillError(LingFlowError):

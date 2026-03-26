@@ -10,9 +10,7 @@ from lingflow.compression.compressor import ContextCompressor
 from lingflow.coordination.base import BaseCoordinator
 from lingflow.coordination.registry import AgentRegistry
 from lingflow.common.sandbox import SkillSandbox, SandboxError, SandboxTimeoutError
-
-if TYPE_CHECKING:
-    from lingflow.coordination.agent import Agent
+from lingflow.coordination.agent import Agent
 
 logger = logging.getLogger(__name__)
 
