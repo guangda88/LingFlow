@@ -1,5 +1,9 @@
 """ui-mockup-generator 技能实现 - 从需求描述生成 HTML/CSS UI 原型
 
+支持两种样式模式:
+    - 传统 CSS: 内联样式表
+    - Tailwind CSS: 使用 Tailwind CDN 和工具类
+
 异常处理:
     - UIMockupError: UI 原型生成相关错误
     - ValueError: 组件类型或参数无效
@@ -17,6 +21,50 @@ from datetime import datetime
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from exceptions import UIMockupError
+
+# 导入 Tailwind CSS 支持
+try:
+    from .tailwind_components import (
+        TAILWIND_COMPONENTS,
+        TAILWIND_THEMES,
+        generate_tailwind_head,
+        generate_tailwind_end,
+        render_button_tailwind,
+        render_input_tailwind,
+        render_card_tailwind,
+        render_navbar_tailwind,
+        render_hero_tailwind,
+        render_form_tailwind,
+        render_grid_tailwind,
+        render_table_tailwind,
+        render_modal_tailwind,
+        render_footer_tailwind,
+    )
+    TAILWIND_AVAILABLE = True
+except ImportError:
+    try:
+        # 尝试直接导入（用于独立运行）
+        from tailwind_components import (
+            TAILWIND_COMPONENTS,
+            TAILWIND_THEMES,
+            generate_tailwind_head,
+            generate_tailwind_end,
+            render_button_tailwind,
+            render_input_tailwind,
+            render_card_tailwind,
+            render_navbar_tailwind,
+            render_hero_tailwind,
+            render_form_tailwind,
+            render_grid_tailwind,
+            render_table_tailwind,
+            render_modal_tailwind,
+            render_footer_tailwind,
+        )
+        TAILWIND_AVAILABLE = True
+    except ImportError:
+        TAILWIND_AVAILABLE = False
+        logger = logging.getLogger(__name__)
+        logger.warning("Tailwind CSS 组件不可用，将仅使用传统 CSS")
 
 # 导入 Pydantic 验证模型
 try:
@@ -220,13 +268,15 @@ def generate_mockup(params: Dict) -> Dict:
             - theme: 主题名称 (可选，默认 'default')
             - responsive: 是否响应式 (默认 True)
             - title: 页面标题 (默认 'UI Mockup')
+            - use_tailwind: 是否使用 Tailwind CSS (默认 False)
+            - output_dir: 输出目录 (可选)
 
     Returns:
         生成结果字典，包含:
             - html: 生成的 HTML 代码
-            - css: 生成的 CSS 代码
+            - css: 生成的 CSS 代码 (Tailwind 模式下为空)
             - components_used: 使用的组件列表
-            - metadata: 元数据
+            - metadata: 元数据 (包含使用的技术栈)
 
     Raises:
         UIMockupError: UI 原型生成过程中的错误
@@ -237,6 +287,13 @@ def generate_mockup(params: Dict) -> Dict:
     theme = params.get('theme', 'default')
     responsive = params.get('responsive', True)
     title = params.get('title', 'UI Mockup')
+    use_tailwind = params.get('use_tailwind', False)
+    output_dir = params.get('output_dir', None)
+
+    # 检查 Tailwind 可用性
+    if use_tailwind and not TAILWIND_AVAILABLE:
+        logger.warning("Tailwind CSS 不可用，回退到传统 CSS")
+        use_tailwind = False
 
     # 验证 requirement 参数
     if not components:
@@ -245,16 +302,27 @@ def generate_mockup(params: Dict) -> Dict:
             requirement = 'navbar and hero'
 
     # 验证主题
-    if theme not in COLOR_THEMES:
-        raise ValueError(f'不支持的主题: {theme}. 支持的主题: {list(COLOR_THEMES.keys())}')
+    if use_tailwind:
+        valid_themes = list(TAILWIND_THEMES.keys()) if TAILWIND_AVAILABLE else []
+    else:
+        valid_themes = list(COLOR_THEMES.keys())
+
+    if theme not in valid_themes:
+        raise ValueError(f'不支持的主题: {theme}. 支持的主题: {valid_themes}')
 
     # 解析需求获取组件
     if not components:
         components = parse_requirements(requirement)
 
-    # 生成 HTML 和 CSS
-    html_content = generate_html(title, components, theme)
-    css_content = generate_css(components, theme, responsive)
+    # 根据 use_tailwind 选择生成方式
+    if use_tailwind:
+        html_content = generate_html_tailwind(title, components, theme, responsive)
+        css_content = ''  # Tailwind 模式不需要独立 CSS
+        tech_stack = 'Tailwind CSS (CDN)'
+    else:
+        html_content = generate_html(title, components, theme)
+        css_content = generate_css(components, theme, responsive)
+        tech_stack = 'Traditional CSS'
 
     return {
         'html': html_content,
@@ -263,6 +331,7 @@ def generate_mockup(params: Dict) -> Dict:
         'metadata': {
             'theme': theme,
             'responsive': responsive,
+            'tech_stack': tech_stack,
             'generated_at': datetime.now().isoformat()
         }
     }
@@ -763,3 +832,115 @@ def execute_skill(params: Dict) -> Dict:
             'success': False,
             'error': str(e)
         }
+
+
+# ============== Tailwind CSS 支持 ==============
+
+def generate_html_tailwind(
+    title: str,
+    components: List[Dict],
+    theme: str = 'default',
+    responsive: bool = True
+) -> str:
+    """生成 Tailwind CSS 版本的 HTML
+
+    Args:
+        title: 页面标题
+        components: 组件列表
+        theme: 主题名称
+        responsive: 是否响应式
+
+    Returns:
+        完整的 HTML 代码
+    """
+    if not TAILWIND_AVAILABLE:
+        raise UIMockupError("Tailwind CSS 组件不可用")
+
+    # 生成 HTML 头部
+    html = generate_tailwind_head(title, theme)
+
+    # 生成主体内容
+    for component in components:
+        comp_type = component.get('type', '')
+        props = component.get('props', {})
+
+        try:
+            if comp_type == 'navbar':
+                brand = props.get('brand', 'Brand')
+                links = props.get('links', ['Home', 'About', 'Contact'])
+                html += render_navbar_tailwind(brand=brand, links=links)
+            elif comp_type == 'hero':
+                title_text = props.get('title', 'Welcome')
+                subtitle = props.get('subtitle', 'Get Started')
+                actions = props.get('actions', '')
+                html += render_hero_tailwind(title=title_text, subtitle=subtitle, actions=actions)
+            elif comp_type == 'button':
+                text = props.get('text', 'Button')
+                style = props.get('style', 'primary')
+                html += render_button_tailwind(text=text, style=style)
+            elif comp_type == 'card':
+                card_title = props.get('title', 'Card Title')
+                content = props.get('content', 'Card content')
+                html += render_card_tailwind(title=card_title, content=content)
+            elif comp_type == 'form':
+                fields = props.get('fields', '')
+                submit_text = props.get('submit_text', 'Submit')
+                html += render_form_tailwind(fields=fields, submit_text=submit_text)
+            elif comp_type == 'grid':
+                items = props.get('items', '')
+                columns = props.get('columns', 3)
+                html += render_grid_tailwind(items=items, columns=columns)
+            elif comp_type == 'table':
+                headers = props.get('headers', '')
+                rows = props.get('rows', '')
+                html += render_table_tailwind(headers=headers, rows=rows)
+            elif comp_type == 'modal':
+                modal_id = props.get('id', 'modal')
+                modal_title = props.get('title', 'Modal')
+                content = props.get('content', 'Modal content')
+                html += render_modal_tailwind(id=modal_id, title=modal_title, content=content)
+            elif comp_type == 'footer':
+                sections = props.get('sections', '')
+                copyright = props.get('copyright', '© 2024')
+                html += render_footer_tailwind(sections=sections, copyright=copyright)
+            else:
+                # 未知组件，使用占位符
+                html += f'<div class="p-4 bg-gray-100 rounded">Unknown component: {comp_type}</div>'
+
+        except Exception as e:
+            logger.warning(f"渲染组件 {comp_type} 失败: {e}")
+            html += f'<!-- Component {comp_type} failed to render: {e} -->'
+
+    # 添加响应式元标签（如果需要）
+    if responsive:
+        html = html.replace(
+            '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+            '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <meta name="description" content="Generated by LingFlow UI Mockup Generator">'
+        )
+
+    # 生成 HTML 结尾
+    html += generate_tailwind_end()
+
+    return html
+
+
+def get_tailwind_theme_info(theme: str) -> Dict:
+    """获取 Tailwind 主题信息
+
+    Args:
+        theme: 主题名称
+
+    Returns:
+        主题信息字典
+    """
+    if not TAILWIND_AVAILABLE:
+        return {'error': 'Tailwind CSS 不可用'}
+
+    theme_info = TAILWIND_THEMES.get(theme, TAILWIND_THEMES['default'])
+
+    return {
+        'theme': theme,
+        'colors': theme_info,
+        'cdn_version': '3.4.0',
+        'available_themes': list(TAILWIND_THEMES.keys())
+    }
