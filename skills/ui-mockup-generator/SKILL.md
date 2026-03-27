@@ -30,10 +30,18 @@ ui-mockup-generator 是一个用于从自然语言需求描述生成 HTML/CSS UI
 
 ### 支持的主题
 
+**传统 CSS 模式:**
 - **default** - 默认蓝色主题
 - **dark** - 深色模式
 - **nature** - 自然绿色主题
 - **sunset** - 日落橙色主题
+
+**Tailwind CSS 模式:**
+- **default** - 蓝色/紫色渐变
+- **ocean** - 青色/青绿色
+- **sunset** - 橙色/红色
+- **forest** - 绿色/翠绿
+- **dark** - 深灰/锌色
 
 ## 使用场景
 
@@ -106,7 +114,18 @@ lingflow run ui-mockup-generator --params '{
 }'
 ```
 
-### 5. 完整参数示例
+### 5. 使用 Tailwind CSS
+
+```bash
+# 使用 Tailwind CSS 生成现代 UI
+lingflow run ui-mockup-generator --params '{
+    "requirement": "创建带有导航栏和首屏的页面",
+    "use_tailwind": true,
+    "theme": "ocean"
+}'
+```
+
+### 6. 完整参数示例
 
 ```bash
 lingflow run ui-mockup-generator --params '{
@@ -114,6 +133,7 @@ lingflow run ui-mockup-generator --params '{
     "title": "My Company Website",
     "theme": "nature",
     "responsive": true,
+    "use_tailwind": false,
     "output_dir": "./website-prototype"
 }'
 ```
