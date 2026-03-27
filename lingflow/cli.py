@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""LingFlow CLI Interface.
+"""灵通 (LingFlow) CLI Interface
+
+众智混元，万法灵通
 
 Provides command-line interface for executing LingFlow skills and workflows.
 Uses Click for CLI argument parsing and command organization.
@@ -22,8 +24,7 @@ lf = LingFlow()
 
 @click.group()
 def cli() -> None:
-    """LingFlow CLI 主入口"""
-    pass
+    """灵通 (LingFlow) CLI 主入口 - 众智混元，万法灵通"""
 
 
 @cli.command()
