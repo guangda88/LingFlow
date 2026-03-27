@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""LingFlow 命令行接口
+"""灵通 (LingFlow) 命令行接口
+
+众智混元，万法灵通
 
 提供 CLI 命令来执行技能和工作流。
 
@@ -28,9 +30,9 @@ enable_smart_compression()
 
 @click.group()
 def cli():
-    """LingFlow - AI 驱动的技能编排框架
+    """灵通 (LingFlow) - 众智混元，万法灵通
 
-    这是一个命令行工具，用于执行和管理 LingFlow 技能和工作流。
+    这是一个命令行工具，用于执行和管理灵通的技能和工作流。
     """
 
 @cli.command()
