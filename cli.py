@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""灵通 (LingFlow) 命令行接口
+"""灵通 工程流系统 (LingFlow Engineering Flow) 命令行接口
 
 众智混元，万法灵通
 
-提供 CLI 命令来执行技能和工作流。
+提供 CLI 命令来执行技能和工作流，覆盖软件工程全生命周期。
 
 Usage:
     lingflow run <skill> [--params JSON]
@@ -30,9 +30,11 @@ enable_smart_compression()
 
 @click.group()
 def cli():
-    """灵通 (LingFlow) - 众智混元，万法灵通
+    """灵通 工程流系统 (LingFlow Engineering Flow)
 
-    这是一个命令行工具，用于执行和管理灵通的技能和工作流。
+    众智混元，万法灵通
+
+    完整的软件工程工作流系统，覆盖从需求分析到部署运维的全生命周期。
     """
 
 @cli.command()

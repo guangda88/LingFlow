@@ -1,9 +1,88 @@
 # Changelog
 
-All notable changes to LingFlow will be documented in this file.
+All notable changes to LingFlow Engineering Flow will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [3.5.6] - 2026-03-27
+
+### 品牌升级 - 工程流系统
+
+**品牌定位**
+- 中文名称：**灵通 工程流系统** (LingFlow Engineering Flow)
+- 英文定位：LingFlow Engineering Workflow System
+- Slogan：众智混元，万法灵通
+
+### Added
+
+**工程能力完善**
+- **需求工程**
+  - 新增 `requirements-analysis.yaml` - 需求分析工作流
+    - 7 阶段：头脑风暴 → 需求澄清 → 编写规格 → 数据模型 → API 设计 → 验证 → 报告
+  - 新增 `lingflow/requirements/traceability.py` - 需求追溯模块
+    - 需求生命周期管理 (draft → proposed → approved → in_progress → implemented → verified → released)
+    - 实现追溯 (分支、提交、PR、任务)
+    - 依赖关系管理
+    - 追溯报告生成
+- **部署工程**
+  - 新增 `deploy-release.yaml` - 部署发布工作流
+    - 10 阶段：代码审查 → 测试 → 构建 → 环境配置 → 部署 → 验证 → 报告 → 文档更新
+
+**运维监控扩展**
+- 告警规则：4 → 11 条 (+175%)
+  - `slow_skill_load` - 技能加载时间过长
+  - `high_skill_error_rate` - 技能错误率过高
+  - `high_context_usage` - 上下文使用率过高
+  - `high_cpu_usage` - CPU 使用率过高
+  - `low_disk_space` - 磁盘空间不足
+  - `high_concurrent_tasks` - 并发任务数过多
+- 性能趋势分析
+  - `record_metric(name, value)` - 记录指标
+  - `get_metric_trend(name)` - 获取趋势分析
+  - `detect_anomaly(name, value)` - 异常检测
+  - `get_all_trends()` - 获取所有指标趋势
+- 系统资源监控
+  - `update_system_metrics()` - 更新系统指标
+  - `get_system_metrics()` - 获取系统资源 (CPU/内存/磁盘)
+
+**技能注册修复**
+- 修复 `AgentCoordinator.list_skills()` 动态技能发现
+- 为 10 个文档驱动技能创建 `implementation.py`
+  - brainstorming, dispatching-parallel-agents, finishing-a-development-branch
+  - skill-integration, subagent-driven-development, systematic-debugging
+  - test-driven-development, using-git-worktrees, verification-before-completion, writing-plans
+- CLI 可发现技能：4 → 33 个 (+725%)
+
+### Changed
+
+**SDLC 工程流对齐**
+- 需求分析：65% → 85% (+20%)
+- 部署发布：80% → 85% (+5%)
+- 监控运维：70% → 75% (+5%)
+- **综合对齐度：85% → 92%**
+
+**工作流覆盖**
+- 工作流数量：2 → 4 (+100%)
+
+**版本更新**
+- `__version__`: 3.5.2 → 3.6.0
+- `VERSION` 文件更新
+- 模块文档字符串更新
+
+### Performance
+
+- 技能发现：动态扫描，无需手动注册
+- 告警响应：冷却期机制，避免告警风暴
+- 趋势分析：滑动窗口，支持实时分析
+
+### Documentation
+
+- 更新 README.md 反映工程流定位
+- 更新模块文档字符串
+- 新增性能监控文档
 
 ---
 

@@ -101,7 +101,13 @@ class OperationsMonitor:
     - 告警规则
     - 指标聚合
     - 通知集成
+    - 性能趋势分析
+    - 异常检测
     """
+
+    # 默认配置
+    DEFAULT_TRETND_WINDOW = 100  # 趋势分析窗口大小
+    DEFAULT_ANOMALY_THRESHOLD = 2.0  # 异常检测阈值（标准差倍数）
 
     def __init__(self, performance_monitor: PerformanceMonitor = None):
         self.performance_monitor = performance_monitor or performance_monitor
@@ -126,6 +132,17 @@ class OperationsMonitor:
 
         # 锁
         self._lock = threading.RLock()
+
+        # === 新增：性能趋势跟踪 ===
+        self._metric_history: Dict[str, List[float]] = defaultdict(list)
+        self._trend_window = self.DEFAULT_TRETND_WINDOW
+
+        # === 新增：异常检测 ===
+        self._anomaly_threshold = self.DEFAULT_ANOMALY_THRESHOLD
+        self._anomaly_history: List[Dict[str, Any]] = []
+
+        # === 新增：系统资源监控 ===
+        self._system_metrics: Dict[str, float] = {}
 
         # 配置默认告警规则
         self._setup_default_alert_rules()
@@ -173,6 +190,74 @@ class OperationsMonitor:
                 severity=AlertSeverity.WARNING,
                 message_template="内存使用率过高: {memory_usage_percent:.1f}%",
                 cooldown_seconds=300,
+            )
+        )
+
+        # === 新增扩展告警规则 ===
+
+        # 技能加载时间告警
+        self.add_alert_rule(
+            AlertRule(
+                name="slow_skill_load",
+                condition=lambda m: m.get("skill_load_time", 0) > 1.0,
+                severity=AlertSeverity.WARNING,
+                message_template="技能 {name} 加载时间过长: {skill_load_time:.2f}s",
+                cooldown_seconds=600,
+            )
+        )
+
+        # 技能错误率告警
+        self.add_alert_rule(
+            AlertRule(
+                name="high_skill_error_rate",
+                condition=lambda m: m.get("error_rate", 0) > 10,
+                severity=AlertSeverity.ERROR,
+                message_template="技能 {name} 错误率过高: {error_rate:.1f}%",
+                cooldown_seconds=300,
+            )
+        )
+
+        # 上下文 Token 使用率告警
+        self.add_alert_rule(
+            AlertRule(
+                name="high_context_usage",
+                condition=lambda m: m.get("context_usage_percent", 0) > 85,
+                severity=AlertSeverity.WARNING,
+                message_template="上下文使用率过高: {context_usage_percent:.1f}%",
+                cooldown_seconds=300,
+            )
+        )
+
+        # CPU 使用率告警
+        self.add_alert_rule(
+            AlertRule(
+                name="high_cpu_usage",
+                condition=lambda m: m.get("cpu_usage_percent", 0) > 90,
+                severity=AlertSeverity.WARNING,
+                message_template="CPU 使用率过高: {cpu_usage_percent:.1f}%",
+                cooldown_seconds=300,
+            )
+        )
+
+        # 磁盘空间告警
+        self.add_alert_rule(
+            AlertRule(
+                name="low_disk_space",
+                condition=lambda m: m.get("disk_available_percent", 100) < 10,
+                severity=AlertSeverity.CRITICAL,
+                message_template="磁盘空间不足: 仅剩 {disk_available_percent:.1f}%",
+                cooldown_seconds=600,
+            )
+        )
+
+        # 并发任务数告警
+        self.add_alert_rule(
+            AlertRule(
+                name="high_concurrent_tasks",
+                condition=lambda m: m.get("concurrent_tasks", 0) > 50,
+                severity=AlertSeverity.WARNING,
+                message_template="并发任务数过多: {concurrent_tasks} 个",
+                cooldown_seconds=180,
             )
         )
 
@@ -402,6 +487,177 @@ class OperationsMonitor:
             },
         }
 
+    # === 新增：性能趋势分析 ===
+
+    def record_metric(self, name: str, value: float):
+        """记录指标值用于趋势分析
+
+        Args:
+            name: 指标名称
+            value: 指标值
+        """
+        with self._lock:
+            self._metric_history[name].append(value)
+            # 保持窗口大小
+            if len(self._metric_history[name]) > self._trend_window:
+                self._metric_history[name].pop(0)
+
+    def get_metric_trend(self, name: str) -> Dict[str, Any]:
+        """获取指标趋势
+
+        Args:
+            name: 指标名称
+
+        Returns:
+            趋势分析结果
+        """
+        with self._lock:
+            if name not in self._metric_history or len(self._metric_history[name]) < 2:
+                return {"status": "insufficient_data"}
+
+            values = self._metric_history[name]
+
+            # 计算基本统计
+            import statistics as stats
+            mean = stats.mean(values)
+            median = stats.median(values)
+            stdev = stats.stdev(values) if len(values) > 1 else 0
+
+            # 计算趋势
+            recent_avg = stats.mean(values[-10:]) if len(values) >= 10 else mean
+            older_avg = stats.mean(values[:-10]) if len(values) >= 20 else mean
+            trend_percent = ((recent_avg - older_avg) / older_avg * 100) if older_avg != 0 else 0
+
+            # 判断趋势方向
+            if trend_percent > 10:
+                direction = "increasing"
+            elif trend_percent < -10:
+                direction = "decreasing"
+            else:
+                direction = "stable"
+
+            return {
+                "name": name,
+                "current": values[-1],
+                "mean": mean,
+                "median": median,
+                "stdev": stdev,
+                "min": min(values),
+                "max": max(values),
+                "trend_direction": direction,
+                "trend_percent": trend_percent,
+                "sample_count": len(values),
+            }
+
+    def get_all_trends(self) -> Dict[str, Dict[str, Any]]:
+        """获取所有指标趋势"""
+        with self._lock:
+            return {name: self.get_metric_trend(name) for name in self._metric_history}
+
+    # === 新增：异常检测 ===
+
+    def detect_anomaly(self, name: str, value: float) -> Optional[Dict[str, Any]]:
+        """检测指标异常
+
+        Args:
+            name: 指标名称
+            value: 当前值
+
+        Returns:
+            异常信息，如果没有异常则返回 None
+        """
+        with self._lock:
+            if name not in self._metric_history or len(self._metric_history[name]) < 10:
+                return None
+
+            values = self._metric_history[name]
+            import statistics as stats
+
+            mean = stats.mean(values)
+            stdev = stats.stdev(values) if len(values) > 1 else 0
+
+            if stdev == 0:
+                return None
+
+            # 计算 Z-score
+            z_score = abs((value - mean) / stdev)
+
+            if z_score > self._anomaly_threshold:
+                anomaly = {
+                    "metric": name,
+                    "value": value,
+                    "expected_range": (mean - self._anomaly_threshold * stdev,
+                                     mean + self._anomaly_threshold * stdev),
+                    "z_score": z_score,
+                    "timestamp": datetime.now().isoformat(),
+                }
+                self._anomaly_history.append(anomaly)
+                return anomaly
+
+            return None
+
+    def get_anomaly_history(self, limit: int = 50) -> List[Dict[str, Any]]:
+        """获取异常检测历史"""
+        with self._lock:
+            return self._anomaly_history[-limit:]
+
+    # === 新增：系统资源监控 ===
+
+    def update_system_metrics(self):
+        """更新系统资源指标"""
+        try:
+            import psutil
+
+            self._system_metrics = {
+                "cpu_usage_percent": psutil.cpu_percent(interval=0.1),
+                "memory_usage_percent": psutil.virtual_memory().percent,
+                "disk_usage_percent": psutil.disk_usage('/').percent,
+                "disk_available_percent": 100 - psutil.disk_usage('/').percent,
+            }
+
+            # 记录指标用于趋势分析
+            for name, value in self._system_metrics.items():
+                self.record_metric(f"system.{name}", value)
+
+        except ImportError:
+            # psutil 不可用，跳过系统指标采集
+            pass
+        except Exception as e:
+            logger.warning(f"更新系统指标失败: {e}")
+
+    def get_system_metrics(self) -> Dict[str, float]:
+        """获取系统资源指标"""
+        return self._system_metrics.copy()
+
+    # === 新增：增强通知处理 ===
+
+    def setup_default_notification_handlers(self):
+        """设置默认通知处理器"""
+        # 控制台通知
+        def console_handler(alert: Alert):
+            severity_icons = {
+                AlertSeverity.INFO: "ℹ️",
+                AlertSeverity.WARNING: "⚠️",
+                AlertSeverity.ERROR: "❌",
+                AlertSeverity.CRITICAL: "🚨",
+            }
+            icon = severity_icons.get(alert.severity, "📊")
+            print(f"{icon} [{alert.severity.value.upper()}] {alert.message}")
+
+        self.add_notification_handler(console_handler)
+
+        # 日志通知
+        def log_handler(alert: Alert):
+            log_func = {
+                AlertSeverity.INFO: logger.info,
+                AlertSeverity.WARNING: logger.warning,
+                AlertSeverity.ERROR: logger.error,
+                AlertSeverity.CRITICAL: logger.critical,
+            }.get(alert.severity, logger.info)
+            log_func(f"告警 [{alert.source}]: {alert.message}")
+
+        self.add_notification_handler(log_handler)
+
 
 # 全局单例
 _operations_monitor: Optional[OperationsMonitor] = None
@@ -452,3 +708,30 @@ def get_active_alerts() -> List[Alert]:
 def get_monitoring_summary() -> Dict[str, Any]:
     """获取监控摘要"""
     return get_operations_monitor().get_monitoring_summary()
+
+
+# === 新增：扩展便捷函数 ===
+
+def record_metric(name: str, value: float):
+    """记录指标用于趋势分析"""
+    return get_operations_monitor().record_metric(name, value)
+
+
+def get_metric_trend(name: str) -> Dict[str, Any]:
+    """获取指标趋势"""
+    return get_operations_monitor().get_metric_trend(name)
+
+
+def detect_anomaly(name: str, value: float) -> Optional[Dict[str, Any]]:
+    """检测指标异常"""
+    return get_operations_monitor().detect_anomaly(name, value)
+
+
+def update_system_metrics():
+    """更新系统资源指标"""
+    return get_operations_monitor().update_system_metrics()
+
+
+def get_system_metrics() -> Dict[str, float]:
+    """获取系统资源指标"""
+    return get_operations_monitor().get_system_metrics()

@@ -1,0 +1,39 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-03-27T08:57:21.204986",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "title": "测试需求",
+      "description": "这是一个测试需求",
+      "status": "draft",
+      "priority": "medium",
+      "created_at": "2026-03-27T08:57:21.204965",
+      "updated_at": "2026-03-27T08:57:21.204971",
+      "parent_id": null,
+      "child_ids": [],
+      "depends_on": [],
+      "blocks": [],
+      "feature_branch": null,
+      "commits": [],
+      "pull_requests": [],
+      "tasks": [],
+      "test_cases": [],
+      "acceptance_criteria": [],
+      "tags": [],
+      "category": null,
+      "epic": null,
+      "metadata": {}
+    }
+  ],
+  "events": [
+    {
+      "id": "REQ-001_created_1774573041",
+      "requirement_id": "REQ-001",
+      "event_type": "created",
+      "timestamp": "2026-03-27T08:57:21.204984",
+      "description": "创建需求: 测试需求",
+      "metadata": {}
+    }
+  ]
+}

@@ -395,10 +395,25 @@ class AgentCoordinator(BaseCoordinator):
         Returns:
             List of skill names that can be executed
         """
-        # 这里可以返回实际的技能列表
-        return [
-            "database_export",
-            "notification",
-            "code_analysis",
-            "code_optimization",
-        ]
+        import os
+        from pathlib import Path
+
+        skills_dir = Path(os.getcwd()) / "skills"
+        skills = []
+
+        if not skills_dir.exists():
+            return skills
+
+        # 扫描所有包含 implementation.py 或 SKILL.md 的目录
+        for item in skills_dir.iterdir():
+            if not item.is_dir() or item.name.startswith('_'):
+                continue
+
+            impl_path = item / "implementation.py"
+            skill_md = item / "SKILL.md"
+
+            if impl_path.exists() or skill_md.exists():
+                # 使用连字符格式作为技能名称
+                skills.append(item.name)
+
+        return sorted(skills)

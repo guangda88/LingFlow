@@ -1,0 +1,110 @@
+name: 需求分析工作流
+description: 从用户需求到功能规格的完整分析流程
+
+tasks:
+  # 阶段1: 头脑风暴 - 探索用户意图
+  - id: brainstorm_requirements
+    skill: brainstorming
+    params:
+      phase: requirements
+      focus: user_intent
+    metadata:
+      stage: requirements
+      priority: high
+
+  # 阶段2: 需求澄清
+  - id: clarify_requirements
+    skill: brainstorming
+    params:
+      phase: clarification
+      questions:
+        - 目标用户是谁？
+        - 核心功能是什么？
+        - 成功标准是什么？
+        - 有哪些约束条件？
+    depends_on: [brainstorm_requirements]
+    metadata:
+      stage: requirements
+      priority: high
+
+  # 阶段3: 编写需求规格
+  - id: write_specification
+    skill: writing-plans
+    params:
+      output_format: "YYYY-MM-DD-<feature>-spec.md"
+      output_location: "docs/specifications/"
+      sections:
+        - 功能概述
+        - 用户故事
+        - 验收标准
+        - 技术约束
+        - 依赖关系
+    depends_on: [clarify_requirements]
+    metadata:
+      stage: design
+      priority: high
+
+  # 阶段4: 设计数据模型
+  - id: design_database
+    skill: database-schema-designer
+    params:
+      based_on: "{{tasks.write_specification.output}}"
+      output_format: "mermaid"
+    depends_on: [write_specification]
+    condition: "{{tasks.write_specification.output.needs_database}}"
+    metadata:
+      stage: design
+      priority: medium
+
+  # 阶段5: 设计 API 接口
+  - id: design_api
+    skill: api-doc-generator
+    params:
+      based_on: "{{tasks.write_specification.output}}"
+      output_format: "openapi"
+    depends_on: [write_specification]
+    condition: "{{tasks.write_specification.output.has_api}}"
+    metadata:
+      stage: design
+      priority: medium
+
+  # 阶段6: 验证需求完整性
+  - id: validate_requirements
+    skill: verification-before-completion
+    params:
+      check_items:
+        - 需求是否完整？
+        - 验收标准是否清晰？
+        - 技术约束是否考虑？
+        - 依赖关系是否明确？
+    depends_on: [write_specification, design_database, design_api]
+    metadata:
+      stage: verification
+      priority: high
+
+  # 阶段7: 生成需求报告
+  - id: generate_report
+    skill: notification
+    params:
+      level: "info"
+      message: |
+        需求分析完成！
+        - 功能规格: {{tasks.write_specification.output.file}}
+        - 数据模型: {{tasks.design_database.output.file}}
+        - API 设计: {{tasks.design_api.output.file}}
+    depends_on: [validate_requirements]
+    metadata:
+      stage: reporting
+      priority: low
+
+# 成功条件
+success_criteria:
+  - all_tasks_completed: true
+  - requirements_validated: true
+  - spec_file_exists: true
+
+# 输出产物
+artifacts:
+  - docs/specifications/<feature>-spec.md
+  - docs/design/<feature>-database.mermaid
+  - docs/design/<feature>-api.openapi.yaml
