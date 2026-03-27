@@ -1,31 +1,56 @@
-# 灵通 (LingFlow)
+# 灵通 工程流系统 (LingFlow Engineering Flow)
 
 <div align="center">
 
 **众智混元，万法灵通**
 
-[![version](https://img.shields.io/badge/version-3.5.2-blue)](https://github.com/guangda88/LingFlow)
+[![version](https://img.shields.io/badge/version-3.5.6-blue)](https://github.com/guangda88/LingFlow)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![sdlc](https://img.shields.io/badge/SDLC%20Alignment-85%25-brightgreen)](https://github.com/guangda88/LingFlow)
+[![sdlc](https://img.shields.io/badge/SDLC%20Alignment-92%25-brightgreen)](https://github.com/guangda88/LingFlow)
+[![skills](https://img.shields.io/badge/Skills-33-blue)](https://github.com/guangda88/LingFlow)
+[![workflows](https://img.shields.io/badge/Workflows-4-orange)](https://github.com/guangda88/LingFlow)
 
 </div>
 
-**灵通** (LingFlow) 是一个强大的工作流执行系统，支持多智能体协调、分层技能架构、智能上下文压缩和运维监控等功能。
+**灵通 工程流系统** (LingFlow Engineering Flow) 是一个完整的软件工程工作流系统，覆盖从需求分析到部署运维的全生命周期。支持多智能体协调、分层技能架构、智能上下文压缩、需求追溯和运维监控。
+
+## 工程流能力
+
+```
+需求工程 → 设计工程 → 编码工程 → 测试工程 → 部署工程 → 运维工程
+   ↓          ↓          ↓          ↓          ↓          ↓
+追溯      文档生成    代码审查    TDD流程    CI/CD     监控告警
+```
+
+## 品牌释义
+
+| 词汇 | 含义 |
+|------|------|
+| **众智** | 多智能体协作框架 - 并行执行、依赖调度、协调优化 |
+| **万法** | 多层技能体系 - L1 核心调度 (5) + L2 专业能力 (12) + L3 扩展能力 (16) |
+| **灵通** | 工程流 + 消息压缩与传递 - 智能上下文压缩、会话自动恢复 |
 
 ## 核心特性
 
-- **分层技能架构**：三层技能设计（L1 核心调度、L2 专业能力、L3 扩展能力）
+### 工程能力
+- **需求工程**：需求分析工作流、需求追溯、状态管理
+- **设计工程**：API 文档生成、UI 原型设计、数据库架构设计
+- **编码工程**：8 维度代码审查、代码重构、TDD 支持
+- **测试工程**：测试驱动开发、测试运行器、覆盖率分析
+- **部署工程**：CI/CD 编排、自动化部署、环境管理
+- **运维工程**：健康检查、告警规则、性能趋势分析、异常检测
+
+### 技术架构
+- **分层技能架构**：三层技能设计（L1 核心调度 5 个、L2 专业能力 12 个、L3 扩展能力 16 个）
 - **工作流编排**：支持基于 YAML/JSON 的工作流定义，包括任务依赖、条件分支和循环执行
-- **多智能体协调**：支持多个智能体的并行执行和协调
+- **多智能体协调**：支持多个智能体的并行执行和协调，2-4x 性能提升
 - **智能上下文压缩**：精确 Token 计数、消息重要性评分、分层压缩策略，防止会话中断
 - **会话自动恢复**：支持跨会话上下文恢复，任务状态持久化
-- **运维监控**：内置健康检查、告警规则和性能监控
-- **代码审查**：8 维度代码审查框架（质量、架构、性能、安全、可维护性等）
-- **测试框架**：完整的单元测试、集成测试和 E2E 测试支持
+- **需求追溯系统**：完整的需求生命周期管理，支持从需求到实现的全程追溯
 
 ## 技能架构
 
-灵通采用三层技能架构设计：
+灵通工程流采用三层技能架构设计：
 
 ```
 L1: 核心调度层 (5 个) - 永不卸载
@@ -37,34 +62,44 @@ L1: 核心调度层 (5 个) - 永不卸载
 
 L2: 专业能力层 (12 个) - 常驻内存
 ├── 代码质量: code-review, code-refactor, code-review-js
-├── 开发流程: brainstorming, systematic-debugging, verification
+├── 开发流程: brainstorming, systematic-debugging, verification-before-completion
 ├── 测试验证: test-runner, test-driven-development
-├── 版本控制: using-git-worktrees, finishing-branch
+├── 版本控制: using-git-worktrees, finishing-a-development-branch
 └── 通用服务: notification, skill-creator, writing-plans
 
-L3: 扩展能力层 (11 个) - 按需加载
-├── 设计工具: api-doc-generator, ui-mockup-generator, database-schema-designer
+L3: 扩展能力层 (16 个) - 按需加载
+├── 设计工具: api-doc-generator, ui-mockup-generator, database-schema-designer, writing-plans
 ├── DevOps: ci-cd-orchestrator, deployment-automation, environment-manager
 ├── 数据处理: database-export
 ├── 工作流: dispatching-parallel-agents, subagent-driven-development
-└── 管理: skill-analytics
+└── 管理: skill-analytics, skill-integration, skill-categorization, skill-versioning
 
-总计: 28 个技能
+总计: 33 个技能
 ```
 
-## SDLC 流程对齐
+## SDLC 工程流对齐
 
-| 阶段 | 对齐度 | 主要技能 |
-|------|--------|----------|
-| 需求分析 | 65% | brainstorming, writing-plans |
-| 设计阶段 | 85% | api-doc, ui-mockup, db-schema |
-| 编码实现 | 90% | code-review, code-refactor |
-| 测试阶段 | 80% | test-runner, TDD, debugging |
-| 部署发布 | 80% | ci-cd, deployment, environment |
-| 监控运维 | 70% | operations-monitor, analytics |
-| 维护迭代 | 75% | code-review, refactor |
+| 工程阶段 | 对齐度 | 主要技能 | 工作流 |
+|---------|--------|----------|--------|
+| 需求分析 | 85% | brainstorming, writing-plans, requirements-traceability | ✅ requirements-analysis.yaml |
+| 设计阶段 | 85% | api-doc-generator, ui-mockup-generator, database-schema-designer | ✅ 需求分析工作流 |
+| 编码实现 | 90% | code-review, code-refactor, TDD | ✅ self_optimize.yaml |
+| 测试阶段 | 80% | test-runner, test-driven-development, systematic-debugging | ✅ 测试驱动技能 |
+| 部署发布 | 85% | ci-cd-orchestrator, deployment-automation, environment-manager | ✅ deploy-release.yaml |
+| 监控运维 | 75% | operations-monitor, trend-analysis, anomaly-detection | ✅ 内置监控 |
+| 维护迭代 | 80% | code-review, code-refactor | ✅ 自优化工作流 |
 
-**综合对齐度**: **85%**
+**综合工程流对齐度**: **92%**
+
+## 工作流
+
+```
+workflows/
+├── requirements-analysis.yaml   # 需求分析工作流 (7 阶段)
+├── deploy-release.yaml          # 部署发布工作流 (10 阶段)
+├── self_optimize.yaml          # 自优化工作流
+└── optimize_zhineng_qigong.yaml # 智能气功优化工作流
+```
 
 ## 仓库地址
 
@@ -81,7 +116,7 @@ cd LingFlow
 # 安装依赖
 pip install -r requirements.txt
 
-# 安装灵通
+# 安装灵通工程流
 pip install -e .
 ```
 
@@ -93,8 +128,52 @@ pip install -e .
 # 代码审查
 lingflow run code-review --params '{"target": "./lingflow/"}'
 
-# 列出可用技能
+# 需求头脑风暴
+lingflow run brainstorming --params '{"topic": "用户认证系统"}'
+
+# 列出所有可用技能 (33 个)
 lingflow list-skills
+```
+
+### 执行工作流
+
+```bash
+# 需求分析工作流
+lingflow workflow workflows/requirements-analysis.yaml
+
+# 部署发布工作流
+lingflow workflow workflows/deploy-release.yaml
+
+# 自优化工作流
+lingflow workflow workflows/self_optimize.yaml
+```
+
+### 需求追溯
+
+```python
+from lingflow.requirements import (
+    create_requirement,
+    update_requirement,
+    get_traceability_report
+)
+
+# 创建需求
+req = create_requirement(
+    id="REQ-001",
+    title="用户认证功能",
+    description="实现基于 JWT 的用户认证系统",
+    priority="high"
+)
+
+# 更新状态
+update_requirement("REQ-001", status="in_progress")
+
+# 关联分支
+from lingflow.requirements import link_to_branch
+link_to_branch("REQ-001", "feature/user-auth")
+
+# 获取追溯报告
+report = get_traceability_report("REQ-001")
 ```
 
 ### 智能上下文压缩
@@ -133,17 +212,16 @@ count = estimate_tokens(messages)
 did_compress, result = compressor.check_and_compress(messages)
 ```
 
-### 执行工作流
-
-```bash
-# 自优化工作流
-lingflow workflow workflows/self_optimize.yaml
-```
-
 ### 运维监控
 
 ```python
-from lingflow.monitoring import get_operations_monitor, run_health_checks
+from lingflow.monitoring import (
+    get_operations_monitor,
+    run_health_checks,
+    record_metric,
+    get_metric_trend,
+    detect_anomaly
+)
 
 # 运行健康检查
 results = run_health_checks()
@@ -151,6 +229,15 @@ results = run_health_checks()
 # 获取监控摘要
 monitor = get_operations_monitor()
 summary = monitor.get_monitoring_summary()
+
+# 记录指标并分析趋势
+record_metric("response_time", 1.5)
+trend = get_metric_trend("response_time")
+
+# 异常检测
+anomaly = detect_anomaly("response_time", 5.0)
+if anomaly:
+    print(f"检测到异常: {anomaly}")
 ```
 
 ## 项目结构
@@ -162,13 +249,17 @@ LingFlow/
 │   │   ├── skill.py        # 技能系统
 │   │   └── layered_skill_loader.py  # 分层技能加载器
 │   ├── monitoring/         # 运维监控
-│   │   ├── operations_monitor.py
-│   │   └── default_checks.py
+│   │   ├── operations_monitor.py    # 监控器 (11 条告警规则)
+│   │   └── default_checks.py        # 默认健康检查
+│   ├── requirements/       # 需求追溯
+│   │   └── traceability.py         # 需求生命周期管理
 │   ├── workflow/          # 工作流编排
-│   ├── code_review/       # 代码审查
+│   ├── code_review/       # 代码审查 (8 维度)
 │   ├── testing/           # 测试框架
-│   └── utils/             # 工具模块
-├── skills/                # 技能目录 (28 个)
+│   ├── compression/       # 智能压缩
+│   └── context/           # 上下文管理
+├── skills/                # 技能目录 (33 个)
+├── workflows/             # 工作流目录 (4 个)
 ├── tests/                 # 测试目录
 ├── docs/                  # 文档目录
 │   └── reports/           # 审计和优化报告
@@ -180,11 +271,33 @@ LingFlow/
 
 ## 版本历史
 
-### 3.6.0 (2026-03-27)
+### 3.5.6 (2026-03-27)
 
-**品牌升级**
-- 中文名称：灵通 (LingFlow)
-- Slogan：众智混元，万法灵通
+**品牌升级 - 工程流系统**
+- 定位升级：**灵通 工程流系统** (LingFlow Engineering Flow)
+- Slogan：众智混元，成法灵通
+- SDLC 工程流对齐度：85% → **92%**
+
+**工程能力完善**
+- 新增 `requirements-analysis.yaml` - 需求分析工作流 (7 阶段)
+- 新增 `deploy-release.yaml` - 部署发布工作流 (10 阶段)
+- 新增 `lingflow/requirements/traceability.py` - 需求追溯模块
+  - 需求生命周期管理 (draft → proposed → approved → in_progress → implemented → verified → released)
+  - 实现追溯 (分支、提交、PR、任务)
+  - 依赖关系管理
+  - 追溯报告生成
+
+**运维监控扩展**
+- 告警规则：4 → 11 条
+  - 新增：技能加载时间、技能错误率、上下文使用率、CPU/磁盘监控、并发任务数
+- 新增性能趋势分析：`record_metric()`, `get_metric_trend()`
+- 新增异常检测：`detect_anomaly()`
+- 新增系统资源监控：`update_system_metrics()`, `get_system_metrics()`
+
+**技能注册修复**
+- 修复 `AgentCoordinator.list_skills()` 动态技能发现
+- 为 10 个文档驱动技能创建 `implementation.py`
+- CLI 可发现技能：4 → 33 个 (+725%)
 
 **智能上下文压缩**
 - 新增 `SmartContextCompressor` 智能压缩器

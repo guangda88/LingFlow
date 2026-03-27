@@ -1,0 +1,189 @@
+name: 部署发布工作流
+description: 从代码完成到生产部署的完整发布流程
+
+tasks:
+  # 阶段1: 代码审查
+  - id: code_review
+    skill: code-review
+    params:
+      target: "./"
+      dimensions:
+        - code_quality
+        - architecture
+        - performance
+        - security
+        - maintainability
+        - best_practices
+        - consistency
+        - bug_analysis
+      strict_mode: true
+    metadata:
+      stage: review
+      priority: critical
+
+  # 阶段2: 检查审查结果
+  - id: check_review_results
+    skill: conditional-branch
+    params:
+      condition: "{{tasks.code_review.output.severity_counts.critical}} == 0"
+      branches:
+        true:
+          - id: review_passed
+            skill: notification
+            params:
+              level: "info"
+              message: "代码审查通过 - 无严重问题"
+        false:
+          - id: review_failed
+            skill: notification
+            params:
+              level: "error"
+              message: "代码审查失败 - 发现 {{tasks.code_review.output.severity_counts.critical}} 个严重问题"
+            halt: true
+    depends_on: [code_review]
+    metadata:
+      stage: review
+      priority: critical
+
+  # 阶段3: 运行测试套件
+  - id: run_tests
+    skill: test-runner
+    params:
+      test_type: "all"
+      coverage_threshold: 80
+    metadata:
+      stage: testing
+      priority: critical
+
+  # 阶段4: 检查测试结果
+  - id: check_test_results
+    skill: conditional-branch
+    params:
+      condition: "{{tasks.run_tests.output.passed}} == {{tasks.run_tests.output.total}}"
+      branches:
+        true:
+          - id: tests_passed
+            skill: notification
+            params:
+              level: "info"
+              message: "所有测试通过 - 覆盖率: {{tasks.run_tests.output.coverage}}%"
+        false:
+          - id: tests_failed
+            skill: notification
+            params:
+              level: "error"
+              message: "测试失败 - {{tasks.run_tests.output.failed}} 个测试未通过"
+            halt: true
+    depends_on: [run_tests]
+    metadata:
+      stage: testing
+      priority: critical
+
+  # 阶段5: 构建部署包
+  - id: build_package
+    skill: task-runner
+    params:
+      commands:
+        - "python -m build"
+        - "python -m twine check dist/*"
+    metadata:
+      stage: build
+      priority: high
+
+  # 阶段6: 配置部署环境
+  - id: configure_environment
+    skill: environment-manager
+    params:
+      env_type: "production"
+      validate: true
+      backup: true
+    metadata:
+      stage: deploy
+      priority: high
+
+  # 阶段7: 执行部署
+  - id: deploy
+    skill: deployment-automation
+    params:
+      target: "{{params.deploy_target | default('docker')}}"
+      strategy: "blue-green"
+      health_check: true
+      rollback_on_failure: true
+    depends_on: [build_package, configure_environment]
+    metadata:
+      stage: deploy
+      priority: critical
+
+  # 阶段8: 部署后验证
+  - id: post_deploy_verification
+    skill: verification-before-completion
+    params:
+      verification_steps:
+        - 检查服务健康状态
+        - 运行冒烟测试
+        - 验证关键功能
+        - 检查日志错误
+    depends_on: [deploy]
+    metadata:
+      stage: verification
+      priority: critical
+
+  # 阶段9: 生成发布报告
+  - id: generate_release_report
+    skill: notification
+    params:
+      level: "info"
+      message: |
+        发布成功！
+        - 版本: {{params.version}}
+        - 环境: {{params.env | default('production')}}
+        - 部署时间: {{tasks.deploy.output.deploy_time}}
+        - 健康检查: {{tasks.post_deploy_verification.output.status}}
+    depends_on: [post_deploy_verification]
+    metadata:
+      stage: reporting
+      priority: low
+
+  # 阶段10: 更新文档
+  - id: update_documentation
+    skill: api-doc-generator
+    params:
+      regenerate: true
+      publish: true
+    depends_on: [generate_release_report]
+    metadata:
+      stage: post_release
+      priority: medium
+
+# 成功条件
+success_criteria:
+  - code_review_passed: true
+  - all_tests_passed: true
+  - deployment_successful: true
+  - health_checks_passed: true
+
+# 失败回滚策略
+rollback_strategy:
+  trigger:
+    - health_check_failed
+    - critical_errors_detected
+  action:
+    skill: deployment-automation
+    params:
+      action: "rollback"
+      to: "previous_version"
+
+# 输入参数
+required_params:
+  - version: 发布版本号
+  - env: 目标环境 (可选，默认 production)
+  - deploy_target: 部署目标 (可选，默认 docker)
+
+# 通知配置
+notifications:
+  on_success:
+    - channel: "console"
+      level: "info"
+  on_failure:
+    - channel: "console"
+      level: "error"
