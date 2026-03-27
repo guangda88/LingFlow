@@ -4,12 +4,17 @@
 在 LingFlow 导入时自动显示上次会话摘要（如果存在）。
 """
 
+import os
 import sys
 from pathlib import Path
 
-
-SESSION_FILE = Path("/home/ai/.claude/projects/-home-ai-LingFlow/context/SESSION.md")
-LAST_SHOWN_FILE = Path("/home/ai/.claude/projects/-home-ai-LingFlow/context/.last_shown")
+# 会话文件路径 - 使用环境变量或用户主目录
+_CONTEXT_DIR = Path(os.getenv(
+    "LINGFLOW_CONTEXT_DIR",
+    Path.home() / ".claude" / "projects" / "lingflow" / "context"
+))
+SESSION_FILE = _CONTEXT_DIR / "SESSION.md"
+LAST_SHOWN_FILE = _CONTEXT_DIR / ".last_shown"
 
 
 def auto_resume() -> str:

@@ -7,8 +7,11 @@
 4. 显示会话恢复信息
 """
 
+import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
+
+logger = logging.getLogger(__name__)
 
 # 核心模块（延迟导入，避免循环依赖）
 _AgentCoordinator = None
@@ -72,7 +75,15 @@ def get_smart_compressor():
 
 # 导出便捷函数
 track_context = lambda *a, **k: None  # 由 context 模块处理
-compress_context = lambda: get_context_manager().compress_now()
+
+
+def compress_context():
+    """压缩上下文（带异常处理）"""
+    try:
+        return get_context_manager().compress_now()
+    except Exception as e:
+        logger.warning(f"上下文压缩失败: {e}")
+        return ""
 
 
 class LingFlow:

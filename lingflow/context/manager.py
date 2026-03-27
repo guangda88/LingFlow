@@ -5,15 +5,23 @@
 
 import json
 import logging
+import os
+import secrets
+import threading
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
-import hashlib
 
 from .auto_resume import save_resume_markdown
 
 logger = logging.getLogger(__name__)
+
+# 默认上下文存储目录 - 使用环境变量或用户主目录
+DEFAULT_CONTEXT_DIR = Path(os.getenv(
+    "LINGFLOW_CONTEXT_DIR",
+    Path.home() / ".claude" / "projects" / "lingflow" / "context"
+))
 
 
 @dataclass
@@ -51,9 +59,12 @@ class ContextManager:
         """初始化上下文管理器
 
         Args:
-            storage_dir: 上下文存储目录
+            storage_dir: 上下文存储目录 (默认使用用户主目录下的 .claude/projects/lingflow/context)
         """
-        self.storage_dir = Path(storage_dir or "/home/ai/.claude/projects/-home-ai-LingFlow/context")
+        if storage_dir is None:
+            self.storage_dir = DEFAULT_CONTEXT_DIR
+        else:
+            self.storage_dir = Path(storage_dir)
         self.storage_dir.mkdir(parents=True, exist_ok=True)
 
         # 当前会话状态
@@ -78,8 +89,8 @@ class ContextManager:
         self._load_last_context()
 
     def _generate_session_id(self) -> str:
-        """生成会话 ID"""
-        return hashlib.md5(datetime.now().isoformat().encode()).hexdigest()[:12]
+        """生成会话 ID (使用加密安全的随机生成器)"""
+        return secrets.token_urlsafe(12)
 
     def _load_last_context(self) -> Optional[ContextSnapshot]:
         """加载上次的上下文"""
@@ -333,15 +344,18 @@ class ContextManager:
         }
 
 
-# 全局单例
+# 全局单例（线程安全）
 _context_manager: Optional[ContextManager] = None
+_context_manager_lock = threading.Lock()
 
 
 def get_context_manager() -> ContextManager:
-    """获取全局上下文管理器实例"""
+    """获取全局上下文管理器实例（线程安全）"""
     global _context_manager
     if _context_manager is None:
-        _context_manager = ContextManager()
+        with _context_manager_lock:
+            if _context_manager is None:  # 双重检查锁定
+                _context_manager = ContextManager()
     return _context_manager
 
 

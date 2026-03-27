@@ -19,6 +19,7 @@
 import re
 import json
 import logging
+import threading
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
@@ -819,21 +820,24 @@ class SmartContextCompressor:
 # 便捷函数
 # ============================================================================
 
-# 全局单例
+# 全局单例（线程安全）
 _global_compressor: Optional[SmartContextCompressor] = None
+_global_compressor_lock = threading.Lock()
 
 
 def get_smart_compressor(
     max_tokens: int = 180000,
     config: Optional[Dict[str, Any]] = None
 ) -> SmartContextCompressor:
-    """获取全局智能压缩器实例"""
+    """获取全局智能压缩器实例（线程安全）"""
     global _global_compressor
     if _global_compressor is None:
-        _global_compressor = SmartContextCompressor(
-            max_tokens=max_tokens,
-            config=config
-        )
+        with _global_compressor_lock:
+            if _global_compressor is None:  # 双重检查锁定
+                _global_compressor = SmartContextCompressor(
+                    max_tokens=max_tokens,
+                    config=config
+                )
     return _global_compressor
 
 
