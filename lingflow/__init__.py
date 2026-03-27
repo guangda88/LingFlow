@@ -1,28 +1,78 @@
-"""LingFlow 统一入口"""
+"""LingFlow 统一入口
+
+启动顺序:
+1. 导入核心模块
+2. 初始化智能压缩器
+3. 初始化上下文管理器
+4. 显示会话恢复信息
+"""
 
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from .coordination.coordinator import AgentCoordinator
-from .workflow.orchestrator import WorkflowOrchestrator
-from .compression import enable_smart_compression
-from .context import get_context_manager, track_context, compress_context
+# 核心模块（延迟导入，避免循环依赖）
+_AgentCoordinator = None
+_WorkflowOrchestrator = None
 
+
+def _import_core_modules():
+    """延迟导入核心模块"""
+    global _AgentCoordinator, _WorkflowOrchestrator
+    if _AgentCoordinator is None:
+        from .coordination.coordinator import AgentCoordinator
+        from .workflow.orchestrator import WorkflowOrchestrator
+        _AgentCoordinator = AgentCoordinator
+        _WorkflowOrchestrator = WorkflowOrchestrator
+
+
+def _initialize_services():
+    """初始化服务（压缩、上下文）"""
+    # 1. 初始化智能压缩
+    from .compression import enable_smart_compression
+    enable_smart_compression(
+        max_tokens=180000,
+        warning_threshold=0.75,
+        compress_threshold=0.85
+    )
+
+    # 2. 初始化上下文管理器（加载上次状态）
+    from .context import get_context_manager
+    get_context_manager()
+
+
+def _show_session_resume():
+    """显示会话恢复信息"""
+    from .context.auto_resume import auto_resume, SESSION_FILE
+    if SESSION_FILE.exists():
+        text = auto_resume()
+        if text:
+            print(text, file=__import__('sys').stderr)
+
+
+# 版本信息
 __version__ = "3.5.2"
 
-# 导入时自动启用智能上下文压缩，防止对话因 token 限制中断
-# 默认配置: 180k max tokens, 75% 警告, 85% 压缩
-_smart_compressor = enable_smart_compression(
-    max_tokens=180000,
-    warning_threshold=0.75,
-    compress_threshold=0.85
-)
+# 执行启动初始化
+_initialize_services()
+_show_session_resume()
 
-# 初始化对话上下文管理器
-_context_manager = get_context_manager()
 
-# 导入自动恢复模块（会在导入时显示上次会话）
-from .context import auto_resume  # noqa: F401
+# 便捷导入（供外部使用）
+def get_context_manager():
+    """获取上下文管理器实例"""
+    from .context import get_context_manager as _gcm
+    return _gcm()
+
+
+def get_smart_compressor():
+    """获取智能压缩器实例"""
+    from .compression import get_smart_compressor as _gsc
+    return _gsc()
+
+
+# 导出便捷函数
+track_context = lambda *a, **k: None  # 由 context 模块处理
+compress_context = lambda: get_context_manager().compress_now()
 
 
 class LingFlow:
@@ -36,12 +86,15 @@ class LingFlow:
                 - compression_enabled: 是否启用压缩 (默认 True)
                 - compression_target_tokens: 压缩目标 token 数 (默认 4000)
         """
+        # 确保核心模块已导入
+        _import_core_modules()
+
         # 解析配置
         config = config or {}
 
-        # 初始化协调器（已启用高级压缩）
-        self._coordinator = AgentCoordinator()
-        self._orchestrator = WorkflowOrchestrator(self._coordinator)
+        # 初始化协调器
+        self._coordinator = _AgentCoordinator()
+        self._orchestrator = _WorkflowOrchestrator(self._coordinator)
 
     def run_skill(self, skill_name: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """直接执行单个技能
@@ -53,6 +106,7 @@ class LingFlow:
         Returns:
             技能执行结果
         """
+        _import_core_modules()
         return self._coordinator.execute_skill(skill_name, params or {})
 
     def run_workflow_file(self, filepath: str) -> Dict[str, Any]:
@@ -69,6 +123,7 @@ class LingFlow:
         """
         import yaml
 
+        _import_core_modules()
         base_dir = Path.cwd().resolve()
 
         # 安全验证文件路径（不跟随符号链接）

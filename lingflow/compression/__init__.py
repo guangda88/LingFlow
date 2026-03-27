@@ -166,5 +166,5 @@ def check_and_compress(messages: list) -> tuple:
     return False, messages
 
 
-# 模块导入时启用智能压缩 (默认配置)
-enable_smart_compression()
+# 注意: 模块导入时不自动启用，由 lingflow.__init__ 统一管理
+# 使用 enable_smart_compression() 手动启用
