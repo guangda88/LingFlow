@@ -5,11 +5,16 @@
 """
 
 import json
+import os
 from pathlib import Path
 from datetime import datetime
 
-
-SESSION_FILE = Path("/home/ai/.claude/projects/-home-ai-LingFlow/context/session.json")
+# 会话文件路径 - 使用环境变量或用户主目录
+_CONTEXT_DIR = Path(os.getenv(
+    "LINGFLOW_CONTEXT_DIR",
+    Path.home() / ".claude" / "projects" / "lingflow" / "context"
+))
+SESSION_FILE = _CONTEXT_DIR / "session.json"
 
 
 def save_context(summary: str, tasks: list = None, next_steps: list = None):
