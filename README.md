@@ -4,7 +4,7 @@
 
 **众智混元，万法灵通**
 
-[![version](https://img.shields.io/badge/version-3.5.6-blue)](https://github.com/guangda88/LingFlow)
+[![version](https://img.shields.io/badge/version-3.5.7-blue)](https://github.com/guangda88/LingFlow)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![sdlc](https://img.shields.io/badge/SDLC%20Alignment-92%25-brightgreen)](https://github.com/guangda88/LingFlow)
 [![skills](https://img.shields.io/badge/Skills-33-blue)](https://github.com/guangda88/LingFlow)
@@ -13,6 +13,12 @@
 </div>
 
 **灵通 工程流系统** (LingFlow Engineering Flow) 是一个完整的软件工程工作流系统，覆盖从需求分析到部署运维的全生命周期。支持多智能体协调、分层技能架构、智能上下文压缩、需求追溯和运维监控。
+
+**v3.5.7 更新**：
+- ✅ ui-mockup-generator 集成 Tailwind CSS 支持
+- ✅ Git 代理配置脚本 (支持 ghproxy / Cloudflare Workers)
+- ✅ 代码简化：删除 ~950 行过度开发代码
+- ✅ 文档归档：清理 29 个历史报告
 
 ## 工程流能力
 
@@ -47,6 +53,8 @@
 - **智能上下文压缩**：精确 Token 计数、消息重要性评分、分层压缩策略，防止会话中断
 - **会话自动恢复**：支持跨会话上下文恢复，任务状态持久化
 - **需求追溯系统**：完整的需求生命周期管理，支持从需求到实现的全程追溯
+- **UI 原型生成**：支持传统 CSS 和 Tailwind CSS 两种模式（v3.5.7+）
+- **Git 代理加速**：内置 ghproxy 和 Cloudflare Workers 代理配置（v3.5.7+）
 
 ## 技能架构
 
@@ -61,20 +69,20 @@ L1: 核心调度层 (5 个) - 永不卸载
 └── error-handler        错误处理
 
 L2: 专业能力层 (12 个) - 常驻内存
-├── 代码质量: code-review, code-refactor, code-review-js
+├── 代码质量: code-review, code-refactor
 ├── 开发流程: brainstorming, systematic-debugging, verification-before-completion
 ├── 测试验证: test-runner, test-driven-development
 ├── 版本控制: using-git-worktrees, finishing-a-development-branch
 └── 通用服务: notification, skill-creator, writing-plans
 
 L3: 扩展能力层 (16 个) - 按需加载
-├── 设计工具: api-doc-generator, ui-mockup-generator, database-schema-designer, writing-plans
+├── 设计工具: api-doc-generator, ui-mockup-generator (Tailwind CSS 支持), database-schema-designer, writing-plans
 ├── DevOps: ci-cd-orchestrator, deployment-automation, environment-manager
 ├── 数据处理: database-export
 ├── 工作流: dispatching-parallel-agents, subagent-driven-development
 └── 管理: skill-analytics, skill-integration, skill-categorization, skill-versioning
 
-总计: 33 个技能
+总计: 33 个技能 (code-review-js 已合并到 code-review)
 ```
 
 ## SDLC 工程流对齐
@@ -90,6 +98,41 @@ L3: 扩展能力层 (16 个) - 按需加载
 | 维护迭代 | 80% | code-review, code-refactor | ✅ 自优化工作流 |
 
 **综合工程流对齐度**: **92%**
+
+## 更新日志
+
+### v3.5.7 (2026-03-27)
+
+**优化与简化**
+- ✅ 删除过度开发代码 (~950 行)
+  - 移除 testing/mcp_server.py (重新实现 MCP 功能)
+  - 简化 testing/tool_definition.py (453 → 98 行)
+- ✅ 文档归档：清理 29 个历史报告文档
+
+**技能优化**
+- ✅ code-review-js 合并到 code-review，支持多语言审查
+- ✅ ui-mockup-generator 集成 Tailwind CSS 支持
+  - 支持 5 种主题：default, ocean, sunset, forest, dark
+  - 支持传统 CSS 和 Tailwind CSS 两种生成模式
+
+**新增工具**
+- ✅ Git 代理配置脚本 (`.scripts/git-proxy-setup.sh`)
+  - 支持 ghproxy 代理
+  - 支持 Cloudflare Workers 代理
+  - 解决国内 GitHub 访问问题
+
+**文档**
+- 新增 Git 代理配置指南
+- 新增过度开发审查报告
+- 新增项目审查报告
+
+### v3.5.6 (2025-03-25)
+
+- 技能架构优化
+- 性能改进
+- 文档更新
+
+---
 
 ## 工作流
 
