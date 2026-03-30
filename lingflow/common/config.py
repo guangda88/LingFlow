@@ -1,8 +1,9 @@
 """LingFlow 配置管理模块"""
 
+import functools
 import logging
 import os
-from typing import Any, Optional, Type, TypeVar, Union
+from typing import Any, Dict, Optional, Type, TypeVar, Union
 
 import yaml
 
@@ -68,6 +69,7 @@ class ConfigManager:
 
     def __init__(self, config_file: str = None):
         self.config_file = config_file or os.path.join(os.getcwd(), "config.yaml")
+        self._cache: Dict[str, Any] = {}  # 配置缓存
         self.config = self._load_config()
 
     def _load_config(self) -> dict:
@@ -81,6 +83,7 @@ class ConfigManager:
                     file_config = yaml.safe_load(f)
                 if file_config:
                     self._merge_config(config, file_config)
+                    self._cache.clear()  # 清除缓存
             except Exception as e:
                 logger.warning(f"加载配置文件失败: {str(e)}")
 
@@ -98,7 +101,7 @@ class ConfigManager:
         self, key: str, default: Optional[T] = None,
         expected_type: Optional[Type[T]] = None
     ) -> Optional[T]:
-        """获取配置值（支持类型验证）
+        """获取配置值（支持类型验证和缓存）
 
         Args:
             key: 配置键（支持点号分隔的嵌套键，如 "workflow.max_iterations"）
@@ -116,6 +119,10 @@ class ConfigManager:
             >>> config.get("nonexistent.key", default=10)
             10
         """
+        # 检查缓存
+        if key in self._cache:
+            return self._cache[key]
+
         keys = key.split(".")
         value = self.config
 
@@ -123,16 +130,20 @@ class ConfigManager:
             if isinstance(value, dict) and k in value:
                 value = value[k]
             else:
-                return default
+                value = default
+                break
 
         # 如果指定了期望类型，进行验证
-        if expected_type is not None and not isinstance(value, expected_type):
+        if expected_type is not None and value is not None and not isinstance(value, expected_type):
             logger.warning(
                 f"配置类型不匹配: {key} 期望 {expected_type.__name__}, "
                 f"实际 {type(value).__name__}，返回默认值"
             )
-            return default
+            value = default
 
+        # 只有当值不是默认值时才缓存（避免不同默认值的冲突）
+        if value != default and value is not None:
+            self._cache[key] = value
         return value
 
     def set(self, key: str, value):
@@ -146,6 +157,18 @@ class ConfigManager:
             config = config[k]
 
         config[keys[-1]] = value
+
+        # 清除相关缓存（包括该键本身和所有可能的父级键）
+        cache_key = key
+        while cache_key:
+            if cache_key in self._cache:
+                del self._cache[cache_key]
+            # 移除最后一部分来获取父级键
+            parts = cache_key.split(".")
+            if len(parts) > 1:
+                cache_key = ".".join(parts[:-1])
+            else:
+                cache_key = ""
 
     def save(self):
         """保存配置"""

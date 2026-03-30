@@ -2,10 +2,12 @@
 
 import asyncio
 import logging
+import yaml
+from pathlib import Path
 from typing import Dict, List
 
 from lingflow.common.config import get_config
-from lingflow.common.models import Task, TaskResult
+from lingflow.common.models import Task, TaskResult, TaskPriority
 from lingflow.coordination.coordinator import AgentCoordinator
 
 # 常量定义（消除魔法值）
@@ -31,6 +33,70 @@ class WorkflowOrchestrator:
             coordinator: The agent coordinator to use for task execution
         """
         self.coordinator = coordinator
+
+    def load_workflow_from_yaml(self, filepath: str) -> List[Task]:
+        """从 YAML 文件加载工作流任务
+
+        Args:
+            filepath: YAML 文件路径
+
+        Returns:
+            任务列表
+
+        Raises:
+            FileNotFoundError: 文件不存在
+            ValueError: YAML 格式错误
+        """
+        path = Path(filepath)
+        if not path.exists():
+            raise FileNotFoundError(f"Workflow file not found: {filepath}")
+
+        with open(filepath, 'r', encoding='utf-8') as f:
+            workflow_data = yaml.safe_load(f)
+
+        if not workflow_data:
+            raise ValueError(f"Empty workflow file: {filepath}")
+
+        # 兼容不同字段名
+        tasks_data = workflow_data.get('tasks') or workflow_data.get('stages', [])
+
+        if not tasks_data:
+            logger.warning(f"No tasks found in workflow: {filepath}")
+            return []
+
+        tasks = []
+        for task_def in tasks_data:
+            task_id = task_def.get('id', task_def.get('name'))
+            if not task_id:
+                logger.warning(f"Task missing id/name: {task_def}")
+                continue
+
+            # 解析优先级
+            priority_str = task_def.get('priority', task_def.get('metadata', {}).get('priority', 'normal'))
+            priority_map = {
+                'high': TaskPriority.HIGH,
+                'normal': TaskPriority.NORMAL,
+                'low': TaskPriority.LOW
+            }
+            priority = priority_map.get(priority_str.lower(), TaskPriority.NORMAL)
+
+            # 解析依赖
+            dependencies = task_def.get('depends_on', task_def.get('dependencies', []))
+
+            # 创建任务
+            task = Task(
+                task_id=task_id,
+                name=task_def.get('skill', task_id),
+                description=task_def.get('description', ''),
+                agent_type=task_def.get('skill', 'general'),
+                context=task_def.get('params', {}),
+                priority=priority,
+                dependencies=dependencies
+            )
+            tasks.append(task)
+
+        logger.info(f"Loaded {len(tasks)} tasks from {filepath}")
+        return tasks
 
     async def execute_workflow(
         self, tasks: List[Task], max_parallel: int = DEFAULT_MAX_PARALLEL

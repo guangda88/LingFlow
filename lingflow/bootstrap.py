@@ -7,16 +7,16 @@
 2. 日志系统初始化
 3. 智能压缩器初始化
 4. 上下文管理器初始化
-5. 会话恢复显示
+5. 钩子系统初始化
+6. 会话恢复显示
 """
 
 import logging
 import sys
-from pathlib import Path
 from typing import Optional
 
 # 版本信息
-__version__ = "3.5.2"
+__version__ = "3.6.0"
 
 # 启动状态
 _startup_completed = False
@@ -121,9 +121,31 @@ def show_session_resume(
         _startup_errors.append(f"会话恢复显示失败: {e}")
 
 
+def init_hooks(enabled: bool = True) -> Optional[object]:
+    """初始化自优化钩子系统
+
+    Args:
+        enabled: 是否启用钩子系统
+
+    Returns:
+        钩子实例，如果禁用或初始化失败则返回 None
+    """
+    if not enabled:
+        return None
+
+    try:
+        from lingflow.hooks import get_global_hook
+        hook = get_global_hook()
+        return hook
+    except Exception as e:
+        _startup_errors.append(f"钩子系统初始化失败: {e}")
+        return None
+
+
 def bootstrap(
     compression: bool = True,
     auto_resume: bool = True,
+    hooks: bool = True,
     verbose: bool = False
 ) -> dict:
     """执行完整的启动流程
@@ -131,6 +153,7 @@ def bootstrap(
     Args:
         compression: 是否启用智能压缩
         auto_resume: 是否显示会话恢复
+        hooks: 是否启用钩子系统
         verbose: 是否输出详细信息
 
     Returns:
@@ -142,6 +165,7 @@ def bootstrap(
         "version": __version__,
         "compression": None,
         "context_manager": None,
+        "hooks": None,
         "errors": [],
         "success": True
     }
@@ -157,7 +181,11 @@ def bootstrap(
     # 3. 初始化上下文管理器
     status["context_manager"] = init_context_manager()
 
-    # 4. 显示会话恢复
+    # 4. 初始化钩子系统
+    if hooks:
+        status["hooks"] = init_hooks()
+
+    # 5. 显示会话恢复
     if auto_resume:
         show_session_resume()
 
@@ -190,6 +218,7 @@ def _auto_bootstrap():
         bootstrap(
             compression=True,
             auto_resume=True,
+            hooks=True,
             verbose=False
         )
 

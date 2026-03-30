@@ -104,7 +104,7 @@ def evaluate_condition(condition):
         ast.GtE: operator.ge,
         ast.LtE: operator.le,
         ast.And: lambda a, b: a and b,
-        ast.Or: lambda a, b: a or or,
+        ast.Or: lambda a, b: a or b,
         ast.Not: lambda a: not a,
         ast.Add: operator.add,
         ast.Sub: operator.sub,

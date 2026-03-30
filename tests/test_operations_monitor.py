@@ -202,7 +202,7 @@ class TestOperationsMonitor(unittest.TestCase):
         )
 
         self.monitor.add_alert_rule(rule)
-        self.assertEqual(len(self.monitor._alert_rules), 5)  # 4 default + 1 new
+        self.assertEqual(len(self.monitor._alert_rules), 11)  # 10 default + 1 new
 
     def test_remove_alert_rule(self):
         """Test removing an alert rule"""

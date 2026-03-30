@@ -611,7 +611,23 @@ python verify_system_simple.py
 
 # 3. 代码检查（可选）
 flake8 lingflow/ --max-line-length=120
+
+# 4. 同步更新文档（必做）
+# - README.md 功能说明、版本号
+# - 相关技术文档（docs/目录）
+# - CHANGELOG.md 变更记录
 ```
+
+### 提交前文档同步要求
+
+> **重要**: 任何代码提交前，必须同步更新 README.md 和相关文档
+
+| 变更类型 | 必须更新的文档 |
+|----------|----------------|
+| 新增功能 | README.md 功能列表、使用示例 |
+| 修改API | README.md API说明、相关技术文档 |
+| Bug修复 | CHANGELOG.md 修复记录 |
+| 版本发布 | README.md 版本号、CHANGELOG.md、发布说明 |
 
 ---
 
@@ -697,6 +713,7 @@ class LazyLoader:
 - [ ] 现有测试通过
 - [ ] 无明显性能退化
 - [ ] 日志信息合理
+- [ ] **README.md 和相关文档已同步更新** ⚠️
 
 ### PR审查要点
 
@@ -737,7 +754,7 @@ class LazyLoader:
 - [ ] 添加docstring
 - [ ] 编写/更新测试
 - [ ] 本地测试通过
-- [ ] 更新相关文档
+- [ ] **同步更新 README.md 和相关文档** ⚠️
 
 ### Bug修复
 

@@ -1,0 +1,209 @@
+#!/bin/bash
+# LingFlow Commit-msg Hook v1.2.0
+# 功能: 验证提交消息格式
+# 适用: LingFlow 多智能体系统
+
+set -euo pipefail
+
+# ==================== 配置区域 ====================
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# 颜色输出
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# ==================== 日志函数 ====================
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+log_success() {
+    echo -e "${GREEN}[PASS]${NC} $1"
+}
+
+# ==================== 验证函数 ====================
+
+# 检查提交消息格式
+check_commit_format() {
+    local msg="$1"
+    local first_line=$(echo "$msg" | head -1)
+
+    # 检查第一行格式: <type>(<scope>): <subject>
+    if ! echo "$first_line" | grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci)(\(.+\))?: .{5,}"; then
+        log_error "提交消息格式不正确"
+        echo ""
+        echo "正确格式:"
+        echo "  <type>(<scope>): <subject>"
+        echo ""
+        echo "类型 (type):"
+        echo "  feat     - 新功能"
+        echo "  fix      - 修复"
+        echo "  docs     - 文档"
+        echo "  style    - 格式（不影响代码运行的变动）"
+        echo "  refactor - 重构"
+        echo "  test     - 测试"
+        echo "  chore    - 构建过程或辅助工具的变动"
+        echo "  perf     - 性能优化"
+        echo "  ci       - CI 配置"
+        echo ""
+        echo "作用域 (scope):"
+        echo "  agent       - Agent 相关"
+        echo "  workflow    - 工作流相关"
+        echo "  coordination - 协调相关"
+        echo "  monitoring  - 监控相关"
+        echo "  core        - 核心功能"
+        echo "  utils       - 工具函数"
+        echo ""
+        echo "示例:"
+        echo "  feat(agent): 添加新的代码审查 Agent"
+        echo "  fix(workflow): 修复并行执行死锁问题"
+        echo "  docs: 更新 README"
+        echo ""
+        echo "你的提交消息:"
+        echo "  $first_line"
+        return 1
+    fi
+
+    return 0
+}
+
+# 检查提交消息长度
+check_commit_length() {
+    local msg="$1"
+    local first_line=$(echo "$msg" | head -1)
+
+    # 检查第一行长度（不超过 72 字符）
+    if [ ${#first_line} -gt 72 ]; then
+        log_error "提交消息第一行超过 72 字符"
+        echo "  长度: ${#first_line}"
+        echo "  内容: $first_line"
+        return 1
+    fi
+
+    # 检查单行提交（不应该只有一行）
+    local line_count=$(echo "$msg" | wc -l)
+    if [ $line_count -eq 1 ]; then
+        log_warn "建议添加详细的提交描述"
+        echo "  提交消息应该包含:"
+        echo "    - 第一行: 简短描述"
+        echo "    - 空行"
+        echo "    - 详细描述: 说明为什么做这个改动"
+        echo "    - 关联 Issue: #123"
+    fi
+
+    return 0
+}
+
+# 检查是否包含关联信息
+check_commit_references() {
+    local msg="$1"
+
+    # 如果是 fix 或 feat，建议关联 Issue
+    if echo "$msg" | head -1 | grep -qE "^(feat|fix)"; then
+        if ! echo "$msg" | grep -qiE "(closes|closes|fixes|refs|related to|#)[0-9]+"; then
+            log_warn "fix/feat 提交建议关联 Issue"
+            echo "  在提交消息末尾添加: Closes #123"
+        fi
+    fi
+
+    return 0
+}
+
+# 检查禁止的提交消息
+check_forbidden_patterns() {
+    local msg="$1"
+
+    # 检查是否包含禁止的词汇
+    local forbidden_words=("fix bug" "fix bugs" "temporary" "temp" "hack" "workaround")
+
+    for word in "${forbidden_words[@]}"; do
+        if echo "$msg" | grep -qi "$word"; then
+            log_warn "提交消息包含不建议的词汇: $word"
+        fi
+    done
+
+    # 检查是否有意义的描述
+    if echo "$msg" | head -1 | grep -qE "^(update|fix|add|remove|change)(ed|s)?\s*$"; then
+        log_error "提交消息太简单，请详细说明"
+        echo "  应该说明: 做了什么、为什么做"
+        return 1
+    fi
+
+    return 0
+}
+
+# 检查多智能体系统特定规则
+check_agent_commit_rules() {
+    local msg="$1"
+    local first_line=$(echo "$msg" | head -1)
+
+    # 如果涉及 Agent 变更，检查是否有相关说明
+    if echo "$first_line" | grep -qi "agent"; then
+        # 检查是否有 Agent 类型说明
+        if ! echo "$msg" | grep -qiE "(coordinator|executor|reviewer|monitor)"; then
+            log_warn "Agent 相关提交建议说明 Agent 类型"
+        fi
+    fi
+
+    return 0
+}
+
+# ==================== 主函数 ====================
+main() {
+    echo ""
+    echo -e "${BLUE}LingFlow Commit-msg Hook v1.2.0${NC}"
+    echo ""
+
+    # 跳过合并提交
+    if echo "$COMMIT_MSG" | grep -qE "^Merge (branch|remote-tracking branch|tag)"; then
+        log_info "跳过合并提交的检查"
+        exit 0
+    fi
+
+    # 跳过回滚提交
+    if echo "$COMMIT_MSG" | grep -qE "^Revert \".*\""; then
+        log_info "跳过回滚提交的检查"
+        exit 0
+    fi
+
+    # 显示提交消息
+    log_info "检查提交消息:"
+    echo "  $(echo "$COMMIT_MSG" | head -1)"
+    echo ""
+
+    # 运行检查
+    local failed=0
+
+    check_commit_format "$COMMIT_MSG" || ((failed++))
+    check_commit_length "$COMMIT_MSG" || ((failed++))
+    check_commit_references "$COMMIT_MSG" || true
+    check_forbidden_patterns "$COMMIT_MSG" || ((failed++))
+    check_agent_commit_rules "$COMMIT_MSG" || true
+
+    # 根据失败数决定是否阻止提交
+    if [ $failed -gt 0 ]; then
+        echo ""
+        log_error "提交消息不符合规范"
+        log_info "使用 'git commit --amend' 修改提交消息"
+        log_info "或使用 'git commit --no-verify' 跳过检查（不推荐）"
+        exit 1
+    fi
+
+    log_success "提交消息检查通过"
+    exit 0
+}
+
+# 执行主函数
+main "$@"

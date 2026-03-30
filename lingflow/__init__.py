@@ -137,17 +137,17 @@ class LingFlow:
         Raises:
             ValueError: 如果文件路径不合法或不在允许的目录内
         """
-        import yaml
-
         _import_core_modules()
         base_dir = Path.cwd().resolve()
 
         # 安全验证文件路径（不跟随符号链接）
         validated_path = self._validate_filepath(filepath, base_dir)
 
-        with open(validated_path, encoding="utf-8") as f:
-            workflow_def = yaml.safe_load(f)
-        return self._orchestrator.execute(workflow_def["tasks"])
+        # 使用 orchestrator 的 load_workflow_from_yaml 方法
+        tasks = self._orchestrator.load_workflow_from_yaml(validated_path)
+
+        # 执行工作流
+        return self._orchestrator.execute(tasks)
 
     def _validate_filepath(self, filepath: str, base_dir: Path) -> Path:
         """安全验证文件路径

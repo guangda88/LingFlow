@@ -1,0 +1,374 @@
+#!/bin/bash
+# LingFlow Pre-commit Hook v1.2.0
+# 功能: 代码质量检查、测试验证、文档检查
+# 适用: LingFlow 多智能体系统
+
+set -euo pipefail
+
+# ==================== 配置区域 ====================
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$PROJECT_ROOT"
+
+# 颜色输出
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# 统计变量
+FAILED=0
+PASSED=0
+WARNINGS=0
+
+# ==================== 日志函数 ====================
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+    ((WARNINGS++)) || true
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+    ((FAILED++)) || true
+}
+
+log_success() {
+    echo -e "${GREEN}[PASS]${NC} $1"
+    ((PASSED++)) || true
+}
+
+log_section() {
+    echo ""
+    echo -e "${BLUE}=== $1 ===${NC}"
+}
+
+# ==================== 检查函数 ====================
+
+# 检查是否已安装工具
+check_tool() {
+    local tool="$1"
+    if ! command -v "$tool" &> /dev/null; then
+        log_warn "$tool 未安装，跳过相关检查"
+        return 1
+    fi
+    return 0
+}
+
+# 检查 Python 文件格式
+check_python_format() {
+    log_section "检查 Python 代码格式"
+
+    if ! check_tool black; then
+        return 0
+    fi
+
+    local python_files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$' || true)
+
+    if [ -z "$python_files" ]; then
+        log_info "没有 Python 文件变更"
+        return 0
+    fi
+
+    log_info "检查文件: $python_files"
+
+    # 检查格式
+    if black --check $python_files 2>/dev/null; then
+        log_success "代码格式检查通过"
+    else
+        log_error "代码格式不符合规范，请运行: black $python_files"
+        return 1
+    fi
+}
+
+# 检查 Python 代码质量
+check_python_quality() {
+    log_section "检查 Python 代码质量"
+
+    if ! check_tool flake8; then
+        return 0
+    fi
+
+    local python_files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$' || true)
+
+    if [ -z "$python_files" ]; then
+        return 0
+    fi
+
+    # 运行 flake8
+    local flake8_output=$(flake8 $python_files --max-line-length=88 --ignore=E203,W503 2>&1 || true)
+
+    if [ -z "$flake8_output" ]; then
+        log_success "代码质量检查通过"
+    else
+        log_error "发现代码质量问题:"
+        echo "$flake8_output" | head -20
+        return 1
+    fi
+}
+
+# 检查类型注解
+check_type_annotations() {
+    log_section "检查类型注解"
+
+    if ! check_tool mypy; then
+        return 0
+    fi
+
+    local python_files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$' || true)
+
+    if [ -z "$python_files" ]; then
+        return 0
+    fi
+
+    # 检查是否有类型注解
+    local missing_types=0
+    for file in $python_files; do
+        # 检查公共函数是否有类型注解
+        if grep -E "^def [a-z_][a-z0-9_]*\(" "$file" | grep -v " -> " | grep -v "def _" > /dev/null; then
+            log_warn "$file: 部分函数缺少类型注解"
+            ((missing_types++))
+        fi
+    done
+
+    if [ $missing_types -eq 0 ]; then
+        log_success "类型注解检查通过"
+    else
+        log_warn "发现 $missing_types 个文件可能缺少类型注解"
+    fi
+}
+
+# 检查文档字符串
+check_docstrings() {
+    log_section "检查文档字符串"
+
+    local python_files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$' || true)
+
+    if [ -z "$python_files" ]; then
+        return 0
+    fi
+
+    local missing_docs=0
+    for file in $python_files; do
+        # 检查公共函数是否有 docstring
+        while IFS= read -r line; do
+            if echo "$line" | grep -q "^def [a-z_][a-z0-9_]*(" && ! echo "$line" | grep -q "def _"; then
+                local func_name=$(echo "$line" | sed 's/def \([a-z_][a-z0-9_]*\).*/\1/')
+                if ! grep -A 5 "$line" "$file" | grep -q '"""'; then
+                    log_warn "$file: 函数 $func_name 缺少文档字符串"
+                    ((missing_docs++))
+                fi
+            fi
+        done < "$file"
+    done
+
+    if [ $missing_docs -eq 0 ]; then
+        log_success "文档字符串检查通过"
+    else
+        log_warn "发现 $missing_docs 处缺少文档字符串"
+    fi
+}
+
+# 检查测试文件
+check_test_files() {
+    log_section "检查测试覆盖"
+
+    local changed_files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$' || true)
+
+    if [ -z "$changed_files" ]; then
+        return 0
+    fi
+
+    # 过滤出非测试文件
+    local source_files=$(echo "$changed_files" | grep -v '/test_' | grep -v '/tests/' | grep -v '/__pycache__/' || true)
+
+    if [ -z "$source_files" ]; then
+        log_info "只修改了测试文件"
+        return 0
+    fi
+
+    # 检查是否有对应的测试文件
+    local missing_tests=0
+    for file in $source_files; do
+        # 跳过 __init__.py
+        if echo "$file" | grep -q "__init__.py"; then
+            continue
+        fi
+
+        # 构造测试文件路径
+        local test_file="tests/$(echo "$file" | sed 's|^lingflow/||' | sed 's|\.py$|_test.py|')"
+
+        if [ ! -f "$test_file" ]; then
+            log_warn "缺少测试文件: $test_file"
+            ((missing_tests++))
+        fi
+    done
+
+    if [ $missing_tests -eq 0 ]; then
+        log_success "测试文件检查通过"
+    else
+        log_warn "发现 $missing_tests 个文件缺少对应的测试"
+        log_info "建议为新功能添加测试"
+    fi
+}
+
+# 检查敏感信息
+check_sensitive_info() {
+    log_section "检查敏感信息"
+
+    local changed_files=$(git diff --cached --name-only --diff-filter=ACM || true)
+
+    if [ -z "$changed_files" ]; then
+        return 0
+    fi
+
+    local found_issues=0
+
+    # 检查是否包含密钥、密码等
+    for file in $changed_files; do
+        if git show ":$file" 2>/dev/null | grep -iE "(password|secret|api_key|token)\s*=\s*['\"][^'\"]+['\"]" > /dev/null; then
+            log_error "$file: 可能包含硬编码的敏感信息"
+            ((found_issues++))
+        fi
+
+        # 检查是否包含 IP 地址
+        if git show ":$file" 2>/dev/null | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" > /dev/null; then
+            log_warn "$file: 可能包含 IP 地址"
+            ((found_issues++))
+        fi
+    done
+
+    if [ $found_issues -eq 0 ]; then
+        log_success "敏感信息检查通过"
+    else
+        log_error "发现潜在的安全问题，请检查"
+        return 1
+    fi
+}
+
+# 检查代码复杂度
+check_complexity() {
+    log_section "检查代码复杂度"
+
+    local python_files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$' || true)
+
+    if [ -z "$python_files" ]; then
+        return 0
+    fi
+
+    local complex_files=0
+    for file in $python_files; do
+        # 检查函数行数
+        while IFS= read -r line; do
+            if echo "$line" | grep -q "^def [a-z_][a-z0-9_]*("; then
+                local func_start=$(grep -n "$line" "$file" | cut -d: -f1)
+                local func_end=$(tail -n +$((func_start + 1)) "$file" | grep -n "^def \|^class" | head -1 | cut -d: -f1)
+                if [ -z "$func_end" ]; then
+                    func_end=$(wc -l < "$file")
+                fi
+                local func_lines=$((func_end - 1))
+
+                if [ $func_lines -gt 50 ]; then
+                    log_warn "$file: 有函数超过 50 行 ($func_lines 行)"
+                    ((complex_files++))
+                fi
+            fi
+        done < "$file"
+    done
+
+    if [ $complex_files -eq 0 ]; then
+        log_success "代码复杂度检查通过"
+    else
+        log_warn "发现 $complex_files 处代码复杂度过高"
+        log_info "建议拆分复杂函数"
+    fi
+}
+
+# 检查导入顺序
+check_imports() {
+    log_section "检查导入顺序"
+
+    local python_files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$' || true)
+
+    if [ -z "$python_files" ]; then
+        return 0
+    fi
+
+    if ! check_tool isort; then
+        return 0
+    fi
+
+    local bad_imports=0
+    for file in $python_files; do
+        if ! isort --check-only --profile black "$file" 2>/dev/null; then
+            log_warn "$file: 导入顺序不符合规范"
+            ((bad_imports++))
+        fi
+    done
+
+    if [ $bad_imports -eq 0 ]; then
+        log_success "导入顺序检查通过"
+    else
+        log_warn "发现 $bad_imports 个文件导入顺序不规范"
+        log_info "运行: isort --profile black $python_files"
+    fi
+}
+
+# ==================== 主函数 ====================
+main() {
+    echo ""
+    echo -e "${BLUE}LingFlow Pre-commit Hook v1.2.0${NC}"
+    echo ""
+
+    # 获取提交的文件
+    local staged_files=$(git diff --cached --name-only --diff-filter=ACM)
+    if [ -z "$staged_files" ]; then
+        log_info "没有文件被暂存"
+        exit 0
+    fi
+
+    log_info "检查的文件:"
+    echo "$staged_files" | head -10
+    if [ $(echo "$staged_files" | wc -l) -gt 10 ]; then
+        echo "... 还有更多"
+    fi
+    echo ""
+
+    # 运行检查
+    check_python_format || true
+    check_python_quality || true
+    check_type_annotations || true
+    check_docstrings || true
+    check_test_files || true
+    check_sensitive_info || true
+    check_complexity || true
+    check_imports || true
+
+    # 总结
+    echo ""
+    echo -e "${BLUE}=== 检查总结 ===${NC}"
+    echo -e "  ${GREEN}通过: $PASSED${NC}"
+    echo -e "  ${YELLOW}警告: $WARNINGS${NC}"
+    echo -e "  ${RED}失败: $FAILED${NC}"
+    echo ""
+
+    # 根据失败数决定是否阻止提交
+    if [ $FAILED -gt 0 ]; then
+        log_error "提交被阻止，请修复上述错误"
+        log_info "使用 'git commit --no-verify' 跳过检查（不推荐）"
+        exit 1
+    fi
+
+    if [ $WARNINGS -gt 0 ]; then
+        log_warn "存在警告，建议修复后再提交"
+    fi
+
+    log_success "Pre-commit 检查通过"
+    exit 0
+}
+
+# 执行主函数
+main "$@"
