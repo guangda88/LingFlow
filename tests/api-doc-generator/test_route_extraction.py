@@ -565,7 +565,7 @@ def test_func():
     pass
 '''
         tree = ast.parse(code)
-        func_node = tree.body[1]  # The function definition
+        func_node = tree.body[2]  # The function definition
 
         routes = parse_route_decorator(func_node, 'fastapi')
         assert len(routes) == 1
@@ -585,7 +585,7 @@ def items_handler():
     pass
 '''
         tree = ast.parse(code)
-        func_node = tree.body[1]  # The function definition
+        func_node = tree.body[2]  # The function definition
 
         routes = parse_route_decorator(func_node, 'fastapi')
         # Should extract both routes
@@ -603,7 +603,7 @@ def items_handler():
     pass
 '''
         tree = ast.parse(code)
-        func_node = tree.body[1]  # The function definition
+        func_node = tree.body[2]  # The function definition
 
         routes = parse_route_decorator(func_node, 'flask')
         assert len(routes) == 3

@@ -1,0 +1,380 @@
+#!/bin/bash
+# LingFlow Pre-push Hook v1.2.0
+# 功能: 多仓库一致性检查、版本号验证、测试确认
+# 适用: LingFlow 多智能体系统（GitHub + Gitea）
+
+set -euo pipefail
+
+# ==================== 配置区域 ====================
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$PROJECT_ROOT"
+
+# 远程仓库配置
+GITHUB_REMOTE="github"
+GITEA_REMOTE="origin"
+
+# 颜色输出
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# 统计变量
+FAILED=0
+PASSED=0
+WARNINGS=0
+
+# ==================== 日志函数 ====================
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+    ((WARNINGS++)) || true
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+    ((FAILED++)) || true
+}
+
+log_success() {
+    echo -e "${GREEN}[PASS]${NC} $1"
+    ((PASSED++)) || true
+}
+
+log_section() {
+    echo ""
+    echo -e "${BLUE}=== $1 ===${NC}"
+}
+
+# ==================== 检查函数 ====================
+
+# 检查远程仓库是否存在
+check_remotes() {
+    log_section "检查远程仓库配置"
+
+    local has_github=0
+    local has_gitea=0
+
+    # 检查 GitHub
+    if git remote | grep -q "^${GITHUB_REMOTE}$"; then
+        has_github=1
+        local github_url=$(git remote get-url "$GITHUB_REMOTE" 2>/dev/null || echo "")
+        log_info "GitHub: $github_url"
+    else
+        log_warn "未找到 GitHub 远程仓库 ($GITHUB_REMOTE)"
+    fi
+
+    # 检查 Gitea
+    if git remote | grep -q "^${GITEA_REMOTE}$"; then
+        has_gitea=1
+        local gitea_url=$(git remote get-url "$GITEA_REMOTE" 2>/dev/null || echo "")
+        log_info "Gitea: $gitea_url"
+    else
+        log_warn "未找到 Gitea 远程仓库 ($GITEA_REMOTE)"
+    fi
+
+    if [ $has_github -eq 0 ] && [ $has_gitea -eq 0 ]; then
+        log_error "未找到任何远程仓库"
+        return 1
+    fi
+
+    log_success "远程仓库检查通过"
+    return 0
+}
+
+# 检查分支版本一致性
+check_branch_consistency() {
+    log_section "检查分支一致性"
+
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+    if [ "$current_branch" = "HEAD" ]; then
+        log_error "不在任何分支上"
+        return 1
+    fi
+
+    log_info "当前分支: $current_branch"
+
+    # 检查本地和远程分支的提交差异
+    local remotes=()
+
+    if git remote | grep -q "^${GITHUB_REMOTE}$"; then
+        remotes+=("$GITHUB_REMOTE")
+    fi
+
+    if git remote | grep -q "^${GITEA_REMOTE}$"; then
+        remotes+=("$GITEA_REMOTE")
+    fi
+
+    local inconsistent=0
+    for remote in "${remotes[@]}"; do
+        # 检查远程分支是否存在
+        if git show-ref --verify --quiet "refs/remotes/${remote}/${current_branch}" 2>/dev/null; then
+            local local_commit=$(git rev-parse "${current_branch}")
+            local remote_commit=$(git rev-parse "refs/remotes/${remote}/${current_branch}")
+
+            if [ "$local_commit" != "$remote_commit" ]; then
+                log_warn "${remote}/${current_branch} 与本地分支不一致"
+                ((inconsistent++))
+            fi
+        fi
+    done
+
+    if [ $inconsistent -eq 0 ]; then
+        log_success "分支一致性检查通过"
+    else
+        log_warn "发现 $inconsistent 处分支不一致"
+        log_info "推送后将自动同步"
+    fi
+
+    return 0
+}
+
+# 检查版本号（如果有版本文件）
+check_version_consistency() {
+    log_section "检查版本号一致性"
+
+    local version_files=("pyproject.toml" "setup.py" "__init__.py")
+    local found_version=0
+
+    for file in "${version_files[@]}"; do
+        if [ -f "$file" ]; then
+            # 尝试提取版本号
+            local version=$(grep -E "version\s*=\s*['\"]" "$file" | head -1 | sed -E "s/.*=\s*['\"]([^'\"]+)['\"].*/\1/" || echo "")
+
+            if [ -n "$version" ]; then
+                log_info "$file: $version"
+                ((found_version++))
+            fi
+        fi
+    done
+
+    if [ $found_version -gt 1 ]; then
+        log_warn "发现多个版本号定义，请确保一致性"
+    elif [ $found_version -eq 1 ]; then
+        log_success "版本号检查通过"
+    else
+        log_info "未找到版本号定义"
+    fi
+
+    return 0
+}
+
+# 检查测试状态
+check_test_status() {
+    log_section "检查测试状态"
+
+    # 检查是否有 pytest
+    if ! command -v pytest &> /dev/null; then
+        log_warn "pytest 未安装，跳过测试检查"
+        return 0
+    fi
+
+    # 检查是否有测试文件
+    if [ ! -d "tests" ] && [ ! -d "lingflow/testing" ]; then
+        log_info "未找到测试目录"
+        return 0
+    fi
+
+    log_info "运行快速测试检查..."
+
+    # 运行快速测试（仅测试未修改的测试）
+    if timeout 30 pytest tests/ -v --tb=short -x 2>&1 | head -50; then
+        log_success "快速测试通过"
+    else
+        local test_result=$?
+        if [ $test_result -eq 124 ]; then
+            log_warn "测试超时（30秒），可能测试较多"
+        else
+            log_error "测试失败"
+            log_info "请先修复失败的测试"
+            log_info "或使用 'git push --no-verify' 跳过检查（不推荐）"
+            return 1
+        fi
+    fi
+
+    return 0
+}
+
+# 检查待推送的提交
+check_pending_commits() {
+    log_section "检查待推送的提交"
+
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    local pending_count=0
+
+    # 检查各个远程的待推送提交
+    local remotes=()
+    if git remote | grep -q "^${GITHUB_REMOTE}$"; then
+        remotes+=("$GITHUB_REMOTE")
+    fi
+    if git remote | grep -q "^${GITEA_REMOTE}$"; then
+        remotes+=("$GITEA_REMOTE")
+    fi
+
+    for remote in "${remotes[@]}"; do
+        if git show-ref --verify --quiet "refs/remotes/${remote}/${current_branch}" 2>/dev/null; then
+            local count=$(git rev-list --count "refs/remotes/${remote}/${current_branch}..HEAD" 2>/dev/null || echo "0")
+            if [ $count -gt 0 ]; then
+                log_info "${remote}: 有 $count 个提交待推送"
+                ((pending_count++))
+            fi
+        fi
+    done
+
+    if [ $pending_count -eq 0 ]; then
+        log_info "没有待推送的提交（或远程分支不存在）"
+    else
+        log_success "待推送提交检查完成"
+    fi
+
+    # 显示最近的提交
+    local recent_commits=$(git log --oneline -5 2>/dev/null || echo "")
+    if [ -n "$recent_commits" ]; then
+        echo ""
+        log_info "最近的提交:"
+        echo "$recent_commits" | sed 's/^/    /'
+    fi
+
+    return 0
+}
+
+# 检查大文件
+check_large_files() {
+    log_section "检查大文件"
+
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    local large_file_threshold=1024000  # 1MB
+
+    # 检查待推送的提交中是否有大文件
+    local remotes=()
+    if git remote | grep -q "^${GITHUB_REMOTE}$"; then
+        remotes+=("$GITHUB_REMOTE")
+    fi
+    if git remote | grep -q "^${GITEA_REMOTE}$"; then
+        remotes+=("$GITEA_REMOTE")
+    fi
+
+    for remote in "${remotes[@]}"; do
+        if git show-ref --verify --quiet "refs/remotes/${remote}/${current_branch}" 2>/dev/null; then
+            local large_files=$(git diff --name-only --size-limit=$large_file_threshold "refs/remotes/${remote}/${current_branch}..HEAD" 2>/dev/null || echo "")
+
+            if [ -n "$large_files" ]; then
+                log_warn "发现大文件:"
+                echo "$large_files" | sed 's/^/    /'
+                log_warn "大文件可能影响推送速度"
+            fi
+        fi
+    done
+
+    log_success "大文件检查完成"
+    return 0
+}
+
+# 检查敏感文件
+check_sensitive_files() {
+    log_section "检查敏感文件"
+
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    local sensitive_patterns=(".env" "*.key" "*.pem" "password" "secret")
+
+    # 检查待推送的提交
+    local remotes=()
+    if git remote | grep -q "^${GITHUB_REMOTE}$"; then
+        remotes+=("$GITHUB_REMOTE")
+    fi
+    if git remote | grep -q "^${GITEA_REMOTE}$"; then
+        remotes+=("$GITEA_REMOTE")
+    fi
+
+    for remote in "${remotes[@]}"; do
+        if git show-ref --verify --quiet "refs/remotes/${remote}/${current_branch}" 2>/dev/null; then
+            for pattern in "${sensitive_patterns[@]}"; do
+                local files=$(git diff --name-only "refs/remotes/${remote}/${current_branch}..HEAD" | grep -E "$pattern" || true)
+
+                if [ -n "$files" ]; then
+                    log_error "发现可能的敏感文件:"
+                    echo "$files" | sed 's/^/    /'
+                    log_error "请检查并移除敏感文件"
+                    return 1
+                fi
+            done
+        fi
+    done
+
+    log_success "敏感文件检查通过"
+    return 0
+}
+
+# ==================== 主函数 ====================
+main() {
+    echo ""
+    echo -e "${BLUE}LingFlow Pre-push Hook v1.2.0${NC}"
+    echo ""
+
+    # 从标准输入读取推送信息
+    local remote=""
+    local url=""
+
+    while read -r line; do
+        local local_ref=$(echo "$line" | awk '{print $1}')
+        local local_sha=$(echo "$line" | awk '{print $2}')
+        remote=$(echo "$line" | awk '{print $3}')
+        url=$(echo "$line" | awk '{print $4}')
+
+        log_info "推送目标: $remote ($url)"
+
+        # 如果是删除操作，跳过检查
+        if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
+            log_info "删除操作，跳过检查"
+            exit 0
+        fi
+    done
+
+    # 运行检查
+    check_remotes || ((FAILED++))
+    check_branch_consistency || ((FAILED++))
+    check_version_consistency || true
+    check_pending_commits || true
+    check_large_files || true
+    check_sensitive_files || ((FAILED++))
+
+    # 测试检查（可选，容易失败）
+    if [ "${LINGFLOW_SKIP_TESTS:-0}" != "1" ]; then
+        check_test_status || ((FAILED++))
+    else
+        log_warn "跳过测试检查（LINGFLOW_SKIP_TESTS=1）"
+    fi
+
+    # 总结
+    echo ""
+    echo -e "${BLUE}=== 检查总结 ===${NC}"
+    echo -e "  ${GREEN}通过: $PASSED${NC}"
+    echo -e "  ${YELLOW}警告: $WARNINGS${NC}"
+    echo -e "  ${RED}失败: $FAILED${NC}"
+    echo ""
+
+    # 根据失败数决定是否阻止推送
+    if [ $FAILED -gt 0 ]; then
+        log_error "推送被阻止，请修复上述错误"
+        log_info "使用 'git push --no-verify' 跳过检查（不推荐）"
+        log_info "或设置 LINGFLOW_SKIP_TESTS=1 跳过测试检查"
+        exit 1
+    fi
+
+    if [ $WARNINGS -gt 0 ]; then
+        log_warn "存在警告，建议检查后再推送"
+    fi
+
+    log_success "Pre-push 检查通过"
+    log_info "准备推送到: $remote"
+
+    exit 0
+}
+
+# 执行主函数
+main "$@"

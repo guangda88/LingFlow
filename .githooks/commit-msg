@@ -1,0 +1,159 @@
+#!/bin/bash
+# LingFlow Commit-msg Hook v2.0 - VibeCoding 渐进式部署
+# 核心原则: 质量门控 + AI 辅助 + 渐进式实施
+
+set -euo pipefail
+
+# ==================== 初始化 ====================
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$PROJECT_ROOT"
+
+# 加载配置
+source .githooks/config.sh
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# 颜色输出
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+# ==================== 日志函数 ====================
+log_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
+log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+log_error() { echo -e "${RED}[BLOCK]${NC} $1"; }
+log_pass() { echo -e "${GREEN}[PASS]${NC} $1"; }
+log_section() { echo ""; echo -e "${BLUE}=== $1 ===${NC}"; }
+
+# ==================== P1 检查（提交规范 - 警告性） ====================
+
+# P1: 提交消息格式检查
+check_p1_commit_format() {
+    [ $HOOKS_P1_COMMIT_MSG -eq 0 ] && return 0
+
+    log_section "P1: 提交消息格式检查"
+
+    local first_line=$(echo "$COMMIT_MSG" | head -1)
+
+    # 跳过特殊提交
+    if echo "$first_line" | grep -qE "^(Merge|Revert)"; then
+        log_info "跳过 $first_line 提交"
+        return 0
+    fi
+
+    # 检查格式
+    if ! echo "$first_line" | grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci)(\(.+\))?: .{5,}"; then
+        log_error "提交消息格式不正确"
+        echo ""
+        echo "正确格式:"
+        echo "  <type>(<scope>): <subject>"
+        echo ""
+        echo "类型 (type):"
+        echo "  feat     - 新功能"
+        echo "  fix      - 修复"
+        echo "  docs     - 文档"
+        echo "  style    - 格式"
+        echo "  refactor - 重构"
+        echo "  test     - 测试"
+        echo "  chore    - 构建"
+        echo "  perf     - 性能"
+        echo "  ci       - CI"
+        echo ""
+        echo "作用域 (scope):"
+        echo "  agent, workflow, coordination, monitoring, core, utils"
+        echo ""
+        echo "示例:"
+        echo "  feat(agent): 添加新的代码审查 Agent"
+        echo "  fix(workflow): 修复并行执行死锁"
+        echo "  docs: 更新 README"
+        echo ""
+        echo "你的提交消息:"
+        echo "  $first_line"
+
+        quality_gate $HOOKS_P1_COMMIT_MSG "提交消息格式" 1
+        return $?
+    fi
+
+    log_pass "提交消息格式正确"
+    return 0
+}
+
+# 提交消息长度检查
+check_commit_length() {
+    log_section "提交消息长度检查"
+
+    local first_line=$(echo "$COMMIT_MSG" | head -1)
+
+    # 检查第一行长度
+    if [ ${#first_line} -gt 72 ]; then
+        log_warn "第一行超过 72 字符 (${#first_line} 字符)"
+    fi
+
+    # 检查是否单行提交
+    local line_count=$(echo "$COMMIT_MSG" | wc -l)
+    if [ $line_count -eq 1 ]; then
+        log_info "建议: 添加详细的提交描述"
+    fi
+
+    return 0
+}
+
+# 检查关联信息
+check_commit_references() {
+    log_section "关联信息检查"
+
+    local first_line=$(echo "$COMMIT_MSG" | head -1)
+
+    # fix/feat 建议关联 Issue
+    if echo "$first_line" | grep -qE "^(feat|fix)"; then
+        if ! echo "$COMMIT_MSG" | grep -qiE "(closes|fixes|refs|#)[0-9]+"; then
+            log_info "建议: feat/fix 提交关联 Issue (Closes #123)"
+        fi
+    fi
+
+    return 0
+}
+
+# ==================== 主函数 ====================
+main() {
+    echo ""
+    echo -e "${CYAN}LingFlow Commit-msg Hook v2.0${NC}"
+    echo -e "${CYAN}VibeCoding 渐进式部署${NC}"
+
+    # 显示配置
+    echo ""
+    echo -e "${BLUE}=== 提交消息规范级别: $(get_gate_name $HOOKS_P1_COMMIT_MSG) ===${NC}"
+    echo ""
+
+    log_info "检查提交消息:"
+    echo "  $(echo "$COMMIT_MSG" | head -1)"
+    echo ""
+
+    # 运行检查
+    local failed=0
+
+    check_p1_commit_format || ((failed++))
+    check_commit_length || true
+    check_commit_references || true
+
+    # 判断是否阻断
+    echo ""
+    if [ $failed -gt 0 ]; then
+        log_error "提交消息不符合规范"
+        echo ""
+        echo "提示:"
+        echo "  - 修改提交消息: git commit --amend"
+        echo "  - 或跳过检查: git commit --no-verify"
+        exit 1
+    fi
+
+    log_pass "Commit-msg 检查通过"
+    exit 0
+}
+
+# 执行主函数
+main "$@"

@@ -7,6 +7,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.5.7] - 2026-03-27
+
+### Added
+
+**UI & Frontend**
+- ✅ ui-mockup-generator 集成 Tailwind CSS 支持
+  - 支持传统 CSS 和 Tailwind CSS 两种模式
+  - 增强的主题系统和组件渲染
+
+**Git Operations**
+- ✅ Git 代理配置脚本
+  - 支持 ghproxy 加速
+  - 支持 Cloudflare Workers 代理
+  - 自动配置和管理
+
+**Code Quality**
+- ✅ 代码简化：删除 ~950 行过度开发代码
+- ✅ 文档归档：清理 29 个历史报告
+
+### Fixed
+
+**Workflow System**
+- ✅ 实现 `load_workflow_from_yaml()` 方法
+  - 支持从 YAML 文件加载工作流任务
+  - 兼容 tasks 和 stages 字段
+  - 完整的任务优先级和依赖解析
+
+**Skills**
+- ✅ 修复 conditional-branch 技能语法错误
+  - 修复 `ast.Or: lambda a, b: a or or,` → `a or b`
+- ✅ 重命名 code-review-js.deprecated → code_review_js_deprecated
+  - 修复 Python 导入命名问题
+- ✅ 更新 skills.json 包含所有 33 个技能
+
+**Tests**
+- ✅ 修复 coordinator 测试期望值
+  - 更新检查 code-review 和 brainstorming 技能
+- ✅ 修复 operations_monitor 测试期望值
+  - 更新默认告警规则数量为 11
+- ✅ 修复 route_decorator 测试节点索引
+  - 修正 tree.body 索引为 2
+
+### Performance
+
+**Configuration Management**
+- ✅ 实现配置缓存机制
+  - ConfigManager.get() 方法添加缓存
+  - 自动缓存失效（set() 操作时）
+  - 避免重复值缓存问题
+
+**Code Cleanup**
+- ✅ 移除未使用的导入
+  - bootstrap.py: Path
+  - cli.py: Optional
+  - traceability.py: Set
+  - default_checks.py: Dict, Any
+
+### Documentation
+
+- ✅ README.md 更新反映 33 个技能
+- ✅ 技能架构文档完善
+
+---
+
 ## [3.5.6] - 2026-03-27
 
 ### 品牌升级 - 工程流系统

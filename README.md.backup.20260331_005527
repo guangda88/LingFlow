@@ -1,0 +1,222 @@
+# LingFlow v3.6.0 - AI Coding Tools 的上下文管理和多智能体协作增强引擎
+
+<div align="center">
+
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![Version](https://img.shields.io/badge/version-3.6.0-orange.svg)](https://github.com/lingflow/lingflow-core)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+**让每个 AI coding tool 都有智能的上下文管理**
+
+智能压缩 • 消息评分 • SQLite 管理 • 易于集成
+
+</div>
+
+---
+
+## 🎯 什么是 LingFlow？
+
+LingFlow 是一个**增强组件**，不是独立的平台。它为 AI Coding Tools 提供：
+
+- ✅ **精确的 Token 计数** - 基于 tiktoken，支持多种模型
+- ✅ **智能消息评分** - 多维度评估消息重要性
+- ✅ **分层压缩策略** - 5层压缩级别，智能决策
+- ✅ **SQLite 上下文管理** - 高性能的消息存储和检索（借鉴 Crush）
+- ✅ **统一的 API** - 轻松集成到任何工具
+
+## 💡 核心价值
+
+### 解决的痛点
+
+| Tool | 痛点 | LingFlow 解决方案 |
+|------|------|------------------|
+| **Claude Code** | ~200K token bug | 精确计数 + 智能压缩 |
+| **Cursor** | 200K 限制太低 | 分层压缩，延长 2-3 倍 |
+| **Windsurf** | 过度压缩 | 多维度评分，保留关键内容 |
+| **Copilot** | 缺乏智能压缩 | 自动触发 + 可视化洞察 |
+
+### 效果预期
+
+```
+Token 节省: 30-50%
+会话延长: 2-3 倍
+用户满意度: +40%
+```
+
+## 🚀 快速开始
+
+### 安装
+
+```bash
+# 从 PyPI 安装（即将发布）
+pip install lingflow-core
+
+# 从源码安装
+git clone https://github.com/lingflow/lingflow-core.git
+cd lingflow-core
+pip install -e .
+```
+
+### 基础使用
+
+```python
+from api import get_context_api
+
+# 创建 API 实例
+api = get_context_api()
+
+# 准备消息
+messages = [
+    {"role": "user", "content": "Hello, how are you?"},
+    {"role": "assistant", "content": "I'm doing well, thank you!"},
+    {"role": "user", "content": "Can you help me with Python?"}
+]
+
+# 估算 tokens
+token_info = api.estimate_tokens(messages=messages)
+print(f"Total tokens: {token_info['token_count']}")
+
+# 评分消息
+scores = api.score_messages(messages)
+for score in scores:
+    print(f"Importance: {score['importance_score']:.2f}")
+
+# 获取上下文洞察
+insight = api.get_context_insight(messages)
+print(f"Health status: {insight['health_status']}")
+```
+
+## 📚 API 文档
+
+### 核心 API
+
+#### 1. Token 估算
+
+```python
+api.estimate_tokens(text="Hello world")
+api.estimate_tokens(messages=[...])
+```
+
+#### 2. 消息评分
+
+```python
+api.score_messages(messages, context={...})
+```
+
+#### 3. 上下文压缩
+
+```python
+api.compress_context(
+    messages,
+    target_tokens=10000,
+    strategy="auto"  # auto, light, medium, aggressive
+)
+```
+
+#### 4. 上下文洞察
+
+```python
+api.get_context_insight(messages, threshold=150000)
+```
+
+#### 5. 完整分析
+
+```python
+api.analyze_session(
+    session_id="my_session",
+    messages=messages,
+    threshold=150000
+)
+```
+
+## 🧪 测试
+
+```bash
+# 安装测试依赖
+pip install -e ".[dev]"
+
+# 运行所有测试
+python run_tests.py
+
+# 或使用 pytest
+pytest lingflow-core/tests/ -v
+```
+
+## 🏗️ 架构
+
+```
+lingflow-core/
+├── core/                   # 核心模块
+│   ├── token_estimator.py  # Token 估算
+│   ├── message_scorer.py   # 消息评分
+│   ├── compression_strategy.py  # 压缩策略
+│   ├── context_insight.py  # 上下文洞察
+│   └── sqlite_context_manager.py  # SQLite 管理
+├── api/                    # 统一 API
+│   └── context_api.py      # 上下文 API
+└── tests/                  # 测试
+    ├── test_units.py       # 单元测试
+    └── test_e2e.py         # 端到端测试
+```
+
+## 🎓 设计理念
+
+### 从竞争到互补
+
+```
+✅ LingFlow + Claude Code = 互补
+✅ LingFlow + Cursor = 互补
+✅ LingFlow + Windsurf = 互补
+```
+
+### 借鉴优秀设计
+
+- **SQLite 上下文管理** - 借鉴 Crush 的成熟设计
+- **分层压缩策略** - 智能决策，保留关键内容
+- **多维度评分** - 重要性、相关性、时效性、质量
+
+### 开发原则
+
+1. **痛点驱动** - 每个功能解决实际痛点
+2. **互补思维** - 增强现有工具，不竞争
+3. **最小可行** - 快速验证，持续迭代
+4. **数据驱动** - 基于真实数据决策
+
+## 🗺️ 路线图
+
+### v0.1.0 (当前)
+- ✅ 核心 API
+- ✅ Token 估算
+- ✅ 消息评分
+- ✅ 压缩策略
+- ✅ SQLite 上下文管理
+
+### v0.2.0 (计划中)
+- MCP 服务器
+- Claude Code 集成
+- 性能优化
+
+### v0.3.0 (未来)
+- Cursor 集成
+- Windsurf 集成
+- 高级分析
+
+## 🤝 贡献
+
+欢迎贡献！请参阅 [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## 📄 许可证
+
+MIT License - 详见 [LICENSE](LICENSE)
+
+## 🙏 致谢
+
+- **Crush** - SQLite 上下文管理设计的灵感来源
+- **Claude Code** - 让我们看到上下文管理的痛点
+- **tiktoken** - 精确的 Token 计数
+
+---
+
+**LingFlow v4.0** - 让 AI coding tools 更好
+
+© 2026 LingFlow Team

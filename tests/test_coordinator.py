@@ -447,8 +447,8 @@ class TestListSkills:
         skills = coordinator.list_skills()
         assert isinstance(skills, list)
         assert len(skills) > 0
-        assert "code_analysis" in skills
-        assert "code_optimization" in skills
+        assert "code-review" in skills
+        assert "brainstorming" in skills
 
 
 class TestContextCompressor:

@@ -1,4 +1,11 @@
-pyyaml>=6.0
-click>=8.0
-flask>=2.0  # 可选，用于HTTP API
-pytest>=7.0  # 开发用
+# LingFlow Requirements
+
+# Core dependencies
+tiktoken>=0.5.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Optional dependencies (for full functionality)
+# sqlite3 (included in Python standard library)
