@@ -10,6 +10,7 @@ import json
 import sys
 
 import click
+from typing import Optional, Dict, Any, List
 
 from lingflow import LingFlow
 from lingflow.feedback import (
