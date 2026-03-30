@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-3.6.0-orange.svg)](https://github.com/lingflow/lingflow-core)
+[![Version](https://img.shields.io/badge/version-3.6.0-orange.svg)](https://github.com/guangda88/LingFlow)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **众智混元，万法灵通**
@@ -175,7 +175,7 @@ lingflow optimize simplicity --target ./my-project
 pip install lingflow-core
 
 # 从源码安装
-git clone https://github.com/lingflow/lingflow-core.git
+git clone https://github.com/guangda88/LingFlow.git
 cd lingflow-core
 pip install -e .
 ```
@@ -372,9 +372,9 @@ Token节省: 30-50%
 
 ## 📞 联系方式
 
-- **GitHub**: https://github.com/lingflow/lingflow-core
-- **Issues**: https://github.com/lingflow/lingflow-core/issues
-- **Discussions**: https://github.com/lingflow/lingflow-core/discussions
+- **GitHub**: https://github.com/guangda88/LingFlow
+- **Issues**: https://github.com/guangda88/LingFlow/issues
+- **Discussions**: https://github.com/guangda88/LingFlow/discussions
 
 ---
 
