@@ -1,0 +1,992 @@
+#!/usr/bin/env python3
+"""灵通 (LingFlow) CLI Interface
+
+众智混元，万法灵通
+
+Provides command-line interface for executing LingFlow skills and workflows.
+Uses Click for CLI argument parsing and command organization.
+"""
+import json
+import sys
+import time
+from pathlib import Path
+
+import click
+from typing import Optional, Dict, Any, List
+
+from lingflow import LingFlow
+from lingflow.feedback import (
+    FeedbackCategory,
+    FeedbackSeverity,
+    get_feedback_collector,
+)
+
+lf = LingFlow()
+
+
+@click.group()
+def cli() -> None:
+    """灵通 (LingFlow) CLI 主入口 - 众智混元，万法灵通"""
+
+
+@cli.command()
+@click.argument("skill")
+@click.option("--params", "-p", help="参数（JSON格式）")
+def run(skill, params):
+    """执行单个技能"""
+    if params:
+        try:
+            # Add size limit to prevent DoS
+            if len(params) > 10_000_000:  # 10MB limit
+                raise ValueError("Parameters too large (max 10MB)")
+            params_dict = json.loads(params)
+        except json.JSONDecodeError as e:
+            click.echo(f"Invalid JSON: {e}", err=True)
+            raise click.Abort()
+        except ValueError as e:
+            click.echo(f"Validation error: {e}", err=True)
+            raise click.Abort()
+    else:
+        params_dict = {}
+    result = lf.run_skill(skill, params_dict)
+    click.echo(json.dumps(result, indent=2, ensure_ascii=False))
+
+
+@cli.command()
+@click.argument("workflow_file")
+def workflow(workflow_file):
+    """执行工作流文件（YAML格式）"""
+    result = lf.run_workflow_file(workflow_file)
+    click.echo(json.dumps(result, indent=2, ensure_ascii=False))
+
+
+@cli.command("list-skills")
+def list_skills():
+    """列出所有可用技能"""
+    skills = lf._coordinator.list_skills()
+    for skill in skills:
+        click.echo(f"  - {skill}")
+
+
+# ============================================================================
+# 自优化相关命令
+# ============================================================================
+
+@cli.group()
+def optimize():
+    """自优化系统（基于LingMinOpt）"""
+    pass
+
+
+@optimize.command()
+@click.argument("goal",
+                type=click.Choice(["structure", "performance", "simplicity"]))
+@click.option("--target", "-t", default=".", help="目标路径（默认当前目录）")
+@click.option("--async", "async_mode", is_flag=True, help="异步执行（后台运行）")
+@click.option("--experiments", "-e", type=int, default=20, help="最大实验次数")
+@click.option("--report", "-r", help="保存报告到文件")
+def run(goal, target, async_mode, experiments, report):
+    """运行自优化"""
+    from lingflow.self_optimizer import (
+        quick_optimize,
+        StructureEvaluator,
+        OptimizationAdvisor
+    )
+    from lingflow.self_optimizer.config import get_global_config
+
+    click.echo(f"\n🔍 启动 {goal} 优化...")
+    click.echo(f"目标: {target}")
+
+    # 获取当前指标
+    if goal == "structure":
+        evaluator = StructureEvaluator(target)
+        current_metrics = evaluator.get_current_metrics()
+
+        click.echo(f"\n📊 当前状态:")
+        click.echo(f"  结构违规: {current_metrics.get('structure_violations', 0)}")
+        click.echo(f"  平均类大小: {current_metrics.get('avg_class_size', 0):.0f}行")
+        click.echo(f"  平均复杂度: {current_metrics.get('avg_complexity', 0):.1f}")
+    else:
+        current_metrics = {}
+
+    # 更新配置
+    config = get_global_config()
+    config.set("optimization.max_experiments", experiments)
+
+    # 运行优化
+    result = quick_optimize(target, goal, async_mode)
+
+    if async_mode:
+        click.echo("\n✓ 优化已启动（后台运行）")
+        click.echo("  使用 'lingflow optimize status' 查看进度")
+        click.echo("  使用 'lingflow optimize wait' 等待完成")
+    elif result:
+        if result.success:
+            # 生成报告
+            advisor = OptimizationAdvisor()
+            advisor.print_summary(result, current_metrics)
+
+            if report or config.get("report.auto_save"):
+                report_content = advisor.generate_report(
+                    goal=goal,
+                    target=target,
+                    current_metrics=current_metrics,
+                    optimization_result=result
+                )
+                report_path = advisor.save_report(report_content, report)
+                click.echo(f"📄 报告已保存: {report_path}")
+            else:
+                # 询问是否保存报告
+                if click.confirm("\n是否保存优化报告?", default=True):
+                    report_content = advisor.generate_report(
+                        goal=goal,
+                        target=target,
+                        current_metrics=current_metrics,
+                        optimization_result=result
+                    )
+                    report_path = advisor.save_report(report_content)
+                    click.echo(f"📄 报告已保存: {report_path}")
+        else:
+            click.echo(f"\n✗ 优化失败: {result.error}", err=True)
+            sys.exit(1)
+
+
+@optimize.command("status")
+def status():
+    """查看优化状态"""
+    from lingflow.hooks import get_global_hook
+
+    hook = get_global_hook()
+
+    if not hook.is_optimization_running():
+        click.echo("⚪ 没有运行中的优化")
+        return
+
+    progress = hook.optimizer.get_progress()
+
+    click.echo("🔄 优化运行中")
+    if progress and progress.get("pid"):
+        click.echo(f"  进程ID: {progress['pid']}")
+
+
+@optimize.command("wait")
+@click.option("--timeout", "-t", type=int, default=300, help="超时时间（秒）")
+def wait_completion(timeout):
+    """等待优化完成"""
+    from lingflow.hooks import get_global_hook
+    from lingflow.self_optimizer import OptimizationAdvisor, StructureEvaluator
+
+    hook = get_global_hook()
+
+    if not hook.is_optimization_running():
+        click.echo("⚪ 没有运行中的优化")
+        return
+
+    click.echo(f"⏳ 等待优化完成（最多 {timeout} 秒）...")
+
+    result = hook.optimizer.wait_for_completion(timeout)
+
+    if result and result.success:
+        # 获取当前指标
+        evaluator = StructureEvaluator(".")
+        current_metrics = evaluator.get_current_metrics()
+
+        # 打印摘要
+        advisor = OptimizationAdvisor()
+        advisor.print_summary(result, current_metrics)
+
+        # 生成报告
+        report_content = advisor.generate_report(
+            goal="structure",
+            target=".",
+            current_metrics=current_metrics,
+            optimization_result=result
+        )
+        report_path = advisor.save_report(report_content)
+        click.echo(f"📄 报告已保存: {report_path}")
+    else:
+        click.echo("⚠️  优化未完成或失败")
+        if result and result.error:
+            click.echo(f"错误: {result.error}")
+
+
+@optimize.command("cancel")
+def cancel():
+    """取消当前优化"""
+    from lingflow.hooks import get_global_hook
+
+    hook = get_global_hook()
+
+    if not hook.is_optimization_running():
+        click.echo("⚪ 没有运行中的优化")
+        return
+
+    click.echo("⏹️  正在取消优化...")
+    hook.cancel_optimization()
+    click.echo("✓ 优化已取消")
+
+
+@optimize.command("apply")
+@click.option("--report", "-r", required=True, help="报告文件路径")
+def apply_optimization(report):
+    """应用优化建议（自动修改配置）"""
+    import yaml
+    from pathlib import Path
+
+    report_path = Path(report)
+    if not report_path.exists():
+        click.echo(f"✗ 报告文件不存在: {report}", err=True)
+        sys.exit(1)
+
+    # 解析报告，提取最佳参数
+    content = report_path.read_text(encoding="utf-8")
+
+    # 简单解析（从YAML代码块中提取）
+    in_yaml = False
+    yaml_lines = []
+    for line in content.split('\n'):
+        if '```yaml' in line or '```YAML' in line:
+            in_yaml = True
+            continue
+        if in_yaml and line.strip() == '```':
+            break
+        if in_yaml and line.strip() and not line.strip().startswith('#'):
+            yaml_lines.append(line)
+
+    yaml_content = '\n'.join(yaml_lines)
+    params = yaml.safe_load(yaml_content)
+
+    click.echo(f"\n📋 将应用以下参数:")
+    for key, value in params.items():
+        click.echo(f"  {key}: {value}")
+
+    if not click.confirm("\n确认应用?", default=False):
+        click.echo("取消")
+        return
+
+    # 保存到配置文件
+    config_dir = Path.home() / ".lingflow"
+    config_dir.mkdir(exist_ok=True)
+    config_file = config_dir / "config.yaml"
+
+    existing_config = {}
+    if config_file.exists():
+        with open(config_file, 'r', encoding='utf-8') as f:
+            existing_config = yaml.safe_load(f) or {}
+
+    # 更新配置
+    if "structure_optimization" not in existing_config:
+        existing_config["structure_optimization"] = {}
+    existing_config["structure_optimization"].update(params)
+
+    # 保存
+    with open(config_file, 'w', encoding='utf-8') as f:
+        yaml.dump(existing_config, f, default_flow_style=False, allow_unicode=True)
+
+    click.echo(f"\n✓ 配置已保存到: {config_file}")
+
+
+@optimize.command("generate-config")
+@click.option("--report", "-r", required=True, help="报告文件路径")
+@click.option("--output", "-o", help="输出文件路径（默认：config_optimized.yaml）")
+def generate_config(report, output):
+    """从报告生成配置文件"""
+    import yaml
+    from pathlib import Path
+
+    report_path = Path(report)
+    if not report_path.exists():
+        click.echo(f"✗ 报告文件不存在: {report}", err=True)
+        sys.exit(1)
+
+    # 解析报告
+    content = report_path.read_text(encoding="utf-8")
+
+    # 提取YAML参数
+    in_yaml = False
+    yaml_lines = []
+    for line in content.split('\n'):
+        if '```yaml' in line or '```YAML' in line:
+            in_yaml = True
+            continue
+        if in_yaml and line.strip() == '```':
+            break
+        if in_yaml and line.strip() and not line.strip().startswith('#'):
+            yaml_lines.append(line)
+
+    yaml_content = '\n'.join(yaml_lines)
+    params = yaml.safe_load(yaml_content)
+
+    # 生成配置文件
+    output_path = Path(output) if output else Path("config_optimized.yaml")
+
+    config = {
+        "structure_optimization": params
+    }
+
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write("# LingFlow 自优化配置\n")
+        f.write(f"# 从报告生成: {report}\n")
+        f.write(f"# 时间: {Path(report).stat().st_mtime}\n\n")
+        yaml.dump(config, f, default_flow_style=False, allow_unicode=True)
+
+    click.echo(f"✓ 配置文件已生成: {output_path}")
+
+
+@optimize.command("check")
+@click.option("--target", "-t", default=".", help="目标路径")
+def check_trigger(target):
+    """检查是否需要优化"""
+    from lingflow.self_optimizer import OptimizationTrigger, StructureEvaluator
+
+    trigger = OptimizationTrigger()
+
+    # 收集上下文
+    evaluator = StructureEvaluator(target)
+    metrics = evaluator.get_current_metrics()
+
+    context = {
+        "avg_complexity": metrics.get("avg_complexity", 0),
+        "large_classes_count": metrics.get("large_classes_count", 0),
+        "structure_violations": metrics.get("structure_violations", 0),
+    }
+
+    # 检查条件
+    should_trigger, trigger_info = trigger.check_all_conditions(context)
+
+    if should_trigger:
+        click.echo(f"\n✓ 需要优化")
+        click.echo(f"  原因: {trigger_info.reason}")
+        click.echo(f"  优先级: {trigger_info.priority}")
+    else:
+        click.echo("\n✓ 暂时不需要优化")
+
+
+# ============================================================================
+# 反馈相关命令
+# ============================================================================
+
+@cli.group()
+def feedback():
+    """用户反馈管理"""
+    pass
+
+
+@feedback.command("submit")
+@click.option("--title", "-t", required=True, help="问题标题")
+@click.option("--description", "-d", required=True, help="详细描述")
+@click.option("--category", "-c",
+              type=click.Choice(["bug", "feature", "improvement", "performance", "documentation", "usability", "other"]),
+              default="bug", help="反馈类别")
+@click.option("--severity", "-s",
+              type=click.Choice(["low", "medium", "high", "critical"]),
+              default="medium", help="严重性")
+@click.option("--user", "-u", help="用户标识")
+@click.option("--email", "-e", help="联系邮箱")
+def submit_feedback(title, description, category, severity, user, email):
+    """提交用户反馈"""
+    collector = get_feedback_collector()
+
+    # 如果是 bug，尝试收集环境信息
+    environment = None
+    if category == "bug":
+        import platform
+        environment = {
+            "os": platform.system(),
+            "python_version": platform.python_version(),
+            "lingflow_version": lf.__class__.__module__,
+        }
+
+    feedback = collector.submit_feedback(
+        category=FeedbackCategory(category),
+        severity=FeedbackSeverity(severity),
+        title=title,
+        description=description,
+        user=user,
+        email=email,
+        environment=environment,
+    )
+
+    click.echo(f"✓ 反馈已提交: {feedback.id}")
+    click.echo(f"  标题: {title}")
+    click.echo(f"  类别: {category}")
+    click.echo(f"  严重性: {severity}")
+
+
+@feedback.command("bug")
+@click.option("--title", "-t", required=True, help="Bug 标题")
+@click.option("--description", "-d", required=True, help="详细描述")
+@click.option("--severity", "-s",
+              type=click.Choice(["low", "medium", "high", "critical"]),
+              default="medium", help="严重性")
+def report_bug(title, description, severity):
+    """快捷提交 Bug 报告"""
+    collector = get_feedback_collector()
+
+    # 尝试获取最近的错误信息
+    import traceback
+    stack_trace = traceback.format_exc() if traceback.format_exc().strip() else None
+
+    feedback = collector.submit_bug_report(
+        title=title,
+        description=description,
+        severity=FeedbackSeverity(severity),
+        stack_trace=stack_trace,
+    )
+
+    click.echo(f"✓ Bug 报告已提交: {feedback.id}")
+    click.echo(f"  标题: {title}")
+    click.echo(f"  严重性: {severity}")
+
+    if stack_trace:
+        click.echo(f"  堆栈跟踪已附加")
+
+
+@feedback.command("list")
+@click.option("--category", "-c",
+              type=click.Choice(["bug", "feature", "improvement", "performance", "documentation", "usability", "other"]),
+              help="按类别过滤")
+@click.option("--status", "-s", help="按状态过滤 (open/in_progress/resolved/closed)")
+@click.option("--limit", "-l", type=int, default=20, help="返回数量限制")
+def list_feedbacks(category, status, limit):
+    """列出反馈"""
+    collector = get_feedback_collector()
+
+    cat = FeedbackCategory(category) if category else None
+    feedbacks = collector.get_feedbacks(category=cat, status=status, limit=limit)
+
+    if not feedbacks:
+        click.echo("没有找到反馈")
+        return
+
+    click.echo(f"找到 {len(feedbacks)} 条反馈:\n")
+
+    for f in feedbacks:
+        status_icon = {
+            "open": "🔴",
+            "in_progress": "🟡",
+            "resolved": "🟢",
+            "closed": "⚪",
+        }.get(f.status, "⚪")
+
+        click.echo(f"{status_icon} [{f.id}] {f.title}")
+        click.echo(f"  类别: {f.category.value} | 严重性: {f.severity.value} | 状态: {f.status}")
+        click.echo(f"  时间: {f.timestamp[:19] if len(f.timestamp) > 19 else f.timestamp}")
+        click.echo()
+
+
+@feedback.command("show")
+@click.argument("feedback_id")
+def show_feedback(feedback_id):
+    """显示反馈详情"""
+    collector = get_feedback_collector()
+    feedback = collector.get_feedback(feedback_id)
+
+    if not feedback:
+        click.echo(f"未找到反馈: {feedback_id}", err=True)
+        sys.exit(1)
+
+    click.echo(f"反馈 ID: {feedback.id}")
+    click.echo(f"标题: {feedback.title}")
+    click.echo(f"类别: {feedback.category.value}")
+    click.echo(f"严重性: {feedback.severity.value}")
+    click.echo(f"状态: {feedback.status}")
+    click.echo(f"时间: {feedback.timestamp}")
+    if feedback.user:
+        click.echo(f"用户: {feedback.user}")
+    if feedback.email:
+        click.echo(f"邮箱: {feedback.email}")
+    click.echo(f"\n描述:\n{feedback.description}")
+
+    if feedback.reproduction_steps:
+        click.echo(f"\n复现步骤:")
+        for i, step in enumerate(feedback.reproduction_steps, 1):
+            click.echo(f"  {i}. {step}")
+
+    if feedback.environment:
+        click.echo(f"\n环境信息:")
+        for k, v in feedback.environment.items():
+            click.echo(f"  {k}: {v}")
+
+    if feedback.stack_trace:
+        click.echo(f"\n堆栈跟踪:\n{feedback.stack_trace}")
+
+    if feedback.resolution:
+        click.echo(f"\n解决方案:\n{feedback.resolution}")
+
+
+@feedback.command("resolve")
+@click.argument("feedback_id")
+@click.option("--resolution", "-r", required=True, help="解决方案说明")
+def resolve_feedback(feedback_id, resolution):
+    """标记反馈为已解决"""
+    collector = get_feedback_collector()
+
+    if collector.update_status(feedback_id, "resolved", resolution):
+        click.echo(f"✓ 反馈 {feedback_id} 已标记为已解决")
+    else:
+        click.echo(f"✗ 未找到反馈: {feedback_id}", err=True)
+        sys.exit(1)
+
+
+@feedback.command("export")
+@click.option("--output", "-o", default="feedback_report.md", help="输出文件路径")
+def export_feedback(output):
+    """导出反馈报告为 Markdown"""
+    collector = get_feedback_collector()
+
+    content = collector.export_markdown(output)
+    click.echo(f"✓ 反馈报告已导出到: {output}")
+    click.echo(f"  包含 {len(collector.get_feedbacks())} 条反馈")
+
+
+@feedback.command("stats")
+def feedback_stats():
+    """显示反馈统计信息"""
+    collector = get_feedback_collector()
+    stats = collector.get_statistics()
+
+    click.echo("反馈统计:")
+    click.echo(f"  总计: {stats['total']}")
+    click.echo(f"  待处理: {stats['open']}")
+    click.echo(f"  已解决: {stats['resolved']}")
+
+    click.echo("\n按类别:")
+    for cat, count in stats['by_category'].items():
+        click.echo(f"  {cat}: {count}")
+
+    click.echo("\n按严重性:")
+    for sev, count in stats['by_severity'].items():
+        click.echo(f"  {sev}: {count}")
+
+
+# ============================================================================
+# AI工具学习命令 (Phase 5)
+# ============================================================================
+
+@cli.group()
+def learn():
+    """AI工具学习系统 (Phase 5)"""
+    pass
+
+
+@learn.command()
+@click.option("--tools", "-t",
+              help="工具列表 (逗号分隔): semgrep, ruff, pylint, bandit, mypy")
+@click.option("--target",
+              default=".",
+              help="目标路径 (默认: 当前目录)")
+@click.option("--output", "-o",
+              help="输出报告路径")
+@click.option("--apply",
+              is_flag=True,
+              help="自动应用学习到的改进")
+@click.option("--rules-only",
+              is_flag=True,
+              help="仅提取规则，不运行模式检测")
+@click.option("--verbose", "-v",
+              is_flag=True,
+              help="详细输出")
+def run_learn(tools, target, output, apply, rules_only, verbose):
+    """从AI工具学习规则和模式"""
+    # 导入辅助函数
+    from lingflow.cli_helpers import (
+        detect_available_tools,
+        run_tool_scans,
+        extract_and_save_rules,
+    )
+
+    click.echo(f"\n🧠 启动 AI 工具学习...")
+    click.echo(f"目标: {target}")
+
+    # 解析工具列表
+    if tools:
+        tool_list = [t.strip() for t in tools.split(",")]
+    else:
+        # 自动检测可用工具
+        tool_list = detect_available_tools(verbose)
+
+        if not tool_list:
+            click.echo("\n⚠️  未检测到可用的AI工具", err=True)
+            click.echo("请安装工具或使用 --tools 参数手动指定")
+            sys.exit(1)
+
+    click.echo(f"\n🔧 使用工具: {', '.join(tool_list)}")
+
+    # 收集反馈
+    all_feedback = run_tool_scans(tool_list, target, verbose)
+
+    if not all_feedback:
+        click.echo("\n⚠️  未收集到任何反馈")
+        return
+
+    click.echo(f"\n📊 总共收集 {len(all_feedback)} 条反馈")
+
+    # 提取规则和模式，并保存到知识库
+    rules, patterns, knowledge_base = extract_and_save_rules(
+        all_feedback, target, rules_only, verbose
+    )
+
+    # 显示知识库统计
+    click.echo(f"\n📚 知识库统计:")
+    click.echo(f"  规则: {len(knowledge_base.get_all_rules())}")
+    click.echo(f"  模式: {len(knowledge_base.get_all_patterns())}")
+
+    # 生成报告
+    if output:
+        report_path = Path(output)
+    else:
+        report_dir = Path(target) / ".lingflow" / "reports"
+        report_dir.mkdir(parents=True, exist_ok=True)
+        report_path = report_dir / f"learning_report_{int(time.time())}.md"
+
+    _generate_learning_report(report_path, tool_list, all_feedback, rules, patterns)
+    click.echo(f"\n📄 报告已保存: {report_path}")
+
+    # 应用改进
+    if apply:
+        if not click.confirm("\n⚠️  即将自动应用学习到的改进。继续?", default=False):
+            click.echo("取消应用")
+            return
+
+        click.echo(f"\n🔧 应用改进...")
+        # TODO: 实现自动应用逻辑 (P1优先级)
+        click.echo(f"⚠️  自动应用功能开发中")
+
+
+@learn.command("list-rules")
+@click.option("--category", "-c", help="按类别过滤")
+@click.option("--severity", "-s", help="按严重性过滤")
+@click.option("--limit", "-l", type=int, default=50, help="返回数量限制")
+def list_learned_rules(category, severity, limit):
+    """列出学习到的规则"""
+    from lingflow.self_optimizer.phase5 import InMemoryKnowledgeBase
+
+    kb = InMemoryKnowledgeBase()
+    rules = kb.get_all_rules()
+
+    # 过滤
+    if category:
+        rules = [r for r in rules if r.category.value == category]
+    if severity:
+        rules = [r for r in rules if r.severity.value == severity]
+
+    rules = rules[:limit]
+
+    if not rules:
+        click.echo("没有找到规则")
+        return
+
+    click.echo(f"找到 {len(rules)} 条规则:\n")
+
+    for rule in rules:
+        severity_icon = {
+            "critical": "🔴",
+            "high": "🟠",
+            "medium": "🟡",
+            "low": "🟢",
+        }.get(rule.severity.value, "⚪")
+
+        click.echo(f"{severity_icon} [{rule.id}] {rule.title}")
+        click.echo(f"  类别: {rule.category.value} | 严重性: {rule.severity.value}")
+        click.echo(f"  置信度: {rule.confidence:.2f} | 质量分数: {rule.quality_score:.2f}")
+        if rule.suggestion:
+            click.echo(f"  建议: {rule.suggestion[:100]}...")
+        click.echo()
+
+
+@learn.command("list-patterns")
+@click.option("--type", "-t", help="按类型过滤")
+@click.option("--limit", "-l", type=int, default=50, help="返回数量限制")
+def list_recognized_patterns(type, limit):
+    """列出示例的模式"""
+    from lingflow.self_optimizer.phase5 import InMemoryKnowledgeBase
+
+    kb = InMemoryKnowledgeBase()
+    patterns = kb.get_all_patterns()
+
+    # 过滤
+    if type:
+        patterns = [p for p in patterns if p.pattern_type == type]
+
+    patterns = patterns[:limit]
+
+    if not patterns:
+        click.echo("没有找到模式")
+        return
+
+    click.echo(f"找到 {len(patterns)} 个模式:\n")
+
+    for pattern in patterns:
+        click.echo(f"📋 [{pattern.pattern_type}] {pattern.description}")
+        click.echo(f"  位置: {pattern.location}")
+        if pattern.suggestion:
+            click.echo(f"  建议: {pattern.suggestion[:100]}...")
+        click.echo()
+
+
+# ============================================================================
+# 代码分析命令
+# ============================================================================
+
+@cli.group()
+def analyze():
+    """代码分析系统"""
+    pass
+
+
+@analyze.command()
+@click.option("--target", "-t",
+              default=".",
+              help="目标路径")
+@click.option("--metrics", "-m",
+              help="指标列表 (逗号分隔): complexity, duplication, security, maintainability")
+@click.option("--output", "-o",
+              help="输出报告路径")
+@click.option("--format", "-f",
+              type=click.Choice(["json", "markdown", "html"]),
+              default="markdown",
+              help="输出格式")
+@click.option("--verbose", "-v",
+              is_flag=True,
+              help="详细输出")
+def run_analyze(target, metrics, output, format, verbose):
+    """运行代码分析"""
+    from lingflow.self_optimizer.evaluator import StructureEvaluator
+
+    click.echo(f"\n🔍 分析代码: {target}")
+
+    # 默认指标
+    if metrics:
+        metric_list = [m.strip() for m in metrics.split(",")]
+    else:
+        metric_list = ["complexity", "duplication"]
+
+    click.echo(f"📊 分析指标: {', '.join(metric_list)}")
+
+    # 创建评估器
+    evaluator = StructureEvaluator(target)
+
+    # 收集指标
+    with click.progressbar(length=100, label="分析中") as bar:
+        current_metrics = evaluator.get_current_metrics()
+        bar.update(100)
+
+    # 显示结果
+    click.echo(f"\n📊 分析结果:")
+    click.echo(f"  结构违规: {current_metrics.get('structure_violations', 0)}")
+    click.echo(f"  平均类大小: {current_metrics.get('avg_class_size', 0):.0f} 行")
+    click.echo(f"  平均复杂度: {current_metrics.get('avg_complexity', 0):.1f}")
+    click.echo(f"  大型类数量: {current_metrics.get('large_classes_count', 0)}")
+    click.echo(f"  长方法数量: {current_metrics.get('long_methods_count', 0)}")
+
+    # 保存报告
+    if output:
+        report_path = Path(output)
+    else:
+        report_dir = Path(target) / ".lingflow" / "reports"
+        report_dir.mkdir(parents=True, exist_ok=True)
+        report_path = report_dir / f"analysis_report_{int(time.time())}.{format}"
+
+    _generate_analysis_report(report_path, metric_list, current_metrics, format)
+    click.echo(f"\n📄 报告已保存: {report_path}")
+
+
+@analyze.command("complexity")
+@click.option("--target", "-t",
+              default=".",
+              help="目标路径")
+@click.option("--threshold",
+              type=int,
+              default=10,
+              help="复杂度阈值")
+def analyze_complexity(target, threshold):
+    """分析代码复杂度"""
+    from lingflow.self_optimizer.evaluator import StructureEvaluator
+
+    click.echo(f"\n🔍 分析复杂度: {target}")
+    click.echo(f"阈值: {threshold}")
+
+    evaluator = StructureEvaluator(target)
+    metrics = evaluator.get_current_metrics()
+
+    # TODO: 实现详细的复杂度分析
+    click.echo(f"\n📊 复杂度统计:")
+    click.echo(f"  平均复杂度: {metrics.get('avg_complexity', 0):.1f}")
+    click.echo(f"  最大复杂度: {metrics.get('max_complexity', 0)}")
+    click.echo(f"  高复杂度函数: {metrics.get('high_complexity_count', 0)}")
+
+
+@analyze.command("duplication")
+@click.option("--target", "-t",
+              default=".",
+              help="目标路径")
+@click.option("--min-lines",
+              type=int,
+              default=10,
+              help="最小重复行数")
+def analyze_duplication(target, min_lines):
+    """分析代码重复"""
+    click.echo(f"\n🔍 分析代码重复: {target}")
+    click.echo(f"最小重复行数: {min_lines}")
+
+    # TODO: 实现代码重复检测
+    click.echo(f"\n⚠️  代码重复检测功能开发中")
+
+
+# ============================================================================
+# 测试命令
+# ============================================================================
+
+@cli.group()
+def test():
+    """测试系统"""
+    pass
+
+
+@test.command()
+@click.option("--coverage",
+              is_flag=True,
+              help="生成覆盖率报告")
+@click.option("--verbose", "-v",
+              is_flag=True,
+              help="详细输出")
+@click.option("--parallel",
+              is_flag=True,
+              help="并行运行测试")
+@click.option("--target",
+              help="目标测试路径")
+def run_test(coverage, verbose, parallel, target):
+    """运行测试套件"""
+    import subprocess
+
+    click.echo(f"\n🧪 运行测试套件...")
+
+    # 构建pytest命令
+    cmd = ["python", "-m", "pytest"]
+
+    if verbose:
+        cmd.append("-v")
+    else:
+        cmd.append("-q")
+
+    if coverage:
+        cmd.extend(["--cov=lingflow", "--cov-report=term-missing"])
+
+    if parallel:
+        cmd.extend(["-n", "auto"])
+
+    if target:
+        cmd.append(target)
+
+    click.echo(f"命令: {' '.join(cmd)}")
+
+    # 运行测试
+    result = subprocess.run(cmd)
+    sys.exit(result.returncode)
+
+
+@test.command("e2e")
+@click.option("--scenario", "-s",
+              help="运行特定场景")
+@click.option("--verbose", "-v",
+              is_flag=True,
+              help="详细输出")
+def run_e2e_test(scenario, verbose):
+    """运行端到端测试"""
+    click.echo(f"\n🧪 运行 E2E 测试...")
+
+    # TODO: 集成E2E测试框架
+    click.echo(f"⚠️  E2E测试功能开发中")
+
+
+# ============================================================================
+# 辅助函数
+# ============================================================================
+
+def _generate_learning_report(
+    report_path: Path,
+    tools: List[str],
+    feedback_items: List,
+    rules: List,
+    patterns: List
+):
+    """生成学习报告"""
+    content = f"""# AI 工具学习报告
+
+生成时间: {time.strftime("%Y-%m-%d %H:%M:%S")}
+
+## 📊 统计摘要
+
+- **使用的工具**: {', '.join(tools)}
+- **收集的反馈**: {len(feedback_items)}
+- **提取的规则**: {len(rules)}
+- **识别的模式**: {len(patterns)}
+
+## 🔧 使用的工具
+
+"""
+    for tool in tools:
+        content += f"- `{tool}`\n"
+
+    content += f"\n## 📋 提取的规则 (Top 10)\n\n"
+    for i, rule in enumerate(rules[:10], 1):
+        content += f"### {i}. {rule.title}\n"
+        content += f"- **ID**: {rule.id}\n"
+        content += f"- **类别**: {rule.category.value}\n"
+        content += f"- **严重性**: {rule.severity.value}\n"
+        content += f"- **置信度**: {rule.confidence:.2f}\n"
+        content += f"- **质量分数**: {rule.quality_score:.2f}\n"
+        if rule.suggestion:
+            content += f"- **建议**: {rule.suggestion}\n"
+        content += "\n"
+
+    if patterns:
+        content += f"\n## 🔍 识别的模式 (Top 10)\n\n"
+        for i, pattern in enumerate(patterns[:10], 1):
+            content += f"### {i}. {pattern.description}\n"
+            content += f"- **类型**: {pattern.pattern_type}\n"
+            content += f"- **位置**: {pattern.location}\n"
+            if pattern.suggestion:
+                content += f"- **建议**: {pattern.suggestion}\n"
+            content += "\n"
+
+    report_path.write_text(content, encoding="utf-8")
+
+
+def _generate_analysis_report(
+    report_path: Path,
+    metrics: List[str],
+    results: Dict,
+    format: str
+):
+    """生成分析报告"""
+    if format == "json":
+        content = json.dumps({
+            "metrics": metrics,
+            "results": results,
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+        }, indent=2, ensure_ascii=False)
+    else:  # markdown
+        content = f"""# 代码分析报告
+
+生成时间: {time.strftime("%Y-%m-%d %H:%M:%S")}
+
+## 📊 分析指标
+
+{', '.join(metrics)}
+
+## 📈 分析结果
+
+- **结构违规**: {results.get('structure_violations', 0)}
+- **平均类大小**: {results.get('avg_class_size', 0):.0f} 行
+- **平均复杂度**: {results.get('avg_complexity', 0):.1f}
+- **大型类数量**: {results.get('large_classes_count', 0)}
+- **长方法数量**: {results.get('long_methods_count', 0)}
+"""
+
+    report_path.write_text(content, encoding="utf-8")
+
+
+if __name__ == "__main__":
+    cli()

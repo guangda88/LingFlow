@@ -136,25 +136,93 @@ class DevToolsClient:
         Returns:
             调用结果
         """
-        # 构造 MCP 请求
-        request = {
-            "method": "tools/call",
-            "params": {
-                "name": tool,
-                "arguments": args or {}
-            }
-        }
+        try:
+            # 尝试使用 MCP SDK 调用
+            # 检查是否安装了 mcp 包
+            try:
+                from mcp import Client
+                from mcp.client.stdio import stdio_client
 
-        # 通过 inspector 发送 MCP 请求
-        # 实际实现需要使用 MCP SDK 或 inspector 模块
-        # 这里是简化版，实际使用时需要替换为正确的 MCP 调用
+                # 使用 stdio 连接到 MCP 服务器
+                async with stdio_client() as (read_stream, write_stream):
+                    async with Client(read_stream, write_stream) as client:
+                        # 调用工具
+                        result = await client.call_tool(tool, args or {})
 
-        # TODO: 实现 MCP 调用
-        # 目前返回模拟结果
-        return MCPResult(
-            success=True,
-            data={"tool": tool, "args": args}
-        )
+                        return MCPResult(
+                            success=True,
+                            data=result.content if hasattr(result, 'content') else result
+                        )
+            except ImportError:
+                # MCP SDK 未安装，使用 subprocess 调用 MCP CLI
+                return await self._call_mcp_via_cli(tool, args)
+
+        except Exception as e:
+            # MCP 调用失败，返回错误结果
+            return MCPResult(
+                success=False,
+                error=str(e),
+                data=None
+            )
+
+    async def _call_mcp_via_cli(
+        self,
+        tool: str,
+        args: Optional[Dict[str, Any]] = None
+    ) -> MCPResult:
+        """通过 CLI 调用 MCP 工具（后备方法）
+
+        Args:
+            tool: 工具名称
+            args: 参数
+
+        Returns:
+            调用结果
+        """
+        try:
+            # 构建 MCP CLI 命令
+            import json
+            cmd = [
+                "mcp", "call",
+                self.server_name,
+                tool,
+                json.dumps(args or {})
+            ]
+
+            # 执行命令
+            process = await asyncio.create_subprocess_exec(
+                *cmd,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+
+            stdout, stderr = await process.communicate()
+
+            if process.returncode == 0:
+                return MCPResult(
+                    success=True,
+                    data=json.loads(stdout.decode()) if stdout else {}
+                )
+            else:
+                return MCPResult(
+                    success=False,
+                    error=stderr.decode(),
+                    data=None
+                )
+
+        except FileNotFoundError:
+            # MCP CLI 不可用，返回错误
+            return MCPResult(
+                success=False,
+                error="MCP CLI 不可用，请安装 Model Context Protocol CLI",
+                data=None
+            )
+        except Exception as e:
+            return MCPResult(
+                success=False,
+                error=str(e),
+                data=None
+            )
 
 
 # 便捷函数

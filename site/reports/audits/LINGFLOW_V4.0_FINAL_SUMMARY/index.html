@@ -1,0 +1,2620 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="LingFlow 工程流系统完整API文档 - 众智混元，万法灵通">
+      
+      
+        <meta name="author" content="LingFlow Team">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>LingFlow V4.0 封装优化 - 最终总结 - LingFlow API Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#lingflow-v40-" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="LingFlow API Documentation" class="md-header__button md-logo" aria-label="LingFlow API Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            LingFlow API Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              LingFlow V4.0 封装优化 - 最终总结
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/guangda88/LingFlow" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    guangda88/LingFlow
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../quickstart/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  快速开始
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../api/lingflow/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API 参考
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../examples/basic_usage/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  示例
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../guides/architecture/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  指南
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="LingFlow API Documentation" class="md-nav__button md-logo" aria-label="LingFlow API Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    LingFlow API Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/guangda88/LingFlow" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    guangda88/LingFlow
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速开始
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API 参考
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API 参考
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/lingflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    lingflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/coordination/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    coordination
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    context
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/compression/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    compression
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/self_optimizer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    self_optimizer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/phase4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    phase4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/phase5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    phase5
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    示例
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    示例
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/basic_usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基础用法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/workflow_definition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流定义
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/custom_agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    自定义Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/self_optimization.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    自优化配置
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    指南
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    指南
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    架构概览
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/agent_coordination.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent协调
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/workflow_engine.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流引擎
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/parameter_optimization.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    参数优化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/ai_learning.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI学习系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        完成的工作
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="完成的工作">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 方案对比分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 优化方案设计
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. 优化方案设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心创新
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        架构分层
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 可执行代码示例
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 可执行代码示例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Result 类型（增强版）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 统一异常体系
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 配置系统
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 技能基类
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 缓存系统
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 监控系统
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 技能服务
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 示例技能
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 测试验证
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键特性对比
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        使用示例
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="使用示例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-result_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Result 类型使用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 配置构建器使用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 技能服务使用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        实施路线图
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="实施路线图">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        阶段1：核心基础设施（2周）✅ 设计完成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        阶段2：服务层实现（3周）⏳ 待实施
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        阶段3：技能迁移（3周）⏳ 待实施
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4api-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        阶段4：API 清理（1周）⏳ 待实施
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        阶段5：功能增强（持续）⏳ 待实施
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        成功指标
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="成功指标">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        技术指标（目标）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        性能指标（目标）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用户体验指标（目标）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文档清单
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="文档清单">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        已完成文档
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        待创建文档
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        交付物清单
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="交付物清单">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文档
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        测试
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        下一步行动
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="下一步行动">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        立即行动（本周）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        短期目标（2-4周）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        中期目标（2-3个月）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        长期目标（3-6个月）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心优势总结
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心优势总结">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 技术优势
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 性能优势
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 开发体验优势
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 可维护性优势
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        风险与缓解
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="风险与缓解">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        技术风险
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        项目风险
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        业务风险
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="总结">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        已完成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        待实施
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        预期收益
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="lingflow-v40-">LingFlow V4.0 封装优化 - 最终总结</h1>
+<p><strong>版本</strong>: V4.0.0
+<strong>日期</strong>: 2026-03-25
+<strong>状态</strong>: ✅ 已完成</p>
+<hr />
+<h2 id="_1">完成的工作</h2>
+<h3 id="1">1. 方案对比分析</h3>
+<p><strong>文档</strong>: <code>LINGFLOW_ENCAPSULATION_COMPARISON.md</code></p>
+<p>对比了两个封装方案：
+- <strong>方案A</strong>（渐进式改进）：基于问题的逐步修复
+- <strong>方案B</strong>（全新API设计）：Result类型、构建器模式、服务层架构</p>
+<p><strong>结论</strong>：采用融合方案，结合两者优点</p>
+<h3 id="2">2. 优化方案设计</h3>
+<p><strong>文档</strong>: <code>LINGFLOW_V4.0_OPTIMIZATION_PLAN.md</code></p>
+<p>设计了全面的 V4.0 架构，包括：</p>
+<h4 id="_2">核心创新</h4>
+<ol>
+<li>🎯 <strong>双模式API</strong> - 同步+异步，用户自由选择</li>
+<li>🔌 <strong>插件系统</strong> - 标准化插件接口，支持第三方扩展</li>
+<li>🚀 <strong>性能优化</strong> - 智能缓存、懒加载、并行执行</li>
+<li>🔄 <strong>配置热重载</strong> - 无需重启，动态更新配置</li>
+<li>📊 <strong>内置监控</strong> - 性能追踪、错误统计、资源监控</li>
+<li>🛠️ <strong>开发者体验</strong> - 自动补全、类型提示、错误诊断</li>
+<li>🎨 <strong>渐进式类型化</strong> - 支持完全类型化，也支持渐进式迁移</li>
+<li>🔀 <strong>智能适配器</strong> - 自动转换新旧API，无缝迁移</li>
+</ol>
+<h4 id="_3">架构分层</h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>┌─────────────────────────────────────────┐
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>│   用户层 (CLI/SDK/REST)                 │
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├─────────────────────────────────────────┤
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   API门面层 (LingFlow - 双模式)          │
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>├─────────────────────────────────────────┤
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│   服务层 (Skill/Workflow/Agent/Plugin)  │
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>├─────────────────────────────────────────┤
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│   领域层 (Coordinator/Orchestrator)     │
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>├─────────────────────────────────────────┤
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│   技能层 (BaseSkill + 插件)              │
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>├─────────────────────────────────────────┤
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>│   基础设施层 (Config/Cache/Monitor)     │
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>├─────────────────────────────────────────┤
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>│   核心类型层 (Result/Exceptions)         │
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>├─────────────────────────────────────────┤
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>│   适配器层 (Legacy/Async/Type)           │
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>└─────────────────────────────────────────┘
+</span></code></pre></div>
+<h3 id="3">3. 可执行代码示例</h3>
+<p><strong>文件</strong>: <code>lingflow_v4_example.py</code> (1024 行)</p>
+<p>实现了 V4.0 的核心功能：</p>
+<h4 id="1-result">1. Result 类型（增强版）</h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="err">✓</span> <span class="n">基础创建</span> <span class="p">(</span><span class="n">ok</span><span class="p">,</span> <span class="n">fail</span><span class="p">)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="err">✓</span> <span class="n">链式调用</span> <span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">and_then</span><span class="p">,</span> <span class="n">or_else</span><span class="p">)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="err">✓</span> <span class="n">组合操作</span> <span class="p">(</span><span class="nb">zip</span><span class="p">,</span> <span class="n">first_ok</span><span class="p">)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="err">✓</span> <span class="n">序列化</span> <span class="p">(</span><span class="n">to_dict</span><span class="p">,</span> <span class="n">to_json</span><span class="p">)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="err">✓</span> <span class="n">属性访问</span> <span class="p">(</span><span class="n">is_ok</span><span class="p">,</span> <span class="n">is_error</span><span class="p">,</span> <span class="n">unwrap</span><span class="p">)</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="err">✓</span> <span class="n">调试支持</span> <span class="p">(</span><span class="n">inspect</span><span class="p">)</span>
+</span></code></pre></div>
+<h4 id="2_1">2. 统一异常体系</h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="err">✓</span> <span class="n">LingFlowError</span> <span class="p">(</span><span class="n">基类</span><span class="p">)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="err">✓</span> <span class="n">ConfigurationError</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="err">✓</span> <span class="n">SkillError</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="err">✓</span> <span class="n">ValidationError</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="err">✓</span> <span class="n">错误码支持</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="err">✓</span> <span class="n">结构化错误信息</span>
+</span></code></pre></div>
+<h4 id="3_1">3. 配置系统</h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="err">✓</span> <span class="n">LingFlowConfig</span> <span class="p">(</span><span class="n">配置类</span><span class="p">)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="err">✓</span> <span class="n">LingFlowConfigBuilder</span> <span class="p">(</span><span class="n">构建器</span><span class="p">)</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="err">✓</span> <span class="n">配置验证</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="err">✓</span> <span class="n">性能预设</span> <span class="p">(</span><span class="n">fast</span><span class="o">/</span><span class="n">balanced</span><span class="o">/</span><span class="n">conservative</span><span class="p">)</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="err">✓</span> <span class="n">配置序列化</span>
+</span></code></pre></div>
+<h4 id="4">4. 技能基类</h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="err">✓</span> <span class="n">BaseSkill</span> <span class="p">(</span><span class="n">抽象基类</span><span class="p">)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="err">✓</span> <span class="n">SkillContext</span> <span class="p">(</span><span class="n">执行上下文</span><span class="p">)</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="err">✓</span> <span class="n">SkillResult</span> <span class="p">(</span><span class="n">执行结果</span><span class="p">)</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="err">✓</span> <span class="n">生命周期钩子</span> <span class="p">(</span><span class="n">pre</span><span class="o">/</span><span class="n">post_execute</span><span class="p">,</span> <span class="n">on_error</span><span class="p">)</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="err">✓</span> <span class="n">参数验证</span>
+</span></code></pre></div>
+<h4 id="5">5. 缓存系统</h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="err">✓</span> <span class="n">CacheManager</span> <span class="p">(</span><span class="n">缓存管理器</span><span class="p">)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="err">✓</span> <span class="n">LRU</span> <span class="n">淘汰策略</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="err">✓</span> <span class="n">TTL</span> <span class="n">过期控制</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="err">✓</span> <span class="n">缓存统计</span> <span class="p">(</span><span class="n">hit_rate</span><span class="p">,</span> <span class="n">evictions</span><span class="p">)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="err">✓</span> <span class="n">线程安全</span>
+</span></code></pre></div>
+<h4 id="6">6. 监控系统</h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="err">✓</span> <span class="n">Monitor</span> <span class="p">(</span><span class="n">性能监控器</span><span class="p">)</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="err">✓</span> <span class="n">计数器</span> <span class="p">(</span><span class="n">increment_counter</span><span class="p">)</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="err">✓</span> <span class="n">计时器</span> <span class="p">(</span><span class="n">record_time</span><span class="p">)</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="err">✓</span> <span class="n">性能统计</span> <span class="p">(</span><span class="nb">min</span><span class="o">/</span><span class="nb">max</span><span class="o">/</span><span class="n">avg</span><span class="p">)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="err">✅</span> <span class="n">监控报告</span>
+</span></code></pre></div>
+<h4 id="7">7. 技能服务</h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="err">✓</span> <span class="n">SimpleSkillService</span> <span class="p">(</span><span class="n">技能服务</span><span class="p">)</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="err">✓</span> <span class="n">技能注册</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="err">✓</span> <span class="n">技能执行</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="err">✓</span> <span class="n">参数验证</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="err">✓</span> <span class="n">缓存集成</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="err">✓</span> <span class="n">错误处理</span>
+</span></code></pre></div>
+<h4 id="8">8. 示例技能</h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="err">✓</span> <span class="n">EchoSkill</span> <span class="p">(</span><span class="n">回声技能</span><span class="p">)</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="err">✓</span> <span class="n">CalculatorSkill</span> <span class="p">(</span><span class="n">计算器技能</span><span class="p">)</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="err">✓</span> <span class="n">参数验证</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="err">✓</span> <span class="n">执行逻辑</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="err">✓</span> <span class="n">错误处理</span>
+</span></code></pre></div>
+<h3 id="4_1">4. 测试验证</h3>
+<p>运行结果：✅ <strong>所有测试通过</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>======================================================================
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  测试 Result 类型
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>======================================================================
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>✓ 基础创建
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>✓ 链式调用
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>✓ 组合操作
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>✓ 错误处理
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>✓ 序列化
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>======================================================================
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>  测试配置构建器
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>======================================================================
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>✓ 基础构建
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>✓ 性能预设
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>✓ 配置验证
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>======================================================================
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>  测试缓存管理器
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>======================================================================
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>✓ 基础操作
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>✓ 缓存未命中
+</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>✓ LRU 淘汰
+</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>✓ 缓存统计
+</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>
+</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>======================================================================
+</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>  测试监控系统
+</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>======================================================================
+</span><span id="__span-9-28"><a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>✓ 计数器
+</span><span id="__span-9-29"><a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a>✓ 计时器
+</span><span id="__span-9-30"><a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a>
+</span><span id="__span-9-31"><a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a>======================================================================
+</span><span id="__span-9-32"><a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a>  测试技能服务
+</span><span id="__span-9-33"><a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a>======================================================================
+</span><span id="__span-9-34"><a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a>✓ 注册技能
+</span><span id="__span-9-35"><a id="__codelineno-9-35" name="__codelineno-9-35" href="#__codelineno-9-35"></a>✓ 获取技能信息
+</span><span id="__span-9-36"><a id="__codelineno-9-36" name="__codelineno-9-36" href="#__codelineno-9-36"></a>✓ 执行 Echo 技能
+</span><span id="__span-9-37"><a id="__codelineno-9-37" name="__codelineno-9-37" href="#__codelineno-9-37"></a>✓ 执行 Calculator 技能
+</span><span id="__span-9-38"><a id="__codelineno-9-38" name="__codelineno-9-38" href="#__codelineno-9-38"></a>✓ 缓存测试
+</span><span id="__span-9-39"><a id="__codelineno-9-39" name="__codelineno-9-39" href="#__codelineno-9-39"></a>✓ 参数验证
+</span><span id="__span-9-40"><a id="__codelineno-9-40" name="__codelineno-9-40" href="#__codelineno-9-40"></a>✓ 错误处理
+</span></code></pre></div>
+<hr />
+<h2 id="_4">关键特性对比</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>当前</th>
+<th>V4.0</th>
+<th>改进</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Result 类型</td>
+<td>❌</td>
+<td>✅</td>
+<td>新增</td>
+</tr>
+<tr>
+<td>异步支持</td>
+<td>⚠️</td>
+<td>✅ 双模式</td>
+<td>显著增强</td>
+</tr>
+<tr>
+<td>插件系统</td>
+<td>❌</td>
+<td>✅</td>
+<td>新增</td>
+</tr>
+<tr>
+<td>配置热重载</td>
+<td>❌</td>
+<td>✅</td>
+<td>新增</td>
+</tr>
+<tr>
+<td>缓存系统</td>
+<td>❌</td>
+<td>✅</td>
+<td>新增</td>
+</tr>
+<tr>
+<td>监控系统</td>
+<td>❌</td>
+<td>✅</td>
+<td>新增</td>
+</tr>
+<tr>
+<td>配置构建器</td>
+<td>❌</td>
+<td>✅</td>
+<td>新增</td>
+</tr>
+<tr>
+<td>统一异常</td>
+<td>⚠️</td>
+<td>✅ 完整</td>
+<td>增强</td>
+</tr>
+<tr>
+<td>类型安全</td>
+<td>⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>+150%</td>
+</tr>
+<tr>
+<td>API 一致性</td>
+<td>⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>+150%</td>
+</tr>
+<tr>
+<td>错误处理</td>
+<td>⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>+150%</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_5">使用示例</h2>
+<h3 id="1-result_1">1. Result 类型使用</h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># 创建结果</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">success</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">ok</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="p">})</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">failure</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;Something went wrong&quot;</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="s2">&quot;ERR001&quot;</span><span class="p">)</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># 链式调用</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">Result</span><span class="o">.</span><span class="n">ok</span><span class="p">(</span><span class="s2">&quot;  hello  &quot;</span><span class="p">)</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>          <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">strip</span><span class="p">)</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>          <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>          <span class="o">.</span><span class="n">and_then</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Result</span><span class="o">.</span><span class="n">ok</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="s2">&quot;!&quot;</span><span class="p">)))</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="c1"># 组合操作</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="n">combined</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">Result</span><span class="o">.</span><span class="n">ok</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Result</span><span class="o">.</span><span class="n">ok</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">Result</span><span class="o">.</span><span class="n">ok</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="c1"># combined.data = [1, 2, 3]</span>
+</span></code></pre></div>
+<h3 id="2_2">2. 配置构建器使用</h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># 基础构建</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">config</span> <span class="o">=</span> <span class="p">(</span><span class="n">LingFlowConfig</span><span class="o">.</span><span class="n">builder</span><span class="p">()</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>          <span class="o">.</span><span class="n">max_parallel</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>          <span class="o">.</span><span class="n">timeout</span><span class="p">(</span><span class="mi">600</span><span class="p">)</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>          <span class="o">.</span><span class="n">compression</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">8000</span><span class="p">)</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>          <span class="o">.</span><span class="n">build</span><span class="p">())</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="c1"># 性能预设</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="n">fast_config</span> <span class="o">=</span> <span class="n">LingFlowConfig</span><span class="o">.</span><span class="n">builder</span><span class="p">()</span><span class="o">.</span><span class="n">performance</span><span class="p">(</span><span class="s2">&quot;fast&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="n">balanced_config</span> <span class="o">=</span> <span class="n">LingFlowConfig</span><span class="o">.</span><span class="n">builder</span><span class="p">()</span><span class="o">.</span><span class="n">performance</span><span class="p">(</span><span class="s2">&quot;balanced&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</span></code></pre></div>
+<h3 id="3_2">3. 技能服务使用</h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># 初始化</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">config</span> <span class="o">=</span> <span class="n">LingFlowConfig</span><span class="p">()</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">cache</span> <span class="o">=</span> <span class="n">CacheManager</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">skill_service</span> <span class="o">=</span> <span class="n">SimpleSkillService</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="c1"># 注册技能</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="n">skill_service</span><span class="o">.</span><span class="n">register_skill</span><span class="p">(</span><span class="n">EchoSkill</span><span class="p">())</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="n">skill_service</span><span class="o">.</span><span class="n">register_skill</span><span class="p">(</span><span class="n">CalculatorSkill</span><span class="p">())</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="c1"># 执行技能</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="n">result</span> <span class="o">=</span> <span class="n">skill_service</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;echo&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello!&quot;</span><span class="p">})</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="_6">实施路线图</h2>
+<h3 id="12">阶段1：核心基础设施（2周）✅ 设计完成</h3>
+<ul>
+<li>[x] Result 类型</li>
+<li>[x] 异常体系</li>
+<li>[x] 配置构建器</li>
+<li>[x] BaseSkill 基类</li>
+<li>[x] 缓存管理器</li>
+<li>[x] 监控器</li>
+</ul>
+<h3 id="23">阶段2：服务层实现（3周）⏳ 待实施</h3>
+<ul>
+<li>[ ] SkillService（完整版）</li>
+<li>[ ] WorkflowService（完整版）</li>
+<li>[ ] AgentService</li>
+<li>[ ] PluginService</li>
+<li>[ ] 异步服务实现</li>
+</ul>
+<h3 id="33">阶段3：技能迁移（3周）⏳ 待实施</h3>
+<ul>
+<li>[ ] 创建迁移工具</li>
+<li>[ ] 迁移 10 个核心技能</li>
+<li>[ ] 测试所有技能</li>
+<li>[ ] 更新文档</li>
+</ul>
+<h3 id="4api-1">阶段4：API 清理（1周）⏳ 待实施</h3>
+<ul>
+<li>[ ] 添加弃用警告</li>
+<li>[ ] 更新文档</li>
+<li>[ ] 发布迁移指南</li>
+</ul>
+<h3 id="5_1">阶段5：功能增强（持续）⏳ 待实施</h3>
+<ul>
+<li>[ ] 上下文管理器</li>
+<li>[ ] 装饰器</li>
+<li>[ ] 更多 Result 方法</li>
+<li>[ ] 性能优化</li>
+</ul>
+<hr />
+<h2 id="_7">成功指标</h2>
+<h3 id="_8">技术指标（目标）</h3>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>当前</th>
+<th>目标</th>
+<th>改进</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>类型覆盖率</td>
+<td>60%</td>
+<td>100%</td>
+<td>+40%</td>
+</tr>
+<tr>
+<td>测试覆盖率</td>
+<td>78%</td>
+<td>95%</td>
+<td>+17%</td>
+</tr>
+<tr>
+<td>Cyclomatic复杂度</td>
+<td>15</td>
+<td>&lt; 10</td>
+<td>-33%</td>
+</tr>
+<tr>
+<td>代码重复率</td>
+<td>8%</td>
+<td>&lt; 3%</td>
+<td>-62.5%</td>
+</tr>
+<tr>
+<td>文档覆盖率</td>
+<td>81%</td>
+<td>95%</td>
+<td>+14%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">性能指标（目标）</h3>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>当前</th>
+<th>目标</th>
+<th>改进</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API 响应时间</td>
+<td>200ms</td>
+<td>&lt; 100ms</td>
+<td>-50%</td>
+</tr>
+<tr>
+<td>技能执行速度</td>
+<td>-</td>
+<td>+30%</td>
+<td>+30%</td>
+</tr>
+<tr>
+<td>内存占用</td>
+<td>80MB</td>
+<td>&lt; 50MB</td>
+<td>-37.5%</td>
+</tr>
+<tr>
+<td>缓存命中率</td>
+<td>0%</td>
+<td>&gt; 80%</td>
+<td>+80%</td>
+</tr>
+<tr>
+<td>并发能力</td>
+<td>1x</td>
+<td>4x</td>
+<td>+300%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">用户体验指标（目标）</h3>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>当前</th>
+<th>目标</th>
+<th>改进</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API 一致性</td>
+<td>2/5</td>
+<td>5/5</td>
+<td>+150%</td>
+</tr>
+<tr>
+<td>类型安全</td>
+<td>2/5</td>
+<td>5/5</td>
+<td>+150%</td>
+</tr>
+<tr>
+<td>错误处理</td>
+<td>2/5</td>
+<td>5/5</td>
+<td>+150%</td>
+</tr>
+<tr>
+<td>学习曲线</td>
+<td>中</td>
+<td>低</td>
+<td>-</td>
+</tr>
+<tr>
+<td>开发效率</td>
+<td>-</td>
+<td>+80%</td>
+<td>+80%</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_11">文档清单</h2>
+<h3 id="_12">已完成文档</h3>
+<ol>
+<li><strong>LINGFLOW_ENCAPSULATION_COMPARISON.md</strong></li>
+<li>方案对比分析</li>
+<li>决策建议</li>
+<li>
+<p>实施路线图</p>
+</li>
+<li>
+<p><strong>LINGFLOW_V4.0_OPTIMIZATION_PLAN.md</strong></p>
+</li>
+<li>完整架构设计</li>
+<li>核心类型设计</li>
+<li>服务层设计</li>
+<li>插件系统</li>
+<li>使用示例</li>
+<li>
+<p>实施路线图</p>
+</li>
+<li>
+<p><strong>LINGFLOW_V4.0_FINAL_SUMMARY.md</strong> (本文档)</p>
+</li>
+<li>完成的工作总结</li>
+<li>关键特性对比</li>
+<li>使用示例</li>
+<li>成功指标</li>
+</ol>
+<h3 id="_13">待创建文档</h3>
+<ol>
+<li><strong>LINGFLOW_V4.0_MIGRATION_GUIDE.md</strong></li>
+<li>从 V3.x 迁移到 V4.0</li>
+<li>API 变更列表</li>
+<li>代码示例对比</li>
+<li>
+<p>常见问题解答</p>
+</li>
+<li>
+<p><strong>LINGFLOW_V4.0_API_REFERENCE.md</strong></p>
+</li>
+<li>完整 API 参考</li>
+<li>所有类和方法的详细说明</li>
+<li>类型注解</li>
+<li>
+<p>示例代码</p>
+</li>
+<li>
+<p><strong>LINGFLOW_V4.0_PLUGIN_DEVELOPMENT.md</strong></p>
+</li>
+<li>插件开发指南</li>
+<li>插件接口规范</li>
+<li>插件示例</li>
+<li>最佳实践</li>
+</ol>
+<hr />
+<h2 id="_14">交付物清单</h2>
+<h3 id="_15">代码</h3>
+<ul>
+<li>✅ <code>lingflow_v4_example.py</code> - 可执行的核心代码示例 (1024 行)</li>
+</ul>
+<h3 id="_16">文档</h3>
+<ul>
+<li>✅ <code>LINGFLOW_ENCAPSULATION_COMPARISON.md</code> - 方案对比分析</li>
+<li>✅ <code>LINGFLOW_V4.0_OPTIMIZATION_PLAN.md</code> - 优化方案设计</li>
+<li>✅ <code>LINGFLOW_V4.0_FINAL_SUMMARY.md</code> - 最终总结</li>
+</ul>
+<h3 id="_17">测试</h3>
+<ul>
+<li>✅ Result 类型测试（5项）</li>
+<li>✅ 配置构建器测试（3项）</li>
+<li>✅ 缓存管理器测试（4项）</li>
+<li>✅ 监控系统测试（2项）</li>
+<li>✅ 技能服务测试（7项）</li>
+</ul>
+<hr />
+<h2 id="_18">下一步行动</h2>
+<h3 id="_19">立即行动（本周）</h3>
+<ol>
+<li>✅ 评审并批准 V4.0 方案</li>
+<li>⏳ 创建实施分支 <code>feature/v4.0-refactor</code></li>
+<li>⏳ 开始阶段2：服务层实现</li>
+</ol>
+<h3 id="2-4">短期目标（2-4周）</h3>
+<ol>
+<li>⏳ 实现完整的服务层（Skill/Workflow/Agent/Plugin）</li>
+<li>⏳ 实现异步服务</li>
+<li>⏳ 编写完整的单元测试</li>
+<li>⏳ 集成测试</li>
+</ol>
+<h3 id="2-3">中期目标（2-3个月）</h3>
+<ol>
+<li>⏳ 迁移所有核心技能</li>
+<li>⏳ 更新所有文档</li>
+<li>⏳ 发布迁移指南</li>
+<li>⏳ 用户验收测试</li>
+</ol>
+<h3 id="3-6">长期目标（3-6个月）</h3>
+<ol>
+<li>⏳ 发布 V4.0.0</li>
+<li>⏳ 性能优化</li>
+<li>⏳ 插件生态建设</li>
+<li>⏳ 社区反馈和改进</li>
+</ol>
+<hr />
+<h2 id="_20">核心优势总结</h2>
+<h3 id="1_1">1. 技术优势</h3>
+<ul>
+<li>✅ <strong>双模式API</strong>：同步+异步，用户自由选择</li>
+<li>✅ <strong>类型安全</strong>：100% 类型化，完整类型提示</li>
+<li>✅ <strong>统一抽象</strong>：Result 类型、异常体系、配置构建器</li>
+<li>✅ <strong>插件系统</strong>：标准化插件接口，支持第三方扩展</li>
+</ul>
+<h3 id="2_3">2. 性能优势</h3>
+<ul>
+<li>✅ <strong>智能缓存</strong>：LRU + TTL，命中率 &gt; 80%</li>
+<li>✅ <strong>懒加载</strong>：按需加载，减少内存占用</li>
+<li>✅ <strong>并行执行</strong>：4x 并发能力提升</li>
+<li>✅ <strong>性能监控</strong>：实时追踪，性能阈值告警</li>
+</ul>
+<h3 id="3_3">3. 开发体验优势</h3>
+<ul>
+<li>✅ <strong>自动补全</strong>：完整类型提示，IDE 友好</li>
+<li>✅ <strong>错误诊断</strong>：结构化错误信息，快速定位问题</li>
+<li>✅ <strong>链式调用</strong>：函数式编程风格，代码更优雅</li>
+<li>✅ <strong>渐进式迁移</strong>：支持新旧API并存，平滑过渡</li>
+</ul>
+<h3 id="4_2">4. 可维护性优势</h3>
+<ul>
+<li>✅ <strong>清晰分层</strong>：7层架构，职责明确</li>
+<li>✅ <strong>依赖注入</strong>：松耦合，易于测试</li>
+<li>✅ <strong>配置热重载</strong>：无需重启，动态更新</li>
+<li>✅ <strong>内置监控</strong>：性能追踪，问题早期发现</li>
+</ul>
+<hr />
+<h2 id="_21">风险与缓解</h2>
+<h3 id="_22">技术风险</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>可能性</th>
+<th>影响</th>
+<th>缓解措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>引入新bug</td>
+<td>中</td>
+<td>高</td>
+<td>完整测试、逐步发布</td>
+</tr>
+<tr>
+<td>性能下降</td>
+<td>低</td>
+<td>中</td>
+<td>性能测试、优化</td>
+</tr>
+<tr>
+<td>类型系统复杂性</td>
+<td>中</td>
+<td>中</td>
+<td>文档、示例、培训</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_23">项目风险</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>可能性</th>
+<th>影响</th>
+<th>缓解措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>工期延期</td>
+<td>中</td>
+<td>中</td>
+<td>分阶段、可调整范围</td>
+</tr>
+<tr>
+<td>资源不足</td>
+<td>低</td>
+<td>高</td>
+<td>优先级管理</td>
+</tr>
+<tr>
+<td>用户抵触</td>
+<td>中</td>
+<td>中</td>
+<td>迁移指南、培训</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_24">业务风险</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>可能性</th>
+<th>影响</th>
+<th>缓解措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>现有功能受影响</td>
+<td>低</td>
+<td>高</td>
+<td>向后兼容、测试</td>
+</tr>
+<tr>
+<td>用户流失</td>
+<td>低</td>
+<td>高</td>
+<td>逐步迁移、支持</td>
+</tr>
+<tr>
+<td>竞争对手超越</td>
+<td>低</td>
+<td>中</td>
+<td>快速迭代、新功能</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_25">总结</h2>
+<p>LingFlow V4.0 封装优化项目已经完成了<strong>方案设计</strong>和<strong>核心代码示例</strong>阶段。</p>
+<h3 id="_26">已完成</h3>
+<ul>
+<li>✅ 方案对比分析</li>
+<li>✅ 优化方案设计（V4.0 架构）</li>
+<li>✅ 核心代码实现（7个模块，1024行）</li>
+<li>✅ 测试验证（21项测试，全部通过）</li>
+</ul>
+<h3 id="_27">待实施</h3>
+<ul>
+<li>⏳ 完整服务层实现</li>
+<li>⏳ 技能迁移</li>
+<li>⏳ API 清理</li>
+<li>⏳ 文档完善</li>
+<li>⏳ 发布 V4.0.0</li>
+</ul>
+<h3 id="_28">预期收益</h3>
+<ul>
+<li><strong>开发效率</strong>: +80%</li>
+<li><strong>类型安全</strong>: 100%</li>
+<li><strong>API 一致性</strong>: 5/5</li>
+<li><strong>并发能力</strong>: +300%</li>
+<li><strong>缓存命中</strong>: &gt; 80%</li>
+</ul>
+<hr />
+<p><strong>文档版本</strong>: V1.0
+<strong>最后更新</strong>: 2026-03-25
+<strong>项目状态</strong>: ✅ 设计阶段完成，待实施</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 LingFlow
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.tabs.link"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/extra.js"></script>
+      
+    
+  </body>
+</html>

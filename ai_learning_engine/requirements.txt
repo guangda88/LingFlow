@@ -1,0 +1,25 @@
+# AI学习引擎依赖
+
+# 核心依赖
+pathlib>=1.0.0
+typing-extensions>=4.0.0
+
+# 日志
+logging>=0.5.1.2
+
+# 可选依赖（用于生产环境）
+# 数据库支持
+# sqlalchemy>=1.4.0
+
+# 缓存支持
+# redis>=4.0.0
+
+# 异步支持（可选）
+# asyncio-mqtt>=0.11.0
+
+# 监控和指标（可选）
+# prometheus-client>=0.15.0
+
+# 测试依赖（开发时使用）
+pytest>=7.0.0
+pytest-cov>=4.0.0
