@@ -45,7 +45,7 @@ class Implementation:
 
     def calculate_hash(self, content: str):
         """Calculate hash of implementation for change detection"""
-        self.hash = hashlib.md5(content.encode()).hexdigest()
+        self.hash = hashlib.md5(content.encode(), usedforsecurity=False).hexdigest()
 
     def is_verified(self) -> bool:
         """Check if implementation is verified"""
@@ -516,8 +516,8 @@ class ComplianceMatrix:
         Returns:
             List of principle IDs affected by changes
         """
-        old_hash = hashlib.md5(old_content.encode()).hexdigest()
-        new_hash = hashlib.md5(new_content.encode()).hexdigest()
+        old_hash = hashlib.md5(old_content.encode(), usedforsecurity=False).hexdigest()
+        new_hash = hashlib.md5(new_content.encode(), usedforsecurity=False).hexdigest()
 
         if old_hash == new_hash:
             return []  # No changes

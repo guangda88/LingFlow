@@ -1,0 +1,2736 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="LingFlow 工程流系统完整API文档 - 众智混元，万法灵通">
+      
+      
+        <meta name="author" content="LingFlow Team">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Phase 4 实施路线图详细版 - LingFlow API Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#phase-4" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="LingFlow API Documentation" class="md-header__button md-logo" aria-label="LingFlow API Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            LingFlow API Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Phase 4 实施路线图详细版
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/guangda88/LingFlow" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    guangda88/LingFlow
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../quickstart/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  快速开始
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../api/lingflow/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API 参考
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../examples/basic_usage/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  示例
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../guides/architecture/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  指南
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="LingFlow API Documentation" class="md-nav__button md-logo" aria-label="LingFlow API Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    LingFlow API Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/guangda88/LingFlow" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    guangda88/LingFlow
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速开始
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API 参考
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API 参考
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/lingflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    lingflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/coordination/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    coordination
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    context
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/compression/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    compression
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/self_optimizer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    self_optimizer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/phase4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    phase4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/phase5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    phase5
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    示例
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    示例
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/basic_usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基础用法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/workflow_definition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流定义
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/custom_agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    自定义Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/self_optimization.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    自优化配置
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    指南
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    指南
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    架构概览
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/agent_coordination.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent协调
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/workflow_engine.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流引擎
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/parameter_optimization.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    参数优化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/ai_learning.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI学习系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概述
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-week-1-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        阶段1: 基础架构 (Week 1-2)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="阶段1: 基础架构 (Week 1-2)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        目标
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        任务分解
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="任务分解">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-day-1-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 模块结构创建 (Day 1-2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-day-3-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 参数存储实现 (Day 3-7)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-day-8-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 缓存机制实现 (Day 8-10)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-day-11-12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 工具函数 (Day 11-12)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-day-13-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 测试 (Day 13-14)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        风险与缓解
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依赖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-week-3-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        阶段2: 贝叶斯优化器 (Week 3-4)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="阶段2: 贝叶斯优化器 (Week 3-4)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        目标
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        任务分解
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="任务分解">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-optuna-day-15-17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Optuna集成 (Day 15-17)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-day-18-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 搜索空间定义 (Day 18-19)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-day-20-23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 优化器实现 (Day 20-23)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-day-24-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 收敛性检测 (Day 24-25)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-day-26-28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 集成测试 (Day 26-28)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        风险与缓解
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依赖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-week-5-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        阶段3: 多目标与敏感性分析 (Week 5-6)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="阶段3: 多目标与敏感性分析 (Week 5-6)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        目标
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        任务分解
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="任务分解">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-day-29-33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 多目标优化 (Day 29-33)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-day-34-36" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 敏感性分析 (Day 34-36)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-day-37-39" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 知识迁移 (Day 37-39)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-ab-day-40-41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 A/B测试框架 (Day 40-41)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-day-42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 集成测试 (Day 42)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        风险与缓解
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依赖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cli-week-7-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        阶段4: 集成与CLI (Week 7-8)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="阶段4: 集成与CLI (Week 7-8)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        目标
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        任务分解
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="任务分解">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-day-43-46" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 优化引擎 (Day 43-46)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-cli-day-47-50" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 CLI实现 (Day 47-50)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-day-51-53" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 报告生成 (Day 51-53)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-day-54-55" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 向后兼容 (Day 54-55)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-day-56" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 文档编写 (Day 56)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        风险与缓解
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依赖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-week-9-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        阶段5: 优化与部署 (Week 9-10)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="阶段5: 优化与部署 (Week 9-10)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        目标
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        任务分解
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="任务分解">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-day-57-59" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 性能优化 (Day 57-59)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-day-60-62" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 稳定性测试 (Day 60-62)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-day-63-65" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 生产准备 (Day 63-65)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-day-66-70" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 发布准备 (Day 66-70)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        风险与缓解
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        里程碑与检查点
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="里程碑与检查点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#m1-week-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        M1: 基础架构完成 (Week 2结束)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#m2-week-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        M2: 贝叶斯优化器完成 (Week 4结束)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#m3-week-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        M3: 高级功能完成 (Week 6结束)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#m4-week-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        M4: 集成完成 (Week 8结束)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#m5-week-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        M5: 发布就绪 (Week 10结束)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        资源需求
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="资源需求">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        人力资源
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        计算资源
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        时间预算
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        成功标准
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="成功标准">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        技术指标
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        质量指标
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="phase-4">Phase 4 实施路线图详细版</h1>
+<p><strong>版本</strong>: v1.0
+<strong>日期</strong>: 2026-03-31
+<strong>预计工期</strong>: 10周</p>
+<hr />
+<h2 id="_1">概述</h2>
+<p>本文档提供了Phase 4参数优化架构的详细实施计划，包括每个阶段的具体任务、验收标准、风险和依赖关系。</p>
+<hr />
+<h2 id="1-week-1-2">阶段1: 基础架构 (Week 1-2)</h2>
+<h3 id="_2">目标</h3>
+<p>建立Phase 4的核心架构基础，实现参数存储和缓存机制。</p>
+<h3 id="_3">任务分解</h3>
+<h4 id="11-day-1-2">1.1 模块结构创建 (Day 1-2)</h4>
+<p><strong>任务</strong>:
+- 创建 <code>lingflow/self_optimizer/phase4/</code> 目录
+- 创建 <code>__init__.py</code> 并定义公共API
+- 创建各模块文件骨架</p>
+<p><strong>文件结构</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lingflow/self_optimizer/phase4/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── __init__.py                 # 公共API导出
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── storage.py                  # 存储抽象层
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>├── file_store.py              # 文件系统存储实现
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>├── cache.py                   # 缓存管理
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>├── utils.py                   # 工具函数
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>└── tests/
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    ├── __init__.py
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    ├── test_storage.py
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    ├── test_cache.py
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    └── test_utils.py
+</span></code></pre></div></p>
+<p><strong>验收标准</strong>:
+- [ ] 目录结构正确
+- [ ] 所有模块可以导入
+- [ ] <code>from lingflow.self_optimizer.phase4 import *</code> 无错误</p>
+<h4 id="12-day-3-7">1.2 参数存储实现 (Day 3-7)</h4>
+<p><strong>任务</strong>:
+1. 实现 <code>ParameterVersion</code> 数据类
+2. 实现 <code>ParameterStore</code> 抽象基类
+3. 实现 <code>FileSystemParameterStore</code> 类
+4. 实现索引管理
+5. 实现版本查询和删除</p>
+<p><strong>接口定义</strong>:
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span> <span class="nc">ParameterStore</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="nd">@abstractmethod</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="n">ParameterVersion</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="k">pass</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="nd">@abstractmethod</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParameterVersion</span><span class="p">]:</span> <span class="k">pass</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="nd">@abstractmethod</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="k">def</span> <span class="nf">list_versions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ParameterVersion</span><span class="p">]:</span> <span class="k">pass</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="nd">@abstractmethod</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="k">pass</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    <span class="nd">@abstractmethod</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    <span class="k">def</span> <span class="nf">get_best_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">goal</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span> <span class="k">pass</span>
+</span></code></pre></div></p>
+<p><strong>验收标准</strong>:
+- [ ] 可以保存参数版本
+- [ ] 可以加载已保存的版本
+- [ ] 可以按项目/目标筛选版本
+- [ ] 索引正确维护
+- [ ] 单元测试覆盖率 &gt;80%</p>
+<h4 id="13-day-8-10">1.3 缓存机制实现 (Day 8-10)</h4>
+<p><strong>任务</strong>:
+1. 实现 <code>ParameterCache</code> 类
+2. 实现LRU淘汰策略
+3. 实现缓存失效
+4. 添加缓存统计</p>
+<p><strong>接口定义</strong>:
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span> <span class="nc">ParameterCache</span><span class="p">:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span> <span class="k">pass</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="k">pass</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="k">def</span> <span class="nf">invalidate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="k">pass</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="k">def</span> <span class="nf">get_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span> <span class="k">pass</span>
+</span></code></pre></div></p>
+<p><strong>验收标准</strong>:
+- [ ] 缓存命中率可测量
+- [ ] LRU淘汰正确工作
+- [ ] 缓存可以按上下文失效
+- [ ] 线程安全（如果需要）</p>
+<h4 id="14-day-11-12">1.4 工具函数 (Day 11-12)</h4>
+<p><strong>任务</strong>:
+1. 实现搜索空间验证
+2. 实现参数校验和计算
+3. 实现配置加载和合并
+4. 实现日志设置</p>
+<p><strong>验收标准</strong>:
+- [ ] 搜索空间验证正确
+- [ ] 无效参数被拒绝
+- [ ] 配置可以正确合并</p>
+<h4 id="15-day-13-14">1.5 测试 (Day 13-14)</h4>
+<p><strong>任务</strong>:
+1. 编写单元测试
+2. 编写集成测试
+3. 性能测试
+4. 文档编写</p>
+<p><strong>测试矩阵</strong>:
+| 测试类型 | 覆盖目标 | 最低要求 |
+|----------|----------|----------|
+| 单元测试 | 代码覆盖率 | &gt;80% |
+| 集成测试 | 核心流程 | 100% |
+| 性能测试 | 操作延迟 | &lt;100ms |</p>
+<p><strong>验收标准</strong>:
+- [ ] 所有测试通过
+- [ ] 覆盖率 &gt;80%
+- [ ] 性能达标
+- [ ] 文档完整</p>
+<h3 id="_4">风险与缓解</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>影响</th>
+<th>缓解措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文件系统并发问题</td>
+<td>中</td>
+<td>使用文件锁或SQLite</td>
+</tr>
+<tr>
+<td>索引损坏</td>
+<td>高</td>
+<td>定期备份和校验</td>
+</tr>
+<tr>
+<td>性能不达标</td>
+<td>低</td>
+<td>后期优化或切换到SQLite</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">依赖</h3>
+<ul>
+<li>无外部依赖（纯Python实现）</li>
+<li>需要现有的 <code>lingflow.self_optimizer.config</code></li>
+</ul>
+<hr />
+<h2 id="2-week-3-4">阶段2: 贝叶斯优化器 (Week 3-4)</h2>
+<h3 id="_6">目标</h3>
+<p>集成Optuna，实现智能参数优化，替代现有的网格搜索。</p>
+<h3 id="_7">任务分解</h3>
+<h4 id="21-optuna-day-15-17">2.1 Optuna集成 (Day 15-17)</h4>
+<p><strong>任务</strong>:
+1. 添加Optuna依赖
+2. 创建Optuna Study包装器
+3. 实现TPE采样器配置
+4. 实现剪枝器配置</p>
+<p><strong>代码结构</strong>:
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">class</span> <span class="nc">OptunaOptimizer</span><span class="p">:</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_space</span><span class="p">,</span> <span class="n">objective</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">study</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_study</span><span class="p">()</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">search_space</span> <span class="o">=</span> <span class="n">search_space</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">objective</span> <span class="o">=</span> <span class="n">objective</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="k">def</span> <span class="nf">_create_study</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        <span class="kn">import</span> <span class="nn">optuna</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        <span class="k">return</span> <span class="n">optuna</span><span class="o">.</span><span class="n">create_study</span><span class="p">(</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>            <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>            <span class="n">sampler</span><span class="o">=</span><span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">TPESampler</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>            <span class="n">pruner</span><span class="o">=</span><span class="n">optuna</span><span class="o">.</span><span class="n">pruners</span><span class="o">.</span><span class="n">MedianPruner</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>        <span class="p">)</span>
+</span></code></pre></div></p>
+<p><strong>验收标准</strong>:
+- [ ] Optuna正确安装和导入
+- [ ] Study可以创建和运行
+- [ ] 剪枝正确工作</p>
+<h4 id="22-day-18-19">2.2 搜索空间定义 (Day 18-19)</h4>
+<p><strong>任务</strong>:
+1. 定义搜索空间格式
+2. 实现Optuna试验建议
+3. 支持多种参数类型
+4. 实现搜索空间验证</p>
+<p><strong>参数类型支持</strong>:
+- <code>categorical</code>: 离散选择
+- <code>int</code>: 整数范围
+- <code>float</code>: 浮点范围
+- <code>log</code>: 对数尺度</p>
+<p><strong>验收标准</strong>:
+- [ ] 所有参数类型支持
+- [ ] 无效搜索空间被拒绝
+- [ ] 与Optuna兼容</p>
+<h4 id="23-day-20-23">2.3 优化器实现 (Day 20-23)</h4>
+<p><strong>任务</strong>:
+1. 实现 <code>BayesianOptimizer</code> 类
+2. 实现试验历史管理
+3. 实现最佳参数追踪
+4. 实现优化状态保存</p>
+<p><strong>核心方法</strong>:
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">class</span> <span class="nc">BayesianOptimizer</span><span class="p">:</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="k">def</span> <span class="nf">suggest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span> <span class="k">pass</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="k">def</span> <span class="nf">observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="k">pass</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="k">def</span> <span class="nf">should_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="k">pass</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="k">def</span> <span class="nf">get_best_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span> <span class="k">pass</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="k">def</span> <span class="nf">get_history</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span> <span class="k">pass</span>
+</span></code></pre></div></p>
+<p><strong>验收标准</strong>:
+- [ ] 可以建议参数
+- [ ] 可以观察结果
+- [ ] 历史正确记录
+- [ ] 最佳参数正确追踪</p>
+<h4 id="24-day-24-25">2.4 收敛性检测 (Day 24-25)</h4>
+<p><strong>任务</strong>:
+1. 实现 <code>ConvergenceDetector</code> 类
+2. 实现多种收敛判断方法
+3. 实现收敛率计算</p>
+<p><strong>收敛判断方法</strong>:
+- 基于改进率
+- 基于标准差
+- 基于最优解稳定</p>
+<p><strong>验收标准</strong>:
+- [ ] 收敛正确检测
+- [ ] 误报率 &lt;10%
+- [ ] 收敛率计算准确</p>
+<h4 id="25-day-26-28">2.5 集成测试 (Day 26-28)</h4>
+<p><strong>任务</strong>:
+1. 与现有评估器集成
+2. 端到端测试
+3. 性能对比测试</p>
+<p><strong>性能指标</strong>:
+| 指标 | 网格搜索 | 贝叶斯优化 | 改进 |
+|------|----------|-----------|------|
+| 评估次数 | 50 | 20-25 | 50% |
+| 时间(秒) | 120 | 60 | 50% |
+| 参数质量 | 基准 | +20% | 20% |</p>
+<p><strong>验收标准</strong>:
+- [ ] 与现有评估器兼容
+- [ ] 性能改进 &gt;40%
+- [ ] 参数质量不降低</p>
+<h3 id="_8">风险与缓解</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>影响</th>
+<th>缓解措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Optuna性能不如预期</td>
+<td>中</td>
+<td>保留网格搜索降级</td>
+</tr>
+<tr>
+<td>参数空间不兼容</td>
+<td>低</td>
+<td>提供转换工具</td>
+</tr>
+<tr>
+<td>收敛过早</td>
+<td>中</td>
+<td>调整收敛阈值</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">依赖</h3>
+<ul>
+<li>Optuna &gt;=3.0</li>
+<li>阶段1完成的存储和缓存</li>
+</ul>
+<hr />
+<h2 id="3-week-5-6">阶段3: 多目标与敏感性分析 (Week 5-6)</h2>
+<h3 id="_10">目标</h3>
+<p>实现多目标优化、参数敏感性分析和知识迁移功能。</p>
+<h3 id="_11">任务分解</h3>
+<h4 id="31-day-29-33">3.1 多目标优化 (Day 29-33)</h4>
+<p><strong>任务</strong>:
+1. 实现 <code>MultiObjectiveOptimizer</code> 类
+2. 实现Pareto前沿计算
+3. 实现加权聚合方法
+4. 实现目标冲突检测</p>
+<p><strong>算法选择</strong>:
+- 加权聚合（简单）
+- Pareto最优（精确）
+- NSGA-II（复杂，可选）</p>
+<p><strong>验收标准</strong>:
+- [ ] 可以处理多个目标
+- [ ] Pareto前沿正确计算
+- [ ] 可以获取权衡解</p>
+<h4 id="32-day-34-36">3.2 敏感性分析 (Day 34-36)</h4>
+<p><strong>任务</strong>:
+1. 实现 <code>SensitivityAnalyzer</code> 类
+2. 实现单变量扰动分析
+3. 实现Sobol指数计算（可选）
+4. 实现敏感性报告生成</p>
+<p><strong>分析方法</strong>:
+- 局部敏感性：单变量扰动
+- 全局敏感性：Sobol指数</p>
+<p><strong>验收标准</strong>:
+- [ ] 可以计算敏感性分数
+- [ ] 敏感性排名合理
+- [ ] 报告清晰可读</p>
+<h4 id="33-day-37-39">3.3 知识迁移 (Day 37-39)</h4>
+<p><strong>任务</strong>:
+1. 实现 <code>KnowledgeTransfer</code> 类
+2. 实现项目相似度计算
+3. 实现参数调整
+4. 实现迁移效果评估</p>
+<p><strong>相似度计算</strong>:
+- 基于项目元数据
+- 基于代码结构
+- 基于历史表现</p>
+<p><strong>验收标准</strong>:
+- [ ] 可以找到相似项目
+- [ ] 参数迁移有改进
+- [ ] 迁移成功率 &gt;30%</p>
+<h4 id="34-ab-day-40-41">3.4 A/B测试框架 (Day 40-41)</h4>
+<p><strong>任务</strong>:
+1. 实现 <code>ABTestFramework</code> 类
+2. 实现统计显著性检验
+3. 实现结果比较
+4. 实现推荐生成</p>
+<p><strong>统计方法</strong>:
+- t检验
+- Wilcoxon秩和检验
+- 效应量计算</p>
+<p><strong>验收标准</strong>:
+- [ ] 可以比较参数组
+- [ ] 显著性正确判断
+- [ ] 推荐合理</p>
+<h4 id="35-day-42">3.5 集成测试 (Day 42)</h4>
+<p><strong>任务</strong>:
+1. 完整流程测试
+2. 边界条件测试
+3. 性能测试</p>
+<p><strong>验收标准</strong>:
+- [ ] 所有功能集成
+- [ ] 边界情况处理
+- [ ] 性能达标</p>
+<h3 id="_12">风险与缓解</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>影响</th>
+<th>缓解措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>多目标优化复杂度高</td>
+<td>中</td>
+<td>先实现简单版本</td>
+</tr>
+<tr>
+<td>知识迁移效果差</td>
+<td>低</td>
+<td>作为可选功能</td>
+</tr>
+<tr>
+<td>统计检验误用</td>
+<td>中</td>
+<td>提供文档和示例</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_13">依赖</h3>
+<ul>
+<li>SciPy &gt;=1.7</li>
+<li>阶段2完成的贝叶斯优化器</li>
+<li>Statsmodels (可选)</li>
+</ul>
+<hr />
+<h2 id="4-cli-week-7-8">阶段4: 集成与CLI (Week 7-8)</h2>
+<h3 id="_14">目标</h3>
+<p>实现优化引擎主类、CLI命令和报告生成。</p>
+<h3 id="_15">任务分解</h3>
+<h4 id="41-day-43-46">4.1 优化引擎 (Day 43-46)</h4>
+<p><strong>任务</strong>:
+1. 实现 <code>OptimizationEngine</code> 主类
+2. 集成所有组件
+3. 实现优化流程编排
+4. 实现错误处理</p>
+<p><strong>核心方法</strong>:
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">class</span> <span class="nc">OptimizationEngine</span><span class="p">:</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">OptimizationRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OptimizationResult</span><span class="p">:</span> <span class="k">pass</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="k">def</span> <span class="nf">get_best_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">goal</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span> <span class="k">pass</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="k">def</span> <span class="nf">get_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">goal</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span> <span class="k">pass</span>
+</span></code></pre></div></p>
+<p><strong>验收标准</strong>:
+- [ ] 所有组件集成
+- [ ] 优化流程顺畅
+- [ ] 错误处理完善</p>
+<h4 id="42-cli-day-47-50">4.2 CLI实现 (Day 47-50)</h4>
+<p><strong>任务</strong>:
+1. 实现 <code>optimize run</code> 命令
+2. 实现 <code>optimize best</code> 命令
+3. 实现 <code>optimize history</code> 命令
+4. 实现 <code>optimize export</code> 命令
+5. 实现进度条和输出格式化</p>
+<p><strong>CLI命令</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>lingflow<span class="w"> </span>optimize<span class="w"> </span>run<span class="w"> </span>--goal<span class="w"> </span>structure<span class="w"> </span>--target<span class="w"> </span>.<span class="w"> </span>--max-time<span class="w"> </span><span class="m">60</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>lingflow<span class="w"> </span>optimize<span class="w"> </span>best<span class="w"> </span>--project<span class="w"> </span>myproject<span class="w"> </span>--goal<span class="w"> </span>structure
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>lingflow<span class="w"> </span>optimize<span class="w"> </span><span class="nb">history</span><span class="w"> </span>--format<span class="w"> </span>json
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>lingflow<span class="w"> </span>optimize<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--goal<span class="w"> </span>structure<span class="w"> </span>-o<span class="w"> </span>config.yaml
+</span></code></pre></div></p>
+<p><strong>验收标准</strong>:
+- [ ] 所有命令可用
+- [ ] 帮助文档完整
+- [ ] 输出格式正确</p>
+<h4 id="43-day-51-53">4.3 报告生成 (Day 51-53)</h4>
+<p><strong>任务</strong>:
+1. 实现Markdown报告生成
+2. 实现HTML报告生成
+3. 实现JSON报告生成
+4. 实现可视化图表</p>
+<p><strong>报告内容</strong>:
+- 优化摘要
+- 参数对比
+- 历史趋势
+- 敏感性分析
+- 推荐建议</p>
+<p><strong>验收标准</strong>:
+- [ ] 报告生成正确
+- [ ] 图表清晰
+- [ ] 多格式支持</p>
+<h4 id="44-day-54-55">4.4 向后兼容 (Day 54-55)</h4>
+<p><strong>任务</strong>:
+1. 实现适配器
+2. 保持旧API可用
+3. 迁移指南
+4. 兼容性测试</p>
+<p><strong>验收标准</strong>:
+- [ ] 旧代码无需修改
+- [ ] 新旧版本共存
+- [ ] 迁移指南清晰</p>
+<h4 id="45-day-56">4.5 文档编写 (Day 56)</h4>
+<p><strong>任务</strong>:
+1. 用户指南
+2. API文档
+3. 示例代码
+4. FAQ</p>
+<p><strong>验收标准</strong>:
+- [ ] 文档完整
+- [ ] 示例可运行
+- [ ] FAQ覆盖常见问题</p>
+<h3 id="_16">风险与缓解</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>影响</th>
+<th>缓解措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CLI复杂度增加</td>
+<td>低</td>
+<td>分阶段实现</td>
+</tr>
+<tr>
+<td>报告格式不兼容</td>
+<td>中</td>
+<td>支持多种格式</td>
+</tr>
+<tr>
+<td>向后兼容问题</td>
+<td>高</td>
+<td>充分测试</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">依赖</h3>
+<ul>
+<li>Rich (CLI美化)</li>
+<li>Plotly (可视化)</li>
+<li>Jinja2 (模板)</li>
+</ul>
+<hr />
+<h2 id="5-week-9-10">阶段5: 优化与部署 (Week 9-10)</h2>
+<h3 id="_18">目标</h3>
+<p>性能优化、生产测试和发布准备。</p>
+<h3 id="_19">任务分解</h3>
+<h4 id="51-day-57-59">5.1 性能优化 (Day 57-59)</h4>
+<p><strong>任务</strong>:
+1. 性能分析
+2. 热点优化
+3. 内存优化
+4. 并行化</p>
+<p><strong>优化目标</strong>:
+| 指标 | 当前 | 目标 | 方法 |
+|------|------|------|------|
+| 优化时间 | 60s | &lt;45s | 并行评估 |
+| 内存占用 | 150MB | &lt;200MB | 流式处理 |
+| 缓存命中率 | 50% | &gt;70% | 改进键设计 |</p>
+<p><strong>验收标准</strong>:
+- [ ] 性能提升 &gt;25%
+- [ ] 内存不超标
+- [ ] 并发安全</p>
+<h4 id="52-day-60-62">5.2 稳定性测试 (Day 60-62)</h4>
+<p><strong>任务</strong>:
+1. 压力测试
+2. 长时间运行测试
+3. 异常情况测试
+4. 恢复测试</p>
+<p><strong>测试场景</strong>:
+- 大项目（200+类）
+- 长时间优化（&gt;30分钟）
+- 磁盘空间不足
+- 权限问题</p>
+<p><strong>验收标准</strong>:
+- [ ] 无崩溃
+- [ ] 无内存泄漏
+- [ ] 错误可恢复</p>
+<h4 id="53-day-63-65">5.3 生产准备 (Day 63-65)</h4>
+<p><strong>任务</strong>:
+1. 配置管理
+2. 日志规范
+3. 监控指标
+4. 部署脚本</p>
+<p><strong>交付物</strong>:
+- 生产配置模板
+- 部署检查清单
+- 监控仪表板
+- 故障排查指南</p>
+<p><strong>验收标准</strong>:
+- [ ] 配置完整
+- [ ] 日志有用
+- [ ] 监控覆盖</p>
+<h4 id="54-day-66-70">5.4 发布准备 (Day 66-70)</h4>
+<p><strong>任务</strong>:
+1. 版本标记
+2. 更新日志
+3. 发布说明
+4. 迁移指南</p>
+<p><strong>交付物</strong>:
+- CHANGELOG.md
+- RELEASE_NOTES.md
+- MIGRATION_GUIDE.md</p>
+<p><strong>验收标准</strong>:
+- [ ] 版本号正确
+- [ ] 变更记录完整
+- [ ] 迁移路径清晰</p>
+<h3 id="_20">风险与缓解</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>影响</th>
+<th>缓解措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>性能不达标</td>
+<td>高</td>
+<td>降级到旧方案</td>
+</tr>
+<tr>
+<td>稳定性问题</td>
+<td>高</td>
+<td>延长测试期</td>
+</tr>
+<tr>
+<td>兼容性问题</td>
+<td>中</td>
+<td>提供兼容模式</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_21">里程碑与检查点</h2>
+<h3 id="m1-week-2">M1: 基础架构完成 (Week 2结束)</h3>
+<p><strong>检查项</strong>:
+- [ ] 参数存储可用
+- [ ] 缓存机制工作
+- [ ] 测试覆盖率 &gt;80%
+- [ ] 性能基准建立</p>
+<h3 id="m2-week-4">M2: 贝叶斯优化器完成 (Week 4结束)</h3>
+<p><strong>检查项</strong>:
+- [ ] Optuna集成成功
+- [ ] 优化性能提升 &gt;40%
+- [ ] 收敛检测准确
+- [ ] 与评估器集成</p>
+<h3 id="m3-week-6">M3: 高级功能完成 (Week 6结束)</h3>
+<p><strong>检查项</strong>:
+- [ ] 多目标优化可用
+- [ ] 敏感性分析正确
+- [ ] 知识迁移工作
+- [ ] A/B测试框架完成</p>
+<h3 id="m4-week-8">M4: 集成完成 (Week 8结束)</h3>
+<p><strong>检查项</strong>:
+- [ ] CLI命令完整
+- [ ] 报告生成可用
+- [ ] 向后兼容
+- [ ] 文档完整</p>
+<h3 id="m5-week-10">M5: 发布就绪 (Week 10结束)</h3>
+<p><strong>检查项</strong>:
+- [ ] 性能达标
+- [ ] 稳定性验证
+- [ ] 生产配置
+- [ ] 发布材料</p>
+<hr />
+<h2 id="_22">资源需求</h2>
+<h3 id="_23">人力资源</h3>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>人数</th>
+<th>投入</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>核心开发</td>
+<td>2</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>测试工程师</td>
+<td>1</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>技术文档</td>
+<td>1</td>
+<td>30%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_24">计算资源</h3>
+<ul>
+<li>开发机器: 4核8GB</li>
+<li>测试机器: 8核16GB</li>
+<li>测试项目: 5-10个不同规模</li>
+</ul>
+<h3 id="_25">时间预算</h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>工作日</th>
+<th>缓冲</th>
+<th>总计</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>阶段1</td>
+<td>10</td>
+<td>2</td>
+<td>12</td>
+</tr>
+<tr>
+<td>阶段2</td>
+<td>10</td>
+<td>2</td>
+<td>12</td>
+</tr>
+<tr>
+<td>阶段3</td>
+<td>10</td>
+<td>2</td>
+<td>12</td>
+</tr>
+<tr>
+<td>阶段4</td>
+<td>10</td>
+<td>2</td>
+<td>12</td>
+</tr>
+<tr>
+<td>阶段5</td>
+<td>10</td>
+<td>2</td>
+<td>12</td>
+</tr>
+<tr>
+<td>总计</td>
+<td>50</td>
+<td>10</td>
+<td>60</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_26">成功标准</h2>
+<h3 id="_27">技术指标</h3>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>目标</th>
+<th>测量方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>优化时间减少</td>
+<td>&gt;50%</td>
+<td>基准测试</td>
+</tr>
+<tr>
+<td>参数质量提升</td>
+<td>&gt;20%</td>
+<td>A/B测试</td>
+</tr>
+<tr>
+<td>测试覆盖率</td>
+<td>&gt;80%</td>
+<td>pytest-cov</td>
+</tr>
+<tr>
+<td>内存占用</td>
+<td>&lt;200MB</td>
+<td>profilers</td>
+</tr>
+<tr>
+<td>向后兼容</td>
+<td>100%</td>
+<td>集成测试</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_28">质量指标</h3>
+<ul>
+<li>零P0级别bug</li>
+<li>&lt;5个P1级别bug</li>
+<li>文档完整度 &gt;90%</li>
+<li>代码审查通过率 100%</li>
+</ul>
+<hr />
+<p><strong>文档版本</strong>: v1.0
+<strong>最后更新</strong>: 2026-03-31
+<strong>负责人</strong>: LingFlow架构团队</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 LingFlow
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/extra.js"></script>
+      
+    
+  </body>
+</html>

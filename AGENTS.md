@@ -1,31 +1,46 @@
 # LingFlow Agent Guide
 
-**Version**: v3.5.1
+**Version**: v3.5.7
 **Status**: Production Ready
-**Last Updated**: 2026-03-26
+**Last Updated**: 2026-03-31
 
 ---
 
 ## Project Overview
 
-LingFlow is an intelligent software development workflow engine based on the "Superpowers" concept. It uses a skill-driven architecture to automate development, testing, code review, and documentation generation through coordinated AI agents.
+LingFlow (灵通 工程流系统) is an intelligent software development workflow engine. It uses a skill-driven architecture with multi-agent coordination, smart context compression, and process-isolated sandbox execution to automate the full software engineering lifecycle.
 
 ### Core Philosophy
 
-- **Skill-Driven Architecture**: Complex development workflows decomposed into composable, reusable "superpower" skills
-- **Agent Coordination**: Multi-agent system with intelligent task scheduling and parallel execution
-- **Test-Driven**: Strict TDD enforcement with RED-GREEN-REFACTOR cycle
-- **Context Optimization**: Automatic context compression reduces token usage by 30-50%
+- **Skill-Driven Architecture**: Complex development workflows decomposed into composable, reusable skills organized in a three-layer architecture (L1/L2/L3)
+- **Agent Coordination**: Multi-agent system with capability-based matching, intelligent task scheduling, and parallel execution
+- **Smart Compression**: tiktoken-based token-aware context management with multi-strategy compression (30-50% token savings)
+- **Process-Isolated Sandbox**: Skills execute in isolated processes with timeout, memory limits, module whitelists, and AST-level security analysis
+- **Type-Safe**: `Result[T]` generic type for success/failure handling; strict mypy mode enabled
 
-### Performance Metrics
+### Primary API Entry Point
 
-| Dimension | Traditional | LingFlow | Improvement |
-|-----------|-------------|----------|-------------|
-| Code Analysis | 4-6 hours | 12 minutes | 20-30x |
-| Code Optimization | 3-6 months | 8 hours | 50-100x |
-| Test Execution | 2-3 days | 12 seconds | 14,000-21,600x |
-| Documentation | 1-2 weeks | 5 minutes | 2,000-4,000x |
-| **Overall Project** | **3-6 months** | **1 day** | **90-180x** |
+The `LingFlow` class in `lingflow/__init__.py` provides a unified interface:
+
+```python
+from lingflow import LingFlow
+
+lf = LingFlow()
+
+# Execute a single skill
+result = lf.run_skill("brainstorming", {"topic": "new feature"})
+
+# Execute a workflow from YAML file
+result = lf.run_workflow_file("test_workflow.yaml")
+
+# Execute a workflow definition directly
+result = lf.run_workflow({"tasks": [...]})
+```
+
+On import, LingFlow auto-initializes:
+1. Smart compression (`SmartContextCompressor`, max_tokens=180000)
+2. Context manager (session persistence via `~/.claude/projects/lingflow/context/`)
+3. Session resume (displays last session summary on stderr)
 
 ---
 
@@ -34,43 +49,58 @@ LingFlow is an intelligent software development workflow engine based on the "Su
 ### Testing
 
 ```bash
+# Run full test suite via pytest
+pytest
+
+# Run with markers
+pytest -m unit          # Unit tests only
+pytest -m e2e           # End-to-end tests
+pytest -m snapshot      # Snapshot tests
+pytest -m scenario      # Scenario tests
+pytest -m "not slow"    # Skip slow tests
+
+# Run with coverage
+pytest --cov=lingflow --cov-report=html
+
+# Parallel execution (requires pytest-xdist)
+pytest -n auto
+
 # Quick system verification
 python verify_system_simple.py
-
-# Comprehensive test suite (34 tests, 100% coverage)
 python test_comprehensive.py
 
-# Functional demonstration
+# Demo
 python agent_coordinator.py
+```
+
+### Linting & Formatting
+
+```bash
+# Format with black (line-length=127)
+black --line-length=127 lingflow/
+
+# Sort imports
+isort --profile black --line-length=127 lingflow/
+
+# Lint with flake8
+flake8 --max-line-length=127 --max-complexity=15 lingflow/
+
+# Type check with mypy (strict mode)
+mypy lingflow/
+
+# Security scan
+bandit -r lingflow/ -f txt
+
+# All pre-commit hooks
+pre-commit run --all-files
 ```
 
 ### Git Operations
 
 ```bash
-# Push to both GitHub and Gitea
-git push origin master --tags    # Gitea
-git push github master --tags    # GitHub
-
-# Or use pushall script (if configured)
+git push origin master --tags
+git push github master --tags
 ./push_to_remote.sh
-
-# Check remotes
-git remote -v
-
-# Check status
-git status
-git log --oneline -3
-git tag -l
-```
-
-### Direct Python Execution
-
-```bash
-# Run the main coordinator directly
-python agent_coordinator.py
-
-# Run skill trigger system
-python skill_trigger.py
 ```
 
 ---
@@ -78,187 +108,519 @@ python skill_trigger.py
 ## Project Structure
 
 ```
-lingflow/
-├── skills/                      # Skill library (10 core skills)
-│   ├── skills.json              # Skills configuration
-│   ├── brainstorming/           # Design and ideation skill
-│   ├── writing-plans/           # Implementation planning skill
-│   ├── test-driven-development/ # TDD enforcement skill
-│   ├── systematic-debugging/    # Debugging methodology skill
-│   ├── subagent-driven-development/  # Iterative development skill
-│   ├── using-git-worktrees/     # Workspace isolation skill
-│   ├── finishing-a-development-branch/  # Branch cleanup skill
-│   ├── requesting-code-review/  # Code review skill
-│   └── dispatching-parallel-agents/    # Parallel execution skill ⭐
-├── agents/                      # Agent configurations
-│   └── agents.json              # 6 pre-configured agent types
-├── hooks/                       # Workflow hooks
-│   ├── hooks.json               # Hook configuration
-│   └── session-start            # Session initialization script
-├── docs/                        # Documentation (~7,600 lines)
-│   ├── CORE_WORKFLOW.md         # Core business processes
-│   ├── CODE_OPTIMIZATION_REPORT.md
-│   ├── FINAL_REVIEW_REPORT.md
-│   ├── AGENT_COORDINATION_GUIDE.md
-│   ├── CONTEXT_COMPRESSION_GUIDE.md
-│   ├── PARALLEL_EXECUTION_GUIDE.md
-│   └── USAGE_GUIDE.md
-├── agent_coordinator.py         # Main coordinator (523 lines)
-├── skill_trigger.py             # Skill triggering system
-├── test_comprehensive.py        # Comprehensive test suite
-├── verify_system_simple.py      # System verification script
-├── README.md                    # Project documentation
-├── CHANGELOG.md                 # Version history
-└── push_to_remote.sh            # Git push script
+LingFlow/
+├── lingflow/                        # Main Python package
+│   ├── __init__.py                  # LingFlow class, version, auto-init
+│   ├── cli.py                       # CLI interface
+│   ├── bootstrap.py                 # Bootstrap utilities
+│   ├── ai_friendly.py               # AI-friendly utilities
+│   ├── core/                        # Core abstractions
+│   │   ├── config.py                # LingFlowConfig dataclass
+│   │   ├── types.py                 # Result[T] generic type
+│   │   └── skill.py                 # BaseSkill, FunctionSkill, SkillRegistry (singleton)
+│   ├── coordination/                # Agent coordination
+│   │   ├── base.py                  # BaseCoordinator ABC
+│   │   ├── coordinator.py           # AgentCoordinator (419 lines)
+│   │   ├── registry.py              # AgentRegistry
+│   │   ├── agent.py                 # Agent class
+│   │   └── adapter.py               # Agent adapters
+│   ├── common/                      # Shared modules
+│   │   ├── models.py                # AgentConfig, Task, TaskResult, TaskPriority, AgentStatus
+│   │   ├── exceptions.py            # Full exception hierarchy
+│   │   ├── sandbox.py               # SkillSandbox (process-isolated execution)
+│   │   ├── security_analyzer.py     # AST-based code security analysis
+│   │   ├── audit_logger.py          # Audit logging
+│   │   ├── config.py                # Global config access
+│   │   ├── logger.py                # Logging setup
+│   │   └── skill_manager.py         # Skill management
+│   ├── compression/                 # Context compression
+│   │   ├── compressor.py            # ContextCompressor, AdvancedContextCompressor
+│   │   ├── smart_compressor.py      # SmartContextCompressor (tiktoken-based)
+│   │   └── config.py                # Compression config
+│   ├── workflow/                    # Workflow engine
+│   │   ├── orchestrator.py          # WorkflowOrchestrator (252 lines)
+│   │   └── cache.py                 # Workflow caching
+│   ├── context/                     # Context management
+│   │   ├── manager.py               # ContextManager (session persistence)
+│   │   ├── session.py               # Session handling
+│   │   └── auto_resume.py           # Auto session resume
+│   ├── code_review/                 # Code review framework
+│   │   └── core/
+│   │       ├── base_reviewer.py     # BaseCodeReviewer
+│   │       ├── rule_engine.py       # RuleEngine, Rule
+│   │       ├── scorer.py            # QualityScorer
+│   │       ├── severity.py          # Severity levels
+│   │       └── reporter.py          # ReportGenerator
+│   ├── self_optimizer/              # Self-optimization system
+│   │   ├── __init__.py              # quick_optimize(), check_and_optimize()
+│   │   ├── optimizer.py             # ProcessIsolatedOptimizer, SynchronousOptimizer
+│   │   ├── trigger.py               # OptimizationTrigger, TriggerInfo
+│   │   ├── evaluator.py             # StructureEvaluator
+│   │   ├── performance_evaluator.py # PerformanceEvaluator
+│   │   ├── simplicity_evaluator.py  # SimplicityEvaluator
+│   │   ├── advisor.py               # OptimizationAdvisor
+│   │   ├── config.py                # OptimizationConfig
+│   │   ├── phase4/                  # Bayesian optimization
+│   │   └── phase5/                  # Learning system
+│   ├── testing/                     # Testing framework
+│   │   ├── unit/                    # Unit test utilities
+│   │   ├── e2e/                     # E2E test utilities
+│   │   ├── snapshot/                # Snapshot testing
+│   │   ├── scenarios/               # Scenario tests
+│   │   ├── fixtures/                # Test fixtures
+│   │   ├── ci/                      # CI test config
+│   │   ├── ai_runner.py             # AI-powered test runner
+│   │   ├── scenario.py              # Scenario runner
+│   │   ├── snapshot.py              # Snapshot runner
+│   │   └── test_server.py           # Test server
+│   ├── monitoring/                  # Operations monitoring
+│   │   ├── operations_monitor.py    # OperationsMonitor
+│   │   └── default_checks.py        # Default health checks
+│   ├── feedback/                    # Feedback collection
+│   │   └── collector.py             # FeedbackCollector
+│   ├── utils/                       # Utilities
+│   │   ├── performance.py           # Performance utilities
+│   │   ├── rate_limiter.py          # Rate limiting
+│   │   └── sampling.py              # Sampling utilities
+│   ├── requirements/                # Requirements traceability
+│   │   └── traceability.py          # RequirementsTraceability
+│   ├── guardrail/                   # Guardrails (placeholder)
+│   └── hooks/                       # Hook system
+│       └── auto_optimize_hook.py    # Auto-optimization hook
+├── skills/                          # Skill definitions (32 skills)
+│   ├── skills.json                  # Flat skill registry
+│   ├── skills-layer-configuration.yaml  # L1/L2/L3 layer config
+│   ├── brainstorming/
+│   ├── writing-plans/
+│   ├── test-driven-development/
+│   ├── systematic-debugging/
+│   ├── subagent-driven-development/
+│   ├── verification-before-completion/
+│   ├── using-git-worktrees/
+│   ├── finishing-a-development-branch/
+│   ├── dispatching-parallel-agents/
+│   ├── skill-creator/
+│   ├── workflow-executor/
+│   ├── task-runner/
+│   ├── conditional-branch/
+│   ├── loop-iterator/
+│   ├── error-handler/
+│   ├── code-review/
+│   ├── code-refactor/
+│   ├── api-doc-generator/
+│   ├── ui-mockup-generator/
+│   ├── database-schema-designer/
+│   ├── ci-cd-orchestrator/
+│   ├── deployment-automation/
+│   ├── environment-manager/
+│   ├── notification/
+│   ├── database-export/
+│   ├── test-runner/
+│   ├── skill-analytics/
+│   ├── skill-categorization/
+│   ├── skill-integration/
+│   ├── skill-templates/
+│   ├── skill-testing/
+│   └── skill-versioning/
+├── agents/                          # Agent configurations
+│   ├── agents.json                  # V1 format (6 agents)
+│   └── agents.v2.json               # V2 capability-based format (6 agents)
+├── hooks/                           # Hook definitions
+│   ├── hooks.json                   # 5 hooks (session-start, pre/post-implementation, pre/post-review)
+│   ├── session-start/
+│   ├── pre-implementation/
+│   ├── post-implementation/
+│   ├── pre-review/
+│   └── post-review/
+├── .scripts/                        # Tool scripts
+│   ├── check_docstrings.py
+│   ├── check_type_hints.py
+│   ├── check_complexity.py
+│   ├── verify_system.py
+│   └── skill_trigger.py
+├── lingflow-core/                   # Core subpackage
+│   ├── api/
+│   ├── core/
+│   ├── integration/
+│   ├── tests/
+│   └── utils/
+├── lingflow-claude-code/            # Claude Code integration
+│   ├── hooks/
+│   └── tests/
+├── lingflow-mcp-server/             # MCP server integration
+│   ├── tests/
+│   └── tools/
+├── tests/                           # Test suite (pytest)
+├── docs/                            # Documentation
+├── config.yaml                      # Main configuration
+├── .pytest.ini                      # Pytest configuration
+├── .pre-commit-config.yaml          # Pre-commit hooks
+├── pyproject.toml                   # Black, flake8, mypy config
+├── setup.py                         # Package setup (pip installable)
+├── requirements.txt                 # Dependencies
+├── VERSION                          # Version file (3.5.7)
+└── agent_coordinator.py             # Demo script (thin wrapper, imports from lingflow.*)
 ```
 
 ---
 
-## Code Organization
+## Core Components
 
-### Core Components
+### LingFlow Class (`lingflow/__init__.py`)
 
-#### AgentCoordinator (`agent_coordinator.py`)
+Unified entry point. Methods:
+- `run_skill(skill_name, params)` — Execute a single skill
+- `run_workflow_file(filepath)` — Load and execute a YAML/JSON workflow (with path traversal protection)
+- `run_workflow(workflow_def)` — Execute an in-memory workflow definition
 
-The main coordination engine with 523 lines (optimized from 844 lines). Key classes:
+Uses lazy imports for `AgentCoordinator` and `WorkflowOrchestrator` to avoid circular dependencies.
 
-- `AgentConfig`: Agent configuration model
-  - `name`: Agent identifier
-  - `description`: Agent purpose
-  - `capabilities`: List of skills/capabilities
-  - `max_tasks`: Maximum concurrent tasks
-  - `context_limit`: Context token limit
-  - `timeout`: Task timeout in seconds
-  - `parallel_safe`: Can run in parallel
-  - `requires_isolation`: Needs isolated environment
+### AgentCoordinator (`lingflow/coordination/coordinator.py`)
 
-- `Task`: Task model
-  - `task_id`: Unique identifier
-  - `name`: Task name
-  - `description`: Task description
-  - `priority`: TaskPriority enum (CRITICAL, HIGH, NORMAL, LOW)
-  - `agent_type`: Target agent type
-  - `dependencies`: List of task IDs this depends on
-  - `context`: Additional context dictionary
-
-- `TaskResult`: Task execution result
-  - `task_id`: Task identifier
-  - `success`: Boolean success flag
-  - `output`: Success output string
-  - `error`: Error message if failed
-  - `execution_time`: Time taken in seconds
-  - `agent_used`: Name of agent that executed
-
-- `AgentStatus`: Enum (IDLE, BUSY, FAILED)
-- `TaskPriority`: Enum (CRITICAL=0, HIGH=1, NORMAL=2, LOW=3)
-
-#### Agent Types
-
-Six pre-configured agents in `agents/agents.json`:
-
-1. **implementation** (max_tasks: 3, timeout: 300s)
-   - Capabilities: code_generation, testing, documentation, refactoring
-   - Use for: Feature implementation
-
-2. **review** (max_tasks: 2, timeout: 180s)
-   - Capabilities: code_review, design_review, security_check, quality_analysis
-   - Use for: Code and design review
-
-3. **testing** (max_tasks: 2, timeout: 600s)
-   - Capabilities: test_generation, test_execution, coverage_analysis, performance_testing
-   - Use for: Writing and running tests
-
-4. **debugging** (max_tasks: 1, timeout: 300s, **not parallel_safe**)
-   - Capabilities: error_analysis, root_cause, fix_generation, log_analysis
-   - Use for: Debugging issues
-
-5. **architecture** (max_tasks: 1, timeout: 600s)
-   - Capabilities: system_design, architecture_review, api_design, schema_design
-   - Use for: System design
-
-6. **documentation** (max_tasks: 2, timeout: 300s)
-   - Capabilities: doc_generation, api_doc_writing, tutorial_creation, readme_generation
-   - Use for: Documentation work
-
-#### SkillTrigger (`skill_trigger.py`)
-
-Automatic skill triggering based on context analysis. Loads from `skills/skills.json`.
+Main coordination engine (419 lines). Key responsibilities:
+- Register 6 default agents from `AgentConfig` dataclasses
+- Submit and execute tasks with context compression
+- Parallel task execution via `asyncio.Semaphore`
+- Skill execution with sandbox security validation
+- Path traversal protection on skill loading
 
 Key methods:
-- `get_triggered_skills(context)`: Returns list of skills to trigger
-- `evaluate_trigger_keywords(context, triggers)`: Checks if trigger keywords match
-- `check_dependencies(skill, available_skills)`: Verifies skill dependencies
+- `submit_task(task)` — Queue a task
+- `execute_tasks_parallel(tasks, max_parallel)` — Async parallel execution
+- `execute_skill(skill_name, params)` — Execute a skill with sandbox validation
+- `list_skills()` — Discover available skills from `skills/` directory
+- `get_status()` — Coordinator status with compression stats
+
+### WorkflowOrchestrator (`lingflow/workflow/orchestrator.py`)
+
+Workflow engine (252 lines). Handles:
+- YAML workflow loading with dependency parsing
+- Dependency-aware task scheduling
+- Parallel execution of independent tasks
+- Priority-based task ordering (CRITICAL > HIGH > NORMAL > LOW)
+- Sync wrapper via `asyncio.run()` for the async engine
+
+Key methods:
+- `load_workflow_from_yaml(filepath)` — Parse YAML into `Task` list
+- `execute(tasks, max_parallel)` — Synchronous workflow execution
+- `execute_workflow(tasks, max_parallel)` — Async workflow execution
+
+### SkillRegistry (`lingflow/core/skill.py`)
+
+Singleton registry for skill registration. Supports:
+- `BaseSkill` — Abstract base class with `execute()`, `_execute_impl()`, `validate_params()`
+- `FunctionSkill` — Wraps any `Callable` as a skill
+- `register()`, `register_function()`, `get()`, `list()`, `has()`
+
+### Result[T] (`lingflow/core/types.py`)
+
+Generic result type for success/failure handling:
+```python
+result = Result.ok(data)
+result = Result.fail("error message", code="LF_ERROR")
+
+result.success   # bool
+result.is_ok     # bool (alias)
+result.is_error  # bool
+result.data      # Optional[T]
+result.error     # Optional[str]
+result.to_dict() # Dict
+```
+
+### Data Models (`lingflow/common/models.py`)
+
+All data models use `@dataclass`:
+- `AgentConfig` — name, description, capabilities, max_tasks, context_limit (8000), timeout (300s), parallel_safe
+- `Task` — task_id, name, description, priority (TaskPriority), agent_type, dependencies, context
+- `TaskResult` — task_id, success, output, error, execution_time, agent_used
+- `TaskPriority` — CRITICAL=0, HIGH=1, NORMAL=2, LOW=3
+- `AgentStatus` — IDLE, BUSY, FAILED
+
+### Exception Hierarchy (`lingflow/common/exceptions.py`)
+
+```
+LingFlowError (base, with code + details)
+├── SkillError
+│   ├── SkillNotFoundError
+│   ├── SkillLoadError
+│   └── SkillExecutionError
+├── WorkflowError
+│   ├── WorkflowValidationError
+│   └── WorkflowExecutionError
+├── AgentError
+│   ├── AgentNotFoundError
+│   └── AgentExecutionError
+├── CompressionError
+├── ConfigurationError
+└── ValidationError
+```
+
+### LingFlowConfig (`lingflow/core/config.py`)
+
+Type-safe configuration dataclass with validation:
+- `max_parallel` (2), `max_iterations` (100), `workflow_timeout` (600s)
+- `skills_path` ("skills"), `skill_timeout` (30s), `skill_cache_enabled` (False)
+- `agent_timeout` (300s), `agent_context_limit` (8000)
+- `compression_enabled` (True), `compression_target_tokens` (4000)
+- `log_level` ("INFO")
+- `from_dict()` / `to_dict()` for backward compatibility
 
 ---
 
 ## Skill System
 
-### Skills Configuration (`skills/skills.json`)
+### Three-Layer Architecture (`skills/skills-layer-configuration.yaml`)
 
-Skills are configured with:
-- `name`: Unique skill identifier
-- `description`: Skill purpose
-- `path`: Path to SKILL.md file
-- `triggers`: Keywords that auto-trigger the skill
-- `depends_on`: List of required prerequisite skills
+Skills are organized in three layers with different loading/unloading strategies:
 
-### Core Skills
+| Layer | Description | Loading | Unloading | Skills |
+|-------|-------------|---------|-----------|--------|
+| **L1** | Core scheduling | eager | never | workflow-executor, task-runner, conditional-branch, loop-iterator, error-handler |
+| **L2** | Professional capabilities | eager | never | brainstorming, systematic-debugging, verification-before-completion, code-review, code-refactor, test-runner, test-driven-development, using-git-worktrees, finishing-a-development-branch, notification, skill-creator |
+| **L3** | Extended capabilities | lazy | after_task (5min idle) | writing-plans, api-doc-generator, ui-mockup-generator, database-schema-designer, ci-cd-orchestrator, deployment-automation, environment-manager, database-export, dispatching-parallel-agents, subagent-driven-development, skill-integration, skill-categorization, skill-versioning, skill-analytics, skill-templates, skill-testing |
 
-1. **brainstorming** (MUST use before any creative work)
-   - Triggers: feature, build, create, implement, add functionality
-   - Creates designs and specifications
-   - **HARD-GATE**: Cannot proceed to implementation without design approval
+### L2 Skill Groups
 
-2. **writing-plans** (for multi-step tasks)
+L2 skills are organized into groups with execution constraints:
+
+- **code_quality** (mutex): code-review, code-refactor
+- **development_flow** (ordered): brainstorming → systematic-debugging → verification-before-completion
+- **testing** (mutex): test-runner, test-driven-development
+- **version_control** (mutex): using-git-worktrees, finishing-a-development-branch
+- **common_services** (composable): notification, skill-creator
+
+### Routing Rules
+
+Priority-based routing from `skills-layer-configuration.yaml`:
+- `workflow|yaml` → L1.workflow-executor (priority 10)
+- `review|审查|检查` → L2.code_review (priority 9)
+- `debug|bug|错误` → L2.systematic_debugging (priority 9)
+- `api.*doc|接口文档` → L3.api_doc_generator (priority 7)
+- `ui|mockup|原型` → L3.ui_mockup_generator (priority 7)
+- `database.*design|schema` → L3.database_schema_designer (priority 7)
+- `ci.*cd|pipeline` → L3.ci_cd_orchestrator (priority 7)
+- `deploy|部署` → L3.deployment_automation (priority 7)
+
+### Core Skills (L2)
+
+1. **brainstorming** — Design and ideation (MUST use before creative work)
+   - Triggers: feature, build, create, implement, plan, design
+   - HARD-GATE: Cannot proceed without design approval
+
+2. **writing-plans** — Multi-step task planning (L3, loaded on demand)
    - Triggers: plan, implementation plan, break down, spec
    - Depends on: brainstorming
-   - Creates detailed implementation plans
 
-3. **test-driven-development** (enforces TDD)
-   - Triggers: test, write test, implement, code
+3. **test-driven-development** — TDD enforcement
+   - Triggers: test, write test, implement, tdd
    - Depends on: writing-plans
    - Enforces RED-GREEN-REFACTOR cycle
 
-4. **systematic-debugging**
+4. **systematic-debugging** — 4-phase root cause analysis
    - Triggers: debug, fix, error, issue, broken
-   - 4-phase process: observe, isolate, hypothesize, verify
+   - Phases: observe → isolate → hypothesize → verify
 
-5. **subagent-driven-development** (rapid iteration)
-   - Triggers: execute plan, implement plan, start coding
+5. **subagent-driven-development** — Rapid iteration with two-phase review
+   - Triggers: execute plan, implement plan
    - Depends on: writing-plans
-   - Two-phase review: specification compliance, then code quality
 
-6. **using-git-worktrees**
+6. **verification-before-completion** — Ensures problems are actually fixed
+   - Triggers: verify, check, confirm fix
+
+7. **using-git-worktrees** — Isolated workspace creation
    - Triggers: new branch, start work, begin development
    - Depends on: brainstorming
-   - Creates isolated workspaces for parallel development
 
-7. **finishing-a-development-branch**
+8. **finishing-a-development-branch** — Branch cleanup and merge options
    - Triggers: done, complete, finish, ready to merge
-   - Verifies tests, presents options (merge/PR/keep/discard)
+   - Options: merge, PR, keep, discard
 
-8. **requesting-code-review**
+9. **code-review** — 8-dimension code review
    - Triggers: review, code review, check code
-   - Reviews code against plan, reports issues by severity
+   - Dimensions: code_quality, architecture, performance, security, maintainability, best_practices, consistency, bug_analysis
 
-9. **verification-before-completion**
-   - Triggers: verify, check, confirm fix
-   - Ensures problems are actually fixed
-
-10. **dispatching-parallel-agents** ⭐ Advanced
+10. **dispatching-parallel-agents** — Parallel multi-agent coordination (L3)
     - Triggers: parallel, concurrent, simultaneous
-    - Automatic parallel task execution with dependency awareness
-    - 2-4x performance improvement
+    - max_parallel: 3, dependency-aware
 
-### Skill File Format
+### Workflow Skills (L1)
 
-Each skill has a `SKILL.md` file with:
-- YAML frontmatter (name, description)
-- Hard gates (MUST conditions)
-- Checklists
-- Process flow diagrams
-- Step-by-step instructions
-- Example interactions
+- **workflow-executor** — Execute YAML/JSON workflows
+- **task-runner** — Execute single tasks (skill calls)
+- **conditional-branch** — If/else branching in workflows
+- **loop-iterator** — Loop execution in workflows (max 100 iterations)
+- **error-handler** — Retry and fallback on task failure (max 3 retries)
+
+### Skill Metadata
+
+Each skill in `skills/skills.json` has:
+- `name` — Unique identifier (kebab-case, `[a-z0-9_-]+`)
+- `description` — Purpose (bilingual Chinese/English)
+- `path` — Path to `SKILL.md`
+- `triggers` — Keywords for auto-triggering
+- `depends_on` — Required prerequisite skills
+
+Skills with implementation code have an `implementation.py` file with a required `execute_skill(params: Dict) -> Dict` function.
+
+---
+
+## Agent System
+
+### Agent Types (6 agents, V1 and V2 formats coexist)
+
+Both `agents/agents.json` (V1, flat capability list) and `agents/agents.v2.json` (V2, capability-based with per-capability config) define the same 6 agents:
+
+1. **implementation** — Code generation, refactoring, testing, documentation
+   - Context limit: 8000 tokens, Timeout: 300s, max_concurrent: 3
+
+2. **reviewer** — Code review (8 dimensions), design review, security check, quality analysis
+   - Context limit: 12000 tokens, Timeout: 180s, max_concurrent: 2
+
+3. **tester** — Test generation (pytest/jest), test execution, coverage analysis, performance testing
+   - Context limit: 6000 tokens, Timeout: 600s, max_concurrent: 2
+
+4. **debugger** — Error analysis, root cause, fix generation, log analysis
+   - Context limit: 10000 tokens, Timeout: 300s, max_concurrent: 1, **not parallel_safe**
+
+5. **architect** — System design, architecture review, API design, schema design
+   - Context limit: 15000 tokens, Timeout: 600s, max_concurrent: 1
+
+6. **documentation** — Doc generation, API docs, tutorials, README
+   - Context limit: 5000 tokens, Timeout: 300s, max_concurrent: 2
+
+### V2 Format Features
+
+`agents.v2.json` adds per-capability configuration:
+```json
+{
+  "code_review": {
+    "description": "Execute code review",
+    "context_limit": 12000,
+    "timeout": 180,
+    "languages": ["python", "javascript", "..."],
+    "review_dimensions": ["code_quality", "architecture", "..."]
+  }
+}
+```
+
+Capability matching strategy: `exact_or_broader` with fallback enabled.
+
+### Agent Selection
+
+Agents are matched based on `agent_type` in `Task`:
+```python
+task = Task(task_id="t1", name="Code Review", agent_type="review", ...)
+```
+The coordinator finds agents whose capabilities match the task requirements.
+
+---
+
+## Security
+
+### SkillSandbox (`lingflow/common/sandbox.py`)
+
+Process-isolated execution environment for skill code:
+- **Process isolation**: Runs in separate `multiprocessing.Process`
+- **Timeout**: Default 30s, configurable
+- **Memory limit**: Default 100MB
+- **Recursion depth limit**: Default 100
+- **Loop iteration limit**: Default 1,000,000
+- **Module whitelist**: Only `typing`, `dataclasses`, `datetime`, `math`, `time`
+- **Safe builtins**: Limited set (abs, all, any, bool, dict, enumerate, filter, float, int, isinstance, len, list, map, max, min, range, reversed, round, set, sorted, str, sum, tuple, zip)
+- **AST analysis**: `SecurityAnalyzer` performs static code analysis before execution
+
+Default sandbox instance via `get_default_sandbox()` or convenience function `execute_in_sandbox(func, *args, timeout=None, **kwargs)`.
+
+### Path Traversal Protection
+
+- Skill name validation: regex `^[a-z0-9_-]+$`, length 3-50
+- Workflow file path validation: `resolve()` + `relative_to()` check
+- Symlink rejection for workflow files
+
+### Pre-commit Security Checks
+
+- `bandit` scan on `lingflow/`
+- Custom `check-eval-usage` hook (blocks `eval()`/`exec()`)
+- Custom `check-os-system` hook (blocks `os.system()`, suggests `subprocess.run()`)
+
+---
+
+## Smart Compression
+
+### SmartContextCompressor (`lingflow/compression/smart_compressor.py`)
+
+tiktoken-based intelligent context compression with:
+
+1. **TokenEstimator** — Precise token counting via tiktoken (cl100k_base encoding), falls back to character estimation (ratio 0.25-0.28)
+2. **MessageScorer** — Multi-dimensional scoring: role priority (system > user > assistant > tool), content importance (critical keywords), recency (exponential decay), length adjustment
+3. **TieredCompressionStrategy** — Five tiers: KEEP_ALL, KEEP_IMPORTANT, COMPRESS, SUMMARIZE, DROP
+4. **ConversationSummarizer** — Generates summaries preserving tasks, decisions, and errors
+
+### Compression Modes
+
+| Mode | Target Ratio | Message Compress Ratio |
+|------|-------------|----------------------|
+| normal | 50% | 70% |
+| aggressive | 30% | 50% |
+| emergency | 20% | 30% |
+
+### Thresholds (default)
+
+- **Warning**: 75% of max_tokens
+- **Compress**: 85% of max_tokens
+- **Critical**: 95% of max_tokens (emergency compression)
+
+---
+
+## Self-Optimizer System
+
+### Components
+
+- **OptimizationTrigger** — Checks conditions and triggers optimization with priority
+- **ProcessIsolatedOptimizer** / **SynchronousOptimizer** — Execute optimizations
+- **StructureEvaluator** / **PerformanceEvaluator** / **SimplicityEvaluator** — Multi-goal evaluation
+- **OptimizationAdvisor** — Provides optimization recommendations
+- **Phase 4** — Bayesian optimization
+- **Phase 5** — Learning system
+
+### Convenience Functions
+
+```python
+from lingflow.self_optimizer import quick_optimize, check_and_optimize
+
+# Quick optimize
+result = quick_optimize(target=".", goal="structure")
+
+# Check conditions and optimize if needed
+should_optimize, result = check_and_optimize(context={}, target=".", goal="performance")
+```
+
+Optimization goals: `structure`, `performance`, `simplicity`
+
+---
+
+## Code Review Framework
+
+Modular code review system in `lingflow/code_review/`:
+- **BaseCodeReviewer** — Abstract base for reviewers
+- **RuleEngine** + **Rule** — Pluggable rule system
+- **QualityScorer** — Quantitative quality scoring
+- **Severity** — Issue severity levels
+- **ReportGenerator** — Review report generation
+
+---
+
+## Hooks
+
+5 hooks defined in `hooks/hooks.json`:
+
+| Hook | Trigger Point |
+|------|--------------|
+| `session-start` | When a new session begins |
+| `pre-implementation` | Before code implementation |
+| `post-implementation` | After code implementation |
+| `pre-review` | Before code review |
+| `post-review` | After code review |
 
 ---
 
@@ -266,86 +628,79 @@ Each skill has a `SKILL.md` file with:
 
 ### Python Code
 
-- **Classes**: PascalCase (e.g., `AgentCoordinator`, `TaskResult`)
-- **Functions/Methods**: snake_case (e.g., `execute_task`, `compress`)
-- **Constants**: UPPER_CASE (e.g., `MAX_RETRIES`, `DEFAULT_TIMEOUT`)
-- **Variables**: snake_case (e.g., `task_id`, `execution_time`)
-- **Private members**: Leading underscore (e.g., `_load_skills`)
-- **Type hints**: Required for all function parameters and returns
+- **Classes**: PascalCase (`AgentCoordinator`, `TaskResult`)
+- **Functions/Methods**: snake_case (`execute_task`, `compress_context`)
+- **Constants**: UPPER_CASE (`MAX_SCHEDULING_ITERATIONS`, `DEFAULT_MAX_PARALLEL`)
+- **Variables**: snake_case (`task_id`, `execution_time`)
+- **Private members**: Leading underscore (`_execute_impl`, `_load_skill_module`)
+- **Type hints**: Required on all function parameters and returns (mypy strict mode)
 
 ### File Names
 
-- Python modules: snake_case with `.py` extension (e.g., `agent_coordinator.py`)
-- Configuration files: snake_case with `.json` extension (e.g., `skills.json`)
-- Documentation: UPPERCASE_SNAKE_CASE with `.md` extension (e.g., `CORE_WORKFLOW.md`)
-- Shell scripts: snake_case with `.sh` extension (e.g., `push_to_remote.sh`)
+- Python modules: `snake_case.py`
+- Configuration: `snake_case.json` / `snake_case.yaml`
+- Documentation: `UPPERCASE_SNAKE_CASE.md`
+- Shell scripts: `snake_case.sh`
 
 ### Git Conventions
 
-- **Branch names**: kebab-case (e.g., `feature/add-auth-system`)
-- **Commit messages**: Conventional Commits format
-  - `feat: add parallel agent dispatching`
-  - `fix: resolve context compression memory leak`
-  - `docs: update AGENTS.md with new skill patterns`
-- **Tags**: Semantic versioning (e.g., `v3.1.0`)
-
-### Documentation
-
-- Skill files: `SKILL.md` (uppercase)
-- Design specs: `YYYY-MM-DD-<topic>-design.md` in `docs/superpowers/specs/`
-- Plans: `YYYY-MM-DD-<topic>-plan.md` in `docs/superpowers/plans/`
+- **Branches**: kebab-case (`feature/add-auth-system`)
+- **Commits**: Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`)
+- **Tags**: Semantic versioning (`v3.5.7`)
 
 ---
 
-## Code Style Patterns
+## Code Style
 
-### Type Hints
+### Formatter & Linter Configuration
 
-All functions must include type hints:
+| Tool | Settings |
+|------|----------|
+| **black** | line-length=127, target=py311 |
+| **isort** | profile=black, line-length=127 |
+| **flake8** | max-line-length=127, max-complexity=15, ignore=E203,E266,E501,W503,E402 |
+| **mypy** | python_version=3.11, strict mode (disallow_untyped_defs, disallow_incomplete_defs, strict_optional, strict_equality) |
+| **bandit** | scans `lingflow/`, excludes `tests/` |
 
-```python
-from typing import Dict, List, Optional, Any, Tuple
-from dataclasses import dataclass, field
+### Pre-commit Hooks (`.pre-commit-config.yaml`)
 
-@dataclass
-class Task:
-    task_id: str
-    name: str
-    description: str
-    priority: TaskPriority
-    agent_type: str = ""
-    dependencies: List[str] = field(default_factory=list)
-    context: Dict[str, Any] = field(default_factory=dict)
-
-async def execute_task(self, task: Task, context: Dict[str, Any]) -> TaskResult:
-    """Execute a task and return the result."""
-    ...
-```
+1. **black** — Code formatting
+2. **isort** — Import sorting
+3. **flake8** — Linting (with flake8-docstrings)
+4. **mypy** — Type checking (with `--ignore-missing-imports`)
+5. **bandit** — Security scanning
+6. **pre-commit-hooks** — Large files (500KB max), JSON/YAML/TOML validation, merge conflicts, debug statements, trailing whitespace, line endings
+7. **Custom checks**:
+   - Version consistency (outdated version references in docs)
+   - eval/exec usage detection
+   - os.system usage detection
+   - Missing docstrings in public functions
+   - Missing type hints in public functions
 
 ### Docstrings
 
-Use Google-style docstrings:
-
+Google-style, bilingual (Chinese + English):
 ```python
-def compress(self, context: Dict[str, Any]) -> Dict[str, Any]:
-    """Compress context to reduce token usage.
+def execute(self, func: Callable, *args, **kwargs) -> Any:
+    """在沙箱中执行函数
 
     Args:
-        context: The context dictionary to compress
+        func: 要执行的函数
+        *args: 位置参数
+        **kwargs: 关键字参数
 
     Returns:
-        Compressed context dictionary
+        函数执行结果
 
     Raises:
-        ValueError: If context is invalid
+        SandboxError: 沙箱执行错误
+        SandboxTimeoutError: 执行超时
     """
-    ...
 ```
 
 ### Dataclasses
 
-Use dataclasses for simple data models:
-
+All data models use `@dataclass`:
 ```python
 @dataclass
 class AgentConfig:
@@ -361,205 +716,58 @@ class AgentConfig:
 ### Async/Await
 
 Use `asyncio` for parallel operations:
-
 ```python
-import asyncio
-
-async def execute_tasks_parallel(self, tasks: List[Task], max_parallel: int = 3) -> Dict[str, TaskResult]:
-    """Execute multiple tasks in parallel."""
+async def execute_tasks_parallel(self, tasks: List[Task], max_parallel: int = 2) -> Dict[str, TaskResult]:
     semaphore = asyncio.Semaphore(max_parallel)
-
-    async def execute_with_semaphore(task: Task) -> Tuple[str, TaskResult]:
-        async with semaphore:
-            result = await self.execute_task(task, {})
-            return task.task_id, result
-
-    results = await asyncio.gather(*[execute_with_semaphore(task) for task in tasks])
-    return dict(results)
-```
-
-### Error Handling
-
-Wrap async operations in try-except blocks:
-
-```python
-try:
-    execution_time = time.time() - start_time
-    self.tasks_completed += 1
-    return TaskResult(
-        task_id=task.task_id,
-        success=True,
-        output=f"Task {task.task_id} completed",
-        execution_time=execution_time,
-        agent_used=self.config.name
-    )
-except Exception as e:
-    self.tasks_failed += 1
-    return TaskResult(
-        task_id=task.task_id,
-        success=False,
-        error=str(e),
-        execution_time=time.time() - start_time,
-        agent_used=self.config.name
-    )
-```
-
-### Logging
-
-Log level set to WARNING by default to reduce noise:
-
-```python
-logging.basicConfig(level=logging.WARNING)
-logger = logging.getLogger(__name__)
-
-logger.warning("Agent not found: %s", agent_type)
-logger.error("Task failed: %s", task.task_id)
+    tasks_to_execute = [asyncio.create_task(self._execute_one_task(task, semaphore)) for task in tasks]
+    results_list = await asyncio.gather(*tasks_to_execute, return_exceptions=True)
+    return self._process_task_results(results_list)
 ```
 
 ---
 
-## Testing Approach
+## Testing
+
+### Framework
+
+Pytest-based with `.pytest.ini` configuration:
+
+```ini
+[pytest]
+python_files = test_*.py
+asyncio_mode = auto
+markers = unit, snapshot, scenario, e2e, ci, slow
+```
+
+### Test Markers
+
+| Marker | Purpose |
+|--------|---------|
+| `unit` | Unit tests |
+| `snapshot` | Snapshot/regression tests |
+| `scenario` | Scenario-based tests |
+| `e2e` | End-to-end tests |
+| `ci` | CI/CD integration tests |
+| `slow` | Slow running tests |
 
 ### Test Structure
 
-Tests use a custom `TestRunner` class with clear formatting:
-
-```python
-class TestRunner:
-    def __init__(self):
-        self.coordinator = AgentCoordinator()
-        self.passed = 0
-        self.failed = 0
-        self.errors = []
-
-    def print_header(self, title):
-        """Print test section header"""
-        print("\n" + "=" * 70)
-        print(f"  {title}")
-        print("=" * 70)
-
-    def print_result(self, test_name, passed, error=None):
-        """Print test result with emoji"""
-        status = "✅ PASS" if passed else "❌ FAIL"
-        print(f"  {status} {test_name}")
+```
+lingflow/testing/
+├── unit/          # Unit test utilities
+├── e2e/           # E2E test utilities
+├── snapshot/      # Snapshot testing
+├── scenarios/     # Scenario definitions
+├── fixtures/      # Shared fixtures
+├── ci/            # CI configuration
+tests/             # Root test directory
 ```
 
-### Test Coverage
+### CI Pipelines (`.github/workflows/`)
 
-- **Unit tests**: 25/25 (100%)
-- **Integration tests**: 3/3 (100%)
-- **Functional tests**: 6/6 (100%)
-- **Total**: 34/34 (100% success rate)
-
-### Running Tests
-
-```bash
-# Quick verification (3 tests)
-python verify_system_simple.py
-
-# Full test suite (34 tests)
-python test_comprehensive.py
-```
-
-### Test Categories
-
-1. **Agent Registration** - Verifies agents are properly loaded from config
-2. **Context Compression** - Tests compression logic and token savings
-3. **Parallel Execution** - Tests concurrent task execution
-4. **Workflow Execution** - Tests dependency-based task scheduling
-5. **State Monitoring** - Tests agent status tracking
-6. **Error Handling** - Tests failure scenarios and recovery
-
----
-
-## Important Gotchas
-
-### Skill Dependencies
-
-Skills have strict dependency chains. Do NOT skip steps:
-
-- `brainstorming` → `writing-plans` → `test-driven-development`
-- `brainstorming` → `using-git-worktrees` → any development
-
-Always check `depends_on` in `skills/skills.json` before using a skill.
-
-### Hard Gates
-
-Many skills have **HARD-GATE** sections that cannot be bypassed:
-
-- `brainstorming`: MUST get design approval before implementation
-- `test-driven-development`: MUST write failing test before code
-- `verification-before-completion`: MUST actually verify fixes
-
-These gates are enforced through documentation and process requirements.
-
-### Parallel Execution
-
-When using `dispatching-parallel-agents`:
-
-- Tasks must be independent (no shared file modifications)
-- Dependencies must be clearly identified
-- Each task should be 2-5 minutes long
-- Requires adequate compute resources
-- Not all agents are `parallel_safe` (e.g., debugging agent)
-
-### Context Compression
-
-The context compressor automatically reduces token usage:
-
-- Preserves high-priority fields: `requirements`, `specification`, `description`
-- Truncates long text to 1000 characters
-- Limits additional fields to 3 items (500 chars each)
-- Estimated at 4 characters per token
-
-Compression stats are tracked: `coordinator.compressor.get_stats()`
-
-### Agent Selection
-
-Agents are automatically selected based on `agent_type` field in Task:
-
-```python
-task = Task(
-    task_id="task-1",
-    name="Code Review",
-    agent_type="review",  # This selects the review agent
-    ...
-)
-```
-
-If `agent_type` is empty, any compatible agent can be used.
-
-### Workflow Execution
-
-When executing workflows with dependencies:
-
-- Tasks are grouped by dependency level
-- Level 1 (no deps) executes first
-- Level 2 waits for Level 1, etc.
-- Max of 100 iterations to prevent infinite loops
-- Failed tasks stop their dependents
-
-### Logging
-
-Default log level is WARNING. For debugging, change in `agent_coordinator.py`:
-
-```python
-logging.basicConfig(level=logging.DEBUG)  # Was: level=logging.WARNING
-```
-
-### Version Control
-
-- Tag each release: `git tag -a v3.1.0 -m "Release v3.1.0"`
-- Push tags separately: `git push origin v3.1.0`
-- Use `push_to_remote.sh` for guided push process
-- Branches should use feature branches with clear names
-
-### Testing Requirements
-
-- All changes must pass `python test_comprehensive.py`
-- Test coverage must remain at 100%
-- New features must include corresponding tests
-- Follow RED-GREEN-REFACTOR cycle
+1. **ci.yml** — Main CI pipeline
+2. **code-quality.yml** — Code quality + security scanning
+3. **testing-framework.yml** — Comprehensive test execution
 
 ---
 
@@ -576,7 +784,7 @@ logging.basicConfig(level=logging.DEBUG)  # Was: level=logging.WARNING
    ↓
 4. test-driven-development (implement + test)
    ↓
-5. requesting-code-review (get feedback)
+5. code-review (get feedback)
    ↓
 6. verification-before-completion (verify fixes)
    ↓
@@ -597,7 +805,7 @@ logging.basicConfig(level=logging.DEBUG)  # Was: level=logging.WARNING
    ├─ task-2 (testing agent)
    └─ task-3 (documentation agent)
    ↓
-5. request-code-review (aggregate review)
+5. code-review (aggregate review)
    ↓
 6. finishing-a-development-branch (merge)
 ```
@@ -618,255 +826,139 @@ logging.basicConfig(level=logging.DEBUG)  # Was: level=logging.WARNING
 
 ---
 
-## Code Quality Standards
-
-### Metrics (v3.1.0)
-
-- **Lines of code**: 523 (optimized from 844, -38%)
-- **Cyclomatic complexity**: 15 (down from 25, -40%)
-- **Test coverage**: 100%
-- **Code duplication**: 5% (down from 15%)
-- **Memory usage**: 3MB (down from 5MB, -40%)
-- **Initialization time**: 5ms (down from 10ms, -50%)
-
-### Quality Checklist
-
-Before submitting changes:
-
-- [ ] All tests pass: `python test_comprehensive.py`
-- [ ] No new code duplication
-- [ ] Type hints on all functions
-- [ ] Docstrings on all public methods
-- [ ] Cyclomatic complexity under 20
-- [ ] No unused imports
-- [ ] Log level at WARNING (unless debugging)
-- [ ] Follow existing naming conventions
-- [ ] Update CHANGELOG.md if applicable
-- [ ] Update relevant documentation
-
----
-
 ## Common Tasks
 
 ### Adding a New Skill
 
 1. Create skill directory: `skills/my-new-skill/`
-2. Create `SKILL.md` with:
-   - YAML frontmatter (name, description)
-   - Hard gates (if applicable)
-   - Triggers section
-   - Process flow
-   - Checklists
-3. Add to `skills/skills.json`:
-   ```json
-   {
-     "name": "my-new-skill",
-     "description": "Skill description",
-     "path": "skills/my-new-skill/SKILL.md",
-     "triggers": ["trigger", "keyword"],
-     "depends_on": ["brainstorming"]
-   }
-   ```
-4. Test with `skill_trigger.py`
+2. Create `SKILL.md` with frontmatter, gates, triggers, process, checklists
+3. (Optional) Create `implementation.py` with `execute_skill(params: Dict) -> Dict`
+4. Add to `skills/skills.json`
+5. Add to appropriate layer in `skills/skills-layer-configuration.yaml`
+6. Run: `python .scripts/skill_trigger.py`
 
 ### Adding a New Agent Type
 
-1. Add to `agents/agents.json`:
-   ```json
-   {
-     "name": "my-agent",
-     "description": "Agent description",
-     "capabilities": ["capability1", "capability2"],
-     "max_tasks": 2,
-     "context_limit": 8000,
-     "timeout": 300,
-     "parallel_safe": true,
-     "requires_isolation": false
-   }
-   ```
-2. Agent is auto-registered by `AgentCoordinator`
-3. Test with `test_comprehensive.py`
+1. Add to `agents/agents.json` (V1) and/or `agents/agents.v2.json` (V2)
+2. Agent is auto-registered by `AgentCoordinator._register_default_agents()`
+3. Run tests: `pytest`
 
 ### Creating a New Test
 
-1. Add test method to `TestRunner` class
-2. Follow naming pattern: `test_N_description()`
-3. Use `print_result()` for output
-4. Update test count in summary
-5. Run: `python test_comprehensive.py`
-
-### Releasing a New Version
-
-1. Update version in `README.md`
-2. Update `CHANGELOG.md` with new section
-3. Run full test suite: `python test_comprehensive.py`
-4. Create tag: `git tag -a v3.2.0 -m "Release v3.2.0"`
-5. Push: `./push_to_remote.sh`
-6. Update documentation in `docs/` directory
+1. Create `test_*.py` in `tests/` or appropriate subdirectory
+2. Use pytest markers: `@pytest.mark.unit`, `@pytest.mark.e2e`, etc.
+3. Run: `pytest`
 
 ---
 
-## Performance Optimization
+## Important Gotchas
 
-### Context Compression
+### Skill Dependencies
 
-- Target: 4000 tokens
-- Achieved: 30-50% token savings
-- Strategy: Priority-based field preservation
+Skills have strict dependency chains from `skills/skills-layer-configuration.yaml`:
+- `brainstorming` → `systematic-debugging` → `verification-before-completion`
+- `code-review` → `code-refactor` (refactor requires review first)
+- `workflow-executor` → `task-runner`
+- `brainstorming` → `writing-plans` → `test-driven-development`
+
+### Mutex Groups
+
+These skill pairs cannot run simultaneously:
+- code-review / code-refactor
+- test-runner / test-driven-development
+- using-git-worktrees / finishing-a-development-branch
+
+### Sandbox Constraints
+
+Skill code with `implementation.py` runs in a sandbox:
+- Cannot import `os`, `sys`, `subprocess`, or any module not in the whitelist
+- Cannot use `eval()`, `exec()`, `open()`, `__import__`
+- 30-second timeout, 100MB memory limit
+- Max 1,000,000 loop iterations, max 100 recursion depth
 
 ### Parallel Execution
 
-- Speed improvement: 2-4x
-- Default max parallel: 3 agents
-- Configurable in `agents/agents.json`
+- Tasks must be independent (no shared file modifications)
+- Not all agents are `parallel_safe` (debugging agent is NOT)
+- Default max parallel: 2 (configurable)
+- Max scheduling iterations: 100 (prevents infinite loops)
 
-### Memory Usage
+### Context Compression
 
-- Optimized to 3MB (down from 5MB)
-- Efficient data structures (dataclasses)
-- Minimal object creation in hot paths
-
----
-
-## Documentation Standards
-
-### Code Documentation
-
-- Public methods: Google-style docstrings
-- Classes: Module-level docstring
-- Complex logic: Inline comments
-- No TODO comments in production code
-
-### Skill Documentation
-
-- Frontmatter with name and description
-- Hard gates clearly marked
-- Step-by-step process
-- Example interactions
-- Diagrams where helpful
-
-### Changelog Format
-
-```markdown
-## [X.Y.Z] - YYYY-MM-DD
-
-### Added
-- New feature 1
-- New feature 2
-
-### Changed
-- Modified feature 1
-- Updated setting 2
-
-### Fixed
-- Bug fix 1
-- Bug fix 2
-
-### Performance
-- Metric 1 improvement
-- Metric 2 improvement
-
-### Testing
-- Test coverage improvements
-- New tests added
-```
+- Default max_tokens: 180,000
+- Warning at 75%, auto-compress at 85%, emergency at 95%
+- System messages always preserved
+- `requirements`, `constraints`, `critical_requirements` sections preserved
 
 ---
 
-## Debugging Tips
-
-### Enable Debug Logging
-
-Edit `agent_coordinator.py` line 25:
-```python
-logging.basicConfig(level=logging.DEBUG)  # Change from WARNING
-```
-
-### Check Agent Status
-
-```python
-coordinator = AgentCoordinator()
-status = coordinator.get_status()
-print(status)
-```
-
-### Inspect Context Compression
-
-```python
-stats = coordinator.compressor.get_stats()
-print(f"Compressions: {stats['total_compressions']}")
-print(f"Tokens saved: {stats['tokens_saved']}")
-```
-
-### Test Individual Skills
-
-```python
-trigger = SkillTrigger()
-triggered = trigger.get_triggered_skills({"text": "implement feature"})
-print(triggered)
-```
-
----
-
-## External Dependencies
+## Dependencies
 
 ### Required
 
-- Python 3.8+
-- asyncio (standard library)
-- json (standard library)
-- pathlib (standard library)
-- logging (standard library)
-- dataclasses (Python 3.7+)
-- typing (standard library)
+```
+tiktoken>=0.5.0       # Token counting for smart compression
+```
 
-### Optional
+### Dev Dependencies
 
-- git (for version control operations)
-- network connection (for remote API calls)
+```
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-asyncio
+pytest-xdist          # Parallel test execution
+pydantic
+black                 # Formatting
+flake8                # Linting
+isort                 # Import sorting
+mypy                  # Type checking
+bandit                # Security scanning
+```
 
-**Note**: No external package dependencies - uses only Python standard library. No `requirements.txt`, `setup.py`, or `pyproject.toml` needed.
+### Python Version
+
+- Minimum: Python 3.8+ (per `setup.py`)
+- Target: Python 3.11 (per `pyproject.toml`)
+
+### Installation
+
+```bash
+pip install -e .              # Install in development mode
+pip install -e ".[dev]"       # Install with dev dependencies
+```
 
 ---
 
 ## Resources
 
-### Key Documentation
+### Key Files
 
-- `README.md` - Project overview and quick start
-- `CHANGELOG.md` - Version history
-- `docs/CORE_WORKFLOW.md` - Core business processes
-- `docs/AGENT_COORDINATION_GUIDE.md` - Agent coordination details
-- `docs/PARALLEL_EXECUTION_GUIDE.md` - Parallel execution patterns
+- `lingflow/__init__.py` — LingFlow class, primary API
+- `lingflow/coordination/coordinator.py` — AgentCoordinator
+- `lingflow/workflow/orchestrator.py` — WorkflowOrchestrator
+- `lingflow/compression/smart_compressor.py` — SmartContextCompressor
+- `lingflow/common/sandbox.py` — SkillSandbox
+- `lingflow/common/exceptions.py` — Exception hierarchy
+- `lingflow/core/types.py` — Result[T] type
+- `lingflow/core/skill.py` — Skill system (BaseSkill, SkillRegistry)
+- `skills/skills-layer-configuration.yaml` — Three-layer skill architecture
+- `agents/agents.v2.json` — Capability-based agent definitions
 
-### Skill References
+### Configuration Files
 
-- `skills/brainstorming/SKILL.md` - Design methodology
-- `skills/test-driven-development/SKILL.md` - TDD enforcement
-- `skills/dispatching-parallel-agents/SKILL.md` - Parallel execution
-- `skills/systematic-debugging/SKILL.md` - Debugging process
-
-### Reports
-
-- `docs/CODE_OPTIMIZATION_REPORT.md` - Optimization details
-- `docs/FINAL_REVIEW_REPORT.md` - Code review results
-- `FINAL_SUMMARY.txt` - Project completion summary
+- `config.yaml` — Main configuration (agents, compression, logging, skills, workflow)
+- `.pytest.ini` — Test configuration
+- `pyproject.toml` — Formatter/linter/type checker settings
+- `.pre-commit-config.yaml` — Pre-commit hooks
+- `setup.py` — Package installation
 
 ---
 
 ## Project Status
 
-**Version**: v3.1.0
-**Last Update**: 2026-03-17
-**Status**: ✅ Production Ready
-**Quality Score**: ⭐⭐⭐⭐⭐ (5/5)
-**Test Coverage**: 100%
-
-**Ready for**:
-- Production deployment
-- Feature development
-- Multi-agent coordination
-- Parallel execution workflows
+**Version**: v3.5.7
+**Last Update**: 2026-03-31
+**Status**: Production Ready
 
 **Maintained by**: LingFlow Development Team
 **Repository**: http://zhinenggitea.iepose.cn/guangda/LingFlow

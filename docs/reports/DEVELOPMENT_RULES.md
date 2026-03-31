@@ -17,6 +17,7 @@
 | **向后兼容** | 新旧API并存，不强制替换 |
 | **推荐实践** | 引导使用新模式，但不强制 |
 | **实用优先** | 解决实际问题，避免过度设计 |
+| **警惕过度开发** | 简洁设计，避免不必要的抽象和复杂度 |
 
 ### 版本路线图
 
@@ -737,11 +738,72 @@ class LazyLoader:
 
 ### 不推荐
 
-1. ⚠️ 过度优化 premature optimization
-2. ⚠️ 过度抽象 over-abstraction
-3. ⚠️ 添加不必要的外部依赖
-4. ⚠️ 忽略类型注解（新代码）
-5. ⚠️ 忽略文档字符串（公共API）
+1. ⚠️ **过度开发** - 见下方详细说明
+2. ⚠️ 过度优化 premature optimization
+3. ⚠️ 过度抽象 over-abstraction
+4. ⚠️ 添加不必要的外部依赖
+5. ⚠️ 忽略类型注解（新代码）
+6. ⚠️ 忽略文档字符串（公共API）
+
+### 警惕过度开发 (Over-Engineering)
+
+**原则**: 警惕过度开发，保持简洁实用
+
+**什么是过度开发**:
+- 为了"未来可能"的需求添加当前不需要的功能
+- 过度抽象，创建多层不必要的抽象层
+- 使用复杂的设计模式解决简单问题
+- 追求完美的通用性而牺牲实用性
+
+**识别过度开发的信号**:
+1. 🚩 文件行数过大 (>500行)
+2. 🚩 函数过长 (>50行)
+3. 🚩 过多的抽象类和接口
+4. 🚩 不必要的配置项
+5. 🚩 过度使用设计模式
+
+**审计标准** (基于2026-03-31审计):
+- 代码复杂度评分: Phase 4 ≤ 3/10, Phase 5 ≤ 6/10
+- 平均文件行数: < 400行
+- 长函数比例: < 10%
+- 抽象层数: ≤ 3层
+
+**实用主义开发准则**:
+```python
+# ❌ 过度开发：为"未来可能"的需求设计
+class AbstractAdapterFactory(ABC):
+    """工厂的工厂接口 - 过度抽象"""
+    @abstractmethod
+    def create_factory(self) -> 'AdapterFactory':
+        pass
+
+class AdapterFactory(ABC):
+    """抽象适配器工厂"""
+    @abstractmethod
+    def create_adapter(self) -> 'Adapter':
+        pass
+
+# ✅ 简洁实用：直接实现
+def create_adapter(tool_type: str) -> 'Adapter':
+    """创建适配器 - 简单直接"""
+    if tool_type == "semgrep":
+        return SemgrepAdapter()
+    elif tool_type == "ruff":
+        return RuffAdapter()
+    raise ValueError(f"Unknown tool: {tool_type}")
+```
+
+**YOLO模式经验** (2026-03-31 Phase 4-5实施):
+- ✅ 快速原型验证降低风险
+- ✅ 先实现核心功能，再优化
+- ✅ 简单测试足以保证质量
+- ✅ 避免完美主义拖延进度
+- ✅ 6小时完成10-12周工作量 (280-336x加速)
+
+**记住**:
+> "完美是优秀的敌人。" - Voltaire
+> "过早优化是万恶之源。" - Donald Knuth
+> "简单是终极的复杂。" - Leonardo da Vinci
 
 ---
 
