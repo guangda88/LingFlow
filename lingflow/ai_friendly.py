@@ -17,7 +17,7 @@ from pathlib import Path
 from dataclasses import dataclass
 
 from lingflow import LingFlow
-from lingflow.coordination.coordinator import Task, TaskResult
+from lingflow.coordination.coordinator import Task
 
 
 class AIFriendlyLingFlow(LingFlow):
@@ -235,7 +235,7 @@ class AIFriendlyLingFlow(LingFlow):
         tasks: List[Task],
         max_parallel: int = 2,
         fallback_strategy: str = "skip"
-    ) -> Dict[str, TaskResult]:
+    ) -> Dict[str, Dict[str, Any]]:
         """带回退机制的并行任务执行
 
         Args:
@@ -256,24 +256,20 @@ class AIFriendlyLingFlow(LingFlow):
             """执行单个任务（带回退）"""
             try:
                 async with semaphore:
-                    result = await self._coordinator.execute_skill_async(
-                        task.skill_name,
-                        task.params
+                    result = await asyncio.get_event_loop().run_in_executor(
+                        None, self.run_skill, task.skill_name, task.params
                     )
                     return (task.id, result)
             except Exception as e:
                 if fallback_strategy == "abort":
                     raise
-                # 其他策略：记录错误但继续
-                return (task.id, TaskResult.error(str(e)))
+                return (task.id, {"success": False, "error": str(e)})
 
-        # 并行执行所有任务
         executed = await asyncio.gather(
             *[execute_one(task) for task in tasks],
             return_exceptions=(fallback_strategy != "abort")
         )
 
-        # 收集结果
         for item in executed:
             if isinstance(item, Exception):
                 continue

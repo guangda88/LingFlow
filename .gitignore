@@ -46,3 +46,8 @@ Thumbs.db
 .env
 .npmrc
 _pypirc/
+
+# LingFlow runtime files (contains temporary data and sessions)
+.lingflow/
+!.lingflow/.gitkeep
+!.lingflow/sessions/.gitkeep

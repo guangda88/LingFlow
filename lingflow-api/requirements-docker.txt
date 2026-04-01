@@ -1,0 +1,29 @@
+# LingFlow API - 简化依赖（用于 Docker）
+
+# 核心框架
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# 认证
+python-jose[cryptography]==3.3.0
+python-multipart==0.0.6
+
+# HTTP 客户端
+requests==2.31.0
+
+# 工具
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# 监控
+prometheus-client==0.20.0
+
+# LingFlow 核心依赖（最小集合）
+anthropic>=0.18.0
+openai>=1.0.0
+rich>=13.0.0
+aiohttp>=3.9.0
+click>=8.0.0
+toml>=0.10.2

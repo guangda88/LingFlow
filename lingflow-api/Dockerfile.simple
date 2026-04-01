@@ -1,0 +1,37 @@
+# LingFlow API - 简化 Dockerfile
+# 从 /home/ai/LingFlow/ 根目录构建: docker build -f lingflow-api/Dockerfile.simple -t lingflow-api:latest .
+
+FROM python:3.11-slim
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装系统依赖
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# 复制 LingFlow 核心库（作为模块直接使用）
+COPY lingflow/ /app/lingflow/
+ENV PYTHONPATH=/app:$PYTHONPATH
+
+# 复制 API requirements
+COPY lingflow-api/requirements-docker.txt requirements.txt
+
+# 安装 API 依赖
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 复制应用代码
+COPY lingflow-api/app/ /app/app/
+
+# 暴露端口
+EXPOSE 8000
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# 启动命令（使用简化版本，只提供 8 个核心端点）
+# 使用 shell 形式确保 PYTHONPATH 生效
+CMD uvicorn app.main_simple:app --host 0.0.0.0 --port 8000

@@ -1,0 +1,22 @@
+[phases.setup]
+nixPkgs = ["python311"]
+
+[phases.install]
+cmds = [
+  "python -m venv /venv",
+  "source /venv/bin/activate",
+  "pip install --upgrade pip"
+]
+
+[phases.build]
+cmds = [
+  "source /venv/bin/activate",
+  "pip install --no-cache-dir -r requirements.txt"
+]
+
+[start]
+cmd = "uvicorn main_simple:app --host 0.0.0.0 --port $PORT"
+
+[phases.build]
+nixPkgs = ["python311"]
+cmds = ["pip install --no-cache-dir -r requirements.txt"]
