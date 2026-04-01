@@ -58,7 +58,7 @@ def _show_session_resume():
 
 
 # 版本信息
-__version__ = "3.5.6"
+__version__ = "3.7.0"
 
 # 执行启动初始化
 _initialize_services()

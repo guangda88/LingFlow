@@ -2,6 +2,8 @@
 
 <div align="center">
 
+[![PyPI Version](https://img.shields.io/pypi/v/lingflow-core)](https://pypi.org/project/lingflow-core/)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/lingflow-core)](https://pypi.org/project/lingflow-core/)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
 [![Version](https://img.shields.io/badge/version-3.7.0-orange.svg)](https://github.com/guangda88/LingFlow)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -42,6 +44,47 @@
 │  • Hooks机制                                     │
 │  • 工作流引擎                                    │
 └──────────────────────────────────────────────────┘
+```
+
+---
+
+## 📦 安装
+
+### PyPI 安装（推荐）
+
+```bash
+# 基础安装
+pip install lingflow-core
+
+# 完整功能（包含情报系统和优化器）
+pip install lingflow-core[full]
+
+# 仅开发工具
+pip install lingflow-core[dev]
+
+# 仅情报系统
+pip install lingflow-core[intelligence]
+```
+
+### 从源码安装
+
+```bash
+git clone https://github.com/guangda88/LingFlow.git
+cd LingFlow
+pip install -e .
+```
+
+### 验证安装
+
+```bash
+# 检查版本
+python -c "import lingflow; print(lingflow.__version__)"
+
+# 查看 CLI 帮助
+lingflow --help
+
+# 列出可用技能
+lingflow list-skills
 ```
 
 ---
@@ -218,12 +261,15 @@ results = await coordinator.execute_all()
 ### 安装
 
 ```bash
-# 从PyPI安装（即将发布）
+# 从PyPI安装（推荐）
 pip install lingflow-core
+
+# 完整功能（包含所有可选依赖）
+pip install lingflow-core[full]
 
 # 从源码安装
 git clone https://github.com/guangda88/LingFlow.git
-cd lingflow-core
+cd LingFlow
 pip install -e .
 ```
 
