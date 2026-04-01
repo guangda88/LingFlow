@@ -1,0 +1,120 @@
+# LingFlow REST API - Docker Compose
+# 一键启动完整的开发环境
+
+version: '3.8'
+
+services:
+  # LingFlow API 服务
+  api:
+    build:
+      context: ..
+      dockerfile: lingflow-api/Dockerfile
+      target: api
+    container_name: lingflow-api
+    ports:
+      - "8000:8000"
+    environment:
+      - LINGFLOW_API_KEYS=${LINGFLOW_API_KEYS:-dev-key-12345}
+      - LINGFLOW_WORK_DIR=/workspace
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    volumes:
+      - ../:/workspace
+      - lingflow-cache:/root/.cache
+    depends_on:
+      - redis
+    networks:
+      - lingflow-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis（任务队列和缓存）
+  redis:
+    image: redis:7-alpine
+    container_name: lingflow-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - lingflow-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Celery Worker（异步任务）
+  worker:
+    build:
+      context: ..
+      dockerfile: lingflow-api/Dockerfile
+      target: api
+    container_name: lingflow-worker
+    command: celery -A app.tasks worker --loglevel=info
+    environment:
+      - LINGFLOW_API_KEYS=${LINGFLOW_API_KEYS:-dev-key-12345}
+      - LINGFLOW_WORK_DIR=/workspace
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    volumes:
+      - ../:/workspace
+      - lingflow-cache:/root/.cache
+    depends_on:
+      - redis
+    networks:
+      - lingflow-network
+    restart: unless-stopped
+
+  # Nginx（反向代理）
+  nginx:
+    image: nginx:alpine
+    container_name: lingflow-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - api
+    networks:
+      - lingflow-network
+    restart: unless-stopped
+
+  # PgAdmin（数据库管理，可选）
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: lingflow-pgadmin
+  #   ports:
+  #     - "5050:80"
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=admin@lingflow.dev
+  #     - PGADMIN_DEFAULT_PASSWORD=admin
+  #   networks:
+  #     - lingflow-network
+
+  # Grafana（监控仪表盘，可选）
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: lingflow-grafana
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - grafana-data:/var/lib/grafana
+  #   networks:
+  #     - lingflow-network
+
+networks:
+  lingflow-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  lingflow-cache:
+  grafana-data:

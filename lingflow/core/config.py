@@ -1,8 +1,11 @@
 """LingFlow Configuration Module
 
-This module provides a type-safe configuration class for LingFlow.
+.. deprecated::
+    Use ``lingflow.common.config.ConfigManager`` instead.
+    This module is retained for backward compatibility only.
 """
 
+import warnings
 from dataclasses import asdict, dataclass
 from typing import Any, Dict
 
@@ -10,6 +13,10 @@ from typing import Any, Dict
 @dataclass
 class LingFlowConfig:
     """LingFlow configuration class (type-safe).
+
+    .. deprecated::
+        Use ``lingflow.common.config.ConfigManager`` for new code.
+        This dataclass is retained for backward compatibility only.
 
     Provides type-safe configuration with validation and backward compatibility.
     File I/O is handled at application layer to avoid extra dependencies.
@@ -48,6 +55,13 @@ class LingFlowConfig:
 
     # Logging configuration
     log_level: str = "INFO"
+
+    def __post_init__(self) -> None:
+        warnings.warn(
+            "LingFlowConfig is deprecated. Use lingflow.common.config.ConfigManager instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
     def validate(self) -> None:
         """Validate configuration values.

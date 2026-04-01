@@ -34,8 +34,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lingflow-core"
-version = "3.7.0"
-description = "AI增强的软件工程流系统 - 92% SDLC覆盖"
+version = "3.8.0"
+description = "AI增强的软件工程流系统 - 92% SDLC覆盖 - 4种使用方式"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}

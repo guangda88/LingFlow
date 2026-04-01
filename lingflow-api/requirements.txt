@@ -1,0 +1,40 @@
+# LingFlow REST API - Python 依赖
+# 核心框架
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+
+# 认证和安全
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# 异步任务
+celery==5.3.4
+redis==5.0.1
+
+# HTTP 客户端
+httpx==0.26.0
+requests==2.31.0
+
+# 数据库（可选）
+sqlalchemy==2.0.25
+alembic==1.13.1
+
+# 工具库
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# LingFlow 核心（从本地安装）
+# -e ../.
+
+# 开发依赖
+pytest==7.4.3
+pytest-asyncio==0.23.3
+black==23.12.1
+ruff==0.1.9
+mypy==1.8.0
+
+# 文档
+mkdocs==1.5.3
+mkdocs-material==9.5.3

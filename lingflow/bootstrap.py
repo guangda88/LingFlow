@@ -16,7 +16,7 @@ import sys
 from typing import Optional
 
 # 版本信息
-__version__ = "3.6.0"
+__version__ = "3.8.0"
 
 # 启动状态
 _startup_completed = False

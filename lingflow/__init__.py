@@ -58,7 +58,7 @@ def _show_session_resume():
 
 
 # 版本信息
-__version__ = "3.7.0"
+__version__ = "3.8.0"
 
 # 执行启动初始化
 _initialize_services()
@@ -78,8 +78,7 @@ def get_smart_compressor():
     return _gsc()
 
 
-# 导出便捷函数
-track_context = lambda *a, **k: None  # 由 context 模块处理
+from .context import track_context, compress_context as _compress_context_impl
 
 
 def compress_context():
@@ -186,6 +185,14 @@ class LingFlow:
             raise FileNotFoundError(f"File not found: {filepath}")
 
         return filepath_abs
+
+    def list_skills(self) -> list:
+        """列出所有可用技能
+
+        Returns:
+            技能名称列表
+        """
+        return self._coordinator.list_skills()
 
     def run_workflow(self, workflow_def: Dict[str, Any]) -> Dict[str, Any]:
         """直接执行工作流定义

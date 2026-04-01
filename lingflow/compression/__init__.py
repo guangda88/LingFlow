@@ -43,6 +43,7 @@ __all__ = [
     "CompressionConfig",
     "get_default_compressor",
     "compress_messages",
+    "enable_smart_compression",
 
     # 组件
     "TokenEstimator",
