@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-04-01T15:00:26.328478",
+  "violations": 14.0,
+  "experiments": 20,
+  "best_params": {
+    "max_class_size": 500,
+    "max_method_count": 25,
+    "max_complexity": 10,
+    "max_nesting_depth": 4,
+    "coupling_limit": 8.081164901493565
+  },
+  "duration": 0
+}

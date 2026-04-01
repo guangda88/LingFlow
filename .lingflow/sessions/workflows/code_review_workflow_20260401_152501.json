@@ -1,0 +1,14 @@
+{
+  "session_id": "code_review_workflow_20260401_152501",
+  "messages": [
+    "\u542f\u52a8\u5de5\u4f5c\u6d41: code_review_workflow",
+    "\u6267\u884c\u6b65\u9aa4: \u4ee3\u7801\u5206\u6790",
+    "\u6267\u884c\u6b65\u9aa4: \u95ee\u9898\u68c0\u6d4b",
+    "\u6267\u884c\u6b65\u9aa4: \u751f\u6210\u62a5\u544a",
+    "\u6267\u884c\u6b65\u9aa4: \u4fdd\u5b58\u7ed3\u679c"
+  ],
+  "input_tokens": 280,
+  "output_tokens": 400,
+  "created_at": "2026-04-01T15:25:01.602159",
+  "metadata": {}
+}

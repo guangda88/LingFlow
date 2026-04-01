@@ -28,6 +28,29 @@ from lingflow.core.skill import (
     register_skill,
 )
 from lingflow.core.types import Result
+from lingflow.core.session_v2 import (
+    SessionSnapshot,
+    SessionManager,
+)
+from lingflow.core.query_engine import (
+    QueryEngine,
+    QueryEngineConfig,
+    TurnResult,
+    StopReason,
+    UsageSummary,
+    create_default_engine,
+    create_budget_conscious_engine,
+    create_long_conversation_engine,
+)
+from lingflow.core.prompt_router import (
+    PromptRouter,
+    RouteRule,
+    RouteTarget,
+    RouteResult,
+    RouteStrategy,
+    create_default_router,
+    create_code_focused_router,
+)
 
 __all__ = [
     "Constitution",
@@ -54,4 +77,24 @@ __all__ = [
     "layered_unload_skill",
     "mark_task_complete",
     "route_skill",
+    # Session v2 management
+    "SessionSnapshot",
+    "SessionManager",
+    # QueryEngine
+    "QueryEngine",
+    "QueryEngineConfig",
+    "TurnResult",
+    "StopReason",
+    "UsageSummary",
+    "create_default_engine",
+    "create_budget_conscious_engine",
+    "create_long_conversation_engine",
+    # PromptRouter
+    "PromptRouter",
+    "RouteRule",
+    "RouteTarget",
+    "RouteResult",
+    "RouteStrategy",
+    "create_default_router",
+    "create_code_focused_router",
 ]

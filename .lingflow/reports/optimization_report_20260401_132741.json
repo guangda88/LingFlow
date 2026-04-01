@@ -1,0 +1,35 @@
+{
+  "optimization_summary": {
+    "timestamp": "2026-04-01T13:27:41.409216",
+    "target": "/home/ai/LingFlow/lingflow",
+    "goal": "structure",
+    "duration_seconds": 8.411485195159912
+  },
+  "results": {
+    "before": {
+      "violations": 60.0,
+      "params": {
+        "max_class_size": 200,
+        "max_method_count": 15,
+        "max_complexity": 10,
+        "max_nesting_depth": 4,
+        "coupling_limit": 10.0
+      }
+    },
+    "after": {
+      "violations": 17.0,
+      "params": {
+        "max_class_size": 500,
+        "max_method_count": 20,
+        "max_complexity": 10,
+        "max_nesting_depth": 4,
+        "coupling_limit": 8.329317843338403
+      }
+    },
+    "improvement": {
+      "violations_reduced": 43.0,
+      "improvement_percentage": 71.66666666666667
+    },
+    "experiments": 20
+  }
+}

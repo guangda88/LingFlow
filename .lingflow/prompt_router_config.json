@@ -1,0 +1,107 @@
+{
+  "rules": {
+    "code_analysis": {
+      "keywords": [
+        "\u4ee3\u7801",
+        "\u4f18\u5316",
+        "\u91cd\u6784",
+        "\u6027\u80fd",
+        "\u5206\u6790"
+      ],
+      "patterns": [],
+      "priority": 1,
+      "strategy": "keyword_match",
+      "metadata": {
+        "target_name": "code_analyzer"
+      }
+    },
+    "testing": {
+      "keywords": [
+        "\u6d4b\u8bd5",
+        "\u5355\u5143\u6d4b\u8bd5",
+        "\u6d4b\u8bd5\u7528\u4f8b",
+        "\u6d4b\u8bd5\u8986\u76d6"
+      ],
+      "patterns": [],
+      "priority": 1,
+      "strategy": "keyword_match",
+      "metadata": {
+        "target_name": "tester"
+      }
+    },
+    "writing": {
+      "keywords": [
+        "\u5199",
+        "\u6587\u6863",
+        "\u751f\u6210\u6587\u6863",
+        "\u521b\u4f5c",
+        "\u7ffb\u8bd1"
+      ],
+      "patterns": [],
+      "priority": 1,
+      "strategy": "keyword_match",
+      "metadata": {
+        "target_name": "writer"
+      }
+    },
+    "explanation": {
+      "keywords": [
+        "\u89e3\u91ca",
+        "\u4ec0\u4e48\u662f",
+        "\u5982\u4f55",
+        "\u4e3a\u4ec0\u4e48",
+        "\u539f\u7406"
+      ],
+      "patterns": [],
+      "priority": 1,
+      "strategy": "keyword_match",
+      "metadata": {
+        "target_name": "explainer"
+      }
+    }
+  },
+  "targets": {
+    "code_analyzer": {
+      "agent_type": "CodeAnalysisAgent",
+      "description": "\u4ee3\u7801\u5206\u6790\u548c\u4f18\u5316",
+      "capabilities": [
+        "\u9759\u6001\u5206\u6790",
+        "\u6027\u80fd\u4f18\u5316",
+        "\u4ee3\u7801\u91cd\u6784"
+      ],
+      "metadata": {}
+    },
+    "writer": {
+      "agent_type": "WriterAgent",
+      "description": "\u6587\u6863\u548c\u5185\u5bb9\u751f\u6210",
+      "capabilities": [
+        "\u6587\u6863\u751f\u6210",
+        "\u5185\u5bb9\u521b\u4f5c",
+        "\u7ffb\u8bd1"
+      ],
+      "metadata": {}
+    },
+    "tester": {
+      "agent_type": "TestingAgent",
+      "description": "\u6d4b\u8bd5\u4ee3\u7801\u751f\u6210",
+      "capabilities": [
+        "\u5355\u5143\u6d4b\u8bd5",
+        "\u96c6\u6210\u6d4b\u8bd5",
+        "\u6d4b\u8bd5\u4f18\u5316"
+      ],
+      "metadata": {}
+    },
+    "explainer": {
+      "agent_type": "ExplainerAgent",
+      "description": "\u6982\u5ff5\u89e3\u91ca\u548c\u6559\u5b66",
+      "capabilities": [
+        "\u6982\u5ff5\u89e3\u91ca",
+        "\u6559\u7a0b\u751f\u6210",
+        "\u77e5\u8bc6\u89e3\u7b54"
+      ],
+      "metadata": {}
+    }
+  },
+  "default_target": "code_analyzer",
+  "saved_at": "2026-04-01T15:28:19.774876"
+}
