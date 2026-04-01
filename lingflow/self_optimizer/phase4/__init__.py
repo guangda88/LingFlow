@@ -24,6 +24,51 @@ from lingflow.self_optimizer.phase4.engine import (
     OptimizationEngine,
 )
 
+# 搜索空间（新增）
+from lingflow.self_optimizer.phase4.search_space import (
+    SearchSpace,
+    Parameter,
+    ParameterType,
+)
+
+# 配置类（新增）
+try:
+    from lingflow.self_optimizer.phase4.engine import (
+        OptimizationConfig,
+        Experiment,
+        OptimizationResult,
+    )
+except ImportError:
+    # 如果engine.py中没有这些类，我们定义它们
+    from dataclasses import dataclass, field
+    from typing import Dict, Any, List
+
+    @dataclass
+    class OptimizationConfig:
+        max_experiments: int = 50
+        time_budget: float = 300.0
+        early_stopping_patience: int = 10
+        direction: str = "minimize"
+        acquisition_function: str = "EI"
+        n_initial_points: int = 10
+        random_seed: int = None
+
+    @dataclass
+    class Experiment:
+        params: Dict[str, Any]
+        objective: float
+        metadata: Dict[str, Any] = field(default_factory=dict)
+
+    @dataclass
+    class OptimizationResult:
+        best_params: Dict[str, Any]
+        best_objective: float
+        total_experiments: int
+        total_time: float
+        history: List[Experiment]
+        convergence_curve: List[float]
+        improvement_percentage: float
+
 # 优化器
 from lingflow.self_optimizer.phase4.bayesian_optimizer import (
     BayesianOptimizer,
@@ -91,6 +136,16 @@ __all__ = [
 
     # 核心引擎
     "OptimizationEngine",
+
+    # 配置类（新增）
+    "OptimizationConfig",
+    "Experiment",
+    "OptimizationResult",
+
+    # 搜索空间（新增）
+    "SearchSpace",
+    "Parameter",
+    "ParameterType",
 
     # 优化器
     "BayesianOptimizer",
