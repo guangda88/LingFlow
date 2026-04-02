@@ -1,0 +1,55 @@
+name: 'LingFlow Quality Gate'
+description: 'AI-powered code review and quality gate for LingFlow'
+branding:
+  icon: 'check-circle'
+  color: 'blue'
+
+inputs:
+  command:
+    description: 'LingFlow command to run'
+    required: false
+    default: 'review'
+
+  path:
+    description: 'Path to review or analyze'
+    required: true
+    default: './src'
+
+  github_token:
+    description: 'GitHub Token (for PR comments)'
+    required: true
+    default: ${{ github.token }}
+
+  api_key:
+    description: 'LingFlow API Key (optional, for advanced features)'
+    required: false
+
+  fail_on_error:
+    description: 'Fail the workflow if issues are found'
+    required: false
+    default: 'false'
+
+  output_format:
+    description: 'Output format for results'
+    required: false
+    default: 'markdown'
+    # 选项: markdown, json, summary
+
+outputs:
+  result_file:
+    description: 'Path to the result file'
+    value: ${{ steps.run-lingflow.outputs.result_file }}
+
+  issues_found:
+    description: 'Number of issues found'
+    value: ${{ steps.run-lingflow.outputs.issues_found }}
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.command }}
+    - ${{ inputs.path }}
+    - ${{ inputs.output_format }}
+    - ${{ inputs.fail_on_error }}
+    - ${{ inputs.api_key }}

@@ -19,8 +19,8 @@ from typing import Optional
 __version__ = "3.8.0"
 
 # 启动状态
-_startup_completed = False
-_startup_errors = []
+_STARTUP_COMPLETED = False
+_STARTUP_ERRORS = []
 
 
 def get_version() -> str:
@@ -77,7 +77,7 @@ def init_smart_compression(
         )
         return compressor
     except Exception as e:
-        _startup_errors.append(f"压缩器初始化失败: {e}")
+        _STARTUP_ERRORS.append(f"压缩器初始化失败: {e}")
         return None
 
 
@@ -91,7 +91,7 @@ def init_context_manager() -> Optional[object]:
         from lingflow.context import get_context_manager
         return get_context_manager()
     except Exception as e:
-        _startup_errors.append(f"上下文管理器初始化失败: {e}")
+        _STARTUP_ERRORS.append(f"上下文管理器初始化失败: {e}")
         return None
 
 
@@ -118,7 +118,7 @@ def show_session_resume(
         if resume_text:
             print(resume_text, file=sys.stderr)
     except Exception as e:
-        _startup_errors.append(f"会话恢复显示失败: {e}")
+        _STARTUP_ERRORS.append(f"会话恢复显示失败: {e}")
 
 
 def init_hooks(enabled: bool = True) -> Optional[object]:
@@ -138,7 +138,7 @@ def init_hooks(enabled: bool = True) -> Optional[object]:
         hook = get_global_hook()
         return hook
     except Exception as e:
-        _startup_errors.append(f"钩子系统初始化失败: {e}")
+        _STARTUP_ERRORS.append(f"钩子系统初始化失败: {e}")
         return None
 
 
@@ -159,7 +159,7 @@ def bootstrap(
     Returns:
         启动状态字典
     """
-    global _startup_completed
+    global _STARTUP_COMPLETED
 
     status = {
         "version": __version__,
@@ -190,22 +190,22 @@ def bootstrap(
         show_session_resume()
 
     # 收集错误
-    status["errors"] = _startup_errors.copy()
-    if _startup_errors:
+    status["errors"] = _STARTUP_ERRORS.copy()
+    if _STARTUP_ERRORS:
         status["success"] = False
 
-    _startup_completed = True
+    _STARTUP_COMPLETED = True
     return status
 
 
 def is_startup_completed() -> bool:
     """检查启动是否完成"""
-    return _startup_completed
+    return _STARTUP_COMPLETED
 
 
 def get_startup_errors() -> list:
     """获取启动过程中的错误"""
-    return _startup_errors.copy()
+    return _STARTUP_ERRORS.copy()
 
 
 # ============================================================================
@@ -214,7 +214,7 @@ def get_startup_errors() -> list:
 
 def _auto_bootstrap():
     """模块导入时自动执行启动"""
-    if not _startup_completed:
+    if not _STARTUP_COMPLETED:
         bootstrap(
             compression=True,
             auto_resume=True,

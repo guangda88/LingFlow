@@ -117,7 +117,10 @@ class Constitution:
             cwe="CWE-89",
             name="SQL Injection",
             level=EnforcementLevel.MUST,
-            constraint="Database queries MUST use parameterized statements or ORM methods exclusively",
+            constraint=(
+                "Database queries MUST use parameterized statements "
+                "or ORM methods exclusively"
+            ),
             implementation_pattern="SQLAlchemy, parameterized queries, prepared statements",
             rationale="Prevents arbitrary SQL command execution via user input",
         ),
@@ -154,7 +157,10 @@ class Constitution:
             name="Path Traversal",
             level=EnforcementLevel.MUST,
             constraint="MUST validate and sanitize all file path inputs",
-            implementation_pattern="Use os.path.abspath, validate file paths against allowed directories",
+            implementation_pattern=(
+                "Use os.path.abspath, validate file paths "
+                "against allowed directories"
+            ),
             rationale="Prevents unauthorized file system access",
         ),
         ConstitutionalPrinciple(
@@ -172,7 +178,10 @@ class Constitution:
             name="Deserialization of Untrusted Data",
             level=EnforcementLevel.MUST,
             constraint="MUST avoid deserializing untrusted data",
-            implementation_pattern="Use safe serialization formats (JSON), validate serialized data",
+            implementation_pattern=(
+                "Use safe serialization formats (JSON), "
+                "validate serialized data"
+            ),
             rationale="Deserialization can lead to arbitrary code execution",
         ),
         ConstitutionalPrinciple(
@@ -436,7 +445,10 @@ class Constitution:
                                 principle_id=principle.id,
                                 principle_name=principle.name,
                                 severity=principle.level,
-                                description=f"Potential SQL injection vulnerability: {line.strip()}",
+                                description=(
+                                    f"Potential SQL injection vulnerability: "
+                                    f"{line.strip()}"
+                                ),
                                 location=file_path,
                                 line_number=i,
                                 suggested_fix=principle.implementation_pattern,

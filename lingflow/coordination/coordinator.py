@@ -139,7 +139,7 @@ class AgentCoordinator(BaseCoordinator):
         """查找适合任务的代理"""
         agents = self.registry.find_agents_for_task(task)
         if not agents:
-            logger.warning(f"No agent found for task {task.task_id}")
+            logger.warning("No agent found for task %s", task.task_id)
             return None
         return agents[0]
 
@@ -154,16 +154,17 @@ class AgentCoordinator(BaseCoordinator):
 
             if budget_status.level.value in ("critical", "emergency"):
                 logger.warning(
-                    f"Context budget {budget_status.usage_ratio:.1%} ({budget_status.level.value}), "
-                    "applying aggressive compression"
+                    "Context budget %.1f%% (%s), applying aggressive compression",
+                    budget_status.usage_ratio * 100,
+                    budget_status.level.value
                 )
 
             return self.compressor.compress(context)
         except (ValueError, KeyError, TypeError) as e:
-            logger.warning(f"Context compression failed: {e}")
+            logger.warning("Context compression failed: %s", e)
             return context
         except Exception as e:
-            logger.error(f"Unexpected error during compression: {e}")
+            logger.error("Unexpected error during compression: %s", e)
             return context
 
     def _create_error_result(self, task: Task, error: str) -> TaskResult:
@@ -175,7 +176,7 @@ class AgentCoordinator(BaseCoordinator):
         results = {}
         for result in results_list:
             if isinstance(result, Exception):
-                logger.error(f"Exception in task result: {result}")
+                logger.error("Exception in task result: %s", result)
                 continue
 
             if result:
@@ -183,10 +184,10 @@ class AgentCoordinator(BaseCoordinator):
 
                 if result.success:
                     self.completed_tasks[result.task_id] = result
-                    logger.debug(f"Task {result.task_id} completed successfully")
+                    logger.debug("Task %s completed successfully", result.task_id)
                 else:
                     self.failed_tasks[result.task_id] = result
-                    logger.warning(f"Task {result.task_id} failed: {result.error}")
+                    logger.warning("Task %s failed: %s", result.task_id, result.error)
         return results
 
     def get_status(self) -> Dict[str, Any]:
@@ -275,11 +276,11 @@ class AgentCoordinator(BaseCoordinator):
             return None
 
         if not (3 <= len(skill_name) <= 50):
-            logger.warning(f"Invalid skill name length: {skill_name}")
+            logger.warning("Invalid skill name length: %s", skill_name)
             return None
 
         if not re.match(r"^[a-z0-9_-]+$", skill_name):
-            logger.warning(f"Invalid skill name format: {skill_name}")
+            logger.warning("Invalid skill name format: %s", skill_name)
             return None
 
         # 构建并验证路径
@@ -287,7 +288,7 @@ class AgentCoordinator(BaseCoordinator):
         try:
             skills_dir = skills_dir.resolve()
         except Exception as e:
-            logger.error(f"Failed to resolve skills directory: {e}")
+            logger.error("Failed to resolve skills directory: %s", e)
             return None
 
         skill_path = skills_dir / skill_name / "implementation.py"
@@ -296,17 +297,17 @@ class AgentCoordinator(BaseCoordinator):
         try:
             skill_path = skill_path.resolve(strict=True)
         except FileNotFoundError:
-            logger.warning(f"Skill file not found: {skill_path}")
+            logger.warning("Skill file not found: %s", skill_path)
             return None
         except RuntimeError:
-            logger.warning(f"Skill path resolution failed: {skill_path}")
+            logger.warning("Skill path resolution failed: %s", skill_path)
             return None
 
         # 确保路径在 skills 目录内（防止路径遍历攻击）
         try:
             skill_path.relative_to(skills_dir)
         except ValueError:
-            logger.warning(f"Path traversal attempt detected: {skill_path}")
+            logger.warning("Path traversal attempt detected: %s", skill_path)
             return None
 
         return str(skill_path)

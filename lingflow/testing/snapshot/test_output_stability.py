@@ -71,7 +71,10 @@ class CodeAnalyzer:
                     "name": node.name,
                     "lineno": node.lineno,
                     "args": [arg.arg for arg in node.args.args],
-                    "decorators": [d.id if isinstance(d, ast.Name) else str(type(d).__name__) for d in node.decorator_list],
+                    "decorators": [
+                        d.id if isinstance(d, ast.Name) else str(type(d).__name__)
+                        for d in node.decorator_list
+                    ],
                     "has_return": any(isinstance(n, ast.Return) for n in ast.walk(node))
                 }
                 result["functions"].append(func_info)
@@ -82,7 +85,10 @@ class CodeAnalyzer:
                 class_info = {
                     "name": node.name,
                     "lineno": node.lineno,
-                    "bases": [base.id if isinstance(base, ast.Name) else str(type(base).__name__) for base in node.bases],
+                    "bases": [
+                        base.id if isinstance(base, ast.Name) else str(type(base).__name__)
+                        for base in node.bases
+                    ],
                     "methods": [n.name for n in node.body if isinstance(n, ast.FunctionDef)]
                 }
                 result["classes"].append(class_info)

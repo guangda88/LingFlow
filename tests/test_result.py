@@ -2,7 +2,8 @@
 
 import pytest
 
-from lingflow.core.types import LingFlowError, Result
+from lingflow.common.exceptions import LingFlowError
+from lingflow.core.types import Result
 
 
 class TestLingFlowError:

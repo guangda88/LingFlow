@@ -1,4 +1,8 @@
-"""LingFlow 配置管理模块"""
+"""LingFlow 配置管理模块
+
+Single source of truth for LingFlow configuration.
+Loading priority: LINGFLOW_ env vars > config.yaml > DEFAULT_CONFIG.
+"""
 
 import functools
 import logging
@@ -72,8 +76,19 @@ class ConfigManager:
         self._cache: Dict[str, Any] = {}  # 配置缓存
         self.config = self._load_config()
 
+    # Supported LINGFLOW_ env var overrides (env name -> dot-notation key)
+    ENV_OVERRIDES = {
+        "LINGFLOW_LOG_LEVEL": "logging.level",
+        "LINGFLOW_MAX_PARALLEL": "workflow.max_parallel",
+        "LINGFLOW_MAX_ITERATIONS": "workflow.max_iterations",
+        "LINGFLOW_SKILLS_PATH": "skills.path",
+        "LINGFLOW_SKILL_TIMEOUT": "skills.default_timeout",
+        "LINGFLOW_COMPRESSION_ENABLED": "compression.enabled",
+        "LINGFLOW_AGENT_TIMEOUT": "agents.timeout",
+    }
+
     def _load_config(self) -> dict:
-        """加载配置"""
+        """加载配置（优先级：环境变量 > 配置文件 > 默认值）"""
         config = DEFAULT_CONFIG.copy()
 
         # 加载配置文件
@@ -83,11 +98,43 @@ class ConfigManager:
                     file_config = yaml.safe_load(f)
                 if file_config:
                     self._merge_config(config, file_config)
-                    self._cache.clear()  # 清除缓存
+                    self._cache.clear()
             except Exception as e:
                 logger.warning(f"加载配置文件失败: {str(e)}")
 
+        # 环境变量覆盖
+        for env_key, config_key in self.ENV_OVERRIDES.items():
+            env_val = os.environ.get(env_key)
+            if env_val is not None:
+                self._set_nested(config, config_key, self._parse_env_value(env_val))
+
         return config
+
+    @staticmethod
+    def _set_nested(config: dict, key: str, value: Any) -> None:
+        """Set a nested dict value using dot-notation key."""
+        keys = key.split(".")
+        d = config
+        for k in keys[:-1]:
+            d = d.setdefault(k, {})
+        d[keys[-1]] = value
+
+    @staticmethod
+    def _parse_env_value(value: str) -> Any:
+        """Parse env var string to appropriate Python type."""
+        if value.lower() in ("true", "1", "yes"):
+            return True
+        if value.lower() in ("false", "0", "no"):
+            return False
+        try:
+            return int(value)
+        except ValueError:
+            pass
+        try:
+            return float(value)
+        except ValueError:
+            pass
+        return value
 
     def _merge_config(self, base: dict, override: dict):
         """合并配置"""
@@ -173,6 +220,7 @@ class ConfigManager:
     def save(self):
         """保存配置"""
         try:
+            os.makedirs(os.path.dirname(self.config_file) or ".", exist_ok=True)
             with open(self.config_file, "w", encoding="utf-8") as f:
                 yaml.dump(self.config, f, default_flow_style=False, allow_unicode=True)
             return True

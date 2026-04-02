@@ -123,7 +123,7 @@ LingFlow能够自我优化和进化：
 
 ## 版本信息
 
-当前版本: **v3.5.6**
+当前版本: **v3.8.0**
 
 更新日志请查看 [GitHub Releases](https://github.com/guangda88/LingFlow/releases)
 

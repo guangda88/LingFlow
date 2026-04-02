@@ -41,6 +41,12 @@ class DegradationReport:
     recommendations: List[str] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
+        """Convert the degradation report to a dictionary.
+
+        Returns:
+            Dict[str, Any]: Dictionary representation of the report with
+                health status, score, detected types, details, and recommendations.
+        """
         return {
             "health": self.health.value,
             "score": round(self.score, 3),
@@ -62,6 +68,13 @@ class DegradationDetector:
     INSTRUCTION_KEYWORDS = {
         "must", "should", "require", "ensure", "never",
         "always", "需要", "必须", "确保", "不要",
+    }
+
+    # Context-aware drift keywords: these are stronger signals of instruction adherence
+    DRIFT_NEGATIVE_INDICATORS = {
+        "sorry", "apologize", "i can't", "i cannot", "unfortunately",
+        "let me try again", "as an ai", "as a language model",
+        "抱歉", "对不起", "我无法", "作为AI", "作为语言模型",
     }
 
     def __init__(
@@ -102,8 +115,8 @@ class DegradationDetector:
         similarities = []
         for i in range(1, len(assistant_msgs)):
             sim = self._compute_similarity(
-                assistant_msgs[i - 1].get("content", ""),
-                assistant_msgs[i].get("content", ""),
+                assistant_msgs[i - 1].get("content") or "",
+                assistant_msgs[i].get("content") or "",
             )
             similarities.append(sim)
 
@@ -146,10 +159,14 @@ class DegradationDetector:
 
         drift_scores = []
         for msg in assistant_msgs[-3:]:
-            content = msg.get("content", "").lower()
+            content = (msg.get("content") or "").lower()
             overlap = sum(1 for w in instruction_words if w in content)
             adherence = overlap / len(instruction_words) if instruction_words else 0
-            drift_scores.append(1.0 - adherence)
+
+            # Boost score if negative indicators present (stronger drift signal)
+            has_negative = any(ind in content for ind in self.DRIFT_NEGATIVE_INDICATORS)
+            adjusted_drift = (1.0 - adherence) + (0.15 if has_negative else 0.0)
+            drift_scores.append(min(adjusted_drift, 1.0))
 
         avg_drift = sum(drift_scores) / len(drift_scores)
         return avg_drift > 0.7, avg_drift
@@ -179,7 +196,7 @@ class DegradationDetector:
 
         error_count = 0
         for msg in assistant_msgs:
-            content = msg.get("content", "").lower()
+            content = (msg.get("content") or "").lower()
             if any(indicator in content for indicator in error_indicators):
                 error_count += 1
 
@@ -220,10 +237,11 @@ class DegradationDetector:
             detected.append(DegradationType.ATTENTION_DILUTION)
             recommendations.append("错误率异常升高，可能存在上下文信息过载")
 
-        # 检测指令漂移 (使用通用指令)
-        is_drift, drift_score = self.check_instruction_drift(
-            list(self.INSTRUCTION_KEYWORDS), messages
-        )
+        # 检测指令漂移 (使用语义漂移检测: 检查是否出现拒绝/无法执行的信号)
+        drift_score = 0.0
+        is_drift = False
+        if len(messages) >= self.MIN_MESSAGES_FOR_ANALYSIS:
+            is_drift, drift_score = self._check_semantic_drift(messages)
         scores["instruction_drift"] = 1.0 - drift_score
         if is_drift:
             detected.append(DegradationType.INSTRUCTION_DRIFT)
@@ -264,8 +282,46 @@ class DegradationDetector:
             recommendations=recommendations,
         )
 
+    def _check_semantic_drift(self, messages: List[Dict[str, str]]) -> Tuple[bool, float]:
+        """检测语义漂移 (无需显式指令)
+
+        通过检查最近的 assistant 消息是否包含拒绝/回避信号来检测漂移，
+        而非简单地检查关键词匹配。避免了健康对话的误报。
+
+        Args:
+            messages: 消息列表
+
+        Returns:
+            (是否检测到漂移, 漂移分数)
+        """
+        recent = messages[-self.window_size:]
+        assistant_msgs = [m for m in recent if m.get("role") == "assistant"]
+
+        if not assistant_msgs:
+            return False, 0.0
+
+        drift_indicators = 0
+        for msg in assistant_msgs[-3:]:
+            content = (msg.get("content") or "").lower()
+            if any(ind in content for ind in self.DRIFT_NEGATIVE_INDICATORS):
+                drift_indicators += 1
+
+        if not assistant_msgs[-3:]:
+            return False, 0.0
+
+        drift_score = drift_indicators / len(assistant_msgs[-3:])
+        return drift_score > 0.5, drift_score
+
     def _compute_similarity(self, text1: str, text2: str) -> float:
-        """计算两段文本的相似度（基于 N-gram Jaccard）"""
+        """计算两段文本的相似度（基于 N-gram Jaccard）
+
+        Args:
+            text1: 第一段文本
+            text2: 第二段文本
+
+        Returns:
+            float: 相似度分数 (0.0-1.0)
+        """
         if not text1 or not text2:
             return 0.0
 
@@ -281,7 +337,15 @@ class DegradationDetector:
         return intersection / union if union > 0 else 0.0
 
     def _get_ngrams(self, text: str, n: int = 3) -> set:
-        """提取文本的字符级 N-gram"""
+        """提取文本的字符级 N-gram
+
+        Args:
+            text: 输入文本
+            n: N-gram 大小
+
+        Returns:
+            set: N-gram 集合
+        """
         words = text.lower().split()
         if len(words) < n:
             return {tuple(words)} if words else set()

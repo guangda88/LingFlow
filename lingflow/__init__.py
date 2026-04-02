@@ -19,18 +19,18 @@ from typing import Any, Dict, Optional
 logger = logging.getLogger(__name__)
 
 # 核心模块（延迟导入，避免循环依赖）
-_AgentCoordinator = None
-_WorkflowOrchestrator = None
+_AGENT_COORDINATOR = None
+_WORKFLOW_ORCHESTRATOR = None
 
 
 def _import_core_modules():
     """延迟导入核心模块"""
-    global _AgentCoordinator, _WorkflowOrchestrator
-    if _AgentCoordinator is None:
+    global _AGENT_COORDINATOR, _WORKFLOW_ORCHESTRATOR
+    if _AGENT_COORDINATOR is None:
         from .coordination.coordinator import AgentCoordinator
         from .workflow.orchestrator import WorkflowOrchestrator
-        _AgentCoordinator = AgentCoordinator
-        _WorkflowOrchestrator = WorkflowOrchestrator
+        _AGENT_COORDINATOR = AgentCoordinator
+        _WORKFLOW_ORCHESTRATOR = WorkflowOrchestrator
 
 
 def _initialize_services():
@@ -108,8 +108,8 @@ class LingFlow:
         config = config or {}
 
         # 初始化协调器
-        self._coordinator = _AgentCoordinator()
-        self._orchestrator = _WorkflowOrchestrator(self._coordinator)
+        self._coordinator = _AGENT_COORDINATOR()
+        self._orchestrator = _WORKFLOW_ORCHESTRATOR(self._coordinator)
 
     def run_skill(self, skill_name: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """直接执行单个技能

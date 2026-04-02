@@ -18,16 +18,23 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 class TestCIWorkflowConfiguration:
     """CI 工作流配置测试"""
 
+    @property
+    def _workflow_path(self) -> Path:
+        """获取工作流文件路径"""
+        return Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+
     def test_workflow_file_exists(self):
         """测试工作流文件存在"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        root_dir = Path(__file__).parent.parent.parent.parent
+        workflow_path = root_dir / ".github" / "workflows" / "testing-framework.yml"
         assert workflow_path.exists(), "CI 工作流文件应该存在"
 
     def test_workflow_yaml_valid(self):
         """测试工作流 YAML 格式有效"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        root_dir = Path(__file__).parent.parent.parent.parent
+        workflow_path = root_dir / ".github" / "workflows" / "testing-framework.yml"
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         assert workflow is not None
@@ -36,9 +43,9 @@ class TestCIWorkflowConfiguration:
 
     def test_workflow_has_required_jobs(self):
         """测试工作流包含必需的任务"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         jobs = workflow.get("jobs", {})
@@ -55,9 +62,9 @@ class TestCIWorkflowConfiguration:
 
     def test_unit_tests_matrix(self):
         """测试单元测试矩阵配置"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         unit_tests = workflow["jobs"]["unit-tests"]
@@ -70,9 +77,9 @@ class TestCIWorkflowConfiguration:
 
     def test_coverage_threshold(self):
         """测试覆盖率阈值配置"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         coverage_job = workflow["jobs"]["test-coverage"]
@@ -92,9 +99,9 @@ class TestCIWorkflowConfiguration:
 
     def test_codecov_integration(self):
         """测试 Codecov 集成配置"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         # 检查是否有使用 codecov-action
@@ -109,9 +116,9 @@ class TestCIWorkflowConfiguration:
 
     def test_parallel_execution(self):
         """测试并行执行配置"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         parallel_job = workflow["jobs"].get("parallel-tests")
@@ -129,9 +136,9 @@ class TestCIWorkflowConfiguration:
 
     def test_security_scan(self):
         """测试安全扫描配置"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         security_job = workflow["jobs"].get("security-scan")
@@ -149,9 +156,9 @@ class TestCIWorkflowConfiguration:
 
     def test_test_report_job(self):
         """测试测试报告任务配置"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         report_job = workflow["jobs"].get("test-report")
@@ -172,9 +179,9 @@ class TestCIWorkflowConfiguration:
 
     def test_workflow_triggers(self):
         """测试工作流触发器配置"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         # YAML 解析时 'on' 会被解析为 True
@@ -194,9 +201,9 @@ class TestCIWorkflowConfiguration:
 
     def test_artifact_upload(self):
         """测试工件上传配置"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         # 检查是否有上传工件的操作
@@ -215,9 +222,9 @@ class TestCIBestPractices:
 
     def test_python_version_matrix(self):
         """测试 Python 版本矩阵"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         unit_tests = workflow["jobs"]["unit-tests"]
@@ -231,9 +238,9 @@ class TestCIBestPractices:
 
     def test_coverage_report_generation(self):
         """测试覆盖率报告生成"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         coverage_job = workflow["jobs"]["test-coverage"]
@@ -252,9 +259,9 @@ class TestCIBestPractices:
 
     def test_junit_xml_output(self):
         """测试 JUnit XML 输出"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         # 检查测试任务是否输出 JUnit XML
@@ -273,9 +280,9 @@ class TestCIBestPractices:
 
     def test_cache_usage(self):
         """测试缓存使用（可选）"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         # 检查是否有使用缓存（这是最佳实践，但不是必需的）
@@ -296,9 +303,9 @@ class TestCIIntegration:
 
     def test_workflow_tests_correct_directory(self):
         """测试工作流测试正确的目录"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         # 检查测试命令是否指向正确的目录
@@ -314,9 +321,9 @@ class TestCIIntegration:
 
     def test_dependencies_installation(self):
         """测试依赖安装"""
-        workflow_path = Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
 
-        with open(workflow_path, 'r') as f:
+        with open(workflow_path, 'r', encoding='utf-8') as f:
             workflow = yaml.safe_load(f)
 
         # 检查是否安装 pytest

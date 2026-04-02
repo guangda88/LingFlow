@@ -30,8 +30,8 @@ FROM base as cli
 
 # 复制 LingFlow 核心库
 COPY lingflow/ /app/lingflow/
-COPY setup.py /app/
 COPY pyproject.toml /app/
+COPY VERSION /app/
 
 # 安装 LingFlow
 RUN pip install -e .

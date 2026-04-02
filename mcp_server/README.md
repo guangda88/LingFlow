@@ -1,6 +1,6 @@
 # LingFlow MCP Server v1.3.0
 
-将 LingFlow v3.7.0 的工程流能力封装为 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) 服务器，使 AI 助手（Claude Desktop、Cursor 等）可直接调用 LingFlow 功能。
+将 LingFlow v3.8.0 的工程流能力封装为 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) 服务器，使 AI 助手（Claude Desktop、Cursor 等）可直接调用 LingFlow 功能。
 
 **版本**: v1.3.0 (Phase 3 完成)
 **状态**: ✅ 生产就绪
@@ -56,59 +56,77 @@ lingflow-mcp test
 
 ## 🛠️ 可用工具
 
+### 灵系命名（国学雅正版）
+
+**核心理念**: "众智混元，万法灵通"
+
+所有工具采用**灵系命名**，引用经史子集、诗赋韵语，务求音谐意雅：
+
+| 中文名 | 英文工具名称 | 功能 | 典故 |
+|--------|-------------|------|------|
+| 灵艺 | list_skills | 列出技能 | 《周礼》六艺 |
+| 灵行 | run_skill | 执行技能 | 《易》行健 |
+| 灵鉴 | review_code | 代码审查 | 《诗》殷鉴 |
+| 灵探 | get_github_trends | GitHub趋势 | 《论语》探汤 |
+| 灵觉 | get_npm_trends | npm趋势 | 《孟子》知觉 |
+
+---
+
 ### Phase 1: 高优先级工具 (P0) ✅
 
-| 工具名称 | 描述 | 分类 |
-|---------|------|------|
-| `list_skills` | 列出所有可用技能（8个内置） | 查询 |
-| `run_skill` | 执行指定技能 | 执行 |
-| `review_code` | 8维度代码审查 | 审查 |
-| `get_github_trends` | 采集 GitHub 趋势项目 | 情报 |
-| `get_npm_trends` | 采集 npm 趋势包 | 情报 |
+| 工具名称 | 中文名 | 描述 | 分类 |
+|---------|--------|------|------|
+| `list_skills` | 灵艺 | 列出所有可用技能（8个内置） | 查询 |
+| `run_skill` | 灵行 | 执行指定技能 | 执行 |
+| `review_code` | 灵鉴 | 8维度代码审查 | 审查 |
+| `get_github_trends` | 灵探 | 采集 GitHub 趋势项目 | 情报 |
+| `get_npm_trends` | 灵觉 | 采集 npm 趋势包 | 情报 |
 
 ### Phase 2: 中优先级工具 (P1) ✅
 
 **工作流管理**:
-| 工具名称 | 描述 | 新增 |
-|---------|------|------|
-| `list_workflows` | 列出所有工程流（15+），支持过滤 | ⭐ |
-| `run_workflow` | 执行工程流（异步，支持3种策略） | ⭐ |
-| `get_workflow_status` | 获取工作流详细状态 | 🆕 |
+| 工具名称 | 中文名 | 描述 | 新增 |
+|---------|--------|------|------|
+| `list_workflows` | 灵流 | 列出所有工程流（15+），支持过滤 | ⭐ |
+| `run_workflow` | 灵运 | 执行工程流（异步，支持3种策略） | ⭐ |
+| `get_workflow_status` | 灵踪 | 获取工作流详细状态 | 🆕 |
 
 **需求管理**:
-| 工具名称 | 描述 | 新增 |
-|---------|------|------|
-| `create_requirement` | 创建需求（支持分类和标签） | ⭐ |
-| `get_requirement` | 获取需求详情 | ✅ |
-| `update_requirement` | 更新需求信息 | 🆕 |
-| `list_requirements` | 列出需求（支持过滤和分页） | 🆕 |
-| `link_requirement_to_branch` | 关联需求到 Git 分支 | 🆕 |
+| 工具名称 | 中文名 | 描述 | 新增 |
+|---------|--------|------|------|
+| `create_requirement` | 灵愿 | 创建需求（支持分类和标签） | ⭐ |
+| `get_requirement` | 灵览 | 获取需求详情 | ✅ |
+| `update_requirement` | 灵新 | 更新需求信息 | 🆕 |
+| `list_requirements` | 灵录 | 列出需求（支持过滤和分页） | 🆕 |
+| `link_requirement_to_branch` | 灵联 | 关联需求到 Git 分支 | 🆕 |
 
 **异步任务**:
-| 工具名称 | 描述 | 新增 |
-|---------|------|------|
-| `get_task_status` | 查询异步任务状态 | ✅ |
-| `list_tasks` | 列出所有异步任务 | 🆕 |
+| 工具名称 | 中文名 | 描述 | 新增 |
+|---------|--------|------|------|
+| `get_task_status` | 灵讯 | 查询异步任务状态 | ✅ |
+| `list_tasks` | 灵任 | 列出所有异步任务 | 🆕 |
 
 **总计**: **15 个工具**
 
 ### Phase 3: 运维监控工具 (P2) ✅
 
 **测试运行**:
-| 工具名称 | 描述 | 新增 |
-|---------|------|------|
-| `run_tests` | 运行测试套件（支持单元/集成测试） | ⭐ |
-| `get_coverage` | 获取测试覆盖率（支持多种格式） | ⭐ |
-| `generate_test_report` | 生成测试报告（Markdown/JSON/HTML） | ⭐ |
+| 工具名称 | 中文名 | 描述 | 新增 |
+|---------|--------|------|------|
+| `run_tests` | 灵验 | 运行测试套件（支持单元/集成测试） | ⭐ |
+| `get_coverage` | 灵覆 | 获取测试覆盖率（支持多种格式） | ⭐ |
+| `generate_test_report` | 灵书 | 生成测试报告（Markdown/JSON/HTML） | ⭐ |
 
 **运维监控**:
-| 工具名称 | 描述 | 新增 |
-|---------|------|------|
-| `get_health_status` | 系统健康检查（磁盘/内存/CPU） | ⭐ |
-| `get_metrics` | 性能指标（CPU/内存/磁盘/进程） | ⭐ |
-| `detect_anomaly` | 异常检测（基于历史数据和阈值） | ⭐ |
+| 工具名称 | 中文名 | 描述 | 新增 |
+|---------|--------|------|------|
+| `get_health_status` | 灵脉 | 系统健康检查（磁盘/内存/CPU） | ⭐ |
+| `get_metrics` | 灵量 | 性能指标（CPU/内存/磁盘/进程） | ⭐ |
+| `detect_anomaly` | 灵警 | 异常检测（基于历史数据和阈值） | ⭐ |
 
 **工具总数**: **21 个** (Phase 1: 5, Phase 2: 10, Phase 3: 6)
+
+**命名体系**: 灵系雅正 - 参以经史子集、诗赋韵语
 
 ## 📖 使用示例
 
@@ -275,7 +293,7 @@ lingflow-mcp run [OPTIONS]
 │  └─────────────┬─────────────────────┘  │
 │                │                         │
 │  ┌─────────────▼─────────────────────┐  │
-│  │  LingFlow Core (v3.7.0)           │  │
+│  │  LingFlow Core (v3.8.0)           │  │
 │  │  - 33 skills                      │  │
 │  │  - 15+ workflows                  │  │
 │  │  - Code review                    │  │

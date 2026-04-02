@@ -133,8 +133,8 @@ class ComplianceMatrix:
                         coverage=entry_data.get("coverage", 0.0),
                     )
                     self.entries[entry.principle_id] = entry
-            except Exception as e:
-                logger.error(f"Error loading compliance matrix: {e}")
+            except (json.JSONDecodeError, ValueError, KeyError, TypeError, OSError) as e:
+                logger.error(f"Error loading compliance matrix from {self.path}: {e}")
                 self.entries = {}
 
     def save(self):
@@ -155,7 +155,11 @@ class ComplianceMatrix:
         def implementation_to_dict(imp: Implementation) -> Dict[str, Any]:
             """Convert implementation to dictionary with enum serialization"""
             imp_dict = asdict(imp)
-            imp_dict["status"] = imp.status.value if isinstance(imp.status, VerificationStatus) else imp.status
+            imp_dict["status"] = (
+                imp.status.value
+                if isinstance(imp.status, VerificationStatus)
+                else imp.status
+            )
             return imp_dict
 
         return {
@@ -335,7 +339,8 @@ class ComplianceMatrix:
                 "## Overall Status",
                 "",
                 f"- **Total Principles**: {overall['total_principles']}",
-                f"- **Principles with Implementations**: {overall['principles_with_implementations']}",
+                f"- **Principles with Implementations**: "
+                f"{overall['principles_with_implementations']}",
                 f"- **Verified Principles**: {overall['verified_principles']}",
                 f"- **Average Coverage**: {overall['average_coverage']}",
                 f"- **Verification Rate**: {overall['verification_rate']}",
@@ -553,7 +558,11 @@ class ComplianceMatrix:
             for imp in entry.implementations:
                 if imp.file == file_path:
                     # Handle both enum and string status
-                    status_value = imp.status.value if isinstance(imp.status, VerificationStatus) else imp.status
+                    status_value = (
+                        imp.status.value
+                        if isinstance(imp.status, VerificationStatus)
+                        else imp.status
+                    )
                     principles.append(
                         {
                             "principle_id": principle_id,

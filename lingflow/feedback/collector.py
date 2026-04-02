@@ -99,7 +99,7 @@ class FeedbackCollector:
                     for item in data.get("feedbacks", []):
                         self._feedbacks.append(self._dict_to_feedback(item))
             except Exception as e:
-                logger.warning(f"加载反馈失败: {e}")
+                logger.warning("加载反馈失败: %s", e)
 
     def _dict_to_feedback(self, data: Dict[str, Any]) -> Feedback:
         """从字典创建反馈对象"""

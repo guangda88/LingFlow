@@ -119,7 +119,7 @@ class TestWorkflowDegradationIntegration:
         orch._workflow_messages = [{"role": "old", "content": "stale"}]
         orch._degradation_report = {"old": True}
 
-        with patch("asyncio.run", side_effect=Exception("test")):
+        with patch("asyncio.run", side_effect=RuntimeError("test")):
             with pytest.raises(RuntimeError):
                 orch.execute([])
 

@@ -65,18 +65,21 @@ class WorkflowOrchestrator:
         tasks_data = workflow_data.get('tasks') or workflow_data.get('stages', [])
 
         if not tasks_data:
-            logger.warning(f"No tasks found in workflow: {filepath}")
+            logger.warning("No tasks found in workflow: %s", filepath)
             return []
 
         tasks = []
         for task_def in tasks_data:
             task_id = task_def.get('id', task_def.get('name'))
             if not task_id:
-                logger.warning(f"Task missing id/name: {task_def}")
+                logger.warning("Task missing id/name: %s", task_def)
                 continue
 
             # 解析优先级
-            priority_str = task_def.get('priority', task_def.get('metadata', {}).get('priority', 'normal'))
+            priority_str = task_def.get(
+                'priority',
+                task_def.get('metadata', {}).get('priority', 'normal')
+            )
             priority_map = {
                 'high': TaskPriority.HIGH,
                 'normal': TaskPriority.NORMAL,
@@ -99,7 +102,7 @@ class WorkflowOrchestrator:
             )
             tasks.append(task)
 
-        logger.info(f"Loaded {len(tasks)} tasks from {filepath}")
+        logger.info("Loaded %d tasks from %s", len(tasks), filepath)
         return tasks
 
     async def execute_workflow(
@@ -126,7 +129,8 @@ class WorkflowOrchestrator:
             return {}
 
         logger.info(
-            f"Starting workflow execution with {len(tasks)} tasks, max_parallel={max_parallel}"
+            "Starting workflow execution with %d tasks, max_parallel=%d",
+            len(tasks), max_parallel
         )
         results = {}
 
@@ -138,8 +142,8 @@ class WorkflowOrchestrator:
         for task in tasks:
             try:
                 self.coordinator.submit_task(task)
-            except Exception as e:
-                logger.error(f"Failed to submit task {task.task_id}: {e}")
+            except (ValueError, TypeError, RuntimeError, AttributeError) as e:
+                logger.error("Failed to submit task %s: %s", task.task_id, e)
                 results[task.task_id] = TaskResult(
                     task_id=task.task_id, success=False, error=str(e)
                 )
@@ -155,10 +159,10 @@ class WorkflowOrchestrator:
             ready_tasks = self._get_ready_tasks(tasks)
 
             if not ready_tasks:
-                logger.debug(f"Iteration {iteration}: No ready tasks, waiting for dependencies")
+                logger.debug("Iteration %d: No ready tasks, waiting for dependencies", iteration)
                 break
 
-            logger.debug(f"Iteration {iteration}: Executing {len(ready_tasks)} ready tasks")
+            logger.debug("Iteration %d: Executing %d ready tasks", iteration, len(ready_tasks))
 
             # 并行执行准备好的任务
             try:
@@ -166,8 +170,8 @@ class WorkflowOrchestrator:
                     ready_tasks, max_parallel
                 )
                 results.update(batch_results)
-            except Exception as e:
-                logger.error(f"Failed to execute batch of tasks: {e}")
+            except (RuntimeError, ValueError, asyncio.TimeoutError) as e:
+                logger.error("Failed to execute batch of tasks: %s", e)
                 break
 
             # 短暂延迟
@@ -181,13 +185,15 @@ class WorkflowOrchestrator:
         total_completed = len(self.coordinator.completed_tasks) + len(self.coordinator.failed_tasks)
         if total_completed < len(tasks):
             logger.warning(
-                f"Workflow incomplete: {total_completed}/{len(tasks)} tasks completed. "
-                f"Possible dependency cycle or timeout."
+                "Workflow incomplete: %d/%d tasks completed. "
+                "Possible dependency cycle or timeout.",
+                total_completed, len(tasks)
             )
 
         logger.info(
-            f"Workflow execution completed: {len(self.coordinator.completed_tasks)} succeeded, "
-            f"{len(self.coordinator.failed_tasks)} failed"
+            "Workflow execution completed: %d succeeded, %d failed",
+            len(self.coordinator.completed_tasks),
+            len(self.coordinator.failed_tasks)
         )
 
         return results
@@ -248,7 +254,7 @@ class WorkflowOrchestrator:
         self._workflow_messages = []
         self._degradation_report = None
 
-        logger.info(f"Executing workflow with {len(tasks)} tasks")
+        logger.info("Executing workflow with %d tasks", len(tasks))
 
         if async_execution:
             # 直接返回coroutine，由调用者处理
@@ -258,8 +264,8 @@ class WorkflowOrchestrator:
         # 这样可以避免在已有事件循环中的冲突
         try:
             return asyncio.run(self.execute_workflow(tasks, max_parallel))
-        except Exception as e:
-            logger.error(f"Workflow execution failed: {e}")
+        except (RuntimeError, ValueError, asyncio.TimeoutError) as e:
+            logger.error("Workflow execution failed: %s", e)
             raise RuntimeError(f"Failed to execute workflow: {e}") from e
 
     def _check_degradation(self, batch_results: Dict[str, TaskResult]) -> None:
@@ -285,14 +291,17 @@ class WorkflowOrchestrator:
 
         if report.health.value == "critical":
             logger.warning(
-                f"工作流退化检测: 状态={report.health.value}, 得分={report.score:.2f}, "
-                f"退化类型={[t.value for t in report.detected_types]}"
+                "工作流退化检测: 状态=%s, 得分=%.2f, 退化类型=%s",
+                report.health.value,
+                report.score,
+                [t.value for t in report.detected_types]
             )
             for rec in report.recommendations:
-                logger.warning(f"  退化建议: {rec}")
+                logger.warning("  退化建议: %s", rec)
         elif report.health.value == "degraded":
             logger.info(
-                f"工作流退化检测: 状态={report.health.value}, 得分={report.score:.2f}"
+                "工作流退化检测: 状态=%s, 得分=%.2f",
+                report.health.value, report.score
             )
 
     def get_degradation_report(self) -> Optional[Dict]:

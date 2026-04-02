@@ -105,7 +105,7 @@ class BaseWorkflow:
         """添加依赖的工程流"""
         if workflow_id not in self.dependencies:
             self.dependencies.append(workflow_id)
-            logger.debug(f"Workflow {self.workflow_id} now depends on {workflow_id}")
+            logger.debug("Workflow %s now depends on %s", self.workflow_id, workflow_id)
 
     def add_task(self, task: Task) -> None:
         """添加任务到工程流"""
@@ -126,16 +126,16 @@ class BaseWorkflow:
             return False
 
         if not self.tasks:
-            logger.warning(f"Workflow {self.workflow_id} has no tasks")
+            logger.warning("Workflow %s has no tasks", self.workflow_id)
             return False
 
         # 验证任务
         for task in self.tasks:
             if not task.task_id:
-                logger.error(f"Task in {self.workflow_id} missing task_id")
+                logger.error("Task in %s missing task_id", self.workflow_id)
                 return False
 
-        logger.debug(f"Workflow {self.workflow_id} validation passed")
+        logger.debug("Workflow %s validation passed", self.workflow_id)
         return True
 
     async def execute(self, context: Dict[str, Any]) -> WorkflowResult:
@@ -157,7 +157,7 @@ class BaseWorkflow:
 
         # 检查依赖是否满足
         if not self._check_dependencies(context):
-            logger.warning(f"Workflow {self.workflow_id} dependencies not met")
+            logger.warning("Workflow %s dependencies not met", self.workflow_id)
             return WorkflowResult(
                 workflow_id=self.workflow_id,
                 success=False,
@@ -197,10 +197,10 @@ class BaseWorkflow:
                 tasks_results=task_results
             )
 
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError, KeyError, AttributeError, asyncio.TimeoutError) as e:
             execution_time = asyncio.get_event_loop().time() - start_time
             self.status = WorkflowStatus.FAILED
-            logger.error(f"Workflow {self.workflow_id} failed: {e}")
+            logger.error("Workflow %s failed: %s", self.workflow_id, e)
 
             return WorkflowResult(
                 workflow_id=self.workflow_id,
@@ -491,7 +491,7 @@ class MultiWorkflowCoordinator:
             workflow.orchestrator = WorkflowOrchestrator(self.coordinator)
 
         self.workflows[workflow.workflow_id] = workflow
-        logger.info(f"Registered workflow: {workflow.workflow_id} ({workflow.workflow_type.value})")
+        logger.info("Registered workflow: %s (%s)", workflow.workflow_id, workflow.workflow_type.value)
 
     def get_workflow(self, workflow_id: str) -> Optional[BaseWorkflow]:
         """获取工程流"""
@@ -526,7 +526,7 @@ class MultiWorkflowCoordinator:
             工作流ID到结果的映射
         """
         context = context or {}
-        logger.info(f"Executing {len(self.workflows)} workflows with strategy: {strategy.value}")
+        logger.info("Executing %d workflows with strategy: %s", len(self.workflows), strategy.value)
 
         if strategy == ExecutionStrategy.PARALLEL:
             return await self._execute_parallel(context)
@@ -556,7 +556,7 @@ class MultiWorkflowCoordinator:
         # 处理结果
         for result in results_list:
             if isinstance(result, Exception):
-                logger.error(f"Workflow execution exception: {result}")
+                logger.error("Workflow execution exception: %s", result)
                 continue
             if isinstance(result, WorkflowResult):
                 self.results[result.workflow_id] = result
@@ -601,12 +601,12 @@ class MultiWorkflowCoordinator:
         ]
 
         # 2. 并行执行关键路径
-        logger.info(f"Executing {len(critical_workflows)} critical workflows")
+        logger.info("Executing %d critical workflows", len(critical_workflows))
         critical_results = await self._execute_workflows(critical_workflows, context)
 
         # 3. 执行依赖已满足的其他工程流
         remaining = self._get_ready_workflows(context)
-        logger.info(f"Executing {len(remaining)} remaining workflows")
+        logger.info("Executing %d remaining workflows", len(remaining))
         remaining_results = await self._execute_workflows(remaining, context)
 
         return {**critical_results, **remaining_results}
@@ -665,11 +665,11 @@ class MultiWorkflowCoordinator:
         """
         from_wf = self.get_workflow(from_workflow_id)
         if not from_wf:
-            logger.error(f"Source workflow not found: {from_workflow_id}")
+            logger.error("Source workflow not found: %s", from_workflow_id)
             return None
 
         if not from_wf.can_promote_to(to_type):
-            logger.warning(f"Cannot promote {from_workflow_id} to {to_type.value}")
+            logger.warning("Cannot promote %s to %s", from_workflow_id, to_type.value)
             return None
 
         # 创建新工程流
@@ -680,7 +680,7 @@ class MultiWorkflowCoordinator:
         promoted_wf.tasks = from_wf.tasks.copy()
 
         self.register_workflow(promoted_wf)
-        logger.info(f"Promoted {from_workflow_id} to {workflow_id} ({to_type.value})")
+        logger.info("Promoted %s to %s (%s)", from_workflow_id, workflow_id, to_type.value)
 
         return promoted_wf
 
@@ -704,10 +704,22 @@ class MultiWorkflowCoordinator:
         """获取所有工程流的状态"""
         return {
             "total_workflows": len(self.workflows),
-            "completed": sum(1 for wf in self.workflows.values() if wf.status == WorkflowStatus.COMPLETED),
-            "failed": sum(1 for wf in self.workflows.values() if wf.status == WorkflowStatus.FAILED),
-            "running": sum(1 for wf in self.workflows.values() if wf.status == WorkflowStatus.RUNNING),
-            "pending": sum(1 for wf in self.workflows.values() if wf.status == WorkflowStatus.PENDING),
+            "completed": sum(
+                1 for wf in self.workflows.values()
+                if wf.status == WorkflowStatus.COMPLETED
+            ),
+            "failed": sum(
+                1 for wf in self.workflows.values()
+                if wf.status == WorkflowStatus.FAILED
+            ),
+            "running": sum(
+                1 for wf in self.workflows.values()
+                if wf.status == WorkflowStatus.RUNNING
+            ),
+            "pending": sum(
+                1 for wf in self.workflows.values()
+                if wf.status == WorkflowStatus.PENDING
+            ),
             "workflows": {
                 wf_id: {
                     "type": wf.workflow_type.value,

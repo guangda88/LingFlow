@@ -14,11 +14,11 @@
 ### 1. 工作流工具增强 (P1)
 
 #### 新增工具
-| 工具名称 | 描述 | 增强 |
-|---------|------|------|
-| `list_workflows` | 列出所有工程流 | ✅ 支持类型和状态过滤<br>✅ 统计信息 |
-| `run_workflow` | 执行工作流 | ✅ 支持三种执行策略<br>✅ 异步执行 |
-| `get_workflow_status` | 获取工作流状态 | 🆕 新增 |
+| 工具名称 | 中文名 | 描述 | 增强 |
+|---------|--------|------|------|
+| `list_workflows` | 灵流 | 列出所有工程流 | ✅ 支持类型和状态过滤<br>✅ 统计信息 |
+| `run_workflow` | 灵运 | 执行工作流 | ✅ 支持三种执行策略<br>✅ 异步执行 |
+| `get_workflow_status` | 灵踪 | 获取工作流状态 | 🆕 新增 |
 
 #### 功能特性
 ```python
@@ -45,13 +45,13 @@ run_workflow(
 ### 2. 需求管理工具 (P1)
 
 #### 新增工具
-| 工具名称 | 描述 | 状态 |
-|---------|------|------|
-| `create_requirement` | 创建需求 | ✅ 增强版 |
-| `get_requirement` | 获取需求详情 | ✅ |
-| `update_requirement` | 更新需求 | 🆕 新增 |
-| `list_requirements` | 列出需求 | 🆕 新增 |
-| `link_requirement_to_branch` | 关联需求到分支 | 🆕 新增 |
+| 工具名称 | 中文名 | 描述 | 状态 |
+|---------|--------|------|------|
+| `create_requirement` | 灵愿 | 创建需求 | ✅ 增强版 |
+| `get_requirement` | 灵览 | 获取需求详情 | ✅ |
+| `update_requirement` | 灵新 | 更新需求 | 🆕 新增 |
+| `list_requirements` | 灵录 | 列出需求 | 🆕 新增 |
+| `link_requirement_to_branch` | 灵联 | 关联需求到分支 | 🆕 新增 |
 
 #### 功能特性
 ```python
@@ -81,10 +81,10 @@ link_requirement_to_branch(
 ### 3. 异步任务管理增强
 
 #### 新增工具
-| 工具名称 | 描述 | 状态 |
-|---------|------|------|
-| `get_task_status` | 查询异步任务状态 | ✅ |
-| `list_tasks` | 列出所有异步任务 | 🆕 新增 |
+| 工具名称 | 中文名 | 描述 | 状态 |
+|---------|--------|------|------|
+| `get_task_status` | 灵讯 | 查询异步任务状态 | ✅ |
+| `list_tasks` | 灵任 | 列出所有异步任务 | 🆕 新增 |
 
 #### 功能特性
 ```python
@@ -106,19 +106,19 @@ list_tasks(status_filter="running")
 4. `get_github_trends` - GitHub 趋势
 5. `get_npm_trends` - npm 趋势
 
-### Phase 2 (P1) - 8 个工具
-6. `list_workflows` - 列出工作流 ⭐
-7. `run_workflow` - 执行工作流 ⭐
-8. `get_workflow_status` - 工作流状态 ⭐
-9. `create_requirement` - 创建需求 ⭐
-10. `get_requirement` - 获取需求
-11. `update_requirement` - 更新需求 ⭐
-12. `list_requirements` - 列出需求 ⭐
-13. `link_requirement_to_branch` - 关联需求 ⭐
+### Phase 2 (P1) - 10 个工具
+6. `list_workflows` - 灵流 - 列出工作流 ⭐
+7. `run_workflow` - 灵运 - 执行工作流 ⭐
+8. `get_workflow_status` - 灵踪 - 工作流状态 ⭐
+9. `create_requirement` - 灵愿 - 创建需求 ⭐
+10. `get_requirement` - 灵览 - 获取需求
+11. `update_requirement` - 灵新 - 更新需求 ⭐
+12. `list_requirements` - 灵录 - 列出需求 ⭐
+13. `link_requirement_to_branch` - 灵联 - 关联需求 ⭐
 
 ### 异步任务管理 - 2 个工具
-14. `get_task_status` - 任务状态
-15. `list_tasks` - 列出任务
+14. `get_task_status` - 灵讯 - 任务状态
+15. `list_tasks` - 灵任 - 列出任务
 
 **总计**: **15 个 MCP 工具**
 
@@ -210,15 +210,15 @@ list_tasks(status_filter="running")
 
 ```
 用户: 列出所有开发类工作流
-Claude: [调用 list_workflows(type_filter="dev")]
+Claude: [调用 灵流/list_workflows(type_filter="dev")]
 返回: 3 个开发工作流
 
 用户: 执行功能开发工作流
-Claude: [调用 run_workflow(workflow_id="feature-dev", strategy="hybrid")]
+Claude: [调用 灵运/run_workflow(workflow_id="feature-dev", strategy="hybrid")]
 返回: task_id="workflow_abc123"
 
 用户: 查看工作流状态
-Claude: [调用 get_workflow_status(workflow_id="feature-dev")]
+Claude: [调用 灵踪/get_workflow_status(workflow_id="feature-dev")]
 返回: 执行中，已完成 5/10 个任务
 ```
 
@@ -226,15 +226,15 @@ Claude: [调用 get_workflow_status(workflow_id="feature-dev")]
 
 ```
 用户: 创建一个新需求
-Claude: [调用 create_requirement(...)]
+Claude: [调用 灵愿/create_requirement(...)]
 返回: requirement_id="req-456"
 
 用户: 更新需求状态
-Claude: [调用 update_requirement(requirement_id="req-456", status="approved")]
+Claude: [调用 灵新/update_requirement(requirement_id="req-456", status="approved")]
 返回: 更新成功
 
 用户: 关联需求到分支
-Claude: [调用 link_requirement_to_branch(...)]
+Claude: [调用 灵联/link_requirement_to_branch(...)]
 返回: 关联成功
 ```
 
@@ -242,11 +242,11 @@ Claude: [调用 link_requirement_to_branch(...)]
 
 ```
 用户: 查看所有运行中的任务
-Claude: [调用 list_tasks(status_filter="running")]
+Claude: [调用 灵任/list_tasks(status_filter="running")]
 返回: 2 个运行中的任务
 
 用户: 查看任务详情
-Claude: [调用 get_task_status(task_id="workflow_abc123")]
+Claude: [调用 灵讯/get_task_status(task_id="workflow_abc123")]
 返回: 状态=running, 进度=50%
 ```
 

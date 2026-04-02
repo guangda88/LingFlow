@@ -20,7 +20,19 @@ from lingflow.cli.test import test
 lf = LingFlow()
 
 
+def _get_version() -> str:
+    try:
+        from importlib.metadata import version
+        return version("lingflow-core")
+    except Exception:
+        vfile = Path(__file__).parent.parent.parent / "VERSION"
+        if vfile.exists():
+            return vfile.read_text().strip()
+        return "unknown"
+
+
 @click.group()
+@click.version_option(version=_get_version(), prog_name="lingflow")
 def cli() -> None:
     """灵通 (LingFlow) CLI 主入口 - 众智混元，万法灵通"""
 
@@ -59,16 +71,64 @@ def workflow(workflow_file):
 @cli.command("list-skills")
 def list_skills():
     """列出所有可用技能"""
-    skills = lf._coordinator.list_skills()
+    skills = lf.list_skills()
     for skill in skills:
         click.echo(f"  - {skill}")
 
 
+@cli.command()
+def init():
+    """初始化 LingFlow 工作目录"""
+    lingflow_dir = Path(".lingflow")
+    lingflow_dir.mkdir(exist_ok=True)
+    (lingflow_dir / "config").mkdir(exist_ok=True)
+    (lingflow_dir / "sessions").mkdir(exist_ok=True)
+    (lingflow_dir / "logs").mkdir(exist_ok=True)
+
+    config_file = lingflow_dir / "config" / "config.yaml"
+    if not config_file.exists():
+        config_file.write_text(
+            "# LingFlow configuration\n"
+            "# Override with LINGFLOW_ env vars\n"
+            "workflow:\n  max_parallel: 2\n  max_iterations: 100\n"
+            "skills:\n  path: skills\n  default_timeout: 30\n"
+            "compression:\n  enabled: true\n"
+            "logging:\n  level: INFO\n",
+            encoding="utf-8",
+        )
+        click.echo(f"Created default config: {config_file}")
+    click.echo("LingFlow 工作目录已初始化: .lingflow/")
+
+
+@cli.command("config")
+@click.argument("key", required=False)
+@click.argument("value", required=False)
+@click.option("--list", "list_all", is_flag=True, help="列出所有配置")
+def config_cmd(key, value, list_all):
+    """查看或设置配置"""
+    from lingflow.common.config import config_manager
+
+    if list_all:
+        click.echo(json.dumps(config_manager.config, indent=2, ensure_ascii=False))
+    elif key and value:
+        config_manager.set(key, value)
+        config_manager.save()
+        click.echo(f"Set {key} = {value}")
+    elif key:
+        v = config_manager.get(key)
+        if v is not None:
+            click.echo(json.dumps(v, indent=2, ensure_ascii=False) if isinstance(v, (dict, list)) else str(v))
+        else:
+            click.echo(f"Key not found: {key}", err=True)
+    else:
+        click.echo("Usage: lingflow config KEY [VALUE] or --list")
+
+
 # 添加命令组
-cli.add_command(optimize)
+cli.add_command(analyze)
 cli.add_command(feedback)
 cli.add_command(learn)
-cli.add_command(analyze)
+cli.add_command(optimize)
 cli.add_command(test)
 
 

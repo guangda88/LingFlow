@@ -1,16 +1,17 @@
-# LingFlow v3.7.0 - AI增强的软件工程流系统
+# LingFlow v3.8.0 - AI 生态平台
 
 <div align="center">
 
 [![PyPI Version](https://img.shields.io/pypi/v/lingflow-core)](https://pypi.org/project/lingflow-core/)
-[![PyPI Downloads](https://img.shields.io/pypi/dm/lingflow-core)](https://pypi.org/project/lingflow-core/)
+[![Docker](https://img.shields.io/badge/docker-latest-blue.svg)](https://hub.docker.com/r/guangda88/lingflow-api)
+[![GitHub Action](https://img.shields.io/badge/action-quality--gate-green.svg)](https://github.com/marketplace/actions/lingflow-actions)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-3.7.0-orange.svg)](https://github.com/guangda88/LingFlow)
+[![Version](https://img.shields.io/badge/version-3.8.0-orange.svg)](https://github.com/guangda88/LingFlow)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **众智混元，万法灵通**
 
-工程流系统 • 自优化 • 多智能体 • 92% SDLC覆盖
+CLI • API • Actions • Skills Market
 
 </div>
 
@@ -18,31 +19,33 @@
 
 ## 🎯 什么是 LingFlow？
 
-**LingFlow** 是一个**AI增强的软件工程全流程自动化平台**，覆盖92%的软件开发生命周期（SDLC）。
+**LingFlow** 是一个**AI 增强的软件工程流生态平台**，覆盖 92% 的 SDLC，支持 **4 种使用方式**。
 
-### 三层架构
+### 四层架构
 
 ```
 ┌──────────────────────────────────────────────────┐
-│  主定位：工程流系统（Engineering Workflow）        │
-│  • 92% SDLC覆盖                                  │
-│  • 33个专业技能                                   │
-│  • 6个智能Agent                                  │
-│  • 15+预置工作流                                  │
+│  接入层：4 种使用方式                             │
+│  • CLI 工具 • REST API • GitHub Actions         │
+│  • 技能市场（社区扩展）                           │
 └──────────────────────────────────────────────────┘
                       ↓
 ┌──────────────────────────────────────────────────┐
-│  核心能力：AI工具增强（AI Enhancement）           │
+│  编排层：工作流引擎 + 智能体协调                  │
+│  • 15+ 预置工作流 • 6 个专门 Agent              │
+│  • 可视化编排 • 并行执行                         │
+└──────────────────────────────────────────────────┘
+                      ↓
+┌──────────────────────────────────────────────────┐
+│  核心能力层：33 个专业技能                        │
+│  • 92% SDLC 覆盖 • 自优化系统                    │
 │  • 智能上下文管理                                 │
-│  • 自优化系统（基于LingMinOpt）                  │
-│  • 多智能体协作                                   │
 └──────────────────────────────────────────────────┘
                       ↓
 ┌──────────────────────────────────────────────────┐
-│  基础设施：可扩展框架（Framework）                │
-│  • 技能系统（33个技能）                           │
-│  • Hooks机制                                     │
-│  • 工作流引擎                                    │
+│  基础设施层：Metrics • Logs • Hooks              │
+│  • Prometheus 导出 • 结构化日志                  │
+│  • 可扩展插件系统                                 │
 └──────────────────────────────────────────────────┘
 ```
 
@@ -86,6 +89,84 @@ lingflow --help
 # 列出可用技能
 lingflow list-skills
 ```
+
+---
+
+## 🚀 四种使用方式
+
+LingFlow v3.8.0 现在支持 **4 种使用方式**，满足不同场景需求：
+
+### 1️⃣ CLI 工具（本地开发）
+
+```bash
+pip install lingflow-core
+
+# 列出所有技能
+lingflow list-skills
+
+# 执行单个技能
+lingflow run code-generation --prompt "创建用户API"
+
+# 运行工作流
+lingflow workflow run feature-development
+```
+
+### 2️⃣ REST API（云端部署）
+
+```bash
+# 使用 Docker 部署
+docker run -p 8000:8000 guangda88/lingflow-api:latest
+
+# 或使用 Railway 托管
+# https://lingflow-api.up.railway.app
+```
+
+```python
+# Python 客户端
+import requests
+
+response = requests.get(
+    "http://localhost:8000/api/v1/skills",
+    headers={"X-API-Key": "your-api-key"}
+)
+skills = response.json()
+```
+
+### 3️⃣ GitHub Actions（CI/CD 集成）
+
+```yaml
+# .github/workflows/quality.yml
+name: Quality Gate
+
+on: [pull_request]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: guangda88/LingFlow/actions/quality-gate@v1
+        with:
+          command: review
+          path: ./src
+          fail_on_error: 'true'
+```
+
+### 4️⃣ 技能市场（社区扩展）
+
+```bash
+# 搜索技能
+lingflow skill search fastapi
+
+# 安装社区技能
+lingflow skill install python-fastapi-validator
+
+# 贡献技能
+lingflow skill publish ./my-skill
+```
+
+**技能索引**: https://github.com/lingflow/skills-index
 
 ---
 
@@ -480,7 +561,7 @@ Token节省: 30-50%
 
 <div align="center">
 
-**LingFlow v3.6.0** - 让AI工具更好地为软件工程服务
+**LingFlow v3.8.0** - 让AI工具更好地为软件工程服务
 
 **众智混元，万法灵通** ⚡
 

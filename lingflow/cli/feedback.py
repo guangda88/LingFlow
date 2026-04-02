@@ -23,12 +23,23 @@ def feedback():
 @feedback.command("submit")
 @click.option("--title", "-t", required=True, help="问题标题")
 @click.option("--description", "-d", required=True, help="详细描述")
-@click.option("--category", "-c",
-              type=click.Choice(["bug", "feature", "improvement", "performance", "documentation", "usability", "other"]),
-              default="bug", help="反馈类别")
-@click.option("--severity", "-s",
-              type=click.Choice(["low", "medium", "high", "critical"]),
-              default="medium", help="严重性")
+@click.option(
+    "--category",
+    "-c",
+    type=click.Choice([
+        "bug", "feature", "improvement", "performance",
+        "documentation", "usability", "other",
+    ]),
+    default="bug",
+    help="反馈类别",
+)
+@click.option(
+    "--severity",
+    "-s",
+    type=click.Choice(["low", "medium", "high", "critical"]),
+    default="medium",
+    help="严重性",
+)
 @click.option("--user", "-u", help="用户标识")
 @click.option("--email", "-e", help="联系邮箱")
 def submit_feedback(title, description, category, severity, user, email):
@@ -64,9 +75,13 @@ def submit_feedback(title, description, category, severity, user, email):
 @feedback.command("bug")
 @click.option("--title", "-t", required=True, help="Bug 标题")
 @click.option("--description", "-d", required=True, help="详细描述")
-@click.option("--severity", "-s",
-              type=click.Choice(["low", "medium", "high", "critical"]),
-              default="medium", help="严重性")
+@click.option(
+    "--severity",
+    "-s",
+    type=click.Choice(["low", "medium", "high", "critical"]),
+    default="medium",
+    help="严重性",
+)
 def report_bug(title, description, severity):
     """快捷提交 Bug 报告"""
     collector = get_feedback_collector()

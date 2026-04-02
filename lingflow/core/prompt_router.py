@@ -36,11 +36,13 @@ class RouteRule:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def matches(self, prompt: str) -> Tuple[bool, float]:
-        """
-        检查prompt是否匹配此规则
+        """检查prompt是否匹配此规则
+
+        Args:
+            prompt: 待检查的提示词
 
         Returns:
-            (是否匹配, 匹配分数)
+            Tuple[bool, float]: (是否匹配, 匹配分数)
         """
         score = 0.0
 
@@ -54,7 +56,14 @@ class RouteRule:
         return score > 0, score
 
     def _keyword_match_score(self, prompt: str) -> float:
-        """关键词匹配评分"""
+        """关键词匹配评分
+
+        Args:
+            prompt: 待检查的提示词
+
+        Returns:
+            float: 匹配分数 (0.0-1.0)
+        """
         if not self.keywords:
             return 0.0
 
@@ -69,7 +78,14 @@ class RouteRule:
         return matched_count / len(self.keywords) if self.keywords else 0.0
 
     def _pattern_match_score(self, prompt: str) -> float:
-        """正则表达式匹配评分"""
+        """正则表达式匹配评分
+
+        Args:
+            prompt: 待检查的提示词
+
+        Returns:
+            float: 匹配分数 (0.0-1.0)
+        """
         if not self.patterns:
             return 0.0
 
@@ -105,7 +121,7 @@ class RouteResult:
 
     @property
     def best_match(self) -> Optional[Tuple[str, float]]:
-        """获取最佳匹配"""
+        """Optional[Tuple[str, float]]: 最佳匹配的规则名称和分数"""
         if not self.matched_rules:
             return None
         return max(self.matched_rules, key=lambda x: x[1])
@@ -128,17 +144,38 @@ class PromptRouter:
         self._default_target: Optional[RouteTarget] = None
 
     def add_rule(self, rule: RouteRule) -> 'PromptRouter':
-        """添加路由规则"""
+        """添加路由规则
+
+        Args:
+            rule: 路由规则对象
+
+        Returns:
+            PromptRouter: 返回自身以支持链式调用
+        """
         self._rules[rule.name] = rule
         return self
 
     def add_target(self, target: RouteTarget) -> 'PromptRouter':
-        """添加路由目标"""
+        """添加路由目标
+
+        Args:
+            target: 路由目标对象
+
+        Returns:
+            PromptRouter: 返回自身以支持链式调用
+        """
         self._targets[target.name] = target
         return self
 
     def set_default_target(self, target: RouteTarget) -> 'PromptRouter':
-        """设置默认目标"""
+        """设置默认目标
+
+        Args:
+            target: 默认路由目标对象
+
+        Returns:
+            PromptRouter: 返回自身以支持链式调用
+        """
         self._default_target = target
         return self
 
@@ -195,7 +232,14 @@ class PromptRouter:
         self,
         matched_rules: List[Tuple[str, float]]
     ) -> Optional[RouteTarget]:
-        """根据匹配规则选择目标"""
+        """根据匹配规则选择目标
+
+        Args:
+            matched_rules: 匹配的规则列表，包含规则名称和分数
+
+        Returns:
+            Optional[RouteTarget]: 选中的路由目标，如果没有匹配则返回默认目标
+        """
         if not matched_rules:
             return self._default_target
 
@@ -216,7 +260,14 @@ class PromptRouter:
         self,
         matched_rules: List[Tuple[str, float]]
     ) -> float:
-        """计算路由置信度"""
+        """计算路由置信度
+
+        Args:
+            matched_rules: 匹配的规则列表
+
+        Returns:
+            float: 置信度分数 (0.0-1.0)
+        """
         if not matched_rules:
             return 0.0
 
@@ -224,7 +275,11 @@ class PromptRouter:
         return min(matched_rules[0][1], 1.0)
 
     def get_statistics(self) -> Dict[str, Any]:
-        """获取路由统计"""
+        """获取路由统计
+
+        Returns:
+            Dict[str, Any]: 包含路由总数、平均置信度、常用目标和规则的统计信息
+        """
         if not self._history:
             return {
                 'total_routes': 0,
@@ -269,7 +324,14 @@ class PromptRouter:
         }
 
     def save_config(self, path: Optional[Path] = None) -> Path:
-        """保存路由器配置"""
+        """保存路由器配置
+
+        Args:
+            path: 配置文件保存路径，默认为 .lingflow/prompt_router_config.json
+
+        Returns:
+            Path: 保存的配置文件路径
+        """
         if path is None:
             path = Path(".lingflow/prompt_router_config.json")
 
@@ -310,7 +372,18 @@ class PromptRouter:
 
     @classmethod
     def load_config(cls, path: Path) -> 'PromptRouter':
-        """加载路由器配置"""
+        """加载路由器配置
+
+        Args:
+            path: 配置文件路径
+
+        Returns:
+            PromptRouter: 加载的路由器实例
+
+        Raises:
+            FileNotFoundError: 如果配置文件不存在
+            json.JSONDecodeError: 如果配置文件格式无效
+        """
         with open(path) as f:
             config = json.load(f)
 
@@ -348,7 +421,7 @@ class PromptRouter:
         return router
 
     def clear_history(self):
-        """清除路由历史"""
+        """清除路由历史记录"""
         self._history.clear()
 
 
@@ -357,7 +430,17 @@ class PromptRouter:
 # ============================================================================
 
 def create_default_router() -> PromptRouter:
-    """创建默认的PromptRouter配置"""
+    """创建默认的 PromptRouter 配置
+
+    预定义了四个路由目标：
+    - code_analyzer: 代码分析和优化
+    - writer: 文档和内容生成
+    - tester: 测试代码生成
+    - explainer: 概念解释和教学
+
+    Returns:
+        PromptRouter: 配置好的路由器实例
+    """
 
     router = PromptRouter()
 
@@ -430,7 +513,16 @@ def create_default_router() -> PromptRouter:
 
 
 def create_code_focused_router() -> PromptRouter:
-    """创建代码导向的PromptRouter"""
+    """创建代码导向的 PromptRouter
+
+    预定义了三个代码相关的路由目标：
+    - python_expert: Python 专家
+    - web_dev: Web 开发专家
+    - data_science: 数据科学专家
+
+    Returns:
+        PromptRouter: 配置好的代码导向路由器实例
+    """
 
     router = PromptRouter()
 

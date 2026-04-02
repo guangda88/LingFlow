@@ -77,7 +77,10 @@ class AIToolAdapter:
         try:
             result = self._run_scan_impl(target_path, **kwargs)
             duration = (datetime.now() - start_time).total_seconds()
-            logger.info(f"{self.name} scan completed in {duration:.2f}s, found {len(result)} issues")
+            logger.info(
+                f"{self.name} scan completed in {duration:.2f}s, "
+                f"found {len(result)} issues"
+            )
             return result[:self.max_issues]
         except Exception as e:
             logger.error(f"{self.name} scan failed: {e}")

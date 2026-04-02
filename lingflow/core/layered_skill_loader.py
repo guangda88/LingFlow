@@ -17,7 +17,7 @@ import time
 import yaml
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 
 from lingflow.common.skill_manager import skill_manager
 from lingflow.common.exceptions import SkillLoadError, SkillNotFoundError

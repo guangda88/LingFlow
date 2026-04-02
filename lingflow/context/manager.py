@@ -18,14 +18,14 @@ from lingflow.compression.token_estimator import TokenEstimator
 
 logger = logging.getLogger(__name__)
 
-_shared_token_estimator: Optional[TokenEstimator] = None
+_SHARED_TOKEN_ESTIMATOR: Optional[TokenEstimator] = None
 
 
 def _get_token_estimator() -> TokenEstimator:
-    global _shared_token_estimator
-    if _shared_token_estimator is None:
-        _shared_token_estimator = TokenEstimator()
-    return _shared_token_estimator
+    global _SHARED_TOKEN_ESTIMATOR
+    if _SHARED_TOKEN_ESTIMATOR is None:
+        _SHARED_TOKEN_ESTIMATOR = TokenEstimator()
+    return _SHARED_TOKEN_ESTIMATOR
 
 
 DEFAULT_CONTEXT_DIR = Path(os.getenv(
@@ -122,10 +122,10 @@ class ContextManager:
                 with open(last_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     self.last_context = ContextSnapshot.from_dict(data)
-                    logger.info(f"已加载上次上下文: {self.last_context.session_id}")
+                    logger.info("已加载上次上下文: %s", self.last_context.session_id)
                     return self.last_context
             except Exception as e:
-                logger.warning(f"加载上次上下文失败: {e}")
+                logger.warning("加载上次上下文失败: %s", e)
         self.last_context = None
         return None
 
@@ -220,17 +220,17 @@ class ContextManager:
         budget_status = self._budget_manager.check_budget(self.estimated_tokens)
 
         if budget_status.level.value == "emergency":
-            logger.warning(f"Token 使用率 {budget_status.usage_ratio:.1%}，紧急交接")
+            logger.warning("Token 使用率 %s，紧急交接", budget_status.usage_ratio)
             self.compress_now()
             self.generate_handoff(reason="emergency_token_limit")
         elif budget_status.level.value == "critical":
-            logger.warning(f"Token 使用率 {budget_status.usage_ratio:.1%}，严重退化，立即压缩")
+            logger.warning("Token 使用率 %s，严重退化，立即压缩", budget_status.usage_ratio)
             self.compress_now()
         elif budget_status.level.value == "warning":
-            logger.warning(f"Token 使用率 {budget_status.usage_ratio:.1%}，建议压缩上下文")
+            logger.warning("Token 使用率 %s，建议压缩上下文", budget_status.usage_ratio)
             self.compress_now()
         elif budget_status.level.value == "moderate":
-            logger.info(f"Token 使用率 {budget_status.usage_ratio:.1%}，接近安全阈值")
+            logger.info("Token 使用率 %s，接近安全阈值", budget_status.usage_ratio)
 
     def _save_snapshot(self) -> None:
         """保存当前快照"""
@@ -389,7 +389,7 @@ class ContextManager:
         recovery_file = self.storage_dir / "RECOVERY_CONTEXT.md"
         recovery_file.write_text(summary, encoding="utf-8")
 
-        logger.info(f"上下文已压缩，保存到: {recovery_file}")
+        logger.info("上下文已压缩，保存到: %s", recovery_file)
         return summary
 
     def get_recovery_summary(self) -> str:
@@ -441,7 +441,7 @@ class ContextManager:
         handoff_json = self.storage_dir / "handoff.json"
         handoff_json.write_text(doc.to_json(), encoding="utf-8")
 
-        logger.info(f"交接文档已生成: {handoff_file}")
+        logger.info("交接文档已生成: %s", handoff_file)
         return doc
 
     def get_status(self) -> Dict[str, Any]:
@@ -467,18 +467,18 @@ class ContextManager:
 
 
 # 全局单例（线程安全）
-_context_manager: Optional[ContextManager] = None
-_context_manager_lock = threading.Lock()
+_CONTEXT_MANAGER: Optional[ContextManager] = None
+_CONTEXT_MANAGER_LOCK = threading.Lock()
 
 
 def get_context_manager() -> ContextManager:
     """获取全局上下文管理器实例（线程安全）"""
-    global _context_manager
-    if _context_manager is None:
-        with _context_manager_lock:
-            if _context_manager is None:  # 双重检查锁定
-                _context_manager = ContextManager()
-    return _context_manager
+    global _CONTEXT_MANAGER
+    if _CONTEXT_MANAGER is None:
+        with _CONTEXT_MANAGER_LOCK:
+            if _CONTEXT_MANAGER is None:  # 双重检查锁定
+                _CONTEXT_MANAGER = ContextManager()
+    return _CONTEXT_MANAGER
 
 
 def track_context(role: str, content: str, is_important: bool = False) -> None:
