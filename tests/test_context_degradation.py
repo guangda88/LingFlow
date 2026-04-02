@@ -8,10 +8,8 @@
 4. 综合健康评分
 """
 
-import pytest
 from lingflow.context.degradation import (
     DegradationDetector,
-    DegradationReport,
     DegradationType,
     HealthStatus,
 )

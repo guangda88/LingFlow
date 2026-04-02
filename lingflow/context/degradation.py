@@ -7,13 +7,10 @@
 4. Repetition Collapse — 重复输出或循环行为
 """
 
-import hashlib
 import logging
-import math
-from collections import Counter
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 logger = logging.getLogger(__name__)
 

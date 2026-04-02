@@ -27,7 +27,7 @@ def _get_token_estimator() -> TokenEstimator:
         _shared_token_estimator = TokenEstimator()
     return _shared_token_estimator
 
-# 默认上下文存储目录 - 使用环境变量或用户主目录
+
 DEFAULT_CONTEXT_DIR = Path(os.getenv(
     "LINGFLOW_CONTEXT_DIR",
     Path.home() / ".claude" / "projects" / "lingflow" / "context"
@@ -327,19 +327,19 @@ class ContextManager:
 
         # 生成摘要
         summary_parts = [
-            f"# LingFlow 对话上下文摘要",
-            f"",
+            "# LingFlow 对话上下文摘要",
+            "",
             f"**会话 ID**: {self.session_id}",
             f"**时间**: {self.snapshot.timestamp}",
             f"**消息数**: {self.message_count}",
             f"**估计 Token**: {self.estimated_tokens}",
-            f"",
+            "",
         ]
 
         if self.snapshot.tasks_completed:
             summary_parts.extend([
                 f"## 已完成任务 ({len(self.snapshot.tasks_completed)})",
-                f""
+                "",
             ])
             for task in self.snapshot.tasks_completed:
                 summary_parts.append(f"- ✅ {task}")
@@ -348,7 +348,7 @@ class ContextManager:
         if self.snapshot.tasks_pending:
             summary_parts.extend([
                 f"## 待完成任务 ({len(self.snapshot.tasks_pending)})",
-                f""
+                "",
             ])
             for task in self.snapshot.tasks_pending:
                 summary_parts.append(f"- ◻ {task}")
@@ -356,8 +356,8 @@ class ContextManager:
 
         if self.snapshot.key_decisions:
             summary_parts.extend([
-                f"## 关键决策",
-                f""
+                "## 关键决策",
+                "",
             ])
             for decision in self.snapshot.key_decisions:
                 summary_parts.append(f"- {decision}")
@@ -365,8 +365,8 @@ class ContextManager:
 
         if self.snapshot.important_files:
             summary_parts.extend([
-                f"## 重要文件",
-                f""
+                "## 重要文件",
+                "",
             ])
             for path, desc in self.snapshot.important_files.items():
                 summary_parts.append(f"- `{path}`: {desc}")
@@ -374,8 +374,8 @@ class ContextManager:
 
         if self.snapshot.next_steps:
             summary_parts.extend([
-                f"## 下一步计划",
-                f""
+                "## 下一步计划",
+                "",
             ])
             for i, step in enumerate(self.snapshot.next_steps, 1):
                 summary_parts.append(f"{i}. {step}")
@@ -401,7 +401,7 @@ class ContextManager:
         # 如果没有恢复文件，生成当前摘要
         return self.compress_now()
 
-    def generate_handoff(self, reason: str = "token_limit") -> "HandoffDocument":
+    def generate_handoff(self, reason: str = "token_limit") -> "HandoffDocument":  # noqa: F821
         """生成交接文档
 
         当上下文接近退化阈值时调用，生成结构化的交接文档。

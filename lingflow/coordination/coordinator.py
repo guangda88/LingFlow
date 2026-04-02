@@ -3,12 +3,11 @@
 import asyncio
 import logging
 import types
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional
 
 from lingflow.common.models import AgentConfig, Task, TaskResult
 from lingflow.compression.compressor import (
     ContextCompressor,
-    AdvancedContextCompressor,
     CompressionLevel,
 )
 from lingflow.coordination.base import BaseCoordinator
@@ -103,9 +102,10 @@ class AgentCoordinator(BaseCoordinator):
         semaphore = asyncio.Semaphore(max_parallel)
 
         # 并行执行所有任务
-        # 使用 Task.result() 处理可能的异常
-        tasks_to_execute = [asyncio.create_task(self._execute_one_task(task, semaphore))
-                           for task in tasks]
+        tasks_to_execute = [
+            asyncio.create_task(self._execute_one_task(task, semaphore))
+            for task in tasks
+        ]
         results_list = await asyncio.gather(*tasks_to_execute, return_exceptions=True)
 
         # 处理结果
@@ -273,11 +273,11 @@ class AgentCoordinator(BaseCoordinator):
         # 严格验证技能名称
         if not skill_name:
             return None
-        
+
         if not (3 <= len(skill_name) <= 50):
             logger.warning(f"Invalid skill name length: {skill_name}")
             return None
-        
+
         if not re.match(r"^[a-z0-9_-]+$", skill_name):
             logger.warning(f"Invalid skill name format: {skill_name}")
             return None
@@ -290,13 +290,16 @@ class AgentCoordinator(BaseCoordinator):
             logger.error(f"Failed to resolve skills directory: {e}")
             return None
 
-        skill_path = (skills_dir / skill_name / "implementation.py")
-        
+        skill_path = skills_dir / skill_name / "implementation.py"
+
         # 规范化路径并验证存在性
         try:
             skill_path = skill_path.resolve(strict=True)
-        except (FileNotFoundError, RuntimeError) as e:
+        except FileNotFoundError:
             logger.warning(f"Skill file not found: {skill_path}")
+            return None
+        except RuntimeError:
+            logger.warning(f"Skill path resolution failed: {skill_path}")
             return None
 
         # 确保路径在 skills 目录内（防止路径遍历攻击）
@@ -355,8 +358,8 @@ class AgentCoordinator(BaseCoordinator):
                 self.sandbox.execute_code(skill_code)
             except SandboxTimeoutError as e:
                 raise SkillLoadError(f"Skill {skill_name} execution timed out: {str(e)}")
-            except SandboxError as e:
-                raise SkillLoadError(f"Sandbox error loading skill {skill_name}: {str(e)}")
+            except SandboxError as err:
+                raise SkillLoadError(f"Sandbox error loading skill {skill_name}: {str(err)}")
 
             # 使用 importlib 正常加载模块
             spec = importlib.util.spec_from_file_location(
