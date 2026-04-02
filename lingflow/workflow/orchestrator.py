@@ -277,7 +277,7 @@ class WorkflowOrchestrator:
             self._workflow_messages.append({"role": role, "content": content})
 
         if self._degradation_detector is None:
-            from lingflow.context.degradation import DegradationDetector, HealthStatus
+            from lingflow.context.degradation import DegradationDetector
             self._degradation_detector = DegradationDetector()
 
         report = self._degradation_detector.get_health_score(self._workflow_messages)

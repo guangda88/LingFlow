@@ -38,7 +38,7 @@ __all__ = [
     "HandoffDocument",
 ]
 
-# 导出 auto_resume 模块的接口（但不自动触发）
+
 def show_resume():
     """显示会话恢复信息（手动调用）"""
     from .auto_resume import auto_resume
