@@ -14,8 +14,18 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
 from .auto_resume import save_resume_markdown
+from lingflow.compression.token_estimator import TokenEstimator
 
 logger = logging.getLogger(__name__)
+
+_shared_token_estimator: Optional[TokenEstimator] = None
+
+
+def _get_token_estimator() -> TokenEstimator:
+    global _shared_token_estimator
+    if _shared_token_estimator is None:
+        _shared_token_estimator = TokenEstimator()
+    return _shared_token_estimator
 
 # 默认上下文存储目录 - 使用环境变量或用户主目录
 DEFAULT_CONTEXT_DIR = Path(os.getenv(
@@ -72,6 +82,9 @@ class ContextManager:
         self.message_count = 0
         self.estimated_tokens = 0
 
+        # 对话消息列表（用于实际压缩）
+        self._messages: List[Dict[str, str]] = []
+
         # 上下文数据
         self.snapshot = ContextSnapshot(
             timestamp=datetime.now().isoformat(),
@@ -84,6 +97,15 @@ class ContextManager:
             "critical", "important", "must", "should",
             "todo", "task", "完成", "修复", "实现"
         }
+
+        # 智能压缩器（懒加载）
+        self._smart_compressor = None
+
+        # 预算管理器
+        self._budget_manager = None
+
+        # 退化检测器
+        self._degradation_detector = None
 
         # 加载之前的上下文
         self._load_last_context()
@@ -116,8 +138,10 @@ class ContextManager:
             is_important: 是否为重要消息
         """
         self.message_count += 1
-        # 粗略估计 token 数量（约 4 字符 = 1 token）
-        self.estimated_tokens += len(content) // 4
+        self.estimated_tokens += _get_token_estimator().count_tokens(content)
+
+        # 保存消息到列表
+        self._messages.append({"role": role, "content": content})
 
         # 自动检测重要内容
         if not is_important:
@@ -187,13 +211,26 @@ class ContextManager:
 
     def _check_and_warn(self) -> None:
         """检查 token 使用情况并警告"""
-        ratio = self.estimated_tokens / self.ESTIMATED_TOKEN_LIMIT
+        if self._budget_manager is None:
+            from .budget import ContextBudgetManager
+            self._budget_manager = ContextBudgetManager(
+                max_tokens=self.ESTIMATED_TOKEN_LIMIT,
+            )
 
-        if ratio >= self.COMPRESS_THRESHOLD:
-            logger.warning(f"Token 使用率 {ratio:.1%}，建议压缩上下文")
+        budget_status = self._budget_manager.check_budget(self.estimated_tokens)
+
+        if budget_status.level.value == "emergency":
+            logger.warning(f"Token 使用率 {budget_status.usage_ratio:.1%}，紧急交接")
             self.compress_now()
-        elif ratio >= self.WARNING_THRESHOLD:
-            logger.warning(f"Token 使用率 {ratio:.1%}，接近限制")
+            self.generate_handoff(reason="emergency_token_limit")
+        elif budget_status.level.value == "critical":
+            logger.warning(f"Token 使用率 {budget_status.usage_ratio:.1%}，严重退化，立即压缩")
+            self.compress_now()
+        elif budget_status.level.value == "warning":
+            logger.warning(f"Token 使用率 {budget_status.usage_ratio:.1%}，建议压缩上下文")
+            self.compress_now()
+        elif budget_status.level.value == "moderate":
+            logger.info(f"Token 使用率 {budget_status.usage_ratio:.1%}，接近安全阈值")
 
     def _save_snapshot(self) -> None:
         """保存当前快照"""
@@ -250,12 +287,44 @@ class ContextManager:
             parts.append(f"做出 {len(self.snapshot.key_decisions)} 个关键决策")
         return "; ".join(parts) if parts else "进行中"
 
+    def _get_smart_compressor(self):
+        """懒加载 SmartContextCompressor"""
+        if self._smart_compressor is None:
+            from lingflow.compression.smart_compressor import (
+                SmartContextCompressor,
+                CompressionConfig as SmartCompressionConfig,
+            )
+            config = SmartCompressionConfig(
+                max_tokens=self.ESTIMATED_TOKEN_LIMIT,
+                warning_threshold=self.WARNING_THRESHOLD,
+            )
+            self._smart_compressor = SmartContextCompressor(config=config)
+        return self._smart_compressor
+
     def compress_now(self) -> str:
         """立即压缩当前上下文
+
+        使用 SmartContextCompressor 实际压缩内存中的消息列表，
+        同时生成 Markdown 摘要持久化到磁盘。
 
         Returns:
             压缩后的上下文摘要，可用于新会话
         """
+        # 使用 SmartContextCompressor 压缩内存中的消息
+        if self._messages:
+            compressor = self._get_smart_compressor()
+            result = compressor.compress(
+                self._messages,
+                target_tokens=int(self.ESTIMATED_TOKEN_LIMIT * 0.4),
+            )
+            self._messages = result.compressed_messages
+            self.estimated_tokens = result.compressed_tokens
+            logger.info(
+                f"SmartContextCompressor: {result.original_tokens} -> "
+                f"{result.compressed_tokens} tokens "
+                f"({result.compression_ratio:.1%} reduction)"
+            )
+
         # 生成摘要
         summary_parts = [
             f"# LingFlow 对话上下文摘要",
@@ -332,9 +401,52 @@ class ContextManager:
         # 如果没有恢复文件，生成当前摘要
         return self.compress_now()
 
+    def generate_handoff(self, reason: str = "token_limit") -> "HandoffDocument":
+        """生成交接文档
+
+        当上下文接近退化阈值时调用，生成结构化的交接文档。
+
+        Args:
+            reason: 交接原因
+
+        Returns:
+            HandoffDocument 实例
+        """
+        from .handoff import HandoffDocument
+
+        degradation_types = []
+        if self._messages:
+            if self._degradation_detector is None:
+                from .degradation import DegradationDetector
+                self._degradation_detector = DegradationDetector()
+            report = self._degradation_detector.get_health_score(self._messages)
+            if report.health.value != "healthy":
+                degradation_types = [t.value for t in report.detected_types]
+
+        doc = HandoffDocument.from_context_snapshot(
+            self.snapshot,
+            reason=reason,
+            tasks_in_progress=[
+                t for t in self.snapshot.tasks_pending
+                if any(kw in t.lower() for kw in ["wip", "in progress", "进行中"])
+            ],
+            degradation_detected=len(degradation_types) > 0,
+            degradation_types=degradation_types,
+            token_usage_at_handoff=self.estimated_tokens,
+        )
+
+        handoff_file = self.storage_dir / "HANDOFF.md"
+        handoff_file.write_text(doc.to_markdown(), encoding="utf-8")
+
+        handoff_json = self.storage_dir / "handoff.json"
+        handoff_json.write_text(doc.to_json(), encoding="utf-8")
+
+        logger.info(f"交接文档已生成: {handoff_file}")
+        return doc
+
     def get_status(self) -> Dict[str, Any]:
         """获取当前状态"""
-        return {
+        status = {
             "session_id": self.session_id,
             "message_count": self.message_count,
             "estimated_tokens": self.estimated_tokens,
@@ -342,6 +454,16 @@ class ContextManager:
             "tasks_completed": len(self.snapshot.tasks_completed),
             "tasks_pending": len(self.snapshot.tasks_pending),
         }
+
+        if self._budget_manager:
+            budget_status = self._budget_manager.check_budget(self.estimated_tokens)
+            status["budget"] = budget_status.to_dict()
+
+        if self._messages and self._degradation_detector:
+            health_report = self._degradation_detector.get_health_score(self._messages)
+            status["health"] = health_report.to_dict()
+
+        return status
 
 
 # 全局单例（线程安全）

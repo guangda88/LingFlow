@@ -34,6 +34,11 @@ class AgentCoordinator(BaseCoordinator):
             level=CompressionLevel.ADVANCED
         )
         self.sandbox = SkillSandbox(timeout=30.0, memory_limit=100 * 1024 * 1024)  # 100MB
+
+        # 上下文预算管理（基于 40% 安全线防止长上下文退化）
+        from lingflow.context.budget import ContextBudgetManager
+        self._budget_manager = ContextBudgetManager(max_tokens=180000)
+
         self._register_default_agents()
 
     def _register_default_agents(self) -> None:
@@ -139,8 +144,20 @@ class AgentCoordinator(BaseCoordinator):
         return agents[0]
 
     def _compress_context(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """压缩上下文 - 安全版本"""
+        """压缩上下文 - 基于预算管理器的安全版本"""
         try:
+            # 检查上下文预算
+            import json
+            context_str = json.dumps(context) if isinstance(context, dict) else str(context)
+            context_tokens = self._budget_manager.estimate_text_tokens(context_str)
+            budget_status = self._budget_manager.check_budget(context_tokens)
+
+            if budget_status.level.value in ("critical", "emergency"):
+                logger.warning(
+                    f"Context budget {budget_status.usage_ratio:.1%} ({budget_status.level.value}), "
+                    "applying aggressive compression"
+                )
+
             return self.compressor.compress(context)
         except (ValueError, KeyError, TypeError) as e:
             logger.warning(f"Context compression failed: {e}")
@@ -189,6 +206,7 @@ class AgentCoordinator(BaseCoordinator):
             "failed_tasks": len(self.failed_tasks),
             "agents": len(self.registry.agents),
             "compression_stats": self.compressor.get_stats(),
+            "budget": self._budget_manager.get_status(0),
         }
 
     def reset(self) -> None:

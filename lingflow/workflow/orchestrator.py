@@ -4,7 +4,7 @@ import asyncio
 import logging
 import yaml
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from lingflow.common.config import get_config
 from lingflow.common.models import Task, TaskResult, TaskPriority
@@ -14,6 +14,7 @@ from lingflow.coordination.coordinator import AgentCoordinator
 MAX_SCHEDULING_ITERATIONS = 100  # 最大调度迭代次数
 SCHEDULING_DELAY = 0.01  # 调度间隔（秒）
 DEFAULT_MAX_PARALLEL = 2  # 默认最大并行数
+DEGRADATION_CHECK_INTERVAL = 3  # 每完成 N 个任务检查一次退化
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +34,9 @@ class WorkflowOrchestrator:
             coordinator: The agent coordinator to use for task execution
         """
         self.coordinator = coordinator
+        self._degradation_detector = None
+        self._workflow_messages: List[Dict[str, str]] = []
+        self._degradation_report: Optional[Dict[str, any]] = None
 
     def load_workflow_from_yaml(self, filepath: str) -> List[Task]:
         """从 YAML 文件加载工作流任务
@@ -169,6 +173,10 @@ class WorkflowOrchestrator:
             # 短暂延迟
             await asyncio.sleep(SCHEDULING_DELAY)
 
+            # 定期退化检测
+            if batch_results and iteration % DEGRADATION_CHECK_INTERVAL == 0:
+                self._check_degradation(batch_results)
+
         # 检查是否有未完成的任务
         total_completed = len(self.coordinator.completed_tasks) + len(self.coordinator.failed_tasks)
         if total_completed < len(tasks):
@@ -237,6 +245,9 @@ class WorkflowOrchestrator:
         Raises:
             RuntimeError: 当异步执行失败时
         """
+        self._workflow_messages = []
+        self._degradation_report = None
+
         logger.info(f"Executing workflow with {len(tasks)} tasks")
 
         if async_execution:
@@ -250,3 +261,44 @@ class WorkflowOrchestrator:
         except Exception as e:
             logger.error(f"Workflow execution failed: {e}")
             raise RuntimeError(f"Failed to execute workflow: {e}") from e
+
+    def _check_degradation(self, batch_results: Dict[str, TaskResult]) -> None:
+        """检查工作流执行中的 LLM 退化信号
+
+        在每个批次完成后，收集执行结果到消息列表中，
+        使用 DegradationDetector 分析是否出现退化。
+
+        Args:
+            batch_results: 最新一批任务的执行结果
+        """
+        for task_id, result in batch_results.items():
+            role = "assistant" if result.success else "user"
+            content = result.output if result.success else (result.error or "unknown error")
+            self._workflow_messages.append({"role": role, "content": content})
+
+        if self._degradation_detector is None:
+            from lingflow.context.degradation import DegradationDetector, HealthStatus
+            self._degradation_detector = DegradationDetector()
+
+        report = self._degradation_detector.get_health_score(self._workflow_messages)
+        self._degradation_report = report.to_dict()
+
+        if report.health.value == "critical":
+            logger.warning(
+                f"工作流退化检测: 状态={report.health.value}, 得分={report.score:.2f}, "
+                f"退化类型={[t.value for t in report.detected_types]}"
+            )
+            for rec in report.recommendations:
+                logger.warning(f"  退化建议: {rec}")
+        elif report.health.value == "degraded":
+            logger.info(
+                f"工作流退化检测: 状态={report.health.value}, 得分={report.score:.2f}"
+            )
+
+    def get_degradation_report(self) -> Optional[Dict]:
+        """获取最近的退化检测报告
+
+        Returns:
+            退化检测报告字典，如果从未检测过则返回 None
+        """
+        return self._degradation_report
