@@ -1,10 +1,13 @@
 """Unit tests for lingflow.core.config module."""
 
+import warnings
+
 import pytest
 
 from lingflow.core.config import LingFlowConfig
 
 
+@pytest.mark.filterwarnings("ignore:LingFlowConfig is deprecated:DeprecationWarning")
 class TestLingFlowConfig:
     """Test LingFlowConfig configuration class."""
 
@@ -210,3 +213,12 @@ class TestLingFlowConfig:
             workflow_timeout=0.0, skill_timeout=0.0, agent_timeout=0.0
         )
         config.validate()  # Should not raise
+
+    def test_deprecation_warning(self):
+        """Test that LingFlowConfig emits DeprecationWarning."""
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            LingFlowConfig()
+            assert len(w) == 1
+            assert issubclass(w[0].category, DeprecationWarning)
+            assert "ConfigManager" in str(w[0].message)
