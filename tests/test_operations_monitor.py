@@ -9,19 +9,17 @@ import unittest
 from unittest.mock import Mock, patch
 
 from lingflow.monitoring.operations_monitor import (
+    OperationsMonitor,
+    get_global_monitor as get_operations_monitor,
+    register_health_check,
+    run_health_checks,
+)
+from lingflow.monitoring.metrics.models import (
     Alert,
-    AlertRule,
     AlertSeverity,
     HealthCheckResult,
-    OperationsMonitor,
-    get_operations_monitor,
-    register_health_check,
-    add_alert_rule,
-    run_health_checks,
-    evaluate_all_metrics,
-    get_active_alerts,
-    get_monitoring_summary,
 )
+from lingflow.monitoring.alerts.rules import AlertRule
 from lingflow.monitoring.default_checks import (
     check_skill_loader,
     check_memory_usage,
@@ -202,7 +200,7 @@ class TestOperationsMonitor(unittest.TestCase):
         )
 
         self.monitor.add_alert_rule(rule)
-        self.assertEqual(len(self.monitor._alert_rules), 11)  # 10 default + 1 new
+        self.assertEqual(len(self.monitor._alert_rules), 6)  # 5 default + 1 new
 
     def test_remove_alert_rule(self):
         """Test removing an alert rule"""
