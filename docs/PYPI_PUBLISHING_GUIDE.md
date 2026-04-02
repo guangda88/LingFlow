@@ -1,19 +1,18 @@
-# LingFlow v3.7.0 PyPI 发布指南
+# LingFlow PyPI 发布指南
 
 ## 📦 当前状态
 
-✅ **已完成**:
-- 更新 setup.py 版本到 3.7.0
-- 更新 lingflow/__init__.py 版本到 3.7.0
-- 创建 MANIFEST.in 包含必要文件
-- 配置完整的依赖项和 extras_require
-- 本地构建测试通过
-- 包验证通过 (twine check: PASSED)
+**发布流程**:
+- 更新 `pyproject.toml` 版本号
+- 更新 `lingflow/__init__.py` 版本号
+- 更新 `VERSION` 文件
+- 本地构建测试
+- 发布到 PyPI
 
 **生成的包**:
 ```
-dist/lingflow_core-3.7.0-py3-none-any.whl (388K)
-dist/lingflow_core-3.7.0.tar.gz (358K)
+dist/lingflow_core-{version}-py3-none-any.whl
+dist/lingflow_core-{version}.tar.gz
 ```
 
 ## 🚀 发布步骤
@@ -91,13 +90,14 @@ pip install lingflow-core
 
 # 验证版本
 python -c "import lingflow; print(lingflow.__version__)"
-# 应该输出: 3.7.0
+# 应该输出: 当前版本号
 ```
 
 ## 📋 发布检查清单
 
-- [ ] setup.py 版本为 3.7.0
-- [ ] lingflow/__init__.py 版本为 3.7.0
+- [ ] `pyproject.toml` 版本已更新
+- [ ] `lingflow/__init__.py` 版本已更新
+- [ ] `VERSION` 文件已更新
 - [ ] README.md 描述准确
 - [ ] LICENSE 文件存在（MIT）
 - [ ] 包构建成功: `python -m build`
@@ -162,8 +162,9 @@ pip install lingflow-core[intelligence]
 下次发布新版本时：
 
 1. **更新版本号**:
-   - `setup.py`: `version="3.7.1"`
-   - `lingflow/__init__.py`: `__version__ = "3.7.1"`
+   - `pyproject.toml`: `version = "x.y.z"`
+   - `lingflow/__init__.py`: `__version__ = "x.y.z"`
+   - `VERSION`: `x.y.z`
 
 2. **更新 CHANGELOG.md**
 

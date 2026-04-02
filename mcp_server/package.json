@@ -1,6 +1,6 @@
 {
   "name": "lingflow-mcp",
-  "version": "1.3.0",
+  "version": "3.8.0",
   "description": "LingFlow MCP Server - 21个工具，8个功能域，将 LingFlow 工程流能力暴露为 MCP 工具",
   "author": "LingFlow Team <guangda@iepose.cn>",
   "license": "MIT",

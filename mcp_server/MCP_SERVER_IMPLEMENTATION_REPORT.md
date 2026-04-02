@@ -30,8 +30,8 @@
 ### Phase 1: 高优先级工具 (P0) ✅
 
 #### 1. 技能系统工具
-- ✅ `list_skills` - 列出所有技能（支持按类别/层级过滤）
-- ✅ `run_skill` - 执行指定技能
+- ✅ `list_skills` (**灵艺**) - 列出所有技能（支持按类别/层级过滤）
+- ✅ `run_skill` (**灵行**) - 执行指定技能
 
 **功能**:
 - 支持 33 个技能的动态发现
@@ -39,7 +39,7 @@
 - 参数化执行
 
 #### 2. 代码审查工具
-- ✅ `review_code` - 8维度代码审查
+- ✅ `review_code` (**灵鉴**) - 8维度代码审查
 
 **功能**:
 - 复杂度分析
@@ -52,8 +52,8 @@
 - 错误处理
 
 #### 3. 情报系统工具
-- ✅ `get_github_trends` - GitHub 趋势采集
-- ✅ `get_npm_trends` - npm 趋势采集
+- ✅ `get_github_trends` (**灵探**) - GitHub 趋势采集
+- ✅ `get_npm_trends` (**灵觉**) - npm 趋势采集
 
 **功能**:
 - 关键词过滤
@@ -97,7 +97,7 @@
 │  └─────────────┬─────────────────────┘  │
 │                │                         │
 │  ┌─────────────▼─────────────────────┐  │
-│  │  LingFlow Core (v3.7.0)           │  │
+│  │  LingFlow Core (v3.8.0)           │  │
 │  │  - 33 skills                      │  │
 │  │  - Code review                    │  │
 │  │  - Intelligence system            │  │
@@ -122,20 +122,20 @@
 
 | 工具名称 | 描述 | 异步 | 状态 |
 |---------|------|------|------|
-| `list_skills` | 列出所有技能 | ❌ | ✅ |
-| `run_skill` | 执行技能 | ❌ | ✅ |
-| `review_code` | 代码审查 | ❌ | ✅ |
-| `get_github_trends` | GitHub 趋势 | ❌ | ✅ |
-| `get_npm_trends` | npm 趋势 | ❌ | ✅ |
+| `list_skills` (灵艺) | 列出所有技能 | ❌ | ✅ |
+| `run_skill` (灵行) | 执行技能 | ❌ | ✅ |
+| `review_code` (灵鉴) | 代码审查 | ❌ | ✅ |
+| `get_github_trends` (灵探) | GitHub 趋势 | ❌ | ✅ |
+| `get_npm_trends` (灵觉) | npm 趋势 | ❌ | ✅ |
 
 ### 计划中工具 (Phase 2)
 
-| 工具名称 | 描述 | 异步 | 状态 |
-|---------|------|------|------|
-| `list_workflows` | 列出工作流 | ❌ | 🚧 |
-| `run_workflow` | 执行工作流 | ✅ | 🚧 |
-| `create_requirement` | 创建需求 | ❌ | 🚧 |
-| `get_requirement` | 获取需求 | ❌ | 🚧 |
+| 工具名称 | 中文名 | 描述 | 异步 | 状态 |
+|---------|--------|------|------|------|
+| `list_workflows` | 灵流 | 列出工作流 | ❌ | 🚧 |
+| `run_workflow` | 灵运 | 执行工作流 | ✅ | 🚧 |
+| `create_requirement` | 灵愿 | 创建需求 | ❌ | 🚧 |
+| `get_requirement` | 灵览 | 获取需求 | ❌ | 🚧 |
 
 ## 🔧 配置和部署
 
@@ -194,7 +194,7 @@ lingflow-mcp run --work-dir /path/to/project --log-level DEBUG
 
 ```
 用户: 列出所有基础技能
-Claude: [调用 list_skills(layer="L1")]
+Claude: [调用 灵艺/list_skills(layer="L1")]
 返回: 33 个基础技能列表
 ```
 
@@ -202,7 +202,7 @@ Claude: [调用 list_skills(layer="L1")]
 
 ```
 用户: 审查这个文件
-Claude: [调用 review_code(target_path="src/main.py")]
+Claude: [调用 灵鉴/review_code(target_path="src/main.py")]
 返回: 完整审查报告
 ```
 
@@ -210,7 +210,7 @@ Claude: [调用 review_code(target_path="src/main.py")]
 
 ```
 用户: 推荐一些 Python AI 框架
-Claude: [调用 get_github_trends(keywords=["python", "ai"])]
+Claude: [调用 灵探/get_github_trends(keywords=["python", "ai"])]
 返回: 相关 GitHub 项目列表
 ```
 

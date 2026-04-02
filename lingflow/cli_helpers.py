@@ -49,7 +49,11 @@ def detect_available_tools(verbose: bool = False) -> List[str]:
     return tool_list
 
 
-def run_tool_scans(tool_list: List[str], target: str, verbose: bool = False) -> List[Dict[str, Any]]:
+def run_tool_scans(
+    tool_list: List[str],
+    target: str,
+    verbose: bool = False,
+) -> List[Dict[str, Any]]:
     """运行AI工具扫描
 
     Args:

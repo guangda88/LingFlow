@@ -212,6 +212,25 @@ class OperationsMonitor:
         # 可以在这里添加通知逻辑
         # 例如：发送邮件、Slack通知等
 
+    def add_alert_rule(self, rule: AlertRule) -> None:
+        """添加告警规则
+
+        Args:
+            rule: 告警规则
+        """
+        self.rule_registry.register(rule)
+
+    def remove_alert_rule(self, rule_name: str) -> bool:
+        """移除告警规则
+
+        Args:
+            rule_name: 规则名称
+
+        Returns:
+            是否成功
+        """
+        return self.rule_registry.unregister(rule_name)
+
     def register_alert_rule(self, rule: AlertRule) -> None:
         """注册告警规则
 
@@ -234,15 +253,35 @@ class OperationsMonitor:
     def register_health_check(
         self,
         name: str,
-        check_func: Callable
+        check_func: Callable,
+        description: str = ""
     ) -> None:
         """注册健康检查
 
         Args:
             name: 检查名称
             check_func: 检查函数
+            description: 检查描述
         """
         self.health_collector.register_check(name, check_func)
+
+    def unregister_health_check(self, name: str) -> None:
+        """注销健康检查
+
+        Args:
+            name: 检查名称
+        """
+        self.health_collector.checks.pop(name, None)
+
+    @property
+    def _health_checks(self) -> Dict:
+        """健康检查注册表（向后兼容）"""
+        return self.health_collector.checks
+
+    @property
+    def _alert_rules(self) -> List:
+        """告警规则列表（向后兼容）"""
+        return list(self.rule_registry._rules.values())
 
     def run_health_check(
         self,
@@ -258,13 +297,17 @@ class OperationsMonitor:
         """
         return self.health_collector.run_check(name)
 
-    def run_all_health_checks(self) -> Dict[str, HealthCheckResult]:
+    def run_health_checks(self) -> Dict[str, HealthCheckResult]:
         """运行所有健康检查
 
         Returns:
             检查结果字典
         """
         return self.health_collector.run_all_checks()
+
+    def run_all_health_checks(self) -> Dict[str, HealthCheckResult]:
+        """运行所有健康检查（别名）"""
+        return self.run_health_checks()
 
     def get_alerts(
         self,
@@ -309,6 +352,55 @@ class OperationsMonitor:
                     logger.info(f"告警已解决: {alert_id}")
                     return True
         return False
+
+    def evaluate_metrics(self, metrics: Dict[str, Any]) -> List[Alert]:
+        """评估指标并返回新告警
+
+        Args:
+            metrics: 指标字典
+
+        Returns:
+            触发的告警列表
+        """
+        new_alerts = self.rule_registry.evaluate_all(metrics, "manual_eval")
+        if new_alerts:
+            with self._alerts_lock:
+                self.alerts.extend(new_alerts)
+            for alert in new_alerts:
+                self._on_alert_triggered(alert)
+        return new_alerts
+
+    def get_active_alerts(self) -> List[Alert]:
+        """获取活跃告警（未解决的）"""
+        return self.get_alerts(resolved=False)
+
+    def get_component_status(self) -> Dict[str, bool]:
+        """获取组件状态"""
+        results = self.run_health_checks()
+        return {name: result.healthy for name, result in results.items()}
+
+    def get_overall_health(self) -> bool:
+        """获取整体健康状态"""
+        results = self.run_health_checks()
+        if not results:
+            return True
+        return all(r.healthy for r in results.values())
+
+    def get_monitoring_summary(self) -> Dict[str, Any]:
+        """获取监控摘要"""
+        results = self.run_health_checks()
+        active = self.get_active_alerts()
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "overall_healthy": all(r.healthy for r in results.values()) if results else True,
+            "components": {name: result.healthy for name, result in results.items()},
+            "alerts": {
+                "total": len(self.alerts),
+                "active": len(active),
+                "resolved": len(self.alerts) - len(active),
+            },
+            "health_checks": {name: {"healthy": r.healthy, "message": r.message} for name, r in results.items()},
+        }
 
     def get_statistics(self) -> Dict[str, Any]:
         """获取统计信息
@@ -363,3 +455,46 @@ def get_global_monitor() -> OperationsMonitor:
     if _global_monitor is None:
         _global_monitor = OperationsMonitor()
     return _global_monitor
+
+
+def get_operations_monitor() -> OperationsMonitor:
+    """获取全局监控器实例（别名）"""
+    return get_global_monitor()
+
+
+def register_health_check(name: str, check_func: Callable, description: str = "") -> None:
+    """注册健康检查"""
+    get_global_monitor().register_health_check(name, check_func)
+
+
+def add_alert_rule(rule: AlertRule) -> None:
+    """添加告警规则"""
+    get_global_monitor().register_alert_rule(rule)
+
+
+def run_health_checks() -> Dict[str, HealthCheckResult]:
+    """运行所有健康检查"""
+    return get_global_monitor().run_all_health_checks()
+
+
+def evaluate_all_metrics() -> None:
+    """评估所有指标"""
+    monitor = get_global_monitor()
+    metrics = monitor.get_current_metrics()
+    if metrics:
+        monitor._evaluate_alerts(metrics)
+
+
+def get_active_alerts() -> List[Alert]:
+    """获取活跃告警"""
+    return get_global_monitor().get_active_alerts()
+
+
+def get_monitoring_summary() -> Dict[str, Any]:
+    """获取监控摘要"""
+    return get_global_monitor().get_statistics()
+
+
+def add_notification_handler(handler: Callable) -> None:
+    """添加通知处理器"""
+    get_global_monitor().set_performance_monitor(handler)

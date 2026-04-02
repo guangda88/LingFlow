@@ -160,7 +160,10 @@ class AIScenarioRunner:
                     test_id=f"scenario_{scenario.name}",
                     temp_dir=str(self.test_server.temp_dir),
                     start_time=start_time,
-                    captured_calls=[c.to_dict() if hasattr(c, 'to_dict') else c.__dict__ for c in captured_calls]
+                    captured_calls=[
+                        c.to_dict() if hasattr(c, 'to_dict') else c.__dict__
+                        for c in captured_calls
+                    ]
                 )
 
                 await tool.handle(request, response, context)

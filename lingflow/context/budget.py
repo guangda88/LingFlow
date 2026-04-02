@@ -46,6 +46,11 @@ class BudgetStatus:
     details: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
+        """Convert the budget status to a dictionary.
+
+        Returns:
+            Dict[str, Any]: Dictionary representation of the budget status.
+        """
         return {
             "level": self.level.value,
             "current_tokens": self.current_tokens,
@@ -94,22 +99,22 @@ class ContextBudgetManager:
 
     @property
     def safe_budget(self) -> int:
-        """安全预算（token 数）"""
+        """int: 安全预算（token 数），基于模型最大值的 40%"""
         return int(self.max_tokens * self.safety_ratio)
 
     @property
     def warning_budget(self) -> int:
-        """警告预算"""
+        """int: 警告预算，基于模型最大值的 40%"""
         return int(self.max_tokens * self.WARNING_RATIO)
 
     @property
     def critical_budget(self) -> int:
-        """临界预算"""
+        """int: 临界预算，基于模型最大值的 60%"""
         return int(self.max_tokens * self.CRITICAL_RATIO)
 
     @property
     def emergency_budget(self) -> int:
-        """紧急预算"""
+        """int: 紧急预算，基于模型最大值的 80%"""
         return int(self.max_tokens * self.EMERGENCY_RATIO)
 
     def check_budget(self, current_tokens: int) -> BudgetStatus:

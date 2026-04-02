@@ -62,9 +62,22 @@ class HandoffDocument:
     degradation_types: List[str] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
+        """Convert the handoff document to a dictionary.
+
+        Returns:
+            Dict[str, Any]: Dictionary representation of the handoff document.
+        """
         return asdict(self)
 
     def to_json(self, indent: int = 2) -> str:
+        """Convert the handoff document to JSON string.
+
+        Args:
+            indent: JSON indentation level.
+
+        Returns:
+            str: JSON string representation of the handoff document.
+        """
         return json.dumps(self.to_dict(), ensure_ascii=False, indent=indent)
 
     def to_markdown(self) -> str:
@@ -163,12 +176,31 @@ class HandoffDocument:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "HandoffDocument":
+        """Create a HandoffDocument from a dictionary.
+
+        Args:
+            data: Dictionary containing handoff document data.
+
+        Returns:
+            HandoffDocument: New handoff document instance.
+        """
         known_fields = {f.name for f in cls.__dataclass_fields__.values()}
         filtered = {k: v for k, v in data.items() if k in known_fields}
         return cls(**filtered)
 
     @classmethod
     def from_json(cls, json_str: str) -> "HandoffDocument":
+        """Create a HandoffDocument from a JSON string.
+
+        Args:
+            json_str: JSON string containing handoff document data.
+
+        Returns:
+            HandoffDocument: New handoff document instance.
+
+        Raises:
+            json.JSONDecodeError: If the JSON string is invalid.
+        """
         return cls.from_dict(json.loads(json_str))
 
     @classmethod

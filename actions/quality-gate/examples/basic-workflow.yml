@@ -1,0 +1,83 @@
+name: LingFlow Quality Gate
+
+# 触发条件
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  # 基础代码审查
+  code-review:
+    name: Code Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run LingFlow Review
+        uses: lingflow/actions/quality-gate@v1
+        with:
+          command: review
+          path: ./src
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          output_format: markdown
+          fail_on_error: 'false'
+
+  # 质量门禁（严格模式）
+  quality-gate-strict:
+    name: Quality Gate (Strict)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run with API Key
+        uses: lingflow/actions/quality-gate@v1
+        with:
+          command: review
+          path: ./
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          api_key: ${{ secrets.LINGFLOW_API_KEY }}
+          fail_on_error: 'true'
+        env:
+          ACTION_VERBOSE: 'true'
+
+  # 多路径检查
+  check-all:
+    name: Check Multiple Paths
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        path:
+          - ./backend
+          - ./frontend
+          - ./shared
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check ${{ matrix.path }}
+        uses: lingflow/actions/quality-gate@v1
+        with:
+          command: review
+          path: ${{ matrix.path }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  # 优化建议
+  optimization:
+    name: Code Optimization
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Optimization Check
+        uses: lingflow/actions/quality-gate@v1
+        with:
+          command: optimize
+          path: ./src
+          github_token: ${{ secrets.GITHUB_TOKEN }}

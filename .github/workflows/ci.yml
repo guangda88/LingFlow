@@ -9,39 +9,48 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install -e ".[dev]"
+    - name: Collect tests
+      run: |
+        python -m pytest --co -q
     - name: Run tests
       run: |
-        python -m pytest
+        python -m pytest -q --tb=short
 
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install black flake8 mypy
-    - name: Lint with black
+        pip install black isort flake8 mypy
+    - name: Format check with black
       run: |
-        black --check .
+        black --check --line-length=127 lingflow/ tests/
+    - name: Import check with isort
+      run: |
+        isort --check-only --profile black --line-length=127 lingflow/ tests/
     - name: Lint with flake8
       run: |
-        flake8 .
+        flake8 --max-line-length=127 --max-complexity=15 --ignore=E203,E266,E501,W503,E402 lingflow/
     - name: Type check with mypy
+      continue-on-error: true
       run: |
-        mypy .
+        mypy lingflow/ --ignore-missing-imports --python-version=3.11

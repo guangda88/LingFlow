@@ -171,16 +171,17 @@ class SmartContextCompressor:
             # 执行压缩
             compressed = strategy.execute_plan(messages, plan, scores)
 
-            # 如果启用摘要且压缩后仍超限，添加摘要
             if (self.summarizer and
                 len(compressed) < len(messages) and
                 len(compressed) > 0):
 
-                # 计算被移除的消息
                 removed = [m for m in messages if m not in compressed]
                 if removed:
                     summary_msg = self.summarizer.create_summary_message(removed)
-                    compressed.insert(0, summary_msg)
+                    candidate = [summary_msg] + compressed
+                    candidate_tokens = self.count_tokens(candidate)
+                    if candidate_tokens < current_tokens:
+                        compressed = candidate
 
             # 计算最终 token 数
             final_tokens = self.count_tokens(compressed)

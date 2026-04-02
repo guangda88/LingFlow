@@ -3,9 +3,7 @@
 This module provides standardized types for the LingFlow framework.
 """
 
-from typing import Any, Dict, Generic, Optional, TypeVar, Union
-
-from lingflow.common.exceptions import LingFlowError
+from typing import Any, Dict, Generic, Optional, TypeVar
 
 
 T = TypeVar("T")

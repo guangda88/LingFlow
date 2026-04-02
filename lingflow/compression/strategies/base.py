@@ -134,7 +134,7 @@ class TieredCompressionStrategy(CompressionStrategy):
             "keep_first_n": 1,
             "keep_last_n": 1,
             "score_threshold": 0.9,
-            "remove_system": True,
+            "remove_system": False,
         },
     }
 
@@ -218,13 +218,18 @@ class TieredCompressionStrategy(CompressionStrategy):
             system_messages = []
 
         # 保留首尾消息
-        keep_first = other_messages[:plan.keep_first_n]
-        keep_last = other_messages[-plan.keep_last_n:] if plan.keep_last_n > 0 else []
-        middle_messages = other_messages[
-            plan.keep_first_n:
-        ] if plan.keep_first_n < len(other_messages) else []
-        if plan.keep_last_n > 0 and len(middle_messages) > plan.keep_last_n:
-            middle_messages = middle_messages[:-plan.keep_last_n]
+        if len(other_messages) <= plan.keep_first_n + plan.keep_last_n:
+            keep_first = other_messages
+            keep_last = []
+            middle_messages = []
+        else:
+            keep_first = other_messages[:plan.keep_first_n]
+            keep_last = other_messages[-plan.keep_last_n:] if plan.keep_last_n > 0 else []
+            middle_messages = other_messages[
+                plan.keep_first_n:
+            ] if plan.keep_first_n < len(other_messages) else []
+            if plan.keep_last_n > 0 and len(middle_messages) > plan.keep_last_n:
+                middle_messages = middle_messages[:-plan.keep_last_n]
 
         # 根据评分过滤中间消息
         if scores and plan.score_threshold > 0:

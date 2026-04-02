@@ -11,6 +11,7 @@ from lingflow.compression.compressor import (
     AdvancedContextCompressor,
     CompressionStrategy,
 )
+from lingflow.compression.token_estimator import TokenEstimator
 
 
 class CompressionConfig:
@@ -81,7 +82,7 @@ class ConversationCompressor:
     自动监控对话长度，在超过阈值时压缩上下文。
     """
 
-    # 估算 token 的比率 (约 4 字符 = 1 token)
+    # 估算 token 的比率 (约 4 字符 = 1 token) — 保留向后兼容
     CHAR_TO_TOKEN_RATIO = 0.25
 
     def __init__(self, config: Optional[CompressionConfig] = None) -> None:
@@ -92,6 +93,7 @@ class ConversationCompressor:
         """
         self.config = config or CompressionConfig()
         self.compressor = self.config.create_compressor()
+        self._token_estimator = TokenEstimator()
         self._compression_count = 0
         self._total_saved_tokens = 0
 
@@ -104,7 +106,7 @@ class ConversationCompressor:
         Returns:
             估算的 token 数量
         """
-        return int(len(text) * self.CHAR_TO_TOKEN_RATIO)
+        return self._token_estimator.count_tokens(text)
 
     def should_compress(self, context: Dict[str, Any]) -> bool:
         """检查是否需要压缩
@@ -149,7 +151,11 @@ class ConversationCompressor:
         compressed = self.compressor.compress(context)
 
         compressed_size = len(json.dumps(compressed))
-        saved_tokens = int((original_size - compressed_size) * self.CHAR_TO_TOKEN_RATIO)
+        original_tokens = self._token_estimator.count_tokens(json.dumps(context))
+        compressed_tokens = self._token_estimator.count_tokens(
+            json.dumps(compressed),
+        )
+        saved_tokens = original_tokens - compressed_tokens
 
         self._compression_count += 1
         self._total_saved_tokens += saved_tokens
@@ -163,7 +169,7 @@ class ConversationCompressor:
     ) -> List[Dict[str, str]]:
         """压缩对话历史
 
-        保留最近 N 条消息，压缩旧消息。
+        保留最近 N 条消息，使用 ConversationSummarizer 生成旧消息摘要。
 
         Args:
             messages: 消息列表
@@ -175,18 +181,14 @@ class ConversationCompressor:
         if len(messages) <= keep_recent:
             return messages
 
-        # 保留最近的消息
         recent = messages[-keep_recent:]
-
-        # 压缩旧消息为摘要
         old_messages = messages[:-keep_recent]
+
         if old_messages:
-            # 创建摘要消息
-            summary = {
-                "role": "system",
-                "content": f"[已压缩 {len(old_messages)} 条历史消息]"
-            }
-            return [summary] + recent
+            from lingflow.compression.summarizer import ConversationSummarizer
+            summarizer = ConversationSummarizer()
+            summary_msg = summarizer.create_summary_message(old_messages)
+            return [summary_msg] + recent
 
         return recent
 

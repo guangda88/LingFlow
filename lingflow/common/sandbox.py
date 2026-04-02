@@ -486,8 +486,8 @@ class SkillSandbox:
                     for severity in ['CRITICAL', 'HIGH']:
                         for violation in report['by_severity'][severity]:
                             self.logger.warning(
-                                f"  [{severity}] {violation['violation_type']}: {violation['message']} "
-                                f"at line {violation['line']}"
+                                f"  [{severity}] {violation['violation_type']}: "
+                                f"{violation['message']} at line {violation['line']}"
                             )
 
                     return False
@@ -546,7 +546,9 @@ class SkillSandbox:
             return {
                 'is_safe': is_valid,
                 'total_violations': 0 if is_valid else 1,
-                'by_severity': {'HIGH': [] if is_valid else [{'message': 'Simple validation failed'}]},
+                'by_severity': {
+                    'HIGH': [] if is_valid else [{'message': 'Validation failed'}]
+                },
                 'by_type': {},
                 'has_recursion': False,
                 'max_loop_depth': 0,

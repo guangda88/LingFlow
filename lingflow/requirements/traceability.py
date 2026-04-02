@@ -260,7 +260,11 @@ class RequirementsTraceability:
             # 记录状态变更
             if 'status' in kwargs and kwargs['status'] != req.status:
                 old_status = req.status.value
-                new_status = kwargs['status'].value if isinstance(kwargs['status'], RequirementStatus) else kwargs['status']
+                new_status = (
+                    kwargs['status'].value
+                    if isinstance(kwargs['status'], RequirementStatus)
+                    else kwargs['status']
+                )
                 self._add_event(id, "status_change", f"状态变更: {old_status} -> {new_status}")
 
             # 更新字段

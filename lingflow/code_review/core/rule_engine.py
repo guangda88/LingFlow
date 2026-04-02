@@ -11,6 +11,7 @@ from typing import Dict, List, Any, Optional
 
 from .loaders.rule_loader import RuleLoader, get_registry
 from .rules.models import Rule, RuleResult, RuleNotFoundError
+from .severity import Severity
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,57 @@ class RuleEngine:
     def __init__(self):
         """初始化规则引擎"""
         self.loader = get_registry().loader
+        self._register_default_rules()
+
+    @property
+    def rules(self) -> Dict[str, Rule]:
+        """已注册的规则字典，键为规则ID"""
+        return self.loader.get_all_rules()
+
+    def _register_default_rules(self):
+        """注册默认规则"""
+        import re as _re
+
+        existing = set(self.loader.get_all_rules().keys())
+
+        defaults = []
+
+        if "SEC001" not in existing:
+            defaults.append(Rule(
+                id="SEC001", name="eval_usage", category="security",
+                check_func=lambda c, t, p: ("使用 eval() 存在安全风险" if any(
+                    isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "eval"
+                    for n in ast.walk(t)
+                ) else None),
+                severity=Severity.CRITICAL, suggestion_template="避免使用 eval()",
+            ))
+
+        if "SEC002" not in existing:
+            defaults.append(Rule(
+                id="SEC002", name="exec_usage", category="security",
+                check_func=lambda c, t, p: ("使用 exec() 存在安全风险" if any(
+                    isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "exec"
+                    for n in ast.walk(t)
+                ) else None),
+                severity=Severity.CRITICAL, suggestion_template="避免使用 exec()",
+            ))
+
+        if "PERF001" not in existing:
+            defaults.append(Rule(
+                id="PERF001", name="string_concat_in_loop", category="performance",
+                check_func=lambda c, t, p: None,
+                severity=Severity.MEDIUM, suggestion_template="使用 join() 代替循环内字符串拼接",
+            ))
+
+        if "QUALITY001" not in existing:
+            defaults.append(Rule(
+                id="QUALITY001", name="naming_convention", category="code_quality",
+                check_func=lambda c, t, p: None,
+                severity=Severity.LOW, suggestion_template="遵循命名规范",
+            ))
+
+        for rule in defaults:
+            self.loader.register_rule(rule)
 
     def register_rule(self, rule: Rule) -> None:
         """注册新规则

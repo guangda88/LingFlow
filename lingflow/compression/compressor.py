@@ -10,6 +10,10 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
+from lingflow.compression.token_estimator import TokenEstimator
+
+_token_estimator = TokenEstimator()
+
 
 class CompressionLevel(Enum):
     """压缩级别"""
@@ -138,7 +142,11 @@ class AdvancedContextCompressor:
         return CompressionResult(
             original_length=original_length,
             compressed_length=compressed_length,
-            reduction_ratio=1.0 - (compressed_length / original_length) if original_length > 0 else 0,
+            reduction_ratio=(
+                1.0 - (compressed_length / original_length)
+                if original_length > 0
+                else 0
+            ),
             strategy="advanced",
             preserved_keywords=self._extract_preserved_keywords(text)
         )
@@ -287,7 +295,7 @@ class AdvancedContextCompressor:
     def _estimate_tokens(self, data: Any) -> int:
         """估算 token 数量"""
         text = str(data)
-        return len(text) // 4  # 简单估算：4 字符/token
+        return _token_estimator.count_tokens(text)
 
     def get_stats(self) -> Dict[str, Any]:
         """获取压缩统计"""

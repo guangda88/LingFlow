@@ -103,7 +103,8 @@ class ConversationSummarizer:
             # 提取用户的问题
             if role == "user":
                 # 提取问题（通常以问号结尾或包含疑问词）
-                if any(indicator in content for indicator in ["?", "？", "如何", "怎么", "what", "how", "why"]):
+                question_indicators = ["?", "？", "如何", "怎么", "what", "how", "why"]
+                if any(indicator in content for indicator in question_indicators):
                     key_points.append(f"Q: {content[:100]}...")
 
             # 提取助手的要点
