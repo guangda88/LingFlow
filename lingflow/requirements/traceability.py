@@ -20,40 +20,43 @@ logger = logging.getLogger(__name__)
 
 class RequirementStatus(str, Enum):
     """需求状态"""
-    DRAFT = "draft"                    # 草稿
-    PROPOSED = "proposed"              # 已提出
-    APPROVED = "approved"              # 已批准
-    IN_PROGRESS = "in_progress"        # 进行中
-    IMPLEMENTED = "implemented"        # 已实现
-    VERIFIED = "verified"              # 已验证
-    RELEASED = "released"              # 已发布
-    CANCELLED = "cancelled"            # 已取消
+
+    DRAFT = "draft"  # 草稿
+    PROPOSED = "proposed"  # 已提出
+    APPROVED = "approved"  # 已批准
+    IN_PROGRESS = "in_progress"  # 进行中
+    IMPLEMENTED = "implemented"  # 已实现
+    VERIFIED = "verified"  # 已验证
+    RELEASED = "released"  # 已发布
+    CANCELLED = "cancelled"  # 已取消
 
 
 class RequirementPriority(str, Enum):
     """需求优先级"""
-    CRITICAL = "critical"              # 关键
-    HIGH = "high"                      # 高
-    MEDIUM = "medium"                  # 中
-    LOW = "low"                        # 低
+
+    CRITICAL = "critical"  # 关键
+    HIGH = "high"  # 高
+    MEDIUM = "medium"  # 中
+    LOW = "low"  # 低
 
 
 @dataclass
 class Requirement:
     """需求数据模型"""
-    id: str                            # 需求 ID
-    title: str                         # 需求标题
-    description: str                   # 需求描述
+
+    id: str  # 需求 ID
+    title: str  # 需求标题
+    description: str  # 需求描述
     status: RequirementStatus = RequirementStatus.DRAFT
     priority: RequirementPriority = RequirementPriority.MEDIUM
     created_at: datetime = field(default_factory=datetime.now)
     updated_at: datetime = field(default_factory=datetime.now)
 
     # 追溯信息
-    parent_id: Optional[str] = None    # 父需求 ID
+    parent_id: Optional[str] = None  # 父需求 ID
     child_ids: List[str] = field(default_factory=list)  # 子需求 IDs
     depends_on: List[str] = field(default_factory=list)  # 依赖的需求 IDs
-    blocks: List[str] = field(default_factory=list)      # 被此需求阻塞的需求 IDs
+    blocks: List[str] = field(default_factory=list)  # 被此需求阻塞的需求 IDs
 
     # 实现追溯
     feature_branch: Optional[str] = None  # 功能分支
@@ -77,30 +80,31 @@ class Requirement:
         """转换为字典"""
         data = asdict(self)
         # 转换枚举为字符串
-        data['status'] = self.status.value
-        data['priority'] = self.priority.value
+        data["status"] = self.status.value
+        data["priority"] = self.priority.value
         # 转换日期时间
-        data['created_at'] = self.created_at.isoformat()
-        data['updated_at'] = self.updated_at.isoformat()
+        data["created_at"] = self.created_at.isoformat()
+        data["updated_at"] = self.updated_at.isoformat()
         return data
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Requirement':
+    def from_dict(cls, data: Dict[str, Any]) -> "Requirement":
         """从字典创建"""
         # 转换字符串为枚举
-        data['status'] = RequirementStatus(data.get('status', 'draft'))
-        data['priority'] = RequirementPriority(data.get('priority', 'medium'))
+        data["status"] = RequirementStatus(data.get("status", "draft"))
+        data["priority"] = RequirementPriority(data.get("priority", "medium"))
         # 转换日期时间
-        if isinstance(data.get('created_at'), str):
-            data['created_at'] = datetime.fromisoformat(data['created_at'])
-        if isinstance(data.get('updated_at'), str):
-            data['updated_at'] = datetime.fromisoformat(data['updated_at'])
+        if isinstance(data.get("created_at"), str):
+            data["created_at"] = datetime.fromisoformat(data["created_at"])
+        if isinstance(data.get("updated_at"), str):
+            data["updated_at"] = datetime.fromisoformat(data["updated_at"])
         return cls(**data)
 
 
 @dataclass
 class TraceEvent:
     """追溯事件"""
+
     id: str
     requirement_id: str
     event_type: str  # status_change, commit_added, pr_merged, etc.
@@ -148,16 +152,16 @@ class RequirementsTraceability:
         """从文件加载数据"""
         if self.storage_path.exists():
             try:
-                with open(self.storage_path, 'r', encoding='utf-8') as f:
+                with open(self.storage_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
 
                 # 加载需求
-                for req_data in data.get('requirements', []):
+                for req_data in data.get("requirements", []):
                     req = Requirement.from_dict(req_data)
                     self._requirements[req.id] = req
 
                 # 加载事件
-                for event_data in data.get('events', []):
+                for event_data in data.get("events", []):
                     event = TraceEvent(**event_data)
                     if isinstance(event.timestamp, str):
                         event.timestamp = datetime.fromisoformat(event.timestamp)
@@ -171,35 +175,30 @@ class RequirementsTraceability:
         """保存数据到文件"""
         try:
             data = {
-                'version': '1.0',
-                'updated_at': datetime.now().isoformat(),
-                'requirements': [req.to_dict() for req in self._requirements.values()],
-                'events': [
+                "version": "1.0",
+                "updated_at": datetime.now().isoformat(),
+                "requirements": [req.to_dict() for req in self._requirements.values()],
+                "events": [
                     {
-                        'id': e.id,
-                        'requirement_id': e.requirement_id,
-                        'event_type': e.event_type,
-                        'timestamp': e.timestamp.isoformat(),
-                        'description': e.description,
-                        'metadata': e.metadata
+                        "id": e.id,
+                        "requirement_id": e.requirement_id,
+                        "event_type": e.event_type,
+                        "timestamp": e.timestamp.isoformat(),
+                        "description": e.description,
+                        "metadata": e.metadata,
                     }
                     for e in self._events
-                ]
+                ],
             }
 
-            with open(self.storage_path, 'w', encoding='utf-8') as f:
+            with open(self.storage_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
 
         except Exception as e:
             logger.error(f"保存数据失败: {e}")
 
     def create_requirement(
-        self,
-        id: str,
-        title: str,
-        description: str,
-        priority: RequirementPriority = RequirementPriority.MEDIUM,
-        **kwargs
+        self, id: str, title: str, description: str, priority: RequirementPriority = RequirementPriority.MEDIUM, **kwargs
     ) -> Requirement:
         """创建新需求
 
@@ -217,13 +216,7 @@ class RequirementsTraceability:
             if id in self._requirements:
                 raise ValueError(f"需求 {id} 已存在")
 
-            req = Requirement(
-                id=id,
-                title=title,
-                description=description,
-                priority=priority,
-                **kwargs
-            )
+            req = Requirement(id=id, title=title, description=description, priority=priority, **kwargs)
             self._requirements[id] = req
 
             # 记录事件
@@ -237,11 +230,7 @@ class RequirementsTraceability:
         """获取需求"""
         return self._requirements.get(id)
 
-    def update_requirement(
-        self,
-        id: str,
-        **kwargs
-    ) -> Optional[Requirement]:
+    def update_requirement(self, id: str, **kwargs) -> Optional[Requirement]:
         """更新需求
 
         Args:
@@ -258,13 +247,9 @@ class RequirementsTraceability:
             req = self._requirements[id]
 
             # 记录状态变更
-            if 'status' in kwargs and kwargs['status'] != req.status:
+            if "status" in kwargs and kwargs["status"] != req.status:
                 old_status = req.status.value
-                new_status = (
-                    kwargs['status'].value
-                    if isinstance(kwargs['status'], RequirementStatus)
-                    else kwargs['status']
-                )
+                new_status = kwargs["status"].value if isinstance(kwargs["status"], RequirementStatus) else kwargs["status"]
                 self._add_event(id, "status_change", f"状态变更: {old_status} -> {new_status}")
 
             # 更新字段
@@ -292,7 +277,7 @@ class RequirementsTraceability:
         status: Optional[RequirementStatus] = None,
         priority: Optional[RequirementPriority] = None,
         category: Optional[str] = None,
-        epic: Optional[str] = None
+        epic: Optional[str] = None,
     ) -> List[Requirement]:
         """列出需求
 
@@ -409,12 +394,7 @@ class RequirementsTraceability:
         return {
             "requirement": req.to_dict(),
             "events": [
-                {
-                    "type": e.event_type,
-                    "timestamp": e.timestamp.isoformat(),
-                    "description": e.description
-                }
-                for e in events
+                {"type": e.event_type, "timestamp": e.timestamp.isoformat(), "description": e.description} for e in events
             ],
             "summary": {
                 "commits_count": len(req.commits),
@@ -423,7 +403,7 @@ class RequirementsTraceability:
                 "test_cases_count": len(req.test_cases),
                 "dependencies_count": len(req.depends_on),
                 "blocks_count": len(req.blocks),
-            }
+            },
         }
 
     def get_status_summary(self) -> Dict[str, int]:
@@ -441,7 +421,7 @@ class RequirementsTraceability:
             requirement_id=requirement_id,
             event_type=event_type,
             description=description,
-            metadata=metadata or {}
+            metadata=metadata or {},
         )
         self._events.append(event)
 

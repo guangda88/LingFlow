@@ -24,8 +24,8 @@ LingFlow Phase 5: AI工具学习系统
     apply_result = system.apply_learned_improvements(auto_apply=False)
 """
 
-# 版本信息
-__version__ = "5.0.0-alpha"
+# 版本信息 (与主项目版本保持一致)
+__version__ = "3.8.0"
 __author__ = "LingFlow Team"
 
 # 核心类导出（待实现）
@@ -109,7 +109,6 @@ __all__ = [
     # 版本信息
     "__version__",
     "__author__",
-
     # 数据模型
     "FeedbackItem",
     "ToolType",
@@ -117,13 +116,11 @@ __all__ = [
     "SeverityLevel",
     "LearnedRule",
     "Pattern",
-
     # 学习引擎
     "RuleExtractor",
     "SecurityRuleExtractor",
     "RuleDeduplicator",
     "RuleValidator",
-
     # 模式识别
     "PatternRecognizer",
     "PatternDetector",
@@ -133,7 +130,6 @@ __all__ = [
     "DuplicateCodeDetector",
     "EmptyBlockDetector",
     "ComplexityDetector",
-
     # 知识库
     "KnowledgeBase",
     "InMemoryKnowledgeBase",

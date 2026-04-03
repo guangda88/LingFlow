@@ -9,7 +9,7 @@ try:
         CompressionConfig,
         get_default_compressor,
         compress_messages,
-        enable_smart_compression
+        enable_smart_compression,
     )
 except ImportError:
     from .compressor import ContextCompressor as SmartContextCompressor
@@ -26,14 +26,11 @@ except ImportError:
     def enable_smart_compression(**kwargs):
         """Enable smart compression"""
         return True
+
+
 from .token_estimator import TokenEstimator
 from .scoring import MessageScorer, MessageScore
-from .strategies.base import (
-    CompressionStrategy,
-    TieredCompressionStrategy,
-    CompressionTier,
-    CompressionPlan
-)
+from .strategies.base import CompressionStrategy, TieredCompressionStrategy, CompressionTier, CompressionPlan
 from .summarizer import ConversationSummarizer
 from .result import CompressionResult
 
@@ -44,19 +41,16 @@ __all__ = [
     "get_default_compressor",
     "compress_messages",
     "enable_smart_compression",
-
     # 组件
     "TokenEstimator",
     "MessageScorer",
     "MessageScore",
     "ConversationSummarizer",
-
     # 策略
     "CompressionStrategy",
     "TieredCompressionStrategy",
     "CompressionTier",
     "CompressionPlan",
-
     # 结果
     "CompressionResult",
 ]

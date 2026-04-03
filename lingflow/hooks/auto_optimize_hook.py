@@ -3,7 +3,7 @@ LingFlow 自优化钩子
 在特定事件触发时检查是否需要自优化
 """
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from datetime import datetime
 
 from lingflow.self_optimizer.trigger import OptimizationTrigger, TriggerInfo
@@ -54,9 +54,8 @@ class AutoOptimizeHook:
             "coverage_drop": coverage_drop,
             "execution_time": test_result.get("duration", 0),
             "test_failure_rate": (
-                test_result.get("failed", 0) / test_result.get("total", 1) * 100
-                if test_result.get("total", 0) > 0 else 0
-            )
+                test_result.get("failed", 0) / test_result.get("total", 1) * 100 if test_result.get("total", 0) > 0 else 0
+            ),
         }
 
         # 更新last_check
@@ -100,11 +99,7 @@ class AutoOptimizeHook:
 
         self._check_and_prompt(context, metrics)
 
-    def _check_and_prompt(
-        self,
-        context: Dict[str, Any],
-        event_data: Dict[str, Any]
-    ):
+    def _check_and_prompt(self, context: Dict[str, Any], event_data: Dict[str, Any]):
         """检查条件并提示用户"""
         # 更新last_check_time
         self.last_check_time = datetime.now()
@@ -128,18 +123,14 @@ class AutoOptimizeHook:
         # 提示用户
         self._prompt_user(trigger_info, event_data)
 
-    def _prompt_user(
-        self,
-        trigger_info: TriggerInfo,
-        event_data: Dict[str, Any]
-    ):
+    def _prompt_user(self, trigger_info: TriggerInfo, event_data: Dict[str, Any]):
         """提示用户是否启动优化"""
         if self.optimization_suggested:
             return  # 已建议过，避免重复提示
 
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("🔍 检测到需要优化的问题".center(60))
-        print("="*60)
+        print("=" * 60)
         print(f"\n原因: {trigger_info.reason}")
         print(f"优先级: {trigger_info.priority}")
 
@@ -148,11 +139,11 @@ class AutoOptimizeHook:
             if trigger_info.threshold is not None:
                 print(f"阈值: {trigger_info.threshold}")
 
-        print("\n" + "-"*60)
+        print("\n" + "-" * 60)
 
         response = input("\n是否启动自优化? [y/N] ")
 
-        if response.lower() == 'y':
+        if response.lower() == "y":
             self._start_optimization(trigger_info)
         else:
             print("跳过优化。")
@@ -166,13 +157,11 @@ class AutoOptimizeHook:
 
         # 创建优化请求
         from lingflow.self_optimizer.config import get_global_config
+
         config = get_global_config()
 
         request = OptimizationRequest(
-            target=".",  # 默认当前目录
-            goal=goal,
-            params={},
-            config=config.get_optimization_config()
+            target=".", goal=goal, params={}, config=config.get_optimization_config()  # 默认当前目录
         )
 
         # 启动优化

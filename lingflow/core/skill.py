@@ -136,9 +136,7 @@ class FunctionSkill(BaseSkill):
         description: Skill description
     """
 
-    def __init__(
-        self, name: str, func: Callable[[Dict[str, Any]], Any], description: str = ""
-    ):
+    def __init__(self, name: str, func: Callable[[Dict[str, Any]], Any], description: str = ""):
         """Initialize FunctionSkill.
 
         Args:

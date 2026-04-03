@@ -9,8 +9,7 @@ import pytest
 import ast
 import sys
 from pathlib import Path
-from typing import Dict, Any, List
-import json
+from typing import Dict, Any
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -42,25 +41,16 @@ class CodeAnalyzer:
         try:
             tree = ast.parse(code)
         except SyntaxError as e:
-            return {
-                "error": "SyntaxError",
-                "message": str(e),
-                "success": False
-            }
+            return {"error": "SyntaxError", "message": str(e), "success": False}
 
         result = {
             "success": True,
             "functions": [],
             "classes": [],
             "imports": [],
-            "stats": {
-                "total_lines": len(code.splitlines()),
-                "blank_lines": 0,
-                "comment_lines": 0,
-                "code_lines": 0
-            },
+            "stats": {"total_lines": len(code.splitlines()), "blank_lines": 0, "comment_lines": 0, "code_lines": 0},
             "complexity": 0,
-            "warnings": []
+            "warnings": [],
         }
 
         # 分析代码
@@ -71,11 +61,8 @@ class CodeAnalyzer:
                     "name": node.name,
                     "lineno": node.lineno,
                     "args": [arg.arg for arg in node.args.args],
-                    "decorators": [
-                        d.id if isinstance(d, ast.Name) else str(type(d).__name__)
-                        for d in node.decorator_list
-                    ],
-                    "has_return": any(isinstance(n, ast.Return) for n in ast.walk(node))
+                    "decorators": [d.id if isinstance(d, ast.Name) else str(type(d).__name__) for d in node.decorator_list],
+                    "has_return": any(isinstance(n, ast.Return) for n in ast.walk(node)),
                 }
                 result["functions"].append(func_info)
                 result["complexity"] += 1
@@ -85,31 +72,21 @@ class CodeAnalyzer:
                 class_info = {
                     "name": node.name,
                     "lineno": node.lineno,
-                    "bases": [
-                        base.id if isinstance(base, ast.Name) else str(type(base).__name__)
-                        for base in node.bases
-                    ],
-                    "methods": [n.name for n in node.body if isinstance(n, ast.FunctionDef)]
+                    "bases": [base.id if isinstance(base, ast.Name) else str(type(base).__name__) for base in node.bases],
+                    "methods": [n.name for n in node.body if isinstance(n, ast.FunctionDef)],
                 }
                 result["classes"].append(class_info)
 
             # 导入语句
             elif isinstance(node, ast.Import):
                 for alias in node.names:
-                    result["imports"].append({
-                        "module": alias.name,
-                        "alias": alias.asname,
-                        "lineno": node.lineno
-                    })
+                    result["imports"].append({"module": alias.name, "alias": alias.asname, "lineno": node.lineno})
 
             elif isinstance(node, ast.ImportFrom):
                 for alias in node.names:
-                    result["imports"].append({
-                        "module": node.module,
-                        "name": alias.name,
-                        "alias": alias.asname,
-                        "lineno": node.lineno
-                    })
+                    result["imports"].append(
+                        {"module": node.module, "name": alias.name, "alias": alias.asname, "lineno": node.lineno}
+                    )
 
         # 统计代码行数
         lines = code.splitlines()
@@ -344,11 +321,7 @@ def stable_function():
 
     def test_snapshot_metadata_preserved(self):
         """快照元数据应该被保留"""
-        metadata = SnapshotMetadata(
-            test_name="metadata_test",
-            created_at="2024-01-01T00:00:00",
-            description="测试元数据保留"
-        )
+        metadata = SnapshotMetadata(test_name="metadata_test", created_at="2024-01-01T00:00:00", description="测试元数据保留")
 
         result = {"value": 42}
         snapshot.assert_match("metadata_test", result, metadata=metadata)
@@ -404,7 +377,7 @@ class TestSnapshotManagement:
 
 
 # 主测试入口
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     import logging
 
     logging.basicConfig(level=logging.INFO)

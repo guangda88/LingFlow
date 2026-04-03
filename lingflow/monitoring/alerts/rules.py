@@ -25,7 +25,7 @@ class AlertRule:
         severity: AlertSeverity,
         message_template: str,
         cooldown_seconds: int = 300,
-        enabled: bool = True
+        enabled: bool = True,
     ):
         """初始化告警规则
 
@@ -89,12 +89,7 @@ class AlertRule:
             logger.warning(f"消息格式化失败: {e}")
             return self.message_template
 
-    def create_alert(
-        self,
-        source: str,
-        metrics: Dict[str, Any],
-        alert_id: Optional[str] = None
-    ) -> Alert:
+    def create_alert(self, source: str, metrics: Dict[str, Any], alert_id: Optional[str] = None) -> Alert:
         """创建告警对象
 
         Args:
@@ -113,11 +108,7 @@ class AlertRule:
             source=source,
             message=self.format_message(metrics),
             timestamp=datetime.now(),
-            metadata={
-                "rule": self.name,
-                "trigger_count": self.trigger_count,
-                "metrics": metrics
-            }
+            metadata={"rule": self.name, "trigger_count": self.trigger_count, "metrics": metrics},
         )
 
 
@@ -203,11 +194,7 @@ class RuleRegistry:
             return True
         return False
 
-    def evaluate_all(
-        self,
-        metrics: Dict[str, Any],
-        source: str
-    ) -> List[Alert]:
+    def evaluate_all(self, metrics: Dict[str, Any], source: str) -> List[Alert]:
         """评估所有规则
 
         Args:
@@ -241,34 +228,34 @@ def create_common_rules() -> List[AlertRule]:
             condition=lambda m: m.get("cpu_percent", 0) > 90,
             severity=AlertSeverity.WARNING,
             message_template="CPU使用率过高: {cpu_percent:.1f}%",
-            cooldown_seconds=300
+            cooldown_seconds=300,
         ),
         AlertRule(
             name="high_memory",
             condition=lambda m: m.get("memory_percent", 0) > 90,
             severity=AlertSeverity.WARNING,
             message_template="内存使用率过高: {memory_percent:.1f}%",
-            cooldown_seconds=300
+            cooldown_seconds=300,
         ),
         AlertRule(
             name="high_disk",
             condition=lambda m: m.get("disk_usage_percent", 0) > 90,
             severity=AlertSeverity.ERROR,
             message_template="磁盘使用率过高: {disk_usage_percent:.1f}%",
-            cooldown_seconds=600
+            cooldown_seconds=600,
         ),
         AlertRule(
             name="critical_cpu",
             condition=lambda m: m.get("cpu_percent", 0) > 95,
             severity=AlertSeverity.CRITICAL,
             message_template="CPU使用率危急: {cpu_percent:.1f}%",
-            cooldown_seconds=120
+            cooldown_seconds=120,
         ),
         AlertRule(
             name="critical_memory",
             condition=lambda m: m.get("memory_percent", 0) > 95,
             severity=AlertSeverity.CRITICAL,
             message_template="内存使用率危急: {memory_percent:.1f}%",
-            cooldown_seconds=120
+            cooldown_seconds=120,
         ),
     ]

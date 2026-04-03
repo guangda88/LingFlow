@@ -10,7 +10,7 @@ LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 # 创建日志目录
-log_dir = os.path.join(os.getcwd(), "logs")
+log_dir = os.environ.get("LINGFLOW_LOG_DIR", os.path.join(os.path.expanduser("~"), ".lingflow", "logs"))
 os.makedirs(log_dir, exist_ok=True)
 
 # 创建日志文件

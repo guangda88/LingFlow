@@ -4,8 +4,6 @@ LingFlow Phase 4: 优化器测试
 验证贝叶斯优化器和网格搜索优化器的基本功能。
 """
 
-import pytest
-import time
 from lingflow.self_optimizer.phase4.bayesian_optimizer import (
     BayesianOptimizer,
     GridSearchOptimizer,
@@ -54,6 +52,7 @@ class TestObjectiveFunction:
     def multimodal(params):
         """多峰函数：sin(x) + cos(y)"""
         import math
+
         x = params.get("x", 0)
         y = params.get("y", 0)
         return math.sin(x) + math.cos(y)
@@ -64,15 +63,8 @@ class TestBayesianOptimizer:
 
     def test_initialization(self):
         """测试初始化"""
-        search_space = {
-            "x": {"type": "float", "min": -10, "max": 10},
-            "y": {"type": "float", "min": -10, "max": 10}
-        }
-        optimizer = BayesianOptimizer(
-            search_space,
-            TestObjectiveFunction.simple_quadratic,
-            {"n_trials": 10, "seed": 42}
-        )
+        search_space = {"x": {"type": "float", "min": -10, "max": 10}, "y": {"type": "float", "min": -10, "max": 10}}
+        optimizer = BayesianOptimizer(search_space, TestObjectiveFunction.simple_quadratic, {"n_trials": 10, "seed": 42})
         assert optimizer.search_space == search_space
         assert optimizer.n_trials == 10
 
@@ -81,13 +73,9 @@ class TestBayesianOptimizer:
         search_space = {
             "x": {"type": "float", "min": -10, "max": 10},
             "y": {"type": "int", "min": 0, "max": 20},
-            "z": {"type": "categorical", "choices": ["a", "b", "c"]}
+            "z": {"type": "categorical", "choices": ["a", "b", "c"]},
         }
-        optimizer = BayesianOptimizer(
-            search_space,
-            TestObjectiveFunction.simple_quadratic,
-            {"n_trials": 10}
-        )
+        optimizer = BayesianOptimizer(search_space, TestObjectiveFunction.simple_quadratic, {"n_trials": 10})
         params = optimizer.suggest()
         assert "x" in params
         assert "y" in params
@@ -98,29 +86,16 @@ class TestBayesianOptimizer:
 
     def test_observe(self):
         """测试结果观察"""
-        search_space = {
-            "x": {"type": "float", "min": -10, "max": 10}
-        }
-        optimizer = BayesianOptimizer(
-            search_space,
-            lambda p: p["x"] ** 2,
-            {"n_trials": 10}
-        )
+        search_space = {"x": {"type": "float", "min": -10, "max": 10}}
+        optimizer = BayesianOptimizer(search_space, lambda p: p["x"] ** 2, {"n_trials": 10})
         optimizer.observe({"x": 5.0}, 25.0)
         assert len(optimizer.history) == 1
         assert optimizer.best_score == 25.0
 
     def test_optimize(self):
         """测试完整优化"""
-        search_space = {
-            "x": {"type": "float", "min": -10, "max": 10},
-            "y": {"type": "float", "min": -10, "max": 10}
-        }
-        optimizer = BayesianOptimizer(
-            search_space,
-            TestObjectiveFunction.simple_quadratic,
-            {"n_trials": 20, "timeout": 30}
-        )
+        search_space = {"x": {"type": "float", "min": -10, "max": 10}, "y": {"type": "float", "min": -10, "max": 10}}
+        optimizer = BayesianOptimizer(search_space, TestObjectiveFunction.simple_quadratic, {"n_trials": 20, "timeout": 30})
         state = optimizer.optimize()
         assert isinstance(state, OptimizationState)
         assert state.current_trial > 0
@@ -135,26 +110,15 @@ class TestGridSearchOptimizer:
 
     def test_initialization(self):
         """测试初始化"""
-        search_space = {
-            "x": {"type": "int", "min": 0, "max": 10}
-        }
-        optimizer = GridSearchOptimizer(
-            search_space,
-            lambda p: p["x"],
-            {"max_experiments": 5}
-        )
+        search_space = {"x": {"type": "int", "min": 0, "max": 10}}
+        optimizer = GridSearchOptimizer(search_space, lambda p: p["x"], {"max_experiments": 5})
         assert optimizer.max_experiments == 5
 
     def test_optimize(self):
         """测试网格搜索优化"""
-        search_space = {
-            "x": {"type": "int", "min": 0, "max": 10},
-            "y": {"type": "int", "min": 0, "max": 10}
-        }
+        search_space = {"x": {"type": "int", "min": 0, "max": 10}, "y": {"type": "int", "min": 0, "max": 10}}
         optimizer = GridSearchOptimizer(
-            search_space,
-            lambda p: (p["x"] - 5) ** 2 + (p["y"] - 5) ** 2,
-            {"max_experiments": 20, "timeout": 30}
+            search_space, lambda p: (p["x"] - 5) ** 2 + (p["y"] - 5) ** 2, {"max_experiments": 20, "timeout": 30}
         )
         state = optimizer.optimize()
         assert state.current_trial > 0
@@ -170,22 +134,14 @@ class TestCreateOptimizer:
     def test_create_bayesian_optimizer(self):
         """测试创建贝叶斯优化器"""
         search_space = {"x": {"type": "int", "min": 0, "max": 10}}
-        optimizer = create_optimizer(
-            search_space,
-            lambda p: p["x"],
-            prefer_bayesian=True
-        )
+        optimizer = create_optimizer(search_space, lambda p: p["x"], prefer_bayesian=True)
         assert isinstance(optimizer, BayesianOptimizer)
 
     def test_create_grid_search_fallback(self):
         """测试降级到网格搜索"""
         # 这个测试假设Optuna可用，如果不可用则会自动降级
         search_space = {"x": {"type": "int", "min": 0, "max": 10}}
-        optimizer = create_optimizer(
-            search_space,
-            lambda p: p["x"],
-            prefer_bayesian=True
-        )
+        optimizer = create_optimizer(search_space, lambda p: p["x"], prefer_bayesian=True)
         # 两种类型都是可接受的
         assert isinstance(optimizer, (BayesianOptimizer, GridSearchOptimizer))
 
@@ -196,11 +152,7 @@ class TestConvergenceDetection:
     def test_should_stop_by_trials(self):
         """测试通过试验次数停止"""
         search_space = {"x": {"type": "int", "min": 0, "max": 10}}
-        optimizer = BayesianOptimizer(
-            search_space,
-            lambda p: p["x"],
-            {"n_trials": 3}
-        )
+        optimizer = BayesianOptimizer(search_space, lambda p: p["x"], {"n_trials": 3})
         # 运行3次后应该停止
         for _ in range(3):
             params = optimizer.suggest()
@@ -210,11 +162,7 @@ class TestConvergenceDetection:
     def test_convergence_rate_calculation(self):
         """测试收敛率计算"""
         search_space = {"x": {"type": "int", "min": 0, "max": 10}}
-        optimizer = BayesianOptimizer(
-            search_space,
-            lambda p: p["x"],
-            {"n_trials": 20}
-        )
+        optimizer = BayesianOptimizer(search_space, lambda p: p["x"], {"n_trials": 20})
         # 运行一些试验
         for i in range(15):
             params = optimizer.suggest()
@@ -229,12 +177,7 @@ class TestOptimizationTrial:
 
     def test_trial_creation(self):
         """测试创建试验记录"""
-        trial = OptimizationTrial(
-            trial_id="test_1",
-            params={"x": 1.0},
-            score=0.5,
-            metrics={"custom_metric": 1.0}
-        )
+        trial = OptimizationTrial(trial_id="test_1", params={"x": 1.0}, score=0.5, metrics={"custom_metric": 1.0})
         assert trial.trial_id == "test_1"
         assert trial.params == {"x": 1.0}
         assert trial.score == 0.5
@@ -242,11 +185,7 @@ class TestOptimizationTrial:
 
     def test_trial_to_dict(self):
         """测试试验转换为字典"""
-        trial = OptimizationTrial(
-            trial_id="test_1",
-            params={"x": 1.0},
-            score=0.5
-        )
+        trial = OptimizationTrial(trial_id="test_1", params={"x": 1.0}, score=0.5)
         d = trial.to_dict()
         assert d["trial_id"] == "test_1"
         assert d["params"] == {"x": 1.0}
@@ -258,17 +197,8 @@ class TestOptimizationState:
 
     def test_state_creation(self):
         """测试创建优化状态"""
-        best_trial = OptimizationTrial(
-            trial_id="best",
-            params={"x": 2.0},
-            score=0.0
-        )
-        state = OptimizationState(
-            current_trial=10,
-            best_trial=best_trial,
-            convergence_rate=0.95,
-            should_stop=True
-        )
+        best_trial = OptimizationTrial(trial_id="best", params={"x": 2.0}, score=0.0)
+        state = OptimizationState(current_trial=10, best_trial=best_trial, convergence_rate=0.95, should_stop=True)
         assert state.current_trial == 10
         assert state.get_best_params() == {"x": 2.0}
         assert state.get_best_score() == 0.0
@@ -283,7 +213,7 @@ class TestIntegration:
         search_space = {
             "learning_rate": {"type": "float", "min": 0.001, "max": 0.1},
             "batch_size": {"type": "categorical", "choices": [16, 32, 64]},
-            "epochs": {"type": "int", "min": 10, "max": 100}
+            "epochs": {"type": "int", "min": 10, "max": 100},
         }
 
         # 2. 定义目标函数（模拟）
@@ -295,11 +225,7 @@ class TestIntegration:
             return lr_penalty + batch_penalty + epoch_penalty
 
         # 3. 创建优化器
-        optimizer = create_optimizer(
-            search_space,
-            objective,
-            {"n_trials": 15, "timeout": 30}
-        )
+        optimizer = create_optimizer(search_space, objective, {"n_trials": 15, "timeout": 30})
 
         # 4. 运行优化
         state = optimizer.optimize()
@@ -313,7 +239,7 @@ class TestIntegration:
         assert "epochs" in best_params
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # 运行简单测试
     print("运行优化器基础测试...")
 
@@ -325,9 +251,7 @@ if __name__ == "__main__":
     # 测试2: 运行贝叶斯优化
     print("\n2. 测试贝叶斯优化")
     optimizer = create_optimizer(
-        {"x": {"type": "float", "min": -10, "max": 10}},
-        lambda p: (p["x"] - 3) ** 2,
-        {"n_trials": 10, "timeout": 10}
+        {"x": {"type": "float", "min": -10, "max": 10}}, lambda p: (p["x"] - 3) ** 2, {"n_trials": 10, "timeout": 10}
     )
     state = optimizer.optimize()
     print(f"   最佳参数: {state.get_best_params()}")

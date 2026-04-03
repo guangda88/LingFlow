@@ -34,6 +34,7 @@ class Rule:
         ...     suggestion_template="避免使用eval"
         ... )
     """
+
     id: str
     name: str
     category: str
@@ -71,7 +72,7 @@ class Rule:
             "severity": self.severity.value,
             "suggestion_template": self.suggestion_template,
             "enabled": self.enabled,
-            "metadata": self.metadata
+            "metadata": self.metadata,
         }
 
 
@@ -91,6 +92,7 @@ class RuleResult:
         end_line: 结束行号
         end_column: 结束列号
     """
+
     rule_id: str
     rule_name: str
     severity: Severity
@@ -118,7 +120,7 @@ class RuleResult:
             "line": self.line,
             "column": self.column,
             "end_line": self.end_line,
-            "end_column": self.end_column
+            "end_column": self.end_column,
         }
 
     def __str__(self) -> str:
@@ -127,14 +129,11 @@ class RuleResult:
 
 class RuleEngineError(Exception):
     """规则引擎异常基类"""
-    pass
 
 
 class RuleNotFoundError(RuleEngineError):
     """规则未找到异常"""
-    pass
 
 
 class RuleValidationError(RuleEngineError):
     """规则验证异常"""
-    pass

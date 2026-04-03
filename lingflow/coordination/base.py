@@ -11,9 +11,7 @@ class BaseCoordinator:
     def __init__(self) -> None:
         pass
 
-    def _format_result(
-        self, task_id: str, success: bool, result: Any = None, error: str = None
-    ) -> TaskResult:
+    def _format_result(self, task_id: str, success: bool, result: Any = None, error: str = None) -> TaskResult:
         """格式化任务结果"""
         # 这里可以添加通用的结果格式化逻辑
         return TaskResult(
@@ -22,7 +20,7 @@ class BaseCoordinator:
             output=str(result) if result else "",
             error=error or "",
             execution_time=0.0,
-            agent_used="base"
+            agent_used="base",
         )
 
     def _validate_task(self, task: Task) -> bool:

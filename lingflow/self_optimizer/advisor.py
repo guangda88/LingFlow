@@ -14,18 +14,10 @@ class OptimizationAdvisor:
     """优化建议生成器"""
 
     def __init__(self):
-        self.goal_names = {
-            "structure": "结构优化",
-            "performance": "性能优化",
-            "simplicity": "简洁优化"
-        }
+        self.goal_names = {"structure": "结构优化", "performance": "性能优化", "simplicity": "简洁优化"}
 
     def generate_report(
-        self,
-        goal: str,
-        target: str,
-        current_metrics: Dict[str, Any],
-        optimization_result: OptimizationResult
+        self, goal: str, target: str, current_metrics: Dict[str, Any], optimization_result: OptimizationResult
     ) -> str:
         """生成优化建议报告
 
@@ -58,28 +50,17 @@ class OptimizationAdvisor:
         lines.extend(self._format_issues(current_metrics, goal))
 
         # 添加优化建议
-        lines.extend(self._format_recommendations(
-            current_metrics,
-            optimization_result,
-            goal
-        ))
+        lines.extend(self._format_recommendations(current_metrics, optimization_result, goal))
 
         # 添加详细对比
-        lines.extend(self._format_comparison(
-            current_metrics,
-            optimization_result
-        ))
+        lines.extend(self._format_comparison(current_metrics, optimization_result))
 
         # 添加实施步骤
-        lines.extend(self._format_implementation_steps(
-            optimization_result.best_params
-        ))
+        lines.extend(self._format_implementation_steps(optimization_result.best_params))
 
         # 添加优化历史
         if optimization_result.history:
-            lines.extend(self._format_optimization_history(
-                optimization_result
-            ))
+            lines.extend(self._format_optimization_history(optimization_result))
 
         return "\n".join(lines)
 
@@ -87,16 +68,9 @@ class OptimizationAdvisor:
         """获取目标名称"""
         return self.goal_names.get(goal, goal)
 
-    def _format_current_metrics(
-        self,
-        metrics: Dict[str, Any],
-        goal: str
-    ) -> list[str]:
+    def _format_current_metrics(self, metrics: Dict[str, Any], goal: str) -> list[str]:
         """格式化当前指标"""
-        lines = [
-            "### 质量指标",
-            ""
-        ]
+        lines = ["### 质量指标", ""]
 
         # 通用指标
         if "review_score" in metrics:
@@ -129,7 +103,7 @@ class OptimizationAdvisor:
             if "total_lines" in metrics:
                 lines.append(f"- 代码总行数: {metrics['total_lines']}")
             if "duplication_rate" in metrics:
-                rate_pct = metrics['duplication_rate'] * 100
+                rate_pct = metrics["duplication_rate"] * 100
                 lines.append(f"- 重复率: {rate_pct:.1f}%")
             if "avg_line_length" in metrics:
                 lines.append(f"- 平均行长度: {metrics['avg_line_length']:.0f}")
@@ -137,16 +111,9 @@ class OptimizationAdvisor:
         lines.append("")
         return lines
 
-    def _format_issues(
-        self,
-        metrics: Dict[str, Any],
-        goal: str
-    ) -> list[str]:
+    def _format_issues(self, metrics: Dict[str, Any], goal: str) -> list[str]:
         """格式化主要问题"""
-        lines = [
-            "### 主要问题",
-            ""
-        ]
+        lines = ["### 主要问题", ""]
 
         issues = []
 
@@ -191,22 +158,9 @@ class OptimizationAdvisor:
         lines.append("")
         return lines
 
-    def _format_recommendations(
-        self,
-        current_metrics: Dict[str, Any],
-        result: OptimizationResult,
-        goal: str
-    ) -> list[str]:
+    def _format_recommendations(self, current_metrics: Dict[str, Any], result: OptimizationResult, goal: str) -> list[str]:
         """格式化优化建议"""
-        lines = [
-            "## 优化建议",
-            "",
-            "### 最佳参数配置",
-            "",
-            "```yaml",
-            "# LingFlow 自优化参数配置",
-            ""
-        ]
+        lines = ["## 优化建议", "", "### 最佳参数配置", "", "```yaml", "# LingFlow 自优化参数配置", ""]
 
         # 格式化最佳参数
         for key, value in sorted(result.best_params.items()):
@@ -215,12 +169,14 @@ class OptimizationAdvisor:
             else:
                 lines.append(f"{value}")
 
-        lines.extend([
-            "```",
-            "",
-            "### 预期改进",
-            "",
-        ])
+        lines.extend(
+            [
+                "```",
+                "",
+                "### 预期改进",
+                "",
+            ]
+        )
 
         # 计算预期改进
         if goal == "structure":
@@ -228,7 +184,7 @@ class OptimizationAdvisor:
             if current_violations > 0:
                 improvement_ratio = 0.6  # 假设改进60%
                 expected_violations = int(current_violations * (1 - improvement_ratio))
-                lines.append(f"- 结构违规: {current_violations} → {expected_violations} ({improvement_ratio*100:.0f}% 改进)")
+                lines.append(f"- 结构违规: {current_violations} → {expected_violations} ({improvement_ratio * 100:.0f}% 改进)")
 
             if "avg_class_size" in current_metrics:
                 current_size = current_metrics["avg_class_size"]
@@ -242,22 +198,15 @@ class OptimizationAdvisor:
                 current_time = current_metrics["execution_time"]
                 expected_improvement = 0.3  # 假设改进30%
                 expected_time = current_time * (1 - expected_improvement)
-                lines.append(f"- 执行时间: {current_time:.2f}s → {expected_time:.2f}s ({expected_improvement*100:.0f}% 改进)")
+                lines.append(
+                    f"- 执行时间: {current_time:.2f}s → {expected_time:.2f}s ({expected_improvement * 100:.0f}% 改进)"
+                )
 
-        lines.extend([
-            "",
-            f"**优化实验**: 运行了 {result.experiments} 次实验",
-            f"**优化耗时**: {result.duration:.1f} 秒",
-            ""
-        ])
+        lines.extend(["", f"**优化实验**: 运行了 {result.experiments} 次实验", f"**优化耗时**: {result.duration:.1f} 秒", ""])
 
         return lines
 
-    def _format_comparison(
-        self,
-        current_metrics: Dict[str, Any],
-        result: OptimizationResult
-    ) -> list[str]:
+    def _format_comparison(self, current_metrics: Dict[str, Any], result: OptimizationResult) -> list[str]:
         """格式化详细对比"""
         lines = [
             "### 参数对比",
@@ -317,7 +266,7 @@ class OptimizationAdvisor:
             "```yaml",
             "# 自优化参数",
             "structure_optimization:",
-            ""
+            "",
         ]
 
         # 生成配置示例
@@ -327,40 +276,39 @@ class OptimizationAdvisor:
             else:
                 lines.append(f"  {key}: {value}")
 
-        lines.extend([
-            "```",
-            "",
-            "2. 验证配置：",
-            "   ```bash",
-            "   lingflow review",
-            "   ```",
-            "",
-            "3. 如果满意，提交更改：",
-            "   ```bash",
-            "   git add ~/.lingflow/config.yaml",
-            "   git commit -m 'opt: 应用自优化建议'",
-            "   ```",
-            "",
-            "### 选项 3: 生成配置文件",
-            "",
-            "```bash",
-            "# 生成新的配置文件",
-            "lingflow optimize generate-config --report <报告文件>",
-            "",
-            "# 审查后手动应用",
-            "vi ~/.lingflow/config_optimized.yaml",
-            "```",
-            "",
-            "---",
-            ""
-        ])
+        lines.extend(
+            [
+                "```",
+                "",
+                "2. 验证配置：",
+                "   ```bash",
+                "   lingflow review",
+                "   ```",
+                "",
+                "3. 如果满意，提交更改：",
+                "   ```bash",
+                "   git add ~/.lingflow/config.yaml",
+                "   git commit -m 'opt: 应用自优化建议'",
+                "   ```",
+                "",
+                "### 选项 3: 生成配置文件",
+                "",
+                "```bash",
+                "# 生成新的配置文件",
+                "lingflow optimize generate-config --report <报告文件>",
+                "",
+                "# 审查后手动应用",
+                "vi ~/.lingflow/config_optimized.yaml",
+                "```",
+                "",
+                "---",
+                "",
+            ]
+        )
 
         return lines
 
-    def _format_optimization_history(
-        self,
-        result: OptimizationResult
-    ) -> list[str]:
+    def _format_optimization_history(self, result: OptimizationResult) -> list[str]:
         """格式化优化历史"""
         lines = [
             "## 优化历史",
@@ -385,24 +333,14 @@ class OptimizationAdvisor:
             lines.append(f"| {exp_id} | {param_str} | {score:.2f} |")
 
         if len(result.history) > 10:
-            lines.append(f"| ... | ... | ... |")
+            lines.append("| ... | ... | ... |")
             lines.append(f"| 共 {len(result.history)} 次实验 | | |")
 
-        lines.extend([
-            "",
-            "---",
-            "",
-            f"*报告由 LingFlow 自动生成*",
-            ""
-        ])
+        lines.extend(["", "---", "", "*报告由 LingFlow 自动生成*", ""])
 
         return lines
 
-    def save_report(
-        self,
-        report: str,
-        output_path: str = None
-    ) -> str:
+    def save_report(self, report: str, output_path: str = None) -> str:
         """保存报告到文件
 
         Args:
@@ -421,9 +359,9 @@ class OptimizationAdvisor:
 
     def print_summary(self, result: OptimizationResult, current_metrics: Dict[str, Any]):
         """打印优化摘要到控制台"""
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("📊 优化完成".center(60))
-        print("="*60)
+        print("=" * 60)
 
         print(f"\n✓ 实验次数: {result.experiments}")
         print(f"✓ 优化耗时: {result.duration:.1f} 秒")
@@ -437,14 +375,14 @@ class OptimizationAdvisor:
                 print(f"  {key}: {value}")
 
         if current_metrics.get("structure_violations"):
-            print(f"\n📈 预期改进:")
+            print("\n📈 预期改进:")
             violations = current_metrics["structure_violations"]
             print(f"  结构违规: {violations} → {int(violations * 0.4)} (约60%改进)")
 
-        print("\n" + "="*60 + "\n")
+        print("\n" + "=" * 60 + "\n")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # 测试
     from lingflow.self_optimizer.evaluator import StructureEvaluator
 
@@ -453,22 +391,15 @@ if __name__ == "__main__":
 
     result = OptimizationResult(
         success=True,
-        best_params={
-            "max_class_size": 200,
-            "max_complexity": 10,
-            "max_method_count": 15
-        },
+        best_params={"max_class_size": 200, "max_complexity": 10, "max_method_count": 15},
         best_score=5.0,
         experiments=20,
-        duration=45.2
+        duration=45.2,
     )
 
     advisor = OptimizationAdvisor()
     report = advisor.generate_report(
-        goal="structure",
-        target="/home/ai/LingFlow/lingflow",
-        current_metrics=metrics,
-        optimization_result=result
+        goal="structure", target="/home/ai/LingFlow/lingflow", current_metrics=metrics, optimization_result=result
     )
 
     print(report)

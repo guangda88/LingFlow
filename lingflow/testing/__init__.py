@@ -11,40 +11,33 @@ from .scenario import (
     REFACTORING_SCENARIO,
     DETECT_SECURITY_ISSUE,
     OPTIMIZATION_SCENARIO,
-    create_custom_scenario
+    create_custom_scenario,
 )
 from .test_server import CodeTestServer
-from .tool_definition import (
-    ToolDefinition,
-    ToolCategory,
-    ToolRequest,
-    ToolResponse,
-    TestContext,
-    create_tool_registry
-)
+from .tool_definition import ToolDefinition, ToolCategory, ToolRequest, ToolResponse, TestContext, create_tool_registry
 from .snapshot import SnapshotTest, SnapshotMetadata
 
 __all__ = [
     # Scenario
-    'CodeTestScenario',
-    'CapturedToolCall',
-    'TestInteractionType',
-    'REFACTORING_SCENARIO',
-    'DETECT_SECURITY_ISSUE',
-    'OPTIMIZATION_SCENARIO',
-    'create_custom_scenario',
+    "CodeTestScenario",
+    "CapturedToolCall",
+    "TestInteractionType",
+    "REFACTORING_SCENARIO",
+    "DETECT_SECURITY_ISSUE",
+    "OPTIMIZATION_SCENARIO",
+    "create_custom_scenario",
     # Test Server
-    'CodeTestServer',
+    "CodeTestServer",
     # Tool Definition
-    'ToolDefinition',
-    'ToolCategory',
-    'ToolRequest',
-    'ToolResponse',
-    'TestContext',
-    'create_tool_registry',
+    "ToolDefinition",
+    "ToolCategory",
+    "ToolRequest",
+    "ToolResponse",
+    "TestContext",
+    "create_tool_registry",
     # Snapshot
-    'SnapshotTest',
-    'SnapshotMetadata',
+    "SnapshotTest",
+    "SnapshotMetadata",
 ]
 
-__version__ = '2.0.0'  # 简化版本
+__version__ = "2.0.0"  # 简化版本

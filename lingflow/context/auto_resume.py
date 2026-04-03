@@ -9,10 +9,7 @@ import sys
 from pathlib import Path
 
 # 会话文件路径 - 使用环境变量或用户主目录
-_CONTEXT_DIR = Path(os.getenv(
-    "LINGFLOW_CONTEXT_DIR",
-    Path.home() / ".claude" / "projects" / "lingflow" / "context"
-))
+_CONTEXT_DIR = Path(os.getenv("LINGFLOW_CONTEXT_DIR", Path.home() / ".claude" / "projects" / "lingflow" / "context"))
 SESSION_FILE = _CONTEXT_DIR / "SESSION.md"
 LAST_SHOWN_FILE = _CONTEXT_DIR / ".last_shown"
 
@@ -36,7 +33,7 @@ def auto_resume() -> str:
             lines = content.split("\n")
             for i, line in enumerate(lines):
                 if "任务:" in line:
-                    return "\n".join(lines[:i+1])
+                    return "\n".join(lines[: i + 1])
             return ""
 
     # 标记为已显示

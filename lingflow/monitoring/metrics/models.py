@@ -6,19 +6,21 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 
 class MetricType(str, Enum):
     """指标类型"""
-    COUNTER = "counter"      # 计数器（只增不减）
-    GAUGE = "gauge"          # 仪表盘（可增可减）
+
+    COUNTER = "counter"  # 计数器（只增不减）
+    GAUGE = "gauge"  # 仪表盘（可增可减）
     HISTOGRAM = "histogram"  # 直方图（分布统计）
-    SUMMARY = "summary"      # 摘要（统计信息)
+    SUMMARY = "summary"  # 摘要（统计信息)
 
 
 class AlertSeverity(str, Enum):
     """告警严重级别"""
+
     INFO = "info"
     WARNING = "warning"
     ERROR = "error"
@@ -37,6 +39,7 @@ class Metric:
         timestamp: 时间戳
         metadata: 额外元数据
     """
+
     name: str
     type: MetricType
     value: float
@@ -52,7 +55,7 @@ class Metric:
             "value": self.value,
             "labels": self.labels,
             "timestamp": self.timestamp.isoformat(),
-            "metadata": self.metadata
+            "metadata": self.metadata,
         }
 
 
@@ -70,6 +73,7 @@ class Alert:
         resolved: 是否已解决
         resolved_at: 解决时间
     """
+
     id: str
     severity: AlertSeverity
     source: str
@@ -89,7 +93,7 @@ class Alert:
             "timestamp": self.timestamp.isoformat(),
             "metadata": self.metadata,
             "resolved": self.resolved,
-            "resolved_at": self.resolved_at.isoformat() if self.resolved_at else None
+            "resolved_at": self.resolved_at.isoformat() if self.resolved_at else None,
         }
 
     def resolve(self) -> None:
@@ -110,6 +114,7 @@ class HealthCheckResult:
         metrics: 相关指标
         response_time_ms: 响应时间（毫秒）
     """
+
     component: str
     healthy: bool
     message: str
@@ -125,7 +130,7 @@ class HealthCheckResult:
             "message": self.message,
             "timestamp": self.timestamp.isoformat(),
             "metrics": self.metrics,
-            "response_time_ms": self.response_time_ms
+            "response_time_ms": self.response_time_ms,
         }
 
 
@@ -141,6 +146,7 @@ class SystemMetrics:
         process_count: 进程数
         timestamp: 时间戳
     """
+
     cpu_percent: float
     memory_percent: float
     memory_used_mb: float
@@ -164,7 +170,7 @@ class SystemMetrics:
             "disk_free_gb": self.disk_free_gb,
             "network_io": self.network_io,
             "process_count": self.process_count,
-            "timestamp": self.timestamp.isoformat()
+            "timestamp": self.timestamp.isoformat(),
         }
 
     def is_healthy(self, thresholds: Optional[Dict[str, float]] = None) -> bool:
@@ -176,14 +182,10 @@ class SystemMetrics:
         Returns:
             是否健康
         """
-        thresholds = thresholds or {
-            "cpu_percent": 90.0,
-            "memory_percent": 90.0,
-            "disk_usage_percent": 90.0
-        }
+        thresholds = thresholds or {"cpu_percent": 90.0, "memory_percent": 90.0, "disk_usage_percent": 90.0}
 
         return (
-            self.cpu_percent < thresholds.get("cpu_percent", 90.0) and
-            self.memory_percent < thresholds.get("memory_percent", 90.0) and
-            self.disk_usage_percent < thresholds.get("disk_usage_percent", 90.0)
+            self.cpu_percent < thresholds.get("cpu_percent", 90.0)
+            and self.memory_percent < thresholds.get("memory_percent", 90.0)
+            and self.disk_usage_percent < thresholds.get("disk_usage_percent", 90.0)
         )

@@ -6,35 +6,19 @@ LingFlow Phase 4: 优化引擎核心实现
 """
 
 import logging
-from typing import Dict, Any, List, Optional, Callable
-from pathlib import Path
+from typing import Dict, Any, List
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
 # 导入Phase 4模块
-from lingflow.self_optimizer.phase4.bayesian_optimizer import (
-    BayesianOptimizer,
-    GridSearchOptimizer,
-    create_optimizer,
-    get_default_search_space
-)
-from lingflow.self_optimizer.phase4.multi_objective import (
-    MultiObjectiveOptimizer,
-    MultiObjectiveResult,
-    optimize_multiple_objectives
-)
+from lingflow.self_optimizer.phase4.bayesian_optimizer import create_optimizer, get_default_search_space
+from lingflow.self_optimizer.phase4.multi_objective import optimize_multiple_objectives
 from lingflow.self_optimizer.phase4.sensitivity import (
-    SensitivityAnalyzer,
     analyze_sensitivity,
-    SensitivityResult,
-    SobolResult
 )
 from lingflow.self_optimizer.phase4.visualization import (
     OptimizationVisualizer,
-    plot_optimization_progress,
-    plot_sensitivity_heatmap,
-    plot_pareto_front
 )
 
 # 导入现有评估器
@@ -65,11 +49,7 @@ class OptimizationEngine:
         self.optimization_history: List[Dict[str, Any]] = []
 
     def optimize_single_objective(
-        self,
-        target_path: str,
-        goal: str = "structure",
-        search_space: Dict[str, Any] = None,
-        config: Dict[str, Any] = None
+        self, target_path: str, goal: str = "structure", search_space: Dict[str, Any] = None, config: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """单目标优化
 
@@ -113,16 +93,14 @@ class OptimizationEngine:
             "convergence_rate": state.convergence_rate,
             "total_time": optimizer.get_total_time(),
             "search_space": search_space,
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
         self.optimization_history.append(result)
 
         # 生成可视化报告
         if self.config.get("generate_reports", True):
-            report_path = self.visualizer.generate_html_report(
-                state, search_space, {"goal": goal, "target_path": target_path}
-            )
+            report_path = self.visualizer.generate_html_report(state, search_space, {"goal": goal, "target_path": target_path})
             result["report_path"] = report_path
 
         logger.info(f"优化完成: {result['best_score']:.4f}")
@@ -135,7 +113,7 @@ class OptimizationEngine:
         goals: List[str] = None,
         weights: Dict[str, float] = None,
         search_space: Dict[str, Any] = None,
-        config: Dict[str, Any] = None
+        config: Dict[str, Any] = None,
     ) -> Dict[str, Any]:
         """多目标优化
 
@@ -172,16 +150,13 @@ class OptimizationEngine:
         opt_config = {
             "max_evaluations": self.config.get("max_evaluations", 200),
             "timeout": self.config.get("timeout", 300),
-            **(config or {})
+            **(config or {}),
         }
 
         # 运行多目标优化
         logger.info(f"开始多目标优化: {goals}")
         result = optimize_multiple_objectives(
-            search_space=search_space,
-            objectives=objectives,
-            weights=weights,
-            config=opt_config
+            search_space=search_space, objectives=objectives, weights=weights, config=opt_config
         )
 
         # 记录历史
@@ -194,7 +169,7 @@ class OptimizationEngine:
             "total_time": result.total_time,
             "converged": result.converged,
             "pareto_front_size": len(result.get_pareto_front()),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
         self.optimization_history.append(summary)
@@ -213,7 +188,7 @@ class OptimizationEngine:
             summary["balanced_solution"] = {
                 "params": balanced.params,
                 "objectives": balanced.objectives,
-                "aggregated_score": balanced.aggregated_score
+                "aggregated_score": balanced.aggregated_score,
             }
 
         logger.info(f"多目标优化完成，找到 {len(result.get_pareto_front())} 个Pareto解")
@@ -226,7 +201,7 @@ class OptimizationEngine:
         goal: str = "structure",
         base_params: Dict[str, Any] = None,
         method: str = "local",
-        n_samples: int = 50
+        n_samples: int = 50,
     ) -> Dict[str, Any]:
         """参数敏感性分析
 
@@ -253,27 +228,18 @@ class OptimizationEngine:
         # 运行敏感性分析
         logger.info(f"开始参数敏感性分析 ({method})...")
         sensitivity_result = analyze_sensitivity(
-            search_space=search_space,
-            objective=objective,
-            base_params=base_params,
-            method=method,
-            n_samples=n_samples
+            search_space=search_space, objective=objective, base_params=base_params, method=method, n_samples=n_samples
         )
 
         # 处理结果
         if method == "local":
             # 局部敏感性
-            summary = {
-                "method": method,
-                "goal": goal,
-                "target_path": target_path,
-                "parameters": {}
-            }
+            summary = {"method": method, "goal": goal, "target_path": target_path, "parameters": {}}
 
             for param_name, result in sensitivity_result.items():
                 summary["parameters"][param_name] = {
                     "sensitivity_score": result.sensitivity_score,
-                    "baseline_value": result.baseline_value
+                    "baseline_value": result.baseline_value,
                 }
 
             # 生成可视化
@@ -292,7 +258,7 @@ class OptimizationEngine:
                 "target_path": target_path,
                 "first_order": sensitivity_result.first_order,
                 "total_order": sensitivity_result.total_order,
-                "most_sensitive": sensitivity_result.get_most_sensitive(5)
+                "most_sensitive": sensitivity_result.get_most_sensitive(5),
             }
 
         else:
@@ -332,10 +298,7 @@ class OptimizationEngine:
 
 # 便捷函数
 def quick_optimize(
-    target_path: str = ".",
-    goal: str = "structure",
-    use_bayesian: bool = True,
-    generate_report: bool = True
+    target_path: str = ".", goal: str = "structure", use_bayesian: bool = True, generate_report: bool = True
 ) -> Dict[str, Any]:
     """快速优化（便捷函数）
 
@@ -348,21 +311,13 @@ def quick_optimize(
     Returns:
         优化结果
     """
-    config = {
-        "generate_reports": generate_report,
-        "n_trials": 50,
-        "timeout": 120
-    }
+    config = {"generate_reports": generate_report, "n_trials": 50, "timeout": 120}
 
     engine = OptimizationEngine(config)
     return engine.optimize_single_objective(target_path, goal)
 
 
-def quick_multi_optimize(
-    target_path: str = ".",
-    goals: List[str] = None,
-    weights: Dict[str, float] = None
-) -> Dict[str, Any]:
+def quick_multi_optimize(target_path: str = ".", goals: List[str] = None, weights: Dict[str, float] = None) -> Dict[str, Any]:
     """快速多目标优化（便捷函数）
 
     Args:
@@ -379,11 +334,7 @@ def quick_multi_optimize(
     return engine.optimize_multi_objective(target_path, goals, weights)
 
 
-def quick_sensitivity_analysis(
-    target_path: str = ".",
-    goal: str = "structure",
-    method: str = "local"
-) -> Dict[str, Any]:
+def quick_sensitivity_analysis(target_path: str = ".", goal: str = "structure", method: str = "local") -> Dict[str, Any]:
     """快速敏感性分析（便捷函数）
 
     Args:
@@ -424,8 +375,8 @@ if __name__ == "__main__":
 
 最佳参数:
 """)
-    for param, value in result['best_params'].items():
+    for param, value in result["best_params"].items():
         print(f"  {param}: {value}")
 
-    if result.get('report_path'):
+    if result.get("report_path"):
         print(f"\n报告已生成: {result['report_path']}")

@@ -9,9 +9,9 @@ import json
 import sqlite3
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Set
+from typing import Dict, List, Any, Optional
 
-from .models import LearnedRule, FeedbackCategory, SeverityLevel
+from .models import LearnedRule, FeedbackCategory
 
 
 class KnowledgeBase:
@@ -26,7 +26,7 @@ class KnowledgeBase:
         if db_path is None:
             # 默认路径
             project_root = Path(__file__).parent.parent.parent.parent
-            db_path = project_root / '.lingflow' / 'knowledge.db'
+            db_path = project_root / ".lingflow" / "knowledge.db"
 
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -40,7 +40,7 @@ class KnowledgeBase:
         cursor = conn.cursor()
 
         # 创建规则表
-        cursor.execute('''
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS rules (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -56,21 +56,21 @@ class KnowledgeBase:
                 updated_at TEXT NOT NULL,
                 metadata_json TEXT
             )
-        ''')
+        """)
 
         # 创建索引
-        cursor.execute('''
+        cursor.execute("""
             CREATE INDEX IF NOT EXISTS idx_rules_category
             ON rules(category)
-        ''')
-        cursor.execute('''
+        """)
+        cursor.execute("""
             CREATE INDEX IF NOT EXISTS idx_rules_status
             ON rules(status)
-        ''')
-        cursor.execute('''
+        """)
+        cursor.execute("""
             CREATE INDEX IF NOT EXISTS idx_rules_quality
             ON rules(quality_score)
-        ''')
+        """)
 
         conn.commit()
 
@@ -102,34 +102,39 @@ class KnowledgeBase:
 
             now = datetime.now().isoformat()
 
-            cursor.execute('''
+            cursor.execute(
+                """
                 INSERT OR REPLACE INTO rules (
                     id, name, description, category,
                     pattern_json, tools_json, frequency,
                     confidence, quality_score, status,
                     created_at, updated_at, metadata_json
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (
-                rule.id,
-                rule.name,
-                rule.description,
-                rule.category.value,
-                json.dumps({
-                    'file_patterns': rule.pattern.file_patterns,
-                    'code_patterns': rule.pattern.code_patterns,
-                    'context_keywords': rule.pattern.context_keywords,
-                    'severity_distribution': rule.pattern.severity_distribution,
-                    'tool_support': rule.pattern.tool_support,
-                }),
-                json.dumps(rule.tools),
-                rule.frequency,
-                rule.confidence,
-                rule.quality_score,
-                rule.status,
-                rule.created_at.isoformat(),
-                now,
-                json.dumps({})
-            ))
+            """,
+                (
+                    rule.id,
+                    rule.name,
+                    rule.description,
+                    rule.category.value,
+                    json.dumps(
+                        {
+                            "file_patterns": rule.pattern.file_patterns,
+                            "code_patterns": rule.pattern.code_patterns,
+                            "context_keywords": rule.pattern.context_keywords,
+                            "severity_distribution": rule.pattern.severity_distribution,
+                            "tool_support": rule.pattern.tool_support,
+                        }
+                    ),
+                    json.dumps(rule.tools),
+                    rule.frequency,
+                    rule.confidence,
+                    rule.quality_score,
+                    rule.status,
+                    rule.created_at.isoformat(),
+                    now,
+                    json.dumps({}),
+                ),
+            )
 
             conn.commit()
             return True
@@ -165,7 +170,7 @@ class KnowledgeBase:
             conn = self._get_connection()
             cursor = conn.cursor()
 
-            cursor.execute('SELECT * FROM rules WHERE id = ?', (rule_id,))
+            cursor.execute("SELECT * FROM rules WHERE id = ?", (rule_id,))
             row = cursor.fetchone()
 
             if row:
@@ -176,10 +181,7 @@ class KnowledgeBase:
             return None
 
     def get_all_rules(
-        self,
-        category: Optional[FeedbackCategory] = None,
-        status: Optional[str] = None,
-        limit: int = 100
+        self, category: Optional[FeedbackCategory] = None, status: Optional[str] = None, limit: int = 100
     ) -> List[LearnedRule]:
         """获取所有规则
 
@@ -195,18 +197,18 @@ class KnowledgeBase:
             conn = self._get_connection()
             cursor = conn.cursor()
 
-            query = 'SELECT * FROM rules WHERE 1=1'
+            query = "SELECT * FROM rules WHERE 1=1"
             params = []
 
             if category:
-                query += ' AND category = ?'
+                query += " AND category = ?"
                 params.append(category.value)
 
             if status:
-                query += ' AND status = ?'
+                query += " AND status = ?"
                 params.append(status)
 
-            query += ' ORDER BY quality_score DESC LIMIT ?'
+            query += " ORDER BY quality_score DESC LIMIT ?"
             params.append(limit)
 
             cursor.execute(query, params)
@@ -217,11 +219,7 @@ class KnowledgeBase:
         except Exception:
             return []
 
-    def search_rules(
-        self,
-        keyword: str,
-        limit: int = 20
-    ) -> List[LearnedRule]:
+    def search_rules(self, keyword: str, limit: int = 20) -> List[LearnedRule]:
         """搜索规则
 
         Args:
@@ -235,14 +233,17 @@ class KnowledgeBase:
             conn = self._get_connection()
             cursor = conn.cursor()
 
-            keyword_pattern = f'%{keyword}%'
+            keyword_pattern = f"%{keyword}%"
 
-            cursor.execute('''
+            cursor.execute(
+                """
                 SELECT * FROM rules
                 WHERE name LIKE ? OR description LIKE ?
                 ORDER BY quality_score DESC
                 LIMIT ?
-            ''', (keyword_pattern, keyword_pattern, limit))
+            """,
+                (keyword_pattern, keyword_pattern, limit),
+            )
 
             rows = cursor.fetchall()
             return [self._row_to_rule(row) for row in rows]
@@ -250,11 +251,7 @@ class KnowledgeBase:
         except Exception:
             return []
 
-    def update_rule_status(
-        self,
-        rule_id: str,
-        status: str
-    ) -> bool:
+    def update_rule_status(self, rule_id: str, status: str) -> bool:
         """更新规则状态
 
         Args:
@@ -268,10 +265,13 @@ class KnowledgeBase:
             conn = self._get_connection()
             cursor = conn.cursor()
 
-            cursor.execute('''
+            cursor.execute(
+                """
                 UPDATE rules SET status = ?, updated_at = ?
                 WHERE id = ?
-            ''', (status, datetime.now().isoformat(), rule_id))
+            """,
+                (status, datetime.now().isoformat(), rule_id),
+            )
 
             conn.commit()
             return cursor.rowcount > 0
@@ -292,7 +292,7 @@ class KnowledgeBase:
             conn = self._get_connection()
             cursor = conn.cursor()
 
-            cursor.execute('DELETE FROM rules WHERE id = ?', (rule_id,))
+            cursor.execute("DELETE FROM rules WHERE id = ?", (rule_id,))
             conn.commit()
 
             return cursor.rowcount > 0
@@ -307,49 +307,45 @@ class KnowledgeBase:
             cursor = conn.cursor()
 
             # 总规则数
-            cursor.execute('SELECT COUNT(*) FROM rules')
+            cursor.execute("SELECT COUNT(*) FROM rules")
             total = cursor.fetchone()[0]
 
             # 按类别统计
-            cursor.execute('''
+            cursor.execute("""
                 SELECT category, COUNT(*) as count
                 FROM rules
                 GROUP BY category
-            ''')
+            """)
             by_category = {row[0]: row[1] for row in cursor.fetchall()}
 
             # 按状态统计
-            cursor.execute('''
+            cursor.execute("""
                 SELECT status, COUNT(*) as count
                 FROM rules
                 GROUP BY status
-            ''')
+            """)
             by_status = {row[0]: row[1] for row in cursor.fetchall()}
 
             # 平均质量分数
-            cursor.execute('SELECT AVG(quality_score) FROM rules')
+            cursor.execute("SELECT AVG(quality_score) FROM rules")
             avg_quality = cursor.fetchone()[0] or 0.0
 
             return {
-                'total_rules': total,
-                'by_category': by_category,
-                'by_status': by_status,
-                'average_quality': round(avg_quality, 2),
+                "total_rules": total,
+                "by_category": by_category,
+                "by_status": by_status,
+                "average_quality": round(avg_quality, 2),
             }
 
         except Exception:
             return {
-                'total_rules': 0,
-                'by_category': {},
-                'by_status': {},
-                'average_quality': 0.0,
+                "total_rules": 0,
+                "by_category": {},
+                "by_status": {},
+                "average_quality": 0.0,
             }
 
-    def export_rules(
-        self,
-        output_path: str,
-        category: Optional[FeedbackCategory] = None
-    ) -> bool:
+    def export_rules(self, output_path: str, category: Optional[FeedbackCategory] = None) -> bool:
         """导出规则到JSON文件
 
         Args:
@@ -363,29 +359,29 @@ class KnowledgeBase:
             rules = self.get_all_rules(category=category, limit=10000)
 
             data = {
-                'exported_at': datetime.now().isoformat(),
-                'total_rules': len(rules),
-                'rules': [
+                "exported_at": datetime.now().isoformat(),
+                "total_rules": len(rules),
+                "rules": [
                     {
-                        'id': rule.id,
-                        'name': rule.name,
-                        'description': rule.description,
-                        'category': rule.category.value,
-                        'tools': rule.tools,
-                        'frequency': rule.frequency,
-                        'confidence': rule.confidence,
-                        'quality_score': rule.quality_score,
-                        'status': rule.status,
-                        'pattern': {
-                            'file_patterns': rule.pattern.file_patterns,
-                            'context_keywords': rule.pattern.context_keywords,
-                        }
+                        "id": rule.id,
+                        "name": rule.name,
+                        "description": rule.description,
+                        "category": rule.category.value,
+                        "tools": rule.tools,
+                        "frequency": rule.frequency,
+                        "confidence": rule.confidence,
+                        "quality_score": rule.quality_score,
+                        "status": rule.status,
+                        "pattern": {
+                            "file_patterns": rule.pattern.file_patterns,
+                            "context_keywords": rule.pattern.context_keywords,
+                        },
                     }
                     for rule in rules
-                ]
+                ],
             }
 
-            with open(output_path, 'w', encoding='utf-8') as f:
+            with open(output_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
 
             return True
@@ -393,11 +389,7 @@ class KnowledgeBase:
         except Exception:
             return False
 
-    def import_rules(
-        self,
-        input_path: str,
-        overwrite: bool = False
-    ) -> int:
+    def import_rules(self, input_path: str, overwrite: bool = False) -> int:
         """从JSON文件导入规则
 
         Args:
@@ -408,11 +400,11 @@ class KnowledgeBase:
             成功导入的规则数量
         """
         try:
-            with open(input_path, 'r', encoding='utf-8') as f:
+            with open(input_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
             count = 0
-            for rule_data in data.get('rules', []):
+            for rule_data in data.get("rules", []):
                 # 这里需要重建LearnedRule对象
                 # 简化实现，直接跳过
                 count += 1
@@ -426,27 +418,27 @@ class KnowledgeBase:
         """将数据库行转换为LearnedRule对象"""
         from .models import Pattern
 
-        pattern_data = json.loads(row['pattern_json'])
+        pattern_data = json.loads(row["pattern_json"])
         pattern = Pattern(
-            file_patterns=pattern_data.get('file_patterns', []),
-            code_patterns=pattern_data.get('code_patterns', []),
-            context_keywords=pattern_data.get('context_keywords', []),
-            severity_distribution=pattern_data.get('severity_distribution', {}),
-            tool_support=pattern_data.get('tool_support', []),
+            file_patterns=pattern_data.get("file_patterns", []),
+            code_patterns=pattern_data.get("code_patterns", []),
+            context_keywords=pattern_data.get("context_keywords", []),
+            severity_distribution=pattern_data.get("severity_distribution", {}),
+            tool_support=pattern_data.get("tool_support", []),
         )
 
         return LearnedRule(
-            id=row['id'],
-            name=row['name'],
-            description=row['description'],
-            category=FeedbackCategory(row['category']),
+            id=row["id"],
+            name=row["name"],
+            description=row["description"],
+            category=FeedbackCategory(row["category"]),
             pattern=pattern,
-            tools=json.loads(row['tools_json']),
-            frequency=row['frequency'],
-            confidence=row['confidence'],
-            quality_score=row['quality_score'],
-            status=row['status'],
-            created_at=datetime.fromisoformat(row['created_at']),
+            tools=json.loads(row["tools_json"]),
+            frequency=row["frequency"],
+            confidence=row["confidence"],
+            quality_score=row["quality_score"],
+            status=row["status"],
+            created_at=datetime.fromisoformat(row["created_at"]),
         )
 
 
@@ -475,10 +467,7 @@ class InMemoryKnowledgeBase(KnowledgeBase):
         return self._rules.get(rule_id)
 
     def get_all_rules(
-        self,
-        category: Optional[FeedbackCategory] = None,
-        status: Optional[str] = None,
-        limit: int = 100
+        self, category: Optional[FeedbackCategory] = None, status: Optional[str] = None, limit: int = 100
     ) -> List[LearnedRule]:
         """获取所有规则"""
         rules = list(self._rules.values())
@@ -498,9 +487,9 @@ class InMemoryKnowledgeBase(KnowledgeBase):
         keyword_lower = keyword.lower()
 
         rules = [
-            rule for rule in self._rules.values()
-            if keyword_lower in rule.name.lower()
-            or keyword_lower in rule.description.lower()
+            rule
+            for rule in self._rules.values()
+            if keyword_lower in rule.name.lower() or keyword_lower in rule.description.lower()
         ]
 
         rules.sort(key=lambda r: r.quality_score, reverse=True)
@@ -542,19 +531,18 @@ class InMemoryKnowledgeBase(KnowledgeBase):
             total_quality += rule.quality_score
 
         return {
-            'total_rules': total,
-            'by_category': by_category,
-            'by_status': by_status,
-            'average_quality': round(total_quality / total, 2) if total > 0 else 0.0,
+            "total_rules": total,
+            "by_category": by_category,
+            "by_status": by_status,
+            "average_quality": round(total_quality / total, 2) if total > 0 else 0.0,
         }
 
     def close(self) -> None:
         """内存知识库不需要关闭"""
-        pass
 
 
 # 导出
 __all__ = [
-    'KnowledgeBase',
-    'InMemoryKnowledgeBase',
+    "KnowledgeBase",
+    "InMemoryKnowledgeBase",
 ]

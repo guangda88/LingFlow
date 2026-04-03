@@ -15,7 +15,6 @@ from lingflow.self_optimizer.phase5.models import (
     FeedbackCategory,
 )
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -77,11 +76,8 @@ class AIToolAdapter:
         try:
             result = self._run_scan_impl(target_path, **kwargs)
             duration = (datetime.now() - start_time).total_seconds()
-            logger.info(
-                f"{self.name} scan completed in {duration:.2f}s, "
-                f"found {len(result)} issues"
-            )
-            return result[:self.max_issues]
+            logger.info(f"{self.name} scan completed in {duration:.2f}s, " f"found {len(result)} issues")
+            return result[: self.max_issues]
         except Exception as e:
             logger.error(f"{self.name} scan failed: {e}")
             return []
@@ -99,10 +95,7 @@ class AIToolAdapter:
         raise NotImplementedError
 
     def _run_command(
-        self,
-        command: List[str],
-        cwd: Optional[str] = None,
-        timeout: Optional[int] = None
+        self, command: List[str], cwd: Optional[str] = None, timeout: Optional[int] = None
     ) -> subprocess.CompletedProcess:
         """运行命令
 
@@ -115,13 +108,7 @@ class AIToolAdapter:
             命令执行结果
         """
         timeout = timeout or self.timeout
-        result = subprocess.run(
-            command,
-            cwd=cwd,
-            capture_output=True,
-            text=True,
-            timeout=timeout
-        )
+        result = subprocess.run(command, cwd=cwd, capture_output=True, text=True, timeout=timeout)
         return result
 
     def _generate_feedback_id(self) -> str:
@@ -157,12 +144,7 @@ class AIToolAdapter:
         severity_lower = severity_str.lower()
         return severity_map.get(severity_lower, FeedbackSeverity.MEDIUM)
 
-    def _parse_category(
-        self,
-        rule_id: str,
-        message: str,
-        metadata: Dict[str, Any]
-    ) -> FeedbackCategory:
+    def _parse_category(self, rule_id: str, message: str, metadata: Dict[str, Any]) -> FeedbackCategory:
         """解析反馈类别
 
         Args:
@@ -179,9 +161,21 @@ class AIToolAdapter:
 
         # 安全相关
         security_keywords = [
-            "security", "injection", "xss", "csrf", "sql",
-            "auth", "crypto", "cipher", "hash", "password",
-            "token", "session", "eval", "exec", "shell"
+            "security",
+            "injection",
+            "xss",
+            "csrf",
+            "sql",
+            "auth",
+            "crypto",
+            "cipher",
+            "hash",
+            "password",
+            "token",
+            "session",
+            "eval",
+            "exec",
+            "shell",
         ]
         if any(kw in rule_lower or kw in msg_lower for kw in security_keywords):
             return FeedbackCategory.SECURITY
@@ -218,7 +212,7 @@ class AIToolAdapter:
             return []
 
         # 如果已经是AIFeedback列表，直接返回
-        if isinstance(results, list) and hasattr(results[0], 'rule_id'):
+        if isinstance(results, list) and hasattr(results[0], "rule_id"):
             return results
 
         # 如果是字典格式，转换为AIFeedback
@@ -228,7 +222,7 @@ class AIToolAdapter:
         # 尝试逐个转换
         normalized = []
         for item in results if isinstance(results, list) else [results]:
-            if hasattr(item, 'rule_id'):  # 已经是AIFeedback类型
+            if hasattr(item, "rule_id"):  # 已经是AIFeedback类型
                 normalized.append(item)
             elif isinstance(item, dict):
                 normalized.append(self._convert_dict_item_to_feedback(item))
@@ -236,17 +230,16 @@ class AIToolAdapter:
 
     def _convert_dict_to_feedback(self, result_dict: Dict[str, Any]) -> List[AIFeedback]:
         """将字典结果转换为AIFeedback列表"""
-        from lingflow.self_optimizer.phase5.models import AIFeedback
 
         feedback_list = []
 
         # 处理常见格式
-        if 'results' in result_dict:
-            items = result_dict['results']
-        elif 'issues' in result_dict:
-            items = result_dict['issues']
-        elif 'findings' in result_dict:
-            items = result_dict['findings']
+        if "results" in result_dict:
+            items = result_dict["results"]
+        elif "issues" in result_dict:
+            items = result_dict["issues"]
+        elif "findings" in result_dict:
+            items = result_dict["findings"]
         else:
             items = [result_dict]
 
@@ -261,32 +254,28 @@ class AIToolAdapter:
         from lingflow.self_optimizer.phase5.models import AIFeedback, FeedbackSource
 
         # 处理category：如果是枚举直接使用，否则解析
-        category = item.get('category')
+        category = item.get("category")
         if not isinstance(category, FeedbackCategory):
-            category = self._parse_category(
-                item.get('rule_id', ''),
-                item.get('message', ''),
-                item.get('metadata', {})
-            )
+            category = self._parse_category(item.get("rule_id", ""), item.get("message", ""), item.get("metadata", {}))
 
         # 处理severity：如果是枚举直接使用，否则解析
-        severity = item.get('severity')
+        severity = item.get("severity")
         if not isinstance(severity, FeedbackSeverity):
-            severity = self._parse_severity(severity or 'medium')
+            severity = self._parse_severity(severity or "medium")
 
         return AIFeedback(
-            id=item.get('id', self._generate_feedback_id()),
+            id=item.get("id", self._generate_feedback_id()),
             source=FeedbackSource.SEMGREP if "semgrep" in self.name.lower() else FeedbackSource.RUFF,
             category=category,
             severity=severity,
-            rule_id=item.get('rule_id', item.get('check_id', 'unknown')),
-            message=item.get('message', item.get('description', '')),
-            file_path=item.get('file_path', item.get('path', '')),
-            line_no=item.get('line_no', item.get('line_number', item.get('line', 0))),
-            column_no=item.get('column_no', item.get('column_number', item.get('col', 0))),
-            end_line_no=item.get('end_line_no', item.get('end_line_number', item.get('end_line', 0))),
-            end_column_no=item.get('end_column_no', item.get('end_column_number', item.get('end_col', 0))),
-            code_snippet=item.get('code_snippet', item.get('snippet', None)),
-            suggestion=item.get('suggestion', None),
-            metadata=item.get('metadata', {})
+            rule_id=item.get("rule_id", item.get("check_id", "unknown")),
+            message=item.get("message", item.get("description", "")),
+            file_path=item.get("file_path", item.get("path", "")),
+            line_no=item.get("line_no", item.get("line_number", item.get("line", 0))),
+            column_no=item.get("column_no", item.get("column_number", item.get("col", 0))),
+            end_line_no=item.get("end_line_no", item.get("end_line_number", item.get("end_line", 0))),
+            end_column_no=item.get("end_column_no", item.get("end_column_number", item.get("end_col", 0))),
+            code_snippet=item.get("code_snippet", item.get("snippet", None)),
+            suggestion=item.get("suggestion", None),
+            metadata=item.get("metadata", {}),
         )

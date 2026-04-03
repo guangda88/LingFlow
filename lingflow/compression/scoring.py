@@ -5,7 +5,7 @@
 
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
 
@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 class MessageRole(Enum):
     """消息角色枚举"""
+
     SYSTEM = "system"
     USER = "user"
     ASSISTANT = "assistant"
@@ -29,6 +30,7 @@ class MessageScore:
         factors: 影响评分的因素
         timestamp: 评分时间
     """
+
     score: float
     factors: Dict[str, float] = field(default_factory=dict)
     timestamp: datetime = field(default_factory=datetime.now)
@@ -50,10 +52,10 @@ class MessageScorer:
 
     # 角色默认权重
     ROLE_WEIGHTS = {
-        MessageRole.SYSTEM: 1.0,      # 系统提示最重要
-        MessageRole.USER: 0.8,         # 用户提问重要
-        MessageRole.ASSISTANT: 0.6,    # 助手回复相对次要
-        MessageRole.FUNCTION: 0.4,     # 函数调用最次要
+        MessageRole.SYSTEM: 1.0,  # 系统提示最重要
+        MessageRole.USER: 0.8,  # 用户提问重要
+        MessageRole.ASSISTANT: 0.6,  # 助手回复相对次要
+        MessageRole.FUNCTION: 0.4,  # 函数调用最次要
     }
 
     # 关键词及其权重
@@ -63,19 +65,16 @@ class MessageScorer:
         "exception": 1.5,
         "bug": 1.4,
         "fail": 1.3,
-
         # 重要指令
         "必须": 1.3,
         "require": 1.3,
         "critical": 1.4,
         "important": 1.2,
-
         # 代码相关
         "code": 1.1,
         "function": 1.0,
         "class": 1.0,
         "implement": 1.2,
-
         # 问题相关
         "问题": 1.2,
         "question": 1.1,
@@ -87,7 +86,7 @@ class MessageScorer:
         self,
         role_weights: Optional[Dict[MessageRole, float]] = None,
         keyword_weights: Optional[Dict[str, float]] = None,
-        time_half_life: float = 3600.0  # 1小时半衰期
+        time_half_life: float = 3600.0,  # 1小时半衰期
     ):
         """初始化消息评分器
 
@@ -100,11 +99,7 @@ class MessageScorer:
         self.keyword_weights = keyword_weights or self.KEYWORD_WEIGHTS
         self.time_half_life = time_half_life
 
-    def score_message(
-        self,
-        message: Dict,
-        context: Optional[Dict] = None
-    ) -> MessageScore:
+    def score_message(self, message: Dict, context: Optional[Dict] = None) -> MessageScore:
         """对单条消息评分
 
         Args:
@@ -138,11 +133,7 @@ class MessageScorer:
 
         # 计算加权总分
         total_score = (
-            role_score * 0.3 +
-            time_score * 0.2 +
-            length_score * 0.15 +
-            keyword_score * 0.2 +
-            interaction_score * 0.15
+            role_score * 0.3 + time_score * 0.2 + length_score * 0.15 + keyword_score * 0.2 + interaction_score * 0.15
         )
 
         # 归一化到 0-1
@@ -150,11 +141,7 @@ class MessageScorer:
 
         return MessageScore(score=total_score, factors=factors)
 
-    def score_messages(
-        self,
-        messages: List[Dict],
-        context: Optional[Dict] = None
-    ) -> List[MessageScore]:
+    def score_messages(self, messages: List[Dict], context: Optional[Dict] = None) -> List[MessageScore]:
         """对消息列表评分
 
         Args:
@@ -164,10 +151,7 @@ class MessageScorer:
         Returns:
             评分结果列表
         """
-        return [
-            self.score_message(msg, context)
-            for msg in messages
-        ]
+        return [self.score_message(msg, context) for msg in messages]
 
     def _score_role(self, message: Dict) -> float:
         """评分：消息角色
@@ -235,6 +219,7 @@ class MessageScorer:
 
         # 归一化：0-2000字符映射到0-1
         import math
+
         normalized = min(math.log1p(length) / math.log1p(2000), 1.0)
         return float(normalized)
 
@@ -271,11 +256,7 @@ class MessageScorer:
 
         return base_score + weight_score
 
-    def _score_interaction(
-        self,
-        message: Dict,
-        context: Optional[Dict] = None
-    ) -> float:
+    def _score_interaction(self, message: Dict, context: Optional[Dict] = None) -> float:
         """评分：交互质量
 
         检查是否形成良好的问答配对。

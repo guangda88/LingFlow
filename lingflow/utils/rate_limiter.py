@@ -7,20 +7,21 @@ import time
 import threading
 from typing import Callable, Optional, Any, Dict
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 import random
 
 
 @dataclass
 class RateLimitConfig:
     """速率限制配置"""
-    requests_per_second: float = 2.0      # 每秒请求数
-    requests_per_minute: float = 100.0    # 每分钟请求数
-    max_retries: int = 3                  # 最大重试次数
-    base_delay: float = 1.0               # 基础延迟（秒）
-    max_delay: float = 60.0               # 最大延迟（秒）
-    jitter: bool = True                   # 是否添加随机抖动
-    exponential_backoff: bool = True      # 是否使用指数退避
+
+    requests_per_second: float = 2.0  # 每秒请求数
+    requests_per_minute: float = 100.0  # 每分钟请求数
+    max_retries: int = 3  # 最大重试次数
+    base_delay: float = 1.0  # 基础延迟（秒）
+    max_delay: float = 60.0  # 最大延迟（秒）
+    jitter: bool = True  # 是否添加随机抖动
+    exponential_backoff: bool = True  # 是否使用指数退避
 
 
 class RateLimiter:
@@ -53,7 +54,7 @@ class RateLimiter:
 
             # 防止内存泄漏 - 限制历史记录大小
             if len(self.request_times) > self.MAX_HISTORY_SIZE:
-                self.request_times = self.request_times[-self.MAX_HISTORY_SIZE:]
+                self.request_times = self.request_times[-self.MAX_HISTORY_SIZE :]
 
             # 如果达到速率限制，等待
             if len(self.request_times) >= self.config.requests_per_second:
@@ -67,13 +68,14 @@ class RateLimiter:
     async def acquire_async(self):
         """异步获取请求许可"""
         import asyncio
+
         with self.lock:
             now = time.time()
             self.request_times = [t for t in self.request_times if now - t < 1.0]
 
             # 防止内存泄漏 - 限制历史记录大小
             if len(self.request_times) > self.MAX_HISTORY_SIZE:
-                self.request_times = self.request_times[-self.MAX_HISTORY_SIZE:]
+                self.request_times = self.request_times[-self.MAX_HISTORY_SIZE :]
 
             if len(self.request_times) >= self.config.requests_per_second:
                 sleep_time = self.min_interval - (now - self.request_times[0])
@@ -98,13 +100,7 @@ class SmartRetry:
         self.success_count = 0
         self.last_error_time = None
 
-    def execute(
-        self,
-        func: Callable,
-        *args,
-        on_retry: Optional[Callable] = None,
-        **kwargs
-    ) -> Any:
+    def execute(self, func: Callable, *args, on_retry: Optional[Callable] = None, **kwargs) -> Any:
         """执行函数，支持智能重试
 
         Args:
@@ -151,13 +147,7 @@ class SmartRetry:
         # 所有重试都失败
         raise last_exception
 
-    async def execute_async(
-        self,
-        func: Callable,
-        *args,
-        on_retry: Optional[Callable] = None,
-        **kwargs
-    ) -> Any:
+    async def execute_async(self, func: Callable, *args, on_retry: Optional[Callable] = None, **kwargs) -> Any:
         """异步执行函数，支持智能重试"""
         import asyncio
 
@@ -213,7 +203,7 @@ class SmartRetry:
         """计算重试延迟时间"""
         if self.config.exponential_backoff:
             # 指数退避
-            delay = self.config.base_delay * (2 ** attempt)
+            delay = self.config.base_delay * (2**attempt)
         else:
             # 固定延迟
             delay = self.config.base_delay
@@ -271,11 +261,7 @@ class ConcurrencyController:
 class APIClient:
     """整合的API客户端 - 同时控制速率、重试、并发"""
 
-    def __init__(
-        self,
-        rate_limit_config: RateLimitConfig = None,
-        max_concurrent: int = 5
-    ):
+    def __init__(self, rate_limit_config: RateLimitConfig = None, max_concurrent: int = 5):
         """
         Args:
             rate_limit_config: 速率限制配置
@@ -298,12 +284,7 @@ class APIClient:
             def retry_callback(attempt, error, delay):
                 print(f"⚠️  第 {attempt + 1} 次重试，错误: {error}，等待 {delay:.1f}秒...")
 
-            result = self.retry_handler.execute(
-                func,
-                *args,
-                on_retry=retry_callback,
-                **kwargs
-            )
+            result = self.retry_handler.execute(func, *args, on_retry=retry_callback, **kwargs)
 
             return result
 
@@ -321,12 +302,7 @@ class APIClient:
             async def retry_callback(attempt, error, delay):
                 print(f"⚠️  第 {attempt + 1} 次重试，错误: {error}，等待 {delay:.1f}秒...")
 
-            result = await self.retry_handler.execute_async(
-                func,
-                *args,
-                on_retry=retry_callback,
-                **kwargs
-            )
+            result = await self.retry_handler.execute_async(func, *args, on_retry=retry_callback, **kwargs)
 
             return result
 
@@ -344,7 +320,8 @@ class APIClient:
 
 # ============== 使用示例 ==============
 
-def example_rate_limiter():
+
+def example_rate_limiter():  # pragma: no cover
     """速率限制器示例"""
     print("\n=== 速率限制器示例 ===\n")
 
@@ -361,15 +338,11 @@ def example_rate_limiter():
         make_request(i)
 
 
-def example_smart_retry():
+def example_smart_retry():  # pragma: no cover
     """智能重试示例"""
     print("\n=== 智能重试示例 ===\n")
 
-    config = RateLimitConfig(
-        max_retries=3,
-        base_delay=0.5,
-        exponential_backoff=True
-    )
+    config = RateLimitConfig(max_retries=3, base_delay=0.5, exponential_backoff=True)
     retry_handler = SmartRetry(config)
 
     # 模拟可能失败的API调用
@@ -386,16 +359,14 @@ def example_smart_retry():
 
     try:
         result = retry_handler.execute(
-            unreliable_api_call,
-            on_retry=lambda attempt, error, delay:
-                print(f"    重试 #{attempt + 1}，延迟 {delay:.1f}秒")
+            unreliable_api_call, on_retry=lambda attempt, error, delay: print(f"    重试 #{attempt + 1}，延迟 {delay:.1f}秒")
         )
         print(f"\n✓ 最终结果: {result}")
     except Exception as e:
         print(f"\n✗ 所有重试失败: {e}")
 
 
-def example_concurrency_control():
+def example_concurrency_control():  # pragma: no cover
     """并发控制示例"""
     print("\n=== 并发控制示例 ===\n")
 
@@ -422,15 +393,11 @@ def example_concurrency_control():
         t.join()
 
 
-def example_integrated_client():
+def example_integrated_client():  # pragma: no cover
     """整合的API客户端示例"""
     print("\n=== 整合API客户端示例 ===\n")
 
-    config = RateLimitConfig(
-        requests_per_second=2.0,
-        max_retries=3,
-        base_delay=0.5
-    )
+    config = RateLimitConfig(requests_per_second=2.0, max_retries=3, base_delay=0.5)
 
     client = APIClient(config, max_concurrent=3)
 
@@ -469,13 +436,13 @@ def example_integrated_client():
 
     # 显示统计
     stats = client.get_stats()
-    print(f"\n📊 统计:")
+    print("\n📊 统计:")
     print(f"  成功: {stats['success_count']}")
     print(f"  失败: {stats['error_count']}")
     print(f"  错误率: {stats['error_rate']:.1%}")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     print("API速率限制控制演示")
     print("=" * 50)
 

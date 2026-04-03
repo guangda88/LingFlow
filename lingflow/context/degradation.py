@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 class DegradationType(Enum):
     """退化类型"""
+
     CONTEXT_POISONING = "context_poisoning"
     ATTENTION_DILUTION = "attention_dilution"
     INSTRUCTION_DRIFT = "instruction_drift"
@@ -26,6 +27,7 @@ class DegradationType(Enum):
 
 class HealthStatus(Enum):
     """健康状态"""
+
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     CRITICAL = "critical"
@@ -34,6 +36,7 @@ class HealthStatus(Enum):
 @dataclass
 class DegradationReport:
     """退化检测报告"""
+
     health: HealthStatus
     score: float  # 0.0 (完全退化) ~ 1.0 (健康)
     detected_types: List[DegradationType] = field(default_factory=list)
@@ -66,15 +69,33 @@ class DegradationDetector:
     MIN_MESSAGES_FOR_ANALYSIS = 3
     ERROR_RATE_THRESHOLD = 0.5
     INSTRUCTION_KEYWORDS = {
-        "must", "should", "require", "ensure", "never",
-        "always", "需要", "必须", "确保", "不要",
+        "must",
+        "should",
+        "require",
+        "ensure",
+        "never",
+        "always",
+        "需要",
+        "必须",
+        "确保",
+        "不要",
     }
 
     # Context-aware drift keywords: these are stronger signals of instruction adherence
     DRIFT_NEGATIVE_INDICATORS = {
-        "sorry", "apologize", "i can't", "i cannot", "unfortunately",
-        "let me try again", "as an ai", "as a language model",
-        "抱歉", "对不起", "我无法", "作为AI", "作为语言模型",
+        "sorry",
+        "apologize",
+        "i can't",
+        "i cannot",
+        "unfortunately",
+        "let me try again",
+        "as an ai",
+        "as a language model",
+        "抱歉",
+        "对不起",
+        "我无法",
+        "作为AI",
+        "作为语言模型",
     }
 
     def __init__(
@@ -106,7 +127,7 @@ class DegradationDetector:
         if len(messages) < self.MIN_MESSAGES_FOR_ANALYSIS:
             return False, 0.0
 
-        recent = messages[-self.window_size:]
+        recent = messages[-self.window_size :]
         assistant_msgs = [m for m in recent if m.get("role") == "assistant"]
 
         if len(assistant_msgs) < 2:
@@ -145,7 +166,7 @@ class DegradationDetector:
         if not instructions or len(messages) < self.MIN_MESSAGES_FOR_ANALYSIS:
             return False, 0.0
 
-        recent = messages[-self.window_size:]
+        recent = messages[-self.window_size :]
         assistant_msgs = [m for m in recent if m.get("role") == "assistant"]
 
         if not assistant_msgs:
@@ -183,15 +204,21 @@ class DegradationDetector:
         if len(messages) < self.MIN_MESSAGES_FOR_ANALYSIS:
             return False, 0.0
 
-        recent = messages[-self.window_size:]
+        recent = messages[-self.window_size :]
         assistant_msgs = [m for m in recent if m.get("role") == "assistant"]
 
         if not assistant_msgs:
             return False, 0.0
 
         error_indicators = [
-            "error", "exception", "traceback", "failed", "failure",
-            "错误", "失败", "异常",
+            "error",
+            "exception",
+            "traceback",
+            "failed",
+            "failure",
+            "错误",
+            "失败",
+            "异常",
         ]
 
         error_count = 0
@@ -249,15 +276,8 @@ class DegradationDetector:
 
         # 综合评分 (加权平均)
         weights = {"repetition": 0.4, "error_rate": 0.35, "instruction_drift": 0.25}
-        total_weight = sum(
-            weights.get(k, 0) for k in scores
-        )
-        overall_score = (
-            sum(scores.get(k, 1.0) * weights.get(k, 0) for k in scores)
-            / total_weight
-            if total_weight > 0
-            else 1.0
-        )
+        total_weight = sum(weights.get(k, 0) for k in scores)
+        overall_score = sum(scores.get(k, 1.0) * weights.get(k, 0) for k in scores) / total_weight if total_weight > 0 else 1.0
 
         if overall_score < 0.4:
             health = HealthStatus.CRITICAL
@@ -294,7 +314,7 @@ class DegradationDetector:
         Returns:
             (是否检测到漂移, 漂移分数)
         """
-        recent = messages[-self.window_size:]
+        recent = messages[-self.window_size :]
         assistant_msgs = [m for m in recent if m.get("role") == "assistant"]
 
         if not assistant_msgs:
@@ -349,4 +369,4 @@ class DegradationDetector:
         words = text.lower().split()
         if len(words) < n:
             return {tuple(words)} if words else set()
-        return {tuple(words[i:i + n]) for i in range(len(words) - n + 1)}
+        return {tuple(words[i : i + n]) for i in range(len(words) - n + 1)}

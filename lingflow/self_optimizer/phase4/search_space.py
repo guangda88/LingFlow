@@ -3,25 +3,29 @@ LingMinOpt 搜索空间定义
 支持离散、连续、分类参数
 """
 
-from typing import Dict, Any, List, Union, Optional
+from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from enum import Enum
 import numpy as np
 
+
 class ParameterType(Enum):
     """参数类型"""
-    DISCRETE = "discrete"       # 离散参数（从选项中选择）
-    CONTINUOUS = "continuous"   # 连续参数（在范围内）
-    CATEGORICAL = "categorical" # 分类参数（非数值）
+
+    DISCRETE = "discrete"  # 离散参数（从选项中选择）
+    CONTINUOUS = "continuous"  # 连续参数（在范围内）
+    CATEGORICAL = "categorical"  # 分类参数（非数值）
+
 
 @dataclass
 class Parameter:
     """参数定义"""
+
     name: str
     type: ParameterType
-    choices: Optional[List[Any]] = None     # 离散/分类参数的选项
-    min_value: Optional[float] = None       # 连续参数的最小值
-    max_value: Optional[float] = None       # 连续参数的最大值
+    choices: Optional[List[Any]] = None  # 离散/分类参数的选项
+    min_value: Optional[float] = None  # 连续参数的最小值
+    max_value: Optional[float] = None  # 连续参数的最大值
 
     def validate(self, value: Any) -> bool:
         """验证参数值"""
@@ -32,6 +36,7 @@ class Parameter:
         elif self.type == ParameterType.CATEGORICAL:
             return value in self.choices
         return False
+
 
 class SearchSpace:
     """搜索空间"""
@@ -45,11 +50,7 @@ class SearchSpace:
         Example:
             search_space.add_discrete("max_depth", [5, 10, 15, 20])
         """
-        self.parameters[name] = Parameter(
-            name=name,
-            type=ParameterType.DISCRETE,
-            choices=choices
-        )
+        self.parameters[name] = Parameter(name=name, type=ParameterType.DISCRETE, choices=choices)
 
     def add_continuous(self, name: str, min_value: float, max_value: float):
         """添加连续参数
@@ -57,12 +58,7 @@ class SearchSpace:
         Example:
             search_space.add_continuous("learning_rate", 0.001, 0.1)
         """
-        self.parameters[name] = Parameter(
-            name=name,
-            type=ParameterType.CONTINUOUS,
-            min_value=min_value,
-            max_value=max_value
-        )
+        self.parameters[name] = Parameter(name=name, type=ParameterType.CONTINUOUS, min_value=min_value, max_value=max_value)
 
     def add_categorical(self, name: str, choices: List[str]):
         """添加分类参数
@@ -70,11 +66,7 @@ class SearchSpace:
         Example:
             search_space.add_categorical("optimizer", ["adam", "sgd", "rmsprop"])
         """
-        self.parameters[name] = Parameter(
-            name=name,
-            type=ParameterType.CATEGORICAL,
-            choices=choices
-        )
+        self.parameters[name] = Parameter(name=name, type=ParameterType.CATEGORICAL, choices=choices)
 
     def sample(self) -> Dict[str, Any]:
         """随机采样"""
@@ -126,7 +118,7 @@ class SearchSpace:
         for name, param in self.parameters.items():
             if param.type == ParameterType.DISCRETE or param.type == ParameterType.CATEGORICAL:
                 # One-hot解码
-                one_hot = vector[idx:idx + len(param.choices)]
+                one_hot = vector[idx : idx + len(param.choices)]
                 choice_idx = int(np.argmax(one_hot))
                 params[name] = param.choices[choice_idx]
                 idx += len(param.choices)

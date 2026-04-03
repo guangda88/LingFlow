@@ -15,12 +15,14 @@ import logging
 from .scenario import CodeTestScenario, CapturedToolCall
 from .test_server import CodeTestServer
 from .tool_definition import ToolDefinition, ToolRequest, ToolResponse, TestContext
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 
 class ScenarioStatus(str, Enum):
     """场景测试状态"""
+
     PENDING = "pending"
     RUNNING = "running"
     PASSED = "passed"
@@ -32,6 +34,7 @@ class ScenarioStatus(str, Enum):
 @dataclass
 class ScenarioResult:
     """场景测试结果"""
+
     scenario_name: str
     status: ScenarioStatus
     execution_time: float
@@ -44,8 +47,8 @@ class ScenarioResult:
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典"""
         data = asdict(self)
-        data['status'] = self.status.value
-        data['timestamp'] = self.timestamp
+        data["status"] = self.status.value
+        data["timestamp"] = self.timestamp
         return data
 
 
@@ -63,11 +66,7 @@ class AIScenarioRunner:
     - 超时处理
     """
 
-    def __init__(
-        self,
-        test_server: Optional[CodeTestServer] = None,
-        timeout: int = 60
-    ):
+    def __init__(self, test_server: Optional[CodeTestServer] = None, timeout: int = 60):
         """初始化 AI 场景运行器
 
         Args:
@@ -84,10 +83,7 @@ class AIScenarioRunner:
         logger.info(f"🤖 AIScenarioRunner 初始化 (超时: {timeout}s)")
 
     async def run_scenario(
-        self,
-        scenario: CodeTestScenario,
-        tools: Dict[str, ToolDefinition],
-        validate_scenario: bool = True
+        self, scenario: CodeTestScenario, tools: Dict[str, ToolDefinition], validate_scenario: bool = True
     ) -> ScenarioResult:
         """运行单个测试场景
 
@@ -115,15 +111,12 @@ class AIScenarioRunner:
                     status=ScenarioStatus.FAILED,
                     execution_time=0.0,
                     error_message=f"场景验证失败: {e}",
-                    timestamp=time.time()
+                    timestamp=time.time(),
                 )
 
         # 创建结果对象
         result = ScenarioResult(
-            scenario_name=scenario.name,
-            status=ScenarioStatus.RUNNING,
-            execution_time=0.0,
-            timestamp=time.time()
+            scenario_name=scenario.name, status=ScenarioStatus.RUNNING, execution_time=0.0, timestamp=time.time()
         )
 
         start_time = time.time()
@@ -135,16 +128,9 @@ class AIScenarioRunner:
             # 捕获工具调用
             captured_calls = []
 
-            async def capture_tool_call(
-                tool_name: str,
-                args: Dict[str, Any]
-            ) -> Any:
+            async def capture_tool_call(tool_name: str, args: Dict[str, Any]) -> Any:
                 """捕获工具调用"""
-                call = CapturedToolCall(
-                    name=tool_name,
-                    args=args,
-                    timestamp=time.time()
-                )
+                call = CapturedToolCall(name=tool_name, args=args, timestamp=time.time())
                 captured_calls.append(call)
 
                 # 执行实际工具
@@ -160,10 +146,7 @@ class AIScenarioRunner:
                     test_id=f"scenario_{scenario.name}",
                     temp_dir=str(self.test_server.temp_dir),
                     start_time=start_time,
-                    captured_calls=[
-                        c.to_dict() if hasattr(c, 'to_dict') else c.__dict__
-                        for c in captured_calls
-                    ]
+                    captured_calls=[c.to_dict() if hasattr(c, "to_dict") else c.__dict__ for c in captured_calls],
                 )
 
                 await tool.handle(request, response, context)
@@ -174,10 +157,7 @@ class AIScenarioRunner:
 
             # 模拟 AI 交互（简化版）
             # 实际应用中应该调用真实的 AI API
-            response_data = await self._simulate_ai_interaction(
-                scenario,
-                capture_tool_call
-            )
+            response_data = await self._simulate_ai_interaction(scenario, capture_tool_call)
 
             # 验证期望
             expectations_met = True
@@ -189,10 +169,7 @@ class AIScenarioRunner:
                     result.error_message = f"期望验证失败: {e}"
 
             # 验证工具调用
-            tool_expectations_met = self._verify_tool_expectations(
-                scenario,
-                captured_calls
-            )
+            tool_expectations_met = self._verify_tool_expectations(scenario, captured_calls)
 
             # 更新结果
             result.captured_calls = captured_calls
@@ -233,18 +210,11 @@ class AIScenarioRunner:
             scenario: 测试场景
         """
         # 添加测试代码
-        self.test_server.add_python_route(
-            scenario.name,
-            scenario.code_content
-        )
+        self.test_server.add_python_route(scenario.name, scenario.code_content)
 
         logger.debug(f"✓ 场景代码已设置: {scenario.name}")
 
-    async def _simulate_ai_interaction(
-        self,
-        scenario: CodeTestScenario,
-        capture_tool_call: Callable
-    ) -> Any:
+    async def _simulate_ai_interaction(self, scenario: CodeTestScenario, capture_tool_call: Callable) -> Any:
         """模拟 AI 交互
 
         Args:
@@ -258,25 +228,17 @@ class AIScenarioRunner:
             这是简化版的模拟，实际应用中应该调用真实的 AI API
         """
         # 模拟 AI 调用工具
-        for tool_name in scenario.expected_tools[:scenario.max_turns]:
+        for tool_name in scenario.expected_tools[: scenario.max_turns]:
             try:
-                result = await capture_tool_call(tool_name, {})
+
                 logger.debug(f"  AI 调用工具: {tool_name}")
             except Exception as e:
                 logger.warning(f"  工具调用失败: {tool_name} - {e}")
 
         # 返回模拟响应
-        return {
-            "scenario": scenario.name,
-            "tools_called": len(scenario.expected_tools),
-            "status": "completed"
-        }
+        return {"scenario": scenario.name, "tools_called": len(scenario.expected_tools), "status": "completed"}
 
-    def _verify_tool_expectations(
-        self,
-        scenario: CodeTestScenario,
-        captured_calls: List[CapturedToolCall]
-    ) -> bool:
+    def _verify_tool_expectations(self, scenario: CodeTestScenario, captured_calls: List[CapturedToolCall]) -> bool:
         """验证工具调用期望
 
         Args:
@@ -291,26 +253,18 @@ class AIScenarioRunner:
         # 检查必须调用的工具
         for required_tool in scenario.required_tools:
             if required_tool not in called_tools:
-                logger.warning(
-                    f"缺少必需工具: {required_tool}"
-                )
+                logger.warning(f"缺少必需工具: {required_tool}")
                 return False
 
         # 检查期望调用的工具（可选）
         for expected_tool in scenario.expected_tools:
             if expected_tool not in called_tools:
-                logger.debug(
-                    f"未调用期望工具: {expected_tool}"
-                )
+                logger.debug(f"未调用期望工具: {expected_tool}")
                 # 这是可选的，不强制要求
 
         return True
 
-    async def run_batch(
-        self,
-        scenarios: List[CodeTestScenario],
-        tools: Dict[str, ToolDefinition]
-    ) -> List[ScenarioResult]:
+    async def run_batch(self, scenarios: List[CodeTestScenario], tools: Dict[str, ToolDefinition]) -> List[ScenarioResult]:
         """批量运行场景
 
         Args:
@@ -354,10 +308,7 @@ class AIScenarioRunner:
             "passed": self.scenarios_passed,
             "failed": self.scenarios_failed,
             "timeout": self.scenarios_timeout,
-            "success_rate": (
-                self.scenarios_passed / self.scenarios_run
-                if self.scenarios_run > 0 else 0
-            )
+            "success_rate": (self.scenarios_passed / self.scenarios_run if self.scenarios_run > 0 else 0),
         }
 
     def reset_stats(self):
@@ -372,14 +323,12 @@ class AIScenarioRunner:
 
 # 示例使用
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     import sys
+
     sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-    from lingflow.testing.scenario import (
-        REFACTORING_SCENARIO,
-        DETECT_SECURITY_ISSUE
-    )
+    from lingflow.testing.scenario import REFACTORING_SCENARIO
     from lingflow.testing.tool_definition import create_tool_registry
 
     logging.basicConfig(level=logging.INFO)
@@ -400,10 +349,7 @@ if __name__ == "__main__":
         print("运行单个场景:")
         print("-" * 70)
 
-        result = await runner.run_scenario(
-            REFACTORING_SCENARIO,
-            tools
-        )
+        result = await runner.run_scenario(REFACTORING_SCENARIO, tools)
 
         print(f"\n场景: {result.scenario_name}")
         print(f"状态: {result.status.value}")
@@ -416,14 +362,7 @@ if __name__ == "__main__":
         print("批量运行场景:")
         print("-" * 70)
 
-        scenarios = [
-            REFACTORING_SCENARIO,
-            DETECT_SECURITY_ISSUE
-        ]
-
-        results = await runner.run_batch(scenarios, tools)
-
-        print(f"\n运行摘要:")
+        print("\n运行摘要:")
         summary = runner.get_summary()
         print(f"  总场景数: {summary['total_scenarios']}")
         print(f"  通过: {summary['passed']}")

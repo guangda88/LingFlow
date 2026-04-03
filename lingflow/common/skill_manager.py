@@ -4,8 +4,6 @@ import importlib.util
 import logging
 import os
 import re
-import time
-from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
 from lingflow.common.config import get_config
@@ -39,9 +37,7 @@ class SkillManager:
         # 如果文件已修改或未缓存，重新加载
         if skill_name not in self.skills_cache or current_mtime > cached_mtime:
             try:
-                spec = importlib.util.spec_from_file_location(
-                    f"skills.{skill_name}.implementation", skill_path
-                )
+                spec = importlib.util.spec_from_file_location(f"skills.{skill_name}.implementation", skill_path)
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
 
@@ -139,9 +135,7 @@ class SkillManager:
 
         # 加载技能模块
         try:
-            spec = importlib.util.spec_from_file_location(
-                f"skills.{skill_name}.implementation", skill_path
-            )
+            spec = importlib.util.spec_from_file_location(f"skills.{skill_name}.implementation", skill_path)
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
 
@@ -170,9 +164,7 @@ class SkillManager:
 
         for skill_name in os.listdir(self.skills_path):
             skill_dir = os.path.join(self.skills_path, skill_name)
-            if os.path.isdir(skill_dir) and os.path.exists(
-                os.path.join(skill_dir, "implementation.py")
-            ):
+            if os.path.isdir(skill_dir) and os.path.exists(os.path.join(skill_dir, "implementation.py")):
                 skills.append(skill_name)
 
         return skills

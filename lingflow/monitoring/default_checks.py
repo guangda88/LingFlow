@@ -14,9 +14,9 @@ from typing import Optional
 from lingflow.core.layered_skill_loader import get_layered_loader, get_memory_usage
 from lingflow.monitoring.operations_monitor import (
     Alert,
+    AlertSeverity,
     HealthCheckResult,
     register_health_check,
-    add_notification_handler,
     get_operations_monitor,
 )
 
@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 # Default Health Checks
 # ============================================================================
+
 
 def check_skill_loader() -> HealthCheckResult:
     """检查技能加载器健康状态"""
@@ -194,6 +195,7 @@ def check_cpu_usage() -> HealthCheckResult:
 # Default Notification Handlers
 # ============================================================================
 
+
 def log_notification_handler(alert: Alert):
     """日志通知处理器"""
     log_func = {
@@ -203,18 +205,16 @@ def log_notification_handler(alert: Alert):
         AlertSeverity.CRITICAL: logger.critical,
     }.get(alert.severity, logger.info)
 
-    log_func(
-        f"[{alert.severity.value.upper()}] {alert.source}: {alert.message}"
-    )
+    log_func(f"[{alert.severity.value.upper()}] {alert.source}: {alert.message}")
 
 
 def console_notification_handler(alert: Alert):
     """控制台通知处理器 (带颜色)"""
     colors = {
-        AlertSeverity.INFO: "\033[36m",     # Cyan
+        AlertSeverity.INFO: "\033[36m",  # Cyan
         AlertSeverity.WARNING: "\033[33m",  # Yellow
-        AlertSeverity.ERROR: "\033[31m",    # Red
-        AlertSeverity.CRITICAL: "\033[35m", # Magenta
+        AlertSeverity.ERROR: "\033[31m",  # Red
+        AlertSeverity.CRITICAL: "\033[35m",  # Magenta
     }
     reset = "\033[0m"
 
@@ -225,6 +225,7 @@ def console_notification_handler(alert: Alert):
 # ============================================================================
 # Registration Function
 # ============================================================================
+
 
 def register_default_checks():
     """注册默认健康检查"""
@@ -256,6 +257,7 @@ def setup_default_monitoring():
 # ============================================================================
 # Monitoring Loop
 # ============================================================================
+
 
 class MonitoringLoop:
     """监控循环 - 定期运行健康检查和告警评估"""

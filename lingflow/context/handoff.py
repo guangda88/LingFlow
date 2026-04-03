@@ -93,12 +93,14 @@ class HandoffDocument:
         ]
 
         if self.current_task:
-            parts.extend([
-                "## 当前任务",
-                "",
-                self.current_task,
-                "",
-            ])
+            parts.extend(
+                [
+                    "## 当前任务",
+                    "",
+                    self.current_task,
+                    "",
+                ]
+            )
 
         if self.tasks_in_progress:
             parts.extend(["## 进行中的任务", ""])
@@ -164,13 +166,15 @@ class HandoffDocument:
             parts.append("")
 
         if self.degradation_detected:
-            parts.extend([
-                "## 退化检测",
-                "",
-                f"- Token 使用量: {self.token_usage_at_handoff}",
-                f"- 检测到的退化类型: {', '.join(self.degradation_types) or '无'}",
-                "",
-            ])
+            parts.extend(
+                [
+                    "## 退化检测",
+                    "",
+                    f"- Token 使用量: {self.token_usage_at_handoff}",
+                    f"- 检测到的退化类型: {', '.join(self.degradation_types) or '无'}",
+                    "",
+                ]
+            )
 
         return "\n".join(parts)
 
@@ -224,8 +228,6 @@ class HandoffDocument:
         )
 
         decisions = getattr(snapshot, "key_decisions", [])
-        doc.key_decisions = [
-            {"decision": d, "rationale": ""} for d in decisions
-        ]
+        doc.key_decisions = [{"decision": d, "rationale": ""} for d in decisions]
 
         return doc

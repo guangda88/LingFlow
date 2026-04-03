@@ -8,7 +8,7 @@
 import re
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from lingflow.compression.token_estimator import TokenEstimator
 
@@ -17,20 +17,23 @@ _token_estimator = TokenEstimator()
 
 class CompressionLevel(Enum):
     """压缩级别"""
-    BASIC = "basic"      # 基础截断（向后兼容）
+
+    BASIC = "basic"  # 基础截断（向后兼容）
     ADVANCED = "advanced"  # 高级压缩
 
 
 class CompressionStrategy(Enum):
     """压缩策略"""
-    DENSITY = "density"      # 信息密度排名
-    SEMANTIC = "semantic"    # 语义压缩
-    LIST = "list"           # 列表压缩
+
+    DENSITY = "density"  # 信息密度排名
+    SEMANTIC = "semantic"  # 语义压缩
+    LIST = "list"  # 列表压缩
 
 
 @dataclass
 class CompressionResult:
     """压缩结果"""
+
     original_length: int
     compressed_length: int
     reduction_ratio: float
@@ -50,10 +53,19 @@ class AdvancedContextCompressor:
 
     # 默认保留关键词
     DEFAULT_KEYWORDS = [
-        "must", "should", "require", "ensure",
-        "critical", "important", "essential",
-        "verify", "validate", "confirm",
-        "security", "authentication", "authorization"
+        "must",
+        "should",
+        "require",
+        "ensure",
+        "critical",
+        "important",
+        "essential",
+        "verify",
+        "validate",
+        "confirm",
+        "security",
+        "authentication",
+        "authorization",
     ]
 
     def __init__(
@@ -61,7 +73,7 @@ class AdvancedContextCompressor:
         target_ratio: float = 0.5,
         preserve_keywords: bool = True,
         custom_keywords: Optional[List[str]] = None,
-        strategies: Optional[List[CompressionStrategy]] = None
+        strategies: Optional[List[CompressionStrategy]] = None,
     ):
         """初始化压缩器
 
@@ -74,11 +86,7 @@ class AdvancedContextCompressor:
         self.target_ratio = target_ratio
         self.preserve_keywords = preserve_keywords
         self.keywords = set(self.DEFAULT_KEYWORDS + (custom_keywords or []))
-        self.strategies = strategies or [
-            CompressionStrategy.DENSITY,
-            CompressionStrategy.SEMANTIC,
-            CompressionStrategy.LIST
-        ]
+        self.strategies = strategies or [CompressionStrategy.DENSITY, CompressionStrategy.SEMANTIC, CompressionStrategy.LIST]
         self.compressions_count = 0
         self.tokens_saved = 0
 
@@ -142,13 +150,9 @@ class AdvancedContextCompressor:
         return CompressionResult(
             original_length=original_length,
             compressed_length=compressed_length,
-            reduction_ratio=(
-                1.0 - (compressed_length / original_length)
-                if original_length > 0
-                else 0
-            ),
+            reduction_ratio=(1.0 - (compressed_length / original_length) if original_length > 0 else 0),
             strategy="advanced",
-            preserved_keywords=self._extract_preserved_keywords(text)
+            preserved_keywords=self._extract_preserved_keywords(text),
         )
 
     def calculate_density(self, text: str) -> float:
@@ -265,7 +269,7 @@ class AdvancedContextCompressor:
     def _split_sentences(self, text: str) -> List[str]:
         """分割文本为句子"""
         # 按句号、问号、感叹号分割
-        sentences = re.split(r'[.!?]+\s*', text)
+        sentences = re.split(r"[.!?]+\s*", text)
         return [s.strip() for s in sentences if s.strip()]
 
     def _extract_key_sentences(self, sentences: List[str]) -> List[str]:
@@ -303,7 +307,7 @@ class AdvancedContextCompressor:
             "total_compressions": self.compressions_count,
             "tokens_saved": self.tokens_saved,
             "strategies": [s.value for s in self.strategies],
-            "target_ratio": self.target_ratio
+            "target_ratio": self.target_ratio,
         }
 
 
@@ -422,7 +426,4 @@ class _BasicCompressor:
 
     def get_stats(self) -> Dict[str, int]:
         """获取压缩统计"""
-        return {
-            "total_compressions": self.compressions_count,
-            "tokens_saved": self.tokens_saved
-        }
+        return {"total_compressions": self.compressions_count, "tokens_saved": self.tokens_saved}

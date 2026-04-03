@@ -4,10 +4,9 @@ Single source of truth for LingFlow configuration.
 Loading priority: LINGFLOW_ env vars > config.yaml > DEFAULT_CONFIG.
 """
 
-import functools
 import logging
 import os
-from typing import Any, Dict, Optional, Type, TypeVar, Union
+from typing import Any, Dict, Optional, Type, TypeVar
 
 import yaml
 
@@ -144,10 +143,7 @@ class ConfigManager:
             else:
                 base[key] = value
 
-    def get(
-        self, key: str, default: Optional[T] = None,
-        expected_type: Optional[Type[T]] = None
-    ) -> Optional[T]:
+    def get(self, key: str, default: Optional[T] = None, expected_type: Optional[Type[T]] = None) -> Optional[T]:
         """获取配置值（支持类型验证和缓存）
 
         Args:
@@ -182,10 +178,7 @@ class ConfigManager:
 
         # 如果指定了期望类型，进行验证
         if expected_type is not None and value is not None and not isinstance(value, expected_type):
-            logger.warning(
-                f"配置类型不匹配: {key} 期望 {expected_type.__name__}, "
-                f"实际 {type(value).__name__}，返回默认值"
-            )
+            logger.warning(f"配置类型不匹配: {key} 期望 {expected_type.__name__}, " f"实际 {type(value).__name__}，返回默认值")
             value = default
 
         # 只有当值不是默认值时才缓存（避免不同默认值的冲突）

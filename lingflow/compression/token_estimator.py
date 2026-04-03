@@ -20,7 +20,7 @@ class TokenEstimator:
         "gpt-4": 0.25,
         "gpt-3.5-turbo": 0.25,
         "claude-3": 0.28,  # Claude 使用不同的 tokenizer
-        "default": 0.25
+        "default": 0.25,
     }
 
     def __init__(self, model: str = "claude-3", use_tiktoken: bool = True):
@@ -42,6 +42,7 @@ class TokenEstimator:
         """尝试加载 tiktoken"""
         try:
             import tiktoken
+
             # 使用 cl100k_base (GPT-4/3.5-turbo 的编码)
             self._tokenizer = tiktoken.get_encoding("cl100k_base")
             logger.info("使用 tiktoken 进行精确 token 计数")

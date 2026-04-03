@@ -4,7 +4,7 @@
 """
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -23,11 +23,7 @@ class ConversationSummarizer:
         """
         self.max_summary_length = max_summary_length
 
-    def summarize(
-        self,
-        messages: List[Dict],
-        focus: Optional[str] = None
-    ) -> str:
+    def summarize(self, messages: List[Dict], focus: Optional[str] = None) -> str:
         """生成对话摘要
 
         Args:
@@ -48,15 +44,11 @@ class ConversationSummarizer:
 
         # 截断到最大长度
         if len(summary) > self.max_summary_length:
-            summary = summary[:self.max_summary_length - 3] + "..."
+            summary = summary[: self.max_summary_length - 3] + "..."
 
         return summary
 
-    def summarize_by_topic(
-        self,
-        messages: List[Dict],
-        topic: str
-    ) -> str:
+    def summarize_by_topic(self, messages: List[Dict], topic: str) -> str:
         """按主题生成摘要
 
         Args:
@@ -67,21 +59,14 @@ class ConversationSummarizer:
             主题摘要
         """
         # 过滤相关消息
-        relevant = [
-            m for m in messages
-            if topic.lower() in str(m).lower()
-        ]
+        relevant = [m for m in messages if topic.lower() in str(m).lower()]
 
         if not relevant:
             return f"No discussion about {topic}"
 
         return self.summarize(relevant, focus=topic)
 
-    def _extract_key_points(
-        self,
-        messages: List[Dict],
-        focus: Optional[str] = None
-    ) -> List[str]:
+    def _extract_key_points(self, messages: List[Dict], focus: Optional[str] = None) -> List[str]:
         """提取关键点
 
         Args:
@@ -143,11 +128,7 @@ class ConversationSummarizer:
 
         return summary
 
-    def create_summary_message(
-        self,
-        messages: List[Dict],
-        focus: Optional[str] = None
-    ) -> Dict:
+    def create_summary_message(self, messages: List[Dict], focus: Optional[str] = None) -> Dict:
         """创建摘要消息
 
         将摘要转换为标准消息格式。
@@ -164,9 +145,5 @@ class ConversationSummarizer:
         return {
             "role": "system",
             "content": f"[Previous conversation summary]\n{summary_text}",
-            "metadata": {
-                "type": "summary",
-                "original_count": len(messages),
-                "summary_length": len(summary_text)
-            }
+            "metadata": {"type": "summary", "original_count": len(messages), "summary_length": len(summary_text)},
         }

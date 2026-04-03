@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 
 class SkillLayer(str, Enum):
     """技能分层枚举"""
+
     L1 = "L1"  # 核心调度层 - 永不卸载
     L2 = "L2"  # 专业能力层 - 常驻内存
     L3 = "L3"  # 扩展能力层 - 按需加载
@@ -34,13 +35,15 @@ class SkillLayer(str, Enum):
 
 class LoadingStrategy(str, Enum):
     """加载策略"""
-    EAGER = "eager"    # 启动时加载
-    LAZY = "lazy"      # 按需加载
+
+    EAGER = "eager"  # 启动时加载
+    LAZY = "lazy"  # 按需加载
 
 
 class UnloadingStrategy(str, Enum):
     """卸载策略"""
-    NEVER = "never"          # 永不卸载
+
+    NEVER = "never"  # 永不卸载
     AFTER_TASK = "after_task"  # 任务完成后卸载
     IDLE_TIMEOUT = "idle_timeout"  # 空闲超时后卸载
 
@@ -48,6 +51,7 @@ class UnloadingStrategy(str, Enum):
 @dataclass
 class SkillConfig:
     """技能配置"""
+
     name: str
     layer: SkillLayer
     category: str = ""
@@ -69,6 +73,7 @@ class SkillConfig:
 @dataclass
 class LayerConfig:
     """层级配置"""
+
     layer: SkillLayer
     description: str
     loading_strategy: LoadingStrategy
@@ -86,7 +91,11 @@ class SkillRouter:
 
     def __init__(self, config_path: str = None):
         self.config_path = config_path or os.path.join(
-            os.path.dirname(__file__), "..", "..", "skills", "skills-layer-configuration.yaml"
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "skills",
+            "skills-layer-configuration.yaml",
         )
         self.routing_rules: List[Dict] = []
         self.mutex_groups: Dict[str, Set[str]] = {}
@@ -213,7 +222,11 @@ class LayeredSkillLoader:
 
     def __init__(self, config_path: str = None):
         self.config_path = config_path or os.path.join(
-            os.path.dirname(__file__), "..", "..", "skills", "skills-layer-configuration.yaml"
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "skills",
+            "skills-layer-configuration.yaml",
         )
 
         # 层级配置
@@ -293,9 +306,11 @@ class LayeredSkillLoader:
                     skill_def["category"] = category_name
                     self._register_skill(skill_def, SkillLayer.L3)
 
-            logger.info(f"加载分层配置成功: L1={self.layers[SkillLayer.L1].loaded_count}, "
-                       f"L2={self.layers[SkillLayer.L2].loaded_count}, "
-                       f"L3={len([s for s in self.skills.values() if s.layer == SkillLayer.L3])}")
+            logger.info(
+                f"加载分层配置成功: L1={self.layers[SkillLayer.L1].loaded_count}, "
+                f"L2={self.layers[SkillLayer.L2].loaded_count}, "
+                f"L3={len([s for s in self.skills.values() if s.layer == SkillLayer.L3])}"
+            )
         except Exception as e:
             logger.error(f"加载分层配置失败: {e}")
             self._load_default_configuration()
@@ -352,8 +367,9 @@ class LayeredSkillLoader:
             for skill_name in self.L2_SKILLS:
                 self._load_skill(skill_name)
 
-        logger.info(f"核心技能加载完成: L1={self.layers[SkillLayer.L1].loaded_count}, "
-                   f"L2={self.layers[SkillLayer.L2].loaded_count}")
+        logger.info(
+            f"核心技能加载完成: L1={self.layers[SkillLayer.L1].loaded_count}, " f"L2={self.layers[SkillLayer.L2].loaded_count}"
+        )
 
     def _load_skill(self, skill_name: str) -> bool:
         """加载单个技能

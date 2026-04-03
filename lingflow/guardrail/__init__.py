@@ -187,9 +187,7 @@ class GuardrailValidator:
             ],
         }
 
-    def validate_agcef(
-        self, code: str, file_path: str, context: Optional[Dict[str, Any]] = None
-    ) -> SecurityReport:
+    def validate_agcef(self, code: str, file_path: str, context: Optional[Dict[str, Any]] = None) -> SecurityReport:
         """
         Run complete AGCEF validation pipeline (7 steps)
 
@@ -205,9 +203,7 @@ class GuardrailValidator:
 
         start_time = time.time()
 
-        report = SecurityReport(
-            overall_score=0.0, risk_level="UNKNOWN", is_approved=False, execution_time=0.0
-        )
+        report = SecurityReport(overall_score=0.0, risk_level="UNKNOWN", is_approved=False, execution_time=0.0)
 
         # Step 1: Syntax validation
         syntax_result = self.validate_syntax(code, file_path)
@@ -444,9 +440,7 @@ class GuardrailValidator:
 
         return result
 
-    def assess_risk(
-        self, validation_results: Dict[ValidationLevel, ValidationResult]
-    ) -> ValidationResult:
+    def assess_risk(self, validation_results: Dict[ValidationLevel, ValidationResult]) -> ValidationResult:
         """
         Step 4: Assess overall risk
 
@@ -609,6 +603,21 @@ class GuardrailValidator:
         return "\n".join(lines)
 
 
+__all__ = [
+    # Validation levels and severity
+    "ValidationLevel",
+    "Severity",
+    # Data classes
+    "Violation",
+    "ValidationResult",
+    "SecurityReport",
+    # Main validator
+    "GuardrailValidator",
+    # Deployment gate
+    "DeploymentGate",
+]
+
+
 class DeploymentGate:
     """
     Deployment gate enforcement
@@ -642,16 +651,11 @@ class DeploymentGate:
 
         # Check test coverage
         if test_coverage < self.gates["test_coverage"]["min"]:
-            issues.append(
-                f"Test coverage ({test_coverage}%) below minimum "
-                f"({self.gates['test_coverage']['min']}%)"
-            )
+            issues.append(f"Test coverage ({test_coverage}%) below minimum " f"({self.gates['test_coverage']['min']}%)")
 
         # Check for paper tests
         if paper_tests > self.gates["paper_tests"]["max"]:
-            issues.append(
-                f"Found {paper_tests} paper tests (expected {self.gates['paper_tests']['max']})"
-            )
+            issues.append(f"Found {paper_tests} paper tests (expected {self.gates['paper_tests']['max']})")
 
         # Check critical violations
         if security_report.critical_violations > self.gates["critical_violations"]["max"]:

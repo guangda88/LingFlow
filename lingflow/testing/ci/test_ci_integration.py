@@ -8,11 +8,60 @@ CI/CD 集成测试
 import pytest
 import yaml
 from pathlib import Path
-from typing import Dict, Any
 import sys
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+
+class CIWorkflowTestHelper:
+    """CI 工作流测试辅助类 - 提取公共方法降低复杂度"""
+
+    @staticmethod
+    def get_workflow_path() -> Path:
+        """获取工作流文件路径"""
+        return Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+
+    @staticmethod
+    def load_workflow():
+        """加载工作流配置"""
+        workflow_path = CIWorkflowTestHelper.get_workflow_path()
+        with open(workflow_path, "r", encoding="utf-8") as f:
+            return yaml.safe_load(f)
+
+    @staticmethod
+    def find_step_with(steps, key, value):
+        """在步骤列表中查找包含特定键值的步骤"""
+        for step in steps:
+            if key in step and value in step.get(key, ""):
+                return step
+        return None
+
+    @staticmethod
+    def find_step_with_uses(steps, uses_value):
+        """查找使用特定action的步骤"""
+        for step in steps:
+            if "uses" in step and uses_value in step["uses"]:
+                return step
+        return None
+
+    @staticmethod
+    def has_job_with_step_using(workflow, job_name, step_key, step_value):
+        """检查特定job中是否有包含特定键值的步骤"""
+        job = workflow["jobs"].get(job_name)
+        if not job:
+            return False
+        steps = job.get("steps", [])
+        return CIWorkflowTestHelper.find_step_with(steps, step_key, step_value) is not None
+
+    @staticmethod
+    def any_job_has_step_using(workflow, step_key, step_value):
+        """检查任何job中是否有包含特定键值的步骤"""
+        for job in workflow["jobs"].values():
+            steps = job.get("steps", [])
+            if CIWorkflowTestHelper.find_step_with(steps, step_key, step_value):
+                return True
+        return False
 
 
 class TestCIWorkflowConfiguration:
@@ -21,52 +70,36 @@ class TestCIWorkflowConfiguration:
     @property
     def _workflow_path(self) -> Path:
         """获取工作流文件路径"""
-        return Path(__file__).parent.parent.parent.parent / ".github" / "workflows" / "testing-framework.yml"
+        return CIWorkflowTestHelper.get_workflow_path()
+
+    def _load_workflow(self):
+        """加载工作流配置"""
+        return CIWorkflowTestHelper.load_workflow()
 
     def test_workflow_file_exists(self):
         """测试工作流文件存在"""
-        root_dir = Path(__file__).parent.parent.parent.parent
-        workflow_path = root_dir / ".github" / "workflows" / "testing-framework.yml"
+        workflow_path = self._workflow_path
         assert workflow_path.exists(), "CI 工作流文件应该存在"
 
     def test_workflow_yaml_valid(self):
         """测试工作流 YAML 格式有效"""
-        root_dir = Path(__file__).parent.parent.parent.parent
-        workflow_path = root_dir / ".github" / "workflows" / "testing-framework.yml"
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
-
+        workflow = self._load_workflow()
         assert workflow is not None
         assert "name" in workflow
         assert "jobs" in workflow
 
     def test_workflow_has_required_jobs(self):
         """测试工作流包含必需的任务"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
-
+        workflow = self._load_workflow()
         jobs = workflow.get("jobs", {})
-        required_jobs = [
-            "unit-tests",
-            "snapshot-tests",
-            "scenario-tests",
-            "e2e-tests",
-            "test-coverage"
-        ]
+        required_jobs = ["unit-tests", "snapshot-tests", "scenario-tests", "e2e-tests", "test-coverage"]
 
         for job in required_jobs:
             assert job in jobs, f"工作流应该包含 {job} 任务"
 
     def test_unit_tests_matrix(self):
         """测试单元测试矩阵配置"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
-
+        workflow = self._load_workflow()
         unit_tests = workflow["jobs"]["unit-tests"]
         assert "strategy" in unit_tests
         assert "matrix" in unit_tests["strategy"]
@@ -77,11 +110,7 @@ class TestCIWorkflowConfiguration:
 
     def test_coverage_threshold(self):
         """测试覆盖率阈值配置"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
-
+        workflow = self._load_workflow()
         coverage_job = workflow["jobs"]["test-coverage"]
         steps = coverage_job.get("steps", [])
 
@@ -99,68 +128,39 @@ class TestCIWorkflowConfiguration:
 
     def test_codecov_integration(self):
         """测试 Codecov 集成配置"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
+        workflow = self._load_workflow()
 
         # 检查是否有使用 codecov-action
-        codecov_used = False
-        for job_name, job in workflow["jobs"].items():
-            for step in job.get("steps", []):
-                if "uses" in step and "codecov/codecov-action" in step["uses"]:
-                    codecov_used = True
-                    break
-
+        codecov_used = CIWorkflowTestHelper.any_job_has_step_using(
+            workflow, "uses", "codecov/codecov-action"
+        )
         assert codecov_used, "工作流应该集成 Codecov"
 
     def test_parallel_execution(self):
         """测试并行执行配置"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
-
+        workflow = self._load_workflow()
         parallel_job = workflow["jobs"].get("parallel-tests")
         assert parallel_job is not None, "工作流应该包含并行测试任务"
 
         # 检查是否使用 pytest-xdist
         steps = parallel_job.get("steps", [])
-        xdist_used = False
-        for step in steps:
-            if "run" in step and "pytest-xdist" in step.get("run", ""):
-                xdist_used = True
-                break
-
+        xdist_used = CIWorkflowTestHelper.find_step_with(steps, "run", "pytest-xdist") is not None
         assert xdist_used, "并行测试应该使用 pytest-xdist"
 
     def test_security_scan(self):
         """测试安全扫描配置"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
-
+        workflow = self._load_workflow()
         security_job = workflow["jobs"].get("security-scan")
         assert security_job is not None, "工作流应该包含安全扫描任务"
 
         # 检查是否使用 bandit
         steps = security_job.get("steps", [])
-        bandit_used = False
-        for step in steps:
-            if "run" in step and "bandit" in step.get("run", ""):
-                bandit_used = True
-                break
-
+        bandit_used = CIWorkflowTestHelper.find_step_with(steps, "run", "bandit") is not None
         assert bandit_used, "安全扫描应该使用 bandit"
 
     def test_test_report_job(self):
         """测试测试报告任务配置"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
-
+        workflow = self._load_workflow()
         report_job = workflow["jobs"].get("test-report")
         assert report_job is not None, "工作流应该包含测试报告任务"
 
@@ -169,20 +169,12 @@ class TestCIWorkflowConfiguration:
 
         # 检查是否使用发布测试结果 action
         steps = report_job.get("steps", [])
-        publish_used = False
-        for step in steps:
-            if "uses" in step and "publish-unit-test-result-action" in step["uses"]:
-                publish_used = True
-                break
-
+        publish_used = CIWorkflowTestHelper.find_step_with_uses(steps, "publish-unit-test-result-action") is not None
         assert publish_used, "测试报告应该使用发布测试结果 action"
 
     def test_workflow_triggers(self):
         """测试工作流触发器配置"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
+        workflow = self._load_workflow()
 
         # YAML 解析时 'on' 会被解析为 True
         assert "on" in workflow or True in workflow
@@ -201,19 +193,12 @@ class TestCIWorkflowConfiguration:
 
     def test_artifact_upload(self):
         """测试工件上传配置"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
+        workflow = self._load_workflow()
 
         # 检查是否有上传工件的操作
-        artifact_upload_found = False
-        for job_name, job in workflow["jobs"].items():
-            for step in job.get("steps", []):
-                if "uses" in step and "upload-artifact" in step["uses"]:
-                    artifact_upload_found = True
-                    break
-
+        artifact_upload_found = CIWorkflowTestHelper.any_job_has_step_using(
+            workflow, "uses", "upload-artifact"
+        )
         assert artifact_upload_found, "工作流应该包含工件上传"
 
 
@@ -222,11 +207,7 @@ class TestCIBestPractices:
 
     def test_python_version_matrix(self):
         """测试 Python 版本矩阵"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
-
+        workflow = CIWorkflowTestHelper.load_workflow()
         unit_tests = workflow["jobs"]["unit-tests"]
         python_versions = unit_tests["strategy"]["matrix"]["python-version"]
 
@@ -238,11 +219,7 @@ class TestCIBestPractices:
 
     def test_coverage_report_generation(self):
         """测试覆盖率报告生成"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
-
+        workflow = CIWorkflowTestHelper.load_workflow()
         coverage_job = workflow["jobs"]["test-coverage"]
         steps = coverage_job.get("steps", [])
 
@@ -259,10 +236,7 @@ class TestCIBestPractices:
 
     def test_junit_xml_output(self):
         """测试 JUnit XML 输出"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
+        workflow = CIWorkflowTestHelper.load_workflow()
 
         # 检查测试任务是否输出 JUnit XML
         test_jobs = ["unit-tests", "snapshot-tests", "scenario-tests", "e2e-tests"]
@@ -270,28 +244,15 @@ class TestCIBestPractices:
             job = workflow["jobs"].get(job_name)
             if job:
                 steps = job.get("steps", [])
-                junit_found = False
-                for step in steps:
-                    if "run" in step and "--junitxml=" in step.get("run", ""):
-                        junit_found = True
-                        break
-
+                junit_found = CIWorkflowTestHelper.find_step_with(steps, "run", "--junitxml=") is not None
                 assert junit_found, f"{job_name} 应该输出 JUnit XML"
 
     def test_cache_usage(self):
         """测试缓存使用（可选）"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
+        workflow = CIWorkflowTestHelper.load_workflow()
 
         # 检查是否有使用缓存（这是最佳实践，但不是必需的）
-        cache_used = False
-        for job_name, job in workflow["jobs"].items():
-            for step in job.get("steps", []):
-                if "uses" in step and "actions/cache" in step["uses"]:
-                    cache_used = True
-                    break
+        cache_used = CIWorkflowTestHelper.any_job_has_step_using(workflow, "uses", "actions/cache")
 
         # 只是一个警告，不是必需的
         if not cache_used:
@@ -303,10 +264,7 @@ class TestCIIntegration:
 
     def test_workflow_tests_correct_directory(self):
         """测试工作流测试正确的目录"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
+        workflow = CIWorkflowTestHelper.load_workflow()
 
         # 检查测试命令是否指向正确的目录
         for job_name, job in workflow["jobs"].items():
@@ -321,24 +279,15 @@ class TestCIIntegration:
 
     def test_dependencies_installation(self):
         """测试依赖安装"""
-        workflow_path = self._workflow_path
-
-        with open(workflow_path, 'r', encoding='utf-8') as f:
-            workflow = yaml.safe_load(f)
+        workflow = CIWorkflowTestHelper.load_workflow()
 
         # 检查是否安装 pytest
-        pytest_installed = False
-        for job_name, job in workflow["jobs"].items():
-            for step in job.get("steps", []):
-                if "run" in step and "pip install pytest" in step.get("run", ""):
-                    pytest_installed = True
-                    break
-
+        pytest_installed = CIWorkflowTestHelper.any_job_has_step_using(workflow, "run", "pip install pytest")
         assert pytest_installed, "工作流应该安装 pytest"
 
 
 # 主测试入口
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     import logging
 
     logging.basicConfig(level=logging.INFO)

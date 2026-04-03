@@ -13,11 +13,7 @@ import sys
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from lingflow.testing.scenario import (
-    CodeTestScenario,
-    CapturedToolCall,
-    TestInteractionType
-)
+from lingflow.testing.scenario import CodeTestScenario, CapturedToolCall
 
 
 class MockOptimizer:
@@ -33,32 +29,31 @@ class MockOptimizer:
         Returns:
             优化结果
         """
-        original_lines = len(code.split('\n'))
+        original_lines = len(code.split("\n"))
         optimizations = []
 
         # 检测可以优化的循环
         if "for i in range(len(arr)):" in code:
-            optimizations.append({
-                "type": "loop_optimization",
-                "description": "Use direct iteration instead of range(len())",
-                "line": 1,
-                "improvement": "Readability and performance"
-            })
+            optimizations.append(
+                {
+                    "type": "loop_optimization",
+                    "description": "Use direct iteration instead of range(len())",
+                    "line": 1,
+                    "improvement": "Readability and performance",
+                }
+            )
 
         # 生成优化后的代码
-        optimized_code = code.replace(
-            "for i in range(len(arr)):",
-            "for item in arr:"
-        )
+        optimized_code = code.replace("for i in range(len(arr)):", "for item in arr:")
 
         return {
             "optimizer": "loop",
             "original_lines": original_lines,
-            "optimized_lines": len(optimized_code.split('\n')),
+            "optimized_lines": len(optimized_code.split("\n")),
             "optimizations": optimizations,
             "optimization_count": len(optimizations),
             "optimized_code": optimized_code,
-            "improvement": f"{len(optimizations)} optimizations applied"
+            "improvement": f"{len(optimizations)} optimizations applied",
         }
 
     @staticmethod
@@ -75,27 +70,31 @@ class MockOptimizer:
 
         # 检测列表推导式可以替换为生成器
         if "list(" in code and "(x for x in" in code:
-            optimizations.append({
-                "type": "memory_optimization",
-                "description": "Use generator expression instead of list comprehension",
-                "line": 1,
-                "improvement": "Memory efficiency"
-            })
+            optimizations.append(
+                {
+                    "type": "memory_optimization",
+                    "description": "Use generator expression instead of list comprehension",
+                    "line": 1,
+                    "improvement": "Memory efficiency",
+                }
+            )
 
         # 检测大对象可以延迟加载
         if "load_all_data()" in code:
-            optimizations.append({
-                "type": "memory_optimization",
-                "description": "Use lazy loading for large datasets",
-                "line": 2,
-                "improvement": "Reduced memory footprint"
-            })
+            optimizations.append(
+                {
+                    "type": "memory_optimization",
+                    "description": "Use lazy loading for large datasets",
+                    "line": 2,
+                    "improvement": "Reduced memory footprint",
+                }
+            )
 
         return {
             "optimizer": "memory",
             "optimizations": optimizations,
             "optimization_count": len(optimizations),
-            "memory_saving_estimate": f"{len(optimizations) * 20}% reduction"
+            "memory_saving_estimate": f"{len(optimizations) * 20}% reduction",
         }
 
     @staticmethod
@@ -112,36 +111,42 @@ class MockOptimizer:
 
         # 检测字符串拼接
         if "+" in code and "str" in code:
-            optimizations.append({
-                "type": "performance_optimization",
-                "description": "Use join() instead of + for string concatenation",
-                "line": 1,
-                "improvement": "Faster string operations"
-            })
+            optimizations.append(
+                {
+                    "type": "performance_optimization",
+                    "description": "Use join() instead of + for string concatenation",
+                    "line": 1,
+                    "improvement": "Faster string operations",
+                }
+            )
 
         # 检测嵌套循环
         if code.count("for ") >= 2:
-            optimizations.append({
-                "type": "performance_optimization",
-                "description": "Consider using dictionary or set for O(1) lookups",
-                "line": 2,
-                "improvement": "Reduced time complexity"
-            })
+            optimizations.append(
+                {
+                    "type": "performance_optimization",
+                    "description": "Consider using dictionary or set for O(1) lookups",
+                    "line": 2,
+                    "improvement": "Reduced time complexity",
+                }
+            )
 
         # 检测重复计算
         if "expensive_calculation()" in code and code.count("expensive_calculation()") > 1:
-            optimizations.append({
-                "type": "performance_optimization",
-                "description": "Cache expensive calculations",
-                "line": 3,
-                "improvement": "Avoid redundant computation"
-            })
+            optimizations.append(
+                {
+                    "type": "performance_optimization",
+                    "description": "Cache expensive calculations",
+                    "line": 3,
+                    "improvement": "Avoid redundant computation",
+                }
+            )
 
         return {
             "optimizer": "performance",
             "optimizations": optimizations,
             "optimization_count": len(optimizations),
-            "estimated_speedup": f"{len(optimizations) * 1.5}x faster"
+            "estimated_speedup": f"{len(optimizations) * 1.5}x faster",
         }
 
     @staticmethod
@@ -157,38 +162,44 @@ class MockOptimizer:
         optimizations = []
 
         # 检测长函数
-        lines = code.split('\n')
+        lines = code.split("\n")
         if len(lines) > 20:
-            optimizations.append({
-                "type": "readability_optimization",
-                "description": "Extract long function into smaller functions",
-                "line": 1,
-                "improvement": "Better code organization"
-            })
+            optimizations.append(
+                {
+                    "type": "readability_optimization",
+                    "description": "Extract long function into smaller functions",
+                    "line": 1,
+                    "improvement": "Better code organization",
+                }
+            )
 
         # 检测复杂条件
         if "if" in code and "and" in code and "or" in code:
-            optimizations.append({
-                "type": "readability_optimization",
-                "description": "Extract complex condition into named variable or function",
-                "line": 5,
-                "improvement": "Improved clarity"
-            })
+            optimizations.append(
+                {
+                    "type": "readability_optimization",
+                    "description": "Extract complex condition into named variable or function",
+                    "line": 5,
+                    "improvement": "Improved clarity",
+                }
+            )
 
         # 检测魔法数字
         if "42" in code or "3.14" in code:
-            optimizations.append({
-                "type": "readability_optimization",
-                "description": "Replace magic numbers with named constants",
-                "line": 10,
-                "improvement": "Self-documenting code"
-            })
+            optimizations.append(
+                {
+                    "type": "readability_optimization",
+                    "description": "Replace magic numbers with named constants",
+                    "line": 10,
+                    "improvement": "Self-documenting code",
+                }
+            )
 
         return {
             "optimizer": "readability",
             "optimizations": optimizations,
             "optimization_count": len(optimizations),
-            "readability_score": f"Improved by {len(optimizations)} points"
+            "readability_score": f"Improved by {len(optimizations)} points",
         }
 
 
@@ -205,7 +216,7 @@ class TestOptimizationScenarios:
             code_content="for i in range(len(arr)):\n    print(arr[i])",
             max_turns=2,
             expected_tools=["optimize"],
-            expectations=lambda calls: self._validate_loop_optimization(calls)
+            expectations=lambda calls: self._validate_loop_optimization(calls),
         )
 
         calls = [
@@ -222,13 +233,13 @@ class TestOptimizationScenarios:
                             "type": "loop_optimization",
                             "description": "Use direct iteration instead of range(len())",
                             "line": 1,
-                            "improvement": "Readability and performance"
+                            "improvement": "Readability and performance",
                         }
                     ],
                     "optimization_count": 1,
                     "optimized_code": "for item in arr:\n    print(item)",
-                    "improvement": "1 optimizations applied"
-                }
+                    "improvement": "1 optimizations applied",
+                },
             )
         ]
 
@@ -252,7 +263,7 @@ class TestOptimizationScenarios:
             code_content="data = list(x for x in range(1000000))\nresult = load_all_data()",
             max_turns=2,
             expected_tools=["optimize"],
-            expectations=lambda calls: self._validate_memory_optimization(calls)
+            expectations=lambda calls: self._validate_memory_optimization(calls),
         )
 
         calls = [
@@ -267,18 +278,18 @@ class TestOptimizationScenarios:
                             "type": "memory_optimization",
                             "description": "Use generator expression instead of list comprehension",
                             "line": 1,
-                            "improvement": "Memory efficiency"
+                            "improvement": "Memory efficiency",
                         },
                         {
                             "type": "memory_optimization",
                             "description": "Use lazy loading for large datasets",
                             "line": 2,
-                            "improvement": "Reduced memory footprint"
-                        }
+                            "improvement": "Reduced memory footprint",
+                        },
                     ],
                     "optimization_count": 2,
-                    "memory_saving_estimate": "40% reduction"
-                }
+                    "memory_saving_estimate": "40% reduction",
+                },
             )
         ]
 
@@ -302,7 +313,7 @@ class TestOptimizationScenarios:
             code_content="result = ''\nfor item in items:\n    result = result + str(item)\nfor i in range(len(items)):\n    for j in range(len(items)):\n        pass",
             max_turns=2,
             expected_tools=["optimize"],
-            expectations=lambda calls: self._validate_performance_optimization(calls)
+            expectations=lambda calls: self._validate_performance_optimization(calls),
         )
 
         calls = [
@@ -317,18 +328,18 @@ class TestOptimizationScenarios:
                             "type": "performance_optimization",
                             "description": "Use join() instead of + for string concatenation",
                             "line": 2,
-                            "improvement": "Faster string operations"
+                            "improvement": "Faster string operations",
                         },
                         {
                             "type": "performance_optimization",
                             "description": "Consider using dictionary or set for O(1) lookups",
                             "line": 4,
-                            "improvement": "Reduced time complexity"
-                        }
+                            "improvement": "Reduced time complexity",
+                        },
                     ],
                     "optimization_count": 2,
-                    "estimated_speedup": "3.0x faster"
-                }
+                    "estimated_speedup": "3.0x faster",
+                },
             )
         ]
 
@@ -352,7 +363,7 @@ class TestOptimizationScenarios:
             code_content="def long_function(x, y, z):\n    if x > 0 and y < 10 or z == 5:\n        result = 42 / 3.14\n        return result\n    return 0",
             max_turns=2,
             expected_tools=["optimize"],
-            expectations=lambda calls: self._validate_readability_optimization(calls)
+            expectations=lambda calls: self._validate_readability_optimization(calls),
         )
 
         calls = [
@@ -367,18 +378,18 @@ class TestOptimizationScenarios:
                             "type": "readability_optimization",
                             "description": "Extract complex condition into named variable or function",
                             "line": 2,
-                            "improvement": "Improved clarity"
+                            "improvement": "Improved clarity",
                         },
                         {
                             "type": "readability_optimization",
                             "description": "Replace magic numbers with named constants",
                             "line": 3,
-                            "improvement": "Self-documenting code"
-                        }
+                            "improvement": "Self-documenting code",
+                        },
                     ],
                     "optimization_count": 2,
-                    "readability_score": "Improved by 2 points"
-                }
+                    "readability_score": "Improved by 2 points",
+                },
             )
         ]
 
@@ -402,28 +413,17 @@ class TestOptimizationScenarios:
             code_content="result = ''\nfor i in range(len(items)):\n    result = result + str(items[i])\nif x > 0 and y < 10 or z == 5:\n    value = 42 / 3.14\n    return value",
             max_turns=5,
             expected_tools=["optimize"],
-            expectations=lambda calls: self._validate_comprehensive_optimization(calls)
+            expectations=lambda calls: self._validate_comprehensive_optimization(calls),
         )
 
         calls = [
+            CapturedToolCall(name="optimize", args={"optimizer": "loop"}, timestamp=0.0, result={"optimization_count": 1}),
             CapturedToolCall(
-                name="optimize",
-                args={"optimizer": "loop"},
-                timestamp=0.0,
-                result={"optimization_count": 1}
+                name="optimize", args={"optimizer": "performance"}, timestamp=1.0, result={"optimization_count": 1}
             ),
             CapturedToolCall(
-                name="optimize",
-                args={"optimizer": "performance"},
-                timestamp=1.0,
-                result={"optimization_count": 1}
+                name="optimize", args={"optimizer": "readability"}, timestamp=2.0, result={"optimization_count": 1}
             ),
-            CapturedToolCall(
-                name="optimize",
-                args={"optimizer": "readability"},
-                timestamp=2.0,
-                result={"optimization_count": 1}
-            )
         ]
 
         scenario.expectations(calls)
@@ -491,7 +491,7 @@ class TestOptimizerFunctionality:
 
 
 # 主测试入口
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     import logging
 
     logging.basicConfig(level=logging.INFO)

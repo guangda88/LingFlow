@@ -247,5 +247,5 @@ class TestCodeTestServer:
         assert "test1" in stats["tests"]
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])

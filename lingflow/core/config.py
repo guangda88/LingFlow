@@ -84,9 +84,7 @@ class LingFlowConfig:
         if self.compression_target_tokens < 1000:
             raise ValueError("compression_target_tokens must be >= 1000")
         if self.log_level not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
-            raise ValueError(
-                f"log_level must be one of DEBUG, INFO, WARNING, ERROR, CRITICAL, got {self.log_level}"
-            )
+            raise ValueError(f"log_level must be one of DEBUG, INFO, WARNING, ERROR, CRITICAL, got {self.log_level}")
 
     @classmethod
     def from_dict(cls, config: Dict[str, Any]) -> "LingFlowConfig":

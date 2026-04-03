@@ -28,15 +28,13 @@ def _get_token_estimator() -> TokenEstimator:
     return _SHARED_TOKEN_ESTIMATOR
 
 
-DEFAULT_CONTEXT_DIR = Path(os.getenv(
-    "LINGFLOW_CONTEXT_DIR",
-    Path.home() / ".claude" / "projects" / "lingflow" / "context"
-))
+DEFAULT_CONTEXT_DIR = Path(os.getenv("LINGFLOW_CONTEXT_DIR", Path.home() / ".claude" / "projects" / "lingflow" / "context"))
 
 
 @dataclass
 class ContextSnapshot:
     """上下文快照"""
+
     timestamp: str
     session_id: str
     tasks_completed: List[str] = field(default_factory=list)
@@ -93,9 +91,20 @@ class ContextManager:
 
         # 关键词跟踪（用于识别重要消息）
         self._important_keywords: Set[str] = {
-            "fix", "bug", "implement", "create", "refactor",
-            "critical", "important", "must", "should",
-            "todo", "task", "完成", "修复", "实现"
+            "fix",
+            "bug",
+            "implement",
+            "create",
+            "refactor",
+            "critical",
+            "important",
+            "must",
+            "should",
+            "todo",
+            "task",
+            "完成",
+            "修复",
+            "实现",
         }
 
         # 智能压缩器（懒加载）
@@ -213,6 +222,7 @@ class ContextManager:
         """检查 token 使用情况并警告"""
         if self._budget_manager is None:
             from .budget import ContextBudgetManager
+
             self._budget_manager = ContextBudgetManager(
                 max_tokens=self.ESTIMATED_TOKEN_LIMIT,
             )
@@ -249,13 +259,8 @@ class ContextManager:
         session_data = {
             "timestamp": self.snapshot.timestamp,
             "summary": self._get_brief_summary(),
-            "tasks": [
-                {"name": t, "done": True}
-                for t in self.snapshot.tasks_completed
-            ] + [
-                {"name": t, "done": False}
-                for t in self.snapshot.tasks_pending
-            ],
+            "tasks": [{"name": t, "done": True} for t in self.snapshot.tasks_completed]
+            + [{"name": t, "done": False} for t in self.snapshot.tasks_pending],
             "next_steps": self.snapshot.next_steps,
             "session_id": self.session_id,
         }
@@ -263,18 +268,10 @@ class ContextManager:
             json.dump(session_data, f, ensure_ascii=False, indent=2)
 
         # 保存 Markdown 格式（用于自动恢复显示）
-        tasks = [
-            {"name": t, "done": True}
-            for t in self.snapshot.tasks_completed
-        ] + [
-            {"name": t, "done": False}
-            for t in self.snapshot.tasks_pending
+        tasks = [{"name": t, "done": True} for t in self.snapshot.tasks_completed] + [
+            {"name": t, "done": False} for t in self.snapshot.tasks_pending
         ]
-        save_resume_markdown(
-            tasks=tasks,
-            next_steps=self.snapshot.next_steps,
-            summary=self._get_brief_summary()
-        )
+        save_resume_markdown(tasks=tasks, next_steps=self.snapshot.next_steps, summary=self._get_brief_summary())
 
     def _get_brief_summary(self) -> str:
         """获取简短摘要"""
@@ -294,6 +291,7 @@ class ContextManager:
                 SmartContextCompressor,
                 CompressionConfig as SmartCompressionConfig,
             )
+
             config = SmartCompressionConfig(
                 max_tokens=self.ESTIMATED_TOKEN_LIMIT,
                 warning_threshold=self.WARNING_THRESHOLD,
@@ -337,46 +335,56 @@ class ContextManager:
         ]
 
         if self.snapshot.tasks_completed:
-            summary_parts.extend([
-                f"## 已完成任务 ({len(self.snapshot.tasks_completed)})",
-                "",
-            ])
+            summary_parts.extend(
+                [
+                    f"## 已完成任务 ({len(self.snapshot.tasks_completed)})",
+                    "",
+                ]
+            )
             for task in self.snapshot.tasks_completed:
                 summary_parts.append(f"- ✅ {task}")
             summary_parts.append("")
 
         if self.snapshot.tasks_pending:
-            summary_parts.extend([
-                f"## 待完成任务 ({len(self.snapshot.tasks_pending)})",
-                "",
-            ])
+            summary_parts.extend(
+                [
+                    f"## 待完成任务 ({len(self.snapshot.tasks_pending)})",
+                    "",
+                ]
+            )
             for task in self.snapshot.tasks_pending:
                 summary_parts.append(f"- ◻ {task}")
             summary_parts.append("")
 
         if self.snapshot.key_decisions:
-            summary_parts.extend([
-                "## 关键决策",
-                "",
-            ])
+            summary_parts.extend(
+                [
+                    "## 关键决策",
+                    "",
+                ]
+            )
             for decision in self.snapshot.key_decisions:
                 summary_parts.append(f"- {decision}")
             summary_parts.append("")
 
         if self.snapshot.important_files:
-            summary_parts.extend([
-                "## 重要文件",
-                "",
-            ])
+            summary_parts.extend(
+                [
+                    "## 重要文件",
+                    "",
+                ]
+            )
             for path, desc in self.snapshot.important_files.items():
                 summary_parts.append(f"- `{path}`: {desc}")
             summary_parts.append("")
 
         if self.snapshot.next_steps:
-            summary_parts.extend([
-                "## 下一步计划",
-                "",
-            ])
+            summary_parts.extend(
+                [
+                    "## 下一步计划",
+                    "",
+                ]
+            )
             for i, step in enumerate(self.snapshot.next_steps, 1):
                 summary_parts.append(f"{i}. {step}")
             summary_parts.append("")
@@ -418,6 +426,7 @@ class ContextManager:
         if self._messages:
             if self._degradation_detector is None:
                 from .degradation import DegradationDetector
+
                 self._degradation_detector = DegradationDetector()
             report = self._degradation_detector.get_health_score(self._messages)
             if report.health.value != "healthy":
@@ -427,8 +436,7 @@ class ContextManager:
             self.snapshot,
             reason=reason,
             tasks_in_progress=[
-                t for t in self.snapshot.tasks_pending
-                if any(kw in t.lower() for kw in ["wip", "in progress", "进行中"])
+                t for t in self.snapshot.tasks_pending if any(kw in t.lower() for kw in ["wip", "in progress", "进行中"])
             ],
             degradation_detected=len(degradation_types) > 0,
             degradation_types=degradation_types,

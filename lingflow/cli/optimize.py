@@ -9,23 +9,17 @@ import click
 @click.group()
 def optimize():
     """自优化系统（基于LingMinOpt）"""
-    pass
 
 
 @optimize.command()
-@click.argument("goal",
-                type=click.Choice(["structure", "performance", "simplicity"]))
+@click.argument("goal", type=click.Choice(["structure", "performance", "simplicity"]))
 @click.option("--target", "-t", default=".", help="目标路径（默认当前目录）")
 @click.option("--async", "async_mode", is_flag=True, help="异步执行（后台运行）")
 @click.option("--experiments", "-e", type=int, default=20, help="最大实验次数")
 @click.option("--report", "-r", help="保存报告到文件")
 def run(goal, target, async_mode, experiments, report):
     """运行自优化"""
-    from lingflow.self_optimizer import (
-        quick_optimize,
-        StructureEvaluator,
-        OptimizationAdvisor
-    )
+    from lingflow.self_optimizer import quick_optimize, StructureEvaluator, OptimizationAdvisor
     from lingflow.self_optimizer.config import get_global_config
 
     click.echo(f"\n🔍 启动 {goal} 优化...")
@@ -36,7 +30,7 @@ def run(goal, target, async_mode, experiments, report):
         evaluator = StructureEvaluator(target)
         current_metrics = evaluator.get_current_metrics()
 
-        click.echo(f"\n📊 当前状态:")
+        click.echo("\n📊 当前状态:")
         click.echo(f"  结构违规: {current_metrics.get('structure_violations', 0)}")
         click.echo(f"  平均类大小: {current_metrics.get('avg_class_size', 0):.0f}行")
         click.echo(f"  平均复杂度: {current_metrics.get('avg_complexity', 0):.1f}")
@@ -62,10 +56,7 @@ def run(goal, target, async_mode, experiments, report):
 
             if report or config.get("report.auto_save"):
                 report_content = advisor.generate_report(
-                    goal=goal,
-                    target=target,
-                    current_metrics=current_metrics,
-                    optimization_result=result
+                    goal=goal, target=target, current_metrics=current_metrics, optimization_result=result
                 )
                 report_path = advisor.save_report(report_content, report)
                 click.echo(f"📄 报告已保存: {report_path}")
@@ -73,10 +64,7 @@ def run(goal, target, async_mode, experiments, report):
                 # 询问是否保存报告
                 if click.confirm("\n是否保存优化报告?", default=True):
                     report_content = advisor.generate_report(
-                        goal=goal,
-                        target=target,
-                        current_metrics=current_metrics,
-                        optimization_result=result
+                        goal=goal, target=target, current_metrics=current_metrics, optimization_result=result
                     )
                     report_path = advisor.save_report(report_content)
                     click.echo(f"📄 报告已保存: {report_path}")
@@ -131,10 +119,7 @@ def wait_completion(timeout):
 
         # 生成报告
         report_content = advisor.generate_report(
-            goal="structure",
-            target=".",
-            current_metrics=current_metrics,
-            optimization_result=result
+            goal="structure", target=".", current_metrics=current_metrics, optimization_result=result
         )
         report_path = advisor.save_report(report_content)
         click.echo(f"📄 报告已保存: {report_path}")
@@ -177,19 +162,19 @@ def apply_optimization(report):
     # 简单解析（从YAML代码块中提取）
     in_yaml = False
     yaml_lines = []
-    for line in content.split('\n'):
-        if '```yaml' in line or '```YAML' in line:
+    for line in content.split("\n"):
+        if "```yaml" in line or "```YAML" in line:
             in_yaml = True
             continue
-        if in_yaml and line.strip() == '```':
+        if in_yaml and line.strip() == "```":
             break
-        if in_yaml and line.strip() and not line.strip().startswith('#'):
+        if in_yaml and line.strip() and not line.strip().startswith("#"):
             yaml_lines.append(line)
 
-    yaml_content = '\n'.join(yaml_lines)
+    yaml_content = "\n".join(yaml_lines)
     params = yaml.safe_load(yaml_content)
 
-    click.echo(f"\n📋 将应用以下参数:")
+    click.echo("\n📋 将应用以下参数:")
     for key, value in params.items():
         click.echo(f"  {key}: {value}")
 
@@ -204,7 +189,7 @@ def apply_optimization(report):
 
     existing_config = {}
     if config_file.exists():
-        with open(config_file, 'r', encoding='utf-8') as f:
+        with open(config_file, "r", encoding="utf-8") as f:
             existing_config = yaml.safe_load(f) or {}
 
     # 更新配置
@@ -213,7 +198,7 @@ def apply_optimization(report):
     existing_config["structure_optimization"].update(params)
 
     # 保存
-    with open(config_file, 'w', encoding='utf-8') as f:
+    with open(config_file, "w", encoding="utf-8") as f:
         yaml.dump(existing_config, f, default_flow_style=False, allow_unicode=True)
 
     click.echo(f"\n✓ 配置已保存到: {config_file}")
@@ -237,26 +222,24 @@ def generate_config(report, output):
     # 提取YAML参数
     in_yaml = False
     yaml_lines = []
-    for line in content.split('\n'):
-        if '```yaml' in line or '```YAML' in line:
+    for line in content.split("\n"):
+        if "```yaml" in line or "```YAML" in line:
             in_yaml = True
             continue
-        if in_yaml and line.strip() == '```':
+        if in_yaml and line.strip() == "```":
             break
-        if in_yaml and line.strip() and not line.strip().startswith('#'):
+        if in_yaml and line.strip() and not line.strip().startswith("#"):
             yaml_lines.append(line)
 
-    yaml_content = '\n'.join(yaml_lines)
+    yaml_content = "\n".join(yaml_lines)
     params = yaml.safe_load(yaml_content)
 
     # 生成配置文件
     output_path = Path(output) if output else Path("config_optimized.yaml")
 
-    config = {
-        "structure_optimization": params
-    }
+    config = {"structure_optimization": params}
 
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write("# LingFlow 自优化配置\n")
         f.write(f"# 从报告生成: {report}\n")
         f.write(f"# 时间: {Path(report).stat().st_mtime}\n\n")
@@ -287,7 +270,7 @@ def check_trigger(target):
     should_trigger, trigger_info = trigger.check_all_conditions(context)
 
     if should_trigger:
-        click.echo(f"\n✓ 需要优化")
+        click.echo("\n✓ 需要优化")
         click.echo(f"  原因: {trigger_info.reason}")
         click.echo(f"  优先级: {trigger_info.priority}")
     else:

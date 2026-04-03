@@ -7,7 +7,7 @@
 
 from enum import Enum
 from dataclasses import dataclass
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 
 class Severity(Enum):
@@ -37,7 +37,7 @@ class Severity(Enum):
     INFO = "info"
 
     @classmethod
-    def from_string(cls, value: str) -> 'Severity':
+    def from_string(cls, value: str) -> "Severity":
         """
         从字符串创建 Severity 实例
 
@@ -54,10 +54,7 @@ class Severity(Enum):
             return cls(value.lower())
         except ValueError:
             valid_values = [s.value for s in cls]
-            raise ValueError(
-                f"无效的严重程度: '{value}'. "
-                f"有效值为: {', '.join(valid_values)}"
-            )
+            raise ValueError(f"无效的严重程度: '{value}'. " f"有效值为: {', '.join(valid_values)}")
 
     def is_critical(self) -> bool:
         """检查是否为严重级别"""
@@ -93,7 +90,7 @@ class SeverityWeight:
     emoji: str
 
     @classmethod
-    def get_all(cls) -> List['SeverityWeight']:
+    def get_all(cls) -> List["SeverityWeight"]:
         """
         获取所有严重程度配置
 
@@ -170,25 +167,18 @@ class SeverityWeight:
 DIMENSION_WEIGHTS: Dict[str, float] = {
     # 安全性 - 最高权重
     "security": 0.30,
-
     # 潜在错误 - 高权重
     "bugs": 0.25,
-
     # 代码质量
     "code_quality": 0.20,
-
     # 架构设计
     "architecture": 0.10,
-
     # 性能问题
     "performance": 0.05,
-
     # 可维护性
     "maintainability": 0.05,
-
     # 最佳实践
     "best_practices": 0.03,
-
     # 一致性检查
     "autoresearch_consistency": 0.02,
 }

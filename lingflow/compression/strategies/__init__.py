@@ -3,12 +3,7 @@
 提供不同的压缩策略实现。
 """
 
-from .base import (
-    CompressionStrategy,
-    TieredCompressionStrategy,
-    CompressionTier,
-    CompressionPlan
-)
+from .base import CompressionStrategy, TieredCompressionStrategy, CompressionTier, CompressionPlan
 
 __all__ = [
     "CompressionStrategy",

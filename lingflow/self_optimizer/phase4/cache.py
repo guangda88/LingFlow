@@ -7,7 +7,6 @@ YOLO实现：LRU缓存，快速访问
 from collections import OrderedDict
 from typing import Dict, Any, Optional, Tuple, Union
 from datetime import datetime, timedelta
-import time
 import json
 
 from lingflow.self_optimizer.phase4.data_types import ParameterVersion
@@ -105,10 +104,7 @@ class ParameterCache:
 
     def cleanup_expired(self) -> int:
         """清理过期条目"""
-        expired_keys = [
-            k for k, (_, ts) in self._cache.items()
-            if self._is_expired(ts)
-        ]
+        expired_keys = [k for k, (_, ts) in self._cache.items() if self._is_expired(ts)]
         for key in expired_keys:
             del self._cache[key]
         return len(expired_keys)
@@ -124,7 +120,7 @@ class ParameterCache:
             "hits": self._hits,
             "misses": self._misses,
             "hit_rate": hit_rate,
-            "ttl_seconds": self.ttl.total_seconds()
+            "ttl_seconds": self.ttl.total_seconds(),
         }
 
     def get_hit_rate(self) -> float:
@@ -164,8 +160,13 @@ class CachedParameterStore:
         self.store = store
         self.cache = ParameterCache(max_size=cache_size, ttl_seconds=cache_ttl)
 
-    def save(self, params: Dict[str, Any], metadata: Optional[Dict[str, Any]] = None,
-             project: str = "default", parent: Optional[str] = None) -> ParameterVersion:
+    def save(
+        self,
+        params: Dict[str, Any],
+        metadata: Optional[Dict[str, Any]] = None,
+        project: str = "default",
+        parent: Optional[str] = None,
+    ) -> ParameterVersion:
         """保存参数"""
         version = self.store.save(params, metadata, project, parent)
 

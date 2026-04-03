@@ -13,7 +13,7 @@ from lingflow.self_optimizer.phase4.visualization.visualizer import (
     OptimizationVisualizer,
     plot_optimization_progress,
     plot_sensitivity_heatmap,
-    plot_pareto_front
+    plot_pareto_front,
 )
 
 from lingflow.self_optimizer.phase4.visualization.data_processor import DataProcessor

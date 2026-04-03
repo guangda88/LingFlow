@@ -10,16 +10,15 @@
 """
 
 import subprocess
-import json
 import asyncio
 from typing import Any, Dict, Optional
 from dataclasses import dataclass
-from pathlib import Path
 
 
 @dataclass
 class MCPResult:
     """MCP 调用结果"""
+
     success: bool
     data: Any = None
     error: Optional[str] = None
@@ -50,9 +49,7 @@ class DevToolsClient:
             启动结果
         """
         # 调用 MCP 服务器启动浏览器
-        return await self._call_mcp("create_browser", {
-            "headless": True
-        })
+        return await self._call_mcp("create_browser", {"headless": True})
 
     async def navigate(self, url: str) -> MCPResult:
         """导航到 URL
@@ -65,10 +62,7 @@ class DevToolsClient:
         """
         return await self._call_mcp("navigate_to_url", {"url": url})
 
-    async def screenshot(
-        self,
-        path: str = "/tmp/screenshot.png"
-    ) -> MCPResult:
+    async def screenshot(self, path: str = "/tmp/screenshot.png") -> MCPResult:
         """截图
 
         Args:
@@ -77,9 +71,7 @@ class DevToolsClient:
         Returns:
             截图结果
         """
-        return await self._call_mcp("capture_screenshot", {
-            "path": path
-        })
+        return await self._call_mcp("capture_screenshot", {"path": path})
 
     async def get_console(self) -> MCPResult:
         """获取控制台消息
@@ -114,19 +106,13 @@ class DevToolsClient:
         Returns:
             执行结果
         """
-        return await self._call_mcp("evaluate_js", {
-            "expression": script
-        })
+        return await self._call_mcp("evaluate_js", {"expression": script})
 
     async def close(self) -> None:
         """关闭浏览器"""
         await self._call_mcp("close_browser")
 
-    async def _call_mcp(
-        self,
-        tool: str,
-        args: Optional[Dict[str, Any]] = None
-    ) -> MCPResult:
+    async def _call_mcp(self, tool: str, args: Optional[Dict[str, Any]] = None) -> MCPResult:
         """调用 MCP 工具
 
         Args:
@@ -149,27 +135,16 @@ class DevToolsClient:
                         # 调用工具
                         result = await client.call_tool(tool, args or {})
 
-                        return MCPResult(
-                            success=True,
-                            data=result.content if hasattr(result, 'content') else result
-                        )
+                        return MCPResult(success=True, data=result.content if hasattr(result, "content") else result)
             except ImportError:
                 # MCP SDK 未安装，使用 subprocess 调用 MCP CLI
                 return await self._call_mcp_via_cli(tool, args)
 
         except Exception as e:
             # MCP 调用失败，返回错误结果
-            return MCPResult(
-                success=False,
-                error=str(e),
-                data=None
-            )
+            return MCPResult(success=False, error=str(e), data=None)
 
-    async def _call_mcp_via_cli(
-        self,
-        tool: str,
-        args: Optional[Dict[str, Any]] = None
-    ) -> MCPResult:
+    async def _call_mcp_via_cli(self, tool: str, args: Optional[Dict[str, Any]] = None) -> MCPResult:
         """通过 CLI 调用 MCP 工具（后备方法）
 
         Args:
@@ -182,47 +157,26 @@ class DevToolsClient:
         try:
             # 构建 MCP CLI 命令
             import json
-            cmd = [
-                "mcp", "call",
-                self.server_name,
-                tool,
-                json.dumps(args or {})
-            ]
+
+            cmd = ["mcp", "call", self.server_name, tool, json.dumps(args or {})]
 
             # 执行命令
             process = await asyncio.create_subprocess_exec(
-                *cmd,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
 
             stdout, stderr = await process.communicate()
 
             if process.returncode == 0:
-                return MCPResult(
-                    success=True,
-                    data=json.loads(stdout.decode()) if stdout else {}
-                )
+                return MCPResult(success=True, data=json.loads(stdout.decode()) if stdout else {})
             else:
-                return MCPResult(
-                    success=False,
-                    error=stderr.decode(),
-                    data=None
-                )
+                return MCPResult(success=False, error=stderr.decode(), data=None)
 
         except FileNotFoundError:
             # MCP CLI 不可用，返回错误
-            return MCPResult(
-                success=False,
-                error="MCP CLI 不可用，请安装 Model Context Protocol CLI",
-                data=None
-            )
+            return MCPResult(success=False, error="MCP CLI 不可用，请安装 Model Context Protocol CLI", data=None)
         except Exception as e:
-            return MCPResult(
-                success=False,
-                error=str(e),
-                data=None
-            )
+            return MCPResult(success=False, error=str(e), data=None)
 
 
 # 便捷函数

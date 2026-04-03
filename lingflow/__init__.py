@@ -29,6 +29,7 @@ def _import_core_modules():
     if _AGENT_COORDINATOR is None:
         from .coordination.coordinator import AgentCoordinator
         from .workflow.orchestrator import WorkflowOrchestrator
+
         _AGENT_COORDINATOR = AgentCoordinator
         _WORKFLOW_ORCHESTRATOR = WorkflowOrchestrator
 
@@ -37,24 +38,23 @@ def _initialize_services():
     """初始化服务（压缩、上下文）"""
     # 1. 初始化智能压缩
     from .compression import enable_smart_compression
-    enable_smart_compression(
-        max_tokens=180000,
-        warning_threshold=0.75,
-        compress_threshold=0.85
-    )
+
+    enable_smart_compression(max_tokens=180000, warning_threshold=0.75, compress_threshold=0.85)
 
     # 2. 初始化上下文管理器（加载上次状态）
     from .context import get_context_manager
+
     get_context_manager()
 
 
 def _show_session_resume():
     """显示会话恢复信息"""
     from .context.auto_resume import auto_resume, SESSION_FILE
+
     if SESSION_FILE.exists():
         text = auto_resume()
         if text:
-            print(text, file=__import__('sys').stderr)
+            print(text, file=__import__("sys").stderr)
 
 
 # 版本信息
@@ -69,16 +69,15 @@ _show_session_resume()
 def get_context_manager():
     """获取上下文管理器实例"""
     from .context import get_context_manager as _gcm
+
     return _gcm()
 
 
 def get_smart_compressor():
     """获取智能压缩器实例"""
     from .compression import get_smart_compressor as _gsc
+
     return _gsc()
-
-
-from .context import track_context, compress_context as _compress_context_impl
 
 
 def compress_context():
@@ -172,9 +171,7 @@ class LingFlow:
             # 使用 resolve(strict=False) 已经处理了..，但需要验证结果是否在 base_dir 内
             filepath_abs.relative_to(base_dir)
         except ValueError:
-            raise ValueError(
-                f"Access denied: {filepath} is outside allowed directory ({base_dir})"
-            )
+            raise ValueError(f"Access denied: {filepath} is outside allowed directory ({base_dir})")
 
         # 拒绝符号链接（防止链接到目录外的文件）
         if filepath_abs.exists() and filepath_abs.is_symlink():

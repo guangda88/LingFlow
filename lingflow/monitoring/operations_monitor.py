@@ -16,12 +16,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 from lingflow.utils.performance import PerformanceMonitor, performance_monitor
 
-from .metrics.models import (
-    Alert,
-    HealthCheckResult,
-    SystemMetrics,
-    AlertSeverity
-)
+from .metrics.models import Alert, HealthCheckResult, SystemMetrics, AlertSeverity
 from .alerts.rules import RuleRegistry, AlertRule, create_common_rules
 from .collectors.base import MetricCollector, HealthCheckCollector
 
@@ -40,11 +35,7 @@ class OperationsMonitor:
     - 性能监控集成
     """
 
-    def __init__(
-        self,
-        auto_collect: bool = True,
-        collect_interval: int = 60
-    ):
+    def __init__(self, auto_collect: bool = True, collect_interval: int = 60):
         """初始化监控器
 
         Args:
@@ -86,14 +77,8 @@ class OperationsMonitor:
 
     def _register_default_health_checks(self):
         """注册默认健康检查"""
-        self.health_collector.register_check(
-            "disk_space",
-            lambda: self.health_collector.check_disk_space()
-        )
-        self.health_collector.register_check(
-            "memory",
-            lambda: self.health_collector.check_memory()
-        )
+        self.health_collector.register_check("disk_space", lambda: self.health_collector.check_disk_space())
+        self.health_collector.register_check("memory", lambda: self.health_collector.check_memory())
 
     def _register_default_alert_rules(self):
         """注册默认告警规则"""
@@ -107,10 +92,7 @@ class OperationsMonitor:
             return
 
         self._stop_event.clear()
-        self._collect_thread = threading.Thread(
-            target=self._collect_loop,
-            daemon=True
-        )
+        self._collect_thread = threading.Thread(target=self._collect_loop, daemon=True)
         self._collect_thread.start()
         logger.info("启动自动指标收集")
 
@@ -126,7 +108,6 @@ class OperationsMonitor:
 
     def _collect_loop(self):
         """收集循环"""
-        import time
 
         while not self._stop_event.is_set():
             try:
@@ -165,10 +146,7 @@ class OperationsMonitor:
         with self._metrics_lock:
             return self.metrics_history[-1] if self.metrics_history else None
 
-    def get_metrics_history(
-        self,
-        limit: int = 100
-    ) -> List[SystemMetrics]:
+    def get_metrics_history(self, limit: int = 100) -> List[SystemMetrics]:
         """获取指标历史
 
         Args:
@@ -205,9 +183,7 @@ class OperationsMonitor:
         Args:
             alert: 告警对象
         """
-        logger.warning(
-            f"告警触发: [{alert.severity.value}] {alert.message}"
-        )
+        logger.warning(f"告警触发: [{alert.severity.value}] {alert.message}")
 
         # 可以在这里添加通知逻辑
         # 例如：发送邮件、Slack通知等
@@ -250,12 +226,7 @@ class OperationsMonitor:
         """
         return self.rule_registry.unregister(rule_name)
 
-    def register_health_check(
-        self,
-        name: str,
-        check_func: Callable,
-        description: str = ""
-    ) -> None:
+    def register_health_check(self, name: str, check_func: Callable, description: str = "") -> None:
         """注册健康检查
 
         Args:
@@ -283,10 +254,7 @@ class OperationsMonitor:
         """告警规则列表（向后兼容）"""
         return list(self.rule_registry._rules.values())
 
-    def run_health_check(
-        self,
-        name: str
-    ) -> Optional[HealthCheckResult]:
+    def run_health_check(self, name: str) -> Optional[HealthCheckResult]:
         """运行健康检查
 
         Args:
@@ -310,10 +278,7 @@ class OperationsMonitor:
         return self.run_health_checks()
 
     def get_alerts(
-        self,
-        severity: Optional[AlertSeverity] = None,
-        resolved: Optional[bool] = None,
-        limit: int = 100
+        self, severity: Optional[AlertSeverity] = None, resolved: Optional[bool] = None, limit: int = 100
     ) -> List[Alert]:
         """获取告警列表
 
@@ -421,13 +386,10 @@ class OperationsMonitor:
             "active_alerts": active_alerts,
             "resolved_alerts": resolved_alerts,
             "metrics_count": metrics_count,
-            "auto_collecting": self._collect_thread is not None
+            "auto_collecting": self._collect_thread is not None,
         }
 
-    def set_performance_monitor(
-        self,
-        monitor: PerformanceMonitor
-    ) -> None:
+    def set_performance_monitor(self, monitor: PerformanceMonitor) -> None:
         """设置性能监控器
 
         Args:

@@ -9,7 +9,6 @@ import hashlib
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, List, Optional
-from dataclasses import asdict
 
 from lingflow.self_optimizer.phase4.data_types import ParameterVersion
 
@@ -50,8 +49,13 @@ class FileSystemParameterStore:
         params_str = json.dumps(params, sort_keys=True)
         return hashlib.md5(params_str.encode(), usedforsecurity=False).hexdigest()
 
-    def save(self, params: Dict[str, Any], metadata: Optional[Dict[str, Any]] = None,
-             project: str = "default", parent: Optional[str] = None) -> ParameterVersion:
+    def save(
+        self,
+        params: Dict[str, Any],
+        metadata: Optional[Dict[str, Any]] = None,
+        project: str = "default",
+        parent: Optional[str] = None,
+    ) -> ParameterVersion:
         """保存参数"""
         checksum = self._compute_checksum(params)
         timestamp = datetime.now()
@@ -64,7 +68,7 @@ class FileSystemParameterStore:
             metadata=metadata or {},
             parent_version=parent,
             created_at=timestamp,
-            checksum=checksum
+            checksum=checksum,
         )
 
         # 保存版本文件
@@ -75,7 +79,7 @@ class FileSystemParameterStore:
             "metadata": version.metadata,
             "parent_version": version.parent_version,
             "created_at": version.created_at.isoformat(),
-            "checksum": version.checksum
+            "checksum": version.checksum,
         }
         version_file.write_text(json.dumps(version_data, indent=2, ensure_ascii=False))
 
@@ -84,7 +88,7 @@ class FileSystemParameterStore:
             "checksum": checksum,
             "project": project,
             "created_at": timestamp.isoformat(),
-            "parent": parent
+            "parent": parent,
         }
         self._index["by_params"][checksum] = version_id
         if project not in self._index["by_project"]:
@@ -108,7 +112,7 @@ class FileSystemParameterStore:
                 metadata=data.get("metadata", {}),
                 parent_version=data.get("parent_version"),
                 created_at=datetime.fromisoformat(data["created_at"]) if data.get("created_at") else None,
-                checksum=data.get("checksum")
+                checksum=data.get("checksum"),
             )
         except Exception:
             return None
@@ -121,8 +125,7 @@ class FileSystemParameterStore:
             return self.load(version_id)
         return None
 
-    def list_versions(self, project: Optional[str] = None,
-                      limit: int = 100) -> List[ParameterVersion]:
+    def list_versions(self, project: Optional[str] = None, limit: int = 100) -> List[ParameterVersion]:
         """列出版本"""
         version_ids = []
         if project:
@@ -200,10 +203,8 @@ class FileSystemParameterStore:
         return {
             "total_versions": len(self._index["versions"]),
             "projects": list(self._index["by_project"].keys()),
-            "versions_by_project": {
-                p: len(ids) for p, ids in self._index["by_project"].items()
-            },
-            "storage_path": str(self.base_path)
+            "versions_by_project": {p: len(ids) for p, ids in self._index["by_project"].items()},
+            "storage_path": str(self.base_path),
         }
 
 
@@ -219,8 +220,9 @@ def get_default_store() -> FileSystemParameterStore:
     return _default_store
 
 
-def save_params(params: Dict[str, Any], metadata: Optional[Dict[str, Any]] = None,
-                project: str = "default", parent: Optional[str] = None) -> ParameterVersion:
+def save_params(
+    params: Dict[str, Any], metadata: Optional[Dict[str, Any]] = None, project: str = "default", parent: Optional[str] = None
+) -> ParameterVersion:
     """便捷函数：保存参数"""
     return get_default_store().save(params, metadata, project, parent)
 

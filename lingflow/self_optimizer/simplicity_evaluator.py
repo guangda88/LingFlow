@@ -3,25 +3,25 @@ LingFlow 简洁性评估器
 评估代码简洁性和重复度
 """
 
-import ast
 import re
 from pathlib import Path
-from typing import Dict, Any, List, Set, Tuple
+from typing import Dict, Any, List
 from dataclasses import dataclass
 
 
 @dataclass
 class SimplicityMetrics:
     """简洁性指标"""
-    total_lines: int            # 总行数
-    code_lines: int             # 代码行数
-    comment_lines: int          # 注释行数
-    blank_lines: int            # 空行数
-    avg_line_length: float      # 平均行长度
-    max_line_length: int        # 最大行长度
-    long_lines_count: int       # 长行数量
-    duplication_rate: float     # 重复率
-    complex_lines: int          # 复杂行数
+
+    total_lines: int  # 总行数
+    code_lines: int  # 代码行数
+    comment_lines: int  # 注释行数
+    blank_lines: int  # 空行数
+    avg_line_length: float  # 平均行长度
+    max_line_length: int  # 最大行长度
+    long_lines_count: int  # 长行数量
+    duplication_rate: float  # 重复率
+    complex_lines: int  # 复杂行数
 
 
 class SimplicityEvaluator:
@@ -53,7 +53,7 @@ class SimplicityEvaluator:
         score = 0.0
 
         # 长行惩罚
-        max_line_length = params.get("max_line_length", 100)
+
         long_lines_penalty = metrics.long_lines_count * 2.0
         score += long_lines_penalty
 
@@ -63,7 +63,7 @@ class SimplicityEvaluator:
         score += duplication_score
 
         # 复杂度惩罚
-        complexity_threshold = params.get("complexity_threshold", 10)
+
         complexity_penalty = metrics.complex_lines * 1.0
         score += complexity_penalty
 
@@ -83,19 +83,19 @@ class SimplicityEvaluator:
         # 分析每个Python文件
         for py_file in self.target_path.rglob("*.py"):
             try:
-                with open(py_file, 'r', encoding='utf-8') as f:
+                with open(py_file, "r", encoding="utf-8") as f:
                     lines = f.readlines()
 
                 for line in lines:
                     total_lines += 1
-                    line_len = len(line.rstrip('\n\r'))
+                    line_len = len(line.rstrip("\n\r"))
                     line_lengths.append(line_len)
 
                     # 空行
                     if not line.strip():
                         blank_lines += 1
                     # 注释行
-                    elif line.strip().startswith('#'):
+                    elif line.strip().startswith("#"):
                         comment_lines += 1
                     # 代码行
                     else:
@@ -137,11 +137,11 @@ class SimplicityEvaluator:
         # 统计每行出现次数
         for py_file in self.target_path.rglob("*.py"):
             try:
-                with open(py_file, 'r', encoding='utf-8') as f:
+                with open(py_file, "r", encoding="utf-8") as f:
                     for line in f:
                         # 移除空白和注释
                         line = line.strip()
-                        if line and not line.startswith('#'):
+                        if line and not line.startswith("#"):
                             line_counts[line] = line_counts.get(line, 0) + 1
             except Exception:
                 continue
@@ -159,20 +159,20 @@ class SimplicityEvaluator:
         """统计复杂行（包含多个操作符或嵌套的行）"""
         complex_lines = 0
         complex_patterns = [
-            r'.*and.*and.*',          # 多个and
-            r'.*or.*or.*',            # 多个or
-            r'.*if.*if.*',            # 嵌套if
-            r'.*for.*for.*',          # 嵌套for
-            r'.*\{.*\{.*',            # 嵌套大括号
-            r'.*\(.*\(.*',            # 嵌套括号
+            r".*and.*and.*",  # 多个and
+            r".*or.*or.*",  # 多个or
+            r".*if.*if.*",  # 嵌套if
+            r".*for.*for.*",  # 嵌套for
+            r".*\{.*\{.*",  # 嵌套大括号
+            r".*\(.*\(.*",  # 嵌套括号
         ]
 
         for py_file in self.target_path.rglob("*.py"):
             try:
-                with open(py_file, 'r', encoding='utf-8') as f:
+                with open(py_file, "r", encoding="utf-8") as f:
                     for line in f:
                         line = line.strip()
-                        if line and not line.startswith('#'):
+                        if line and not line.startswith("#"):
                             # 检查是否匹配复杂模式
                             for pattern in complex_patterns:
                                 if re.match(pattern, line):
@@ -222,12 +222,12 @@ class SimplicityEvaluator:
 
         for py_file in self.target_path.rglob("*.py"):
             try:
-                with open(py_file, 'r', encoding='utf-8') as f:
+                with open(py_file, "r", encoding="utf-8") as f:
                     lines = f.readlines()
 
                 # 滑动窗口提取代码块
                 for i in range(len(lines) - min_lines + 1):
-                    block = tuple(lines[i:i+min_lines])
+                    block = tuple(lines[i : i + min_lines])
                     if block not in blocks:
                         blocks[block] = []
                     blocks[block].append((str(py_file), i + 1))
@@ -238,11 +238,13 @@ class SimplicityEvaluator:
         # 查找重复
         for block, locations in blocks.items():
             if len(locations) > 1:
-                duplicates.append({
-                    "occurrences": len(locations),
-                    "locations": locations,
-                    "lines": min_lines,
-                })
+                duplicates.append(
+                    {
+                        "occurrences": len(locations),
+                        "locations": locations,
+                        "lines": min_lines,
+                    }
+                )
 
         # 按重复次数排序
         duplicates.sort(key=lambda x: x["occurrences"], reverse=True)
@@ -264,15 +266,11 @@ def fallback_evaluate(params: Dict[str, Any], target_path: str = ".") -> float:
     return evaluator.evaluate(params)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # 测试
     evaluator = SimplicityEvaluator("/home/ai/LingFlow/lingflow")
 
-    params = {
-        "complexity_threshold": 10,
-        "duplication_penalty": 1.0,
-        "max_line_length": 100
-    }
+    params = {"complexity_threshold": 10, "duplication_penalty": 1.0, "max_line_length": 100}
 
     score = evaluator.evaluate(params)
     print(f"简洁性评分: {score:.2f}")

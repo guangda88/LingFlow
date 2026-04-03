@@ -4,7 +4,6 @@
 """
 
 import json
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from lingflow.compression.compressor import (
@@ -26,15 +25,33 @@ class CompressionConfig:
         "strategies": ["density", "semantic", "list"],
         "custom_keywords": [
             # 关键操作词
-            "must", "should", "require", "ensure",
-            "critical", "important", "essential",
-            "verify", "validate", "confirm",
-            "fix", "bug", "error", "warning",
-            "todo", "note", "remember",
+            "must",
+            "should",
+            "require",
+            "ensure",
+            "critical",
+            "important",
+            "essential",
+            "verify",
+            "validate",
+            "confirm",
+            "fix",
+            "bug",
+            "error",
+            "warning",
+            "todo",
+            "note",
+            "remember",
             # 技术术语
-            "api", "function", "class", "method",
-            "import", "export", "return", "param"
-        ]
+            "api",
+            "function",
+            "class",
+            "method",
+            "import",
+            "export",
+            "return",
+            "param",
+        ],
     }
 
     def __init__(self, config: Optional[Dict[str, Any]] = None) -> None:
@@ -63,16 +80,13 @@ class CompressionConfig:
         Returns:
             配置好的压缩器
         """
-        strategies = [
-            CompressionStrategy(s)
-            for s in self.config.get("strategies", ["density", "semantic", "list"])
-        ]
+        strategies = [CompressionStrategy(s) for s in self.config.get("strategies", ["density", "semantic", "list"])]
 
         return AdvancedContextCompressor(
             target_ratio=self.target_ratio,
             preserve_keywords=self.config.get("preserve_keywords", True),
             custom_keywords=self.config.get("custom_keywords"),
-            strategies=strategies
+            strategies=strategies,
         )
 
 
@@ -145,12 +159,9 @@ class ConversationCompressor:
         if not self.should_compress(context):
             return context
 
-        original_size = len(json.dumps(context))
-
         # 使用压缩器压缩
         compressed = self.compressor.compress(context)
 
-        compressed_size = len(json.dumps(compressed))
         original_tokens = self._token_estimator.count_tokens(json.dumps(context))
         compressed_tokens = self._token_estimator.count_tokens(
             json.dumps(compressed),
@@ -162,11 +173,7 @@ class ConversationCompressor:
 
         return compressed
 
-    def compress_conversation_history(
-        self,
-        messages: List[Dict[str, str]],
-        keep_recent: int = 10
-    ) -> List[Dict[str, str]]:
+    def compress_conversation_history(self, messages: List[Dict[str, str]], keep_recent: int = 10) -> List[Dict[str, str]]:
         """压缩对话历史
 
         保留最近 N 条消息，使用 ConversationSummarizer 生成旧消息摘要。
@@ -186,6 +193,7 @@ class ConversationCompressor:
 
         if old_messages:
             from lingflow.compression.summarizer import ConversationSummarizer
+
             summarizer = ConversationSummarizer()
             summary_msg = summarizer.create_summary_message(old_messages)
             return [summary_msg] + recent
@@ -205,7 +213,7 @@ class ConversationCompressor:
                 "enabled": self.config.enabled,
                 "target_ratio": self.config.target_ratio,
                 "threshold_tokens": self.config.threshold_tokens,
-            }
+            },
         }
 
 
@@ -213,9 +221,7 @@ class ConversationCompressor:
 _conversation_compressor: Optional[ConversationCompressor] = None
 
 
-def get_conversation_compressor(
-    config: Optional[CompressionConfig] = None
-) -> ConversationCompressor:
+def get_conversation_compressor(config: Optional[CompressionConfig] = None) -> ConversationCompressor:
     """获取全局对话压缩器实例
 
     Args:
@@ -243,10 +249,7 @@ def compress_if_needed(context: Dict[str, Any]) -> Dict[str, Any]:
     return compressor.compress_context(context)
 
 
-def compress_messages(
-    messages: List[Dict[str, str]],
-    keep_recent: int = 10
-) -> List[Dict[str, str]]:
+def compress_messages(messages: List[Dict[str, str]], keep_recent: int = 10) -> List[Dict[str, str]]:
     """压缩消息历史（便捷函数）
 
     Args:
@@ -269,10 +272,6 @@ def enable_auto_compression(threshold_tokens: int = 50000):
     """
     global _conversation_compressor
 
-    config = CompressionConfig({
-        "enabled": True,
-        "threshold_tokens": threshold_tokens,
-        "target_ratio": 0.4
-    })
+    config = CompressionConfig({"enabled": True, "threshold_tokens": threshold_tokens, "target_ratio": 0.4})
 
     _conversation_compressor = ConversationCompressor(config)

@@ -49,7 +49,7 @@ class TestAdapters:
         adapter = SemgrepAdapter(config)
         assert adapter.timeout == 100
         assert adapter.max_issues == 500
-        assert adapter.enabled == True
+        assert adapter.enabled is True
 
     def test_semgrep_adapter_check_available(self):
         """测试Semgrep可用性检查"""
@@ -80,7 +80,7 @@ class TestAdapters:
         config = {"enabled": False}
         adapter = SemgrepAdapter(config)
 
-        assert adapter.enabled == False
+        assert adapter.enabled is False
 
     def test_semgrep_parse_severity(self):
         """测试Semgrep严重程度解析"""
@@ -200,6 +200,6 @@ def test():
         assert feedback[0].rule_id == "F401"
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # 运行测试
     pytest.main([__file__, "-v"])

@@ -48,12 +48,7 @@ class TestSnapshotTest:
 
     def test_normalize_value_nested(self, snapshot):
         """测试规范化嵌套值"""
-        value = {
-            "outer": {
-                "z_inner": 1,
-                "a_inner": 2
-            }
-        }
+        value = {"outer": {"z_inner": 1, "a_inner": 2}}
         normalized = snapshot._normalize_value(value)
 
         assert list(normalized["outer"].keys()) == ["a_inner", "z_inner"]
@@ -101,12 +96,7 @@ class TestSnapshotTest:
         test_name = "test_metadata"
         data = {"result": "success"}
 
-        metadata = SnapshotMetadata(
-            test_name=test_name,
-            created_at="2024-01-01",
-            version="1.0.0",
-            description="测试元数据"
-        )
+        metadata = SnapshotMetadata(test_name=test_name, created_at="2024-01-01", version="1.0.0", description="测试元数据")
 
         snapshot.assert_match(test_name, data, update=True, metadata=metadata)
 
@@ -117,11 +107,7 @@ class TestSnapshotTest:
 
     def test_update_snapshots_batch(self, snapshot):
         """测试批量更新快照"""
-        batch_data = {
-            "test1": {"value": 1},
-            "test2": {"value": 2},
-            "test3": {"value": 3}
-        }
+        batch_data = {"test1": {"value": 1}, "test2": {"value": 2}, "test3": {"value": 3}}
 
         snapshot.update_snapshots(batch_data)
 
@@ -175,5 +161,5 @@ class TestSnapshotTest:
         assert len(snapshot.list_snapshots()) == 0
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])

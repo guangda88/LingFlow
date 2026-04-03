@@ -27,11 +27,7 @@ class DataProcessor:
         scores = [t.score for t in history]
         trial_ids = list(range(1, len(history) + 1))
 
-        return {
-            "trials": trial_ids,
-            "scores": scores,
-            "count": len(history)
-        }
+        return {"trials": trial_ids, "scores": scores, "count": len(history)}
 
     @staticmethod
     def extract_best_params(optimization_state) -> Dict[str, Any]:
@@ -67,10 +63,7 @@ class DataProcessor:
         Returns:
             收敛率字典
         """
-        return {
-            "rate": optimization_state.convergence_rate,
-            "is_converged": optimization_state.convergence_rate > 0.9
-        }
+        return {"rate": optimization_state.convergence_rate, "is_converged": optimization_state.convergence_rate > 0.9}
 
     @staticmethod
     def extract_sensitivity_data(sensitivity_results: Dict[str, Any]) -> Dict[str, Any]:
@@ -85,10 +78,7 @@ class DataProcessor:
         parameters = list(sensitivity_results.keys())
         scores = [sensitivity_results[p].sensitivity_score for p in parameters]
 
-        return {
-            "parameters": parameters,
-            "scores": scores
-        }
+        return {"parameters": parameters, "scores": scores}
 
     @staticmethod
     def extract_pareto_data(pareto_result) -> Dict[str, Any]:
@@ -107,11 +97,7 @@ class DataProcessor:
 
         objective_names = list(pareto_points[0].objectives.keys())
 
-        return {
-            "points": pareto_points,
-            "objective_names": objective_names,
-            "all_evaluated": pareto_result.all_evaluated
-        }
+        return {"points": pareto_points, "objective_names": objective_names, "all_evaluated": pareto_result.all_evaluated}
 
     @staticmethod
     def get_timestamp() -> str:

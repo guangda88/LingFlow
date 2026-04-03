@@ -4,7 +4,7 @@ LingFlow 自优化触发器
 """
 
 from typing import Optional, Dict, Any, Tuple
-from datetime import datetime, timedelta
+from datetime import datetime
 from dataclasses import dataclass
 
 from lingflow.self_optimizer.config import get_global_config
@@ -13,12 +13,13 @@ from lingflow.self_optimizer.config import get_global_config
 @dataclass
 class TriggerInfo:
     """触发器信息"""
-    type: str                    # 触发器类型
-    reason: str                  # 触发原因
-    priority: str                # 优先级: high/medium/low
-    current_value: Any           # 当前值
-    threshold: Any               # 阈值
-    metrics: Dict[str, Any]      # 相关指标
+
+    type: str  # 触发器类型
+    reason: str  # 触发原因
+    priority: str  # 优先级: high/medium/low
+    current_value: Any  # 当前值
+    threshold: Any  # 阈值
+    metrics: Dict[str, Any]  # 相关指标
 
 
 class OptimizationTrigger:
@@ -57,12 +58,7 @@ class OptimizationTrigger:
         # 1. 用户主动触发（最高优先级）
         if context.get("user_triggered"):
             return True, TriggerInfo(
-                type="user",
-                reason="用户主动触发",
-                priority="high",
-                current_value=None,
-                threshold=None,
-                metrics={}
+                type="user", reason="用户主动触发", priority="high", current_value=None, threshold=None, metrics={}
             )
 
         # 2. 质量检查
@@ -98,10 +94,7 @@ class OptimizationTrigger:
         # 选择优先级最高的触发器
         if triggers_found:
             priority_order = {"high": 3, "medium": 2, "low": 1}
-            triggers_found.sort(
-                key=lambda x: priority_order.get(x.priority, 0),
-                reverse=True
-            )
+            triggers_found.sort(key=lambda x: priority_order.get(x.priority, 0), reverse=True)
             return True, triggers_found[0]
 
         return False, None
@@ -121,7 +114,7 @@ class OptimizationTrigger:
                 priority="high" if score < 50 else "medium",
                 current_value=score,
                 threshold=threshold,
-                metrics={"review_score": score}
+                metrics={"review_score": score},
             )
 
         # 测试覆盖率下降
@@ -135,7 +128,7 @@ class OptimizationTrigger:
                 priority="medium",
                 current_value=coverage_drop,
                 threshold=threshold,
-                metrics={"coverage_drop": coverage_drop}
+                metrics={"coverage_drop": coverage_drop},
             )
 
         # 测试失败率
@@ -149,7 +142,7 @@ class OptimizationTrigger:
                 priority="high",
                 current_value=failure_rate,
                 threshold=threshold,
-                metrics={"test_failure_rate": failure_rate}
+                metrics={"test_failure_rate": failure_rate},
             )
 
         return None
@@ -169,7 +162,7 @@ class OptimizationTrigger:
                 priority="medium",
                 current_value=complexity,
                 threshold=threshold,
-                metrics={"avg_complexity": complexity}
+                metrics={"avg_complexity": complexity},
             )
 
         # 大型类数量
@@ -183,7 +176,7 @@ class OptimizationTrigger:
                 priority="medium",
                 current_value=large_classes,
                 threshold=threshold,
-                metrics={"large_classes_count": large_classes}
+                metrics={"large_classes_count": large_classes},
             )
 
         # 重复代码率
@@ -199,7 +192,7 @@ class OptimizationTrigger:
                 priority="low",
                 current_value=duplication_rate,
                 threshold=threshold,
-                metrics={"duplication_rate": duplication_rate}
+                metrics={"duplication_rate": duplication_rate},
             )
 
         # 耦合度
@@ -213,7 +206,7 @@ class OptimizationTrigger:
                 priority="medium",
                 current_value=coupling,
                 threshold=threshold,
-                metrics={"avg_coupling": coupling}
+                metrics={"avg_coupling": coupling},
             )
 
         return None
@@ -235,10 +228,7 @@ class OptimizationTrigger:
                 priority="high",
                 current_value=exec_time,
                 threshold=baseline * ratio,
-                metrics={
-                    "execution_time": exec_time,
-                    "baseline_time": baseline
-                }
+                metrics={"execution_time": exec_time, "baseline_time": baseline},
             )
 
         # 内存使用
@@ -252,7 +242,7 @@ class OptimizationTrigger:
                 priority="high",
                 current_value=memory_mb,
                 threshold=threshold,
-                metrics={"memory_usage_mb": memory_mb}
+                metrics={"memory_usage_mb": memory_mb},
             )
 
         # API响应时间
@@ -266,7 +256,7 @@ class OptimizationTrigger:
                 priority="medium",
                 current_value=response_time,
                 threshold=threshold,
-                metrics={"response_time_ms": response_time}
+                metrics={"response_time_ms": response_time},
             )
 
         return None
@@ -286,7 +276,7 @@ class OptimizationTrigger:
                 priority="low",
                 current_value=new_lines,
                 threshold=threshold,
-                metrics={"new_lines": new_lines}
+                metrics={"new_lines": new_lines},
             )
 
         # 新增文件数
@@ -300,7 +290,7 @@ class OptimizationTrigger:
                 priority="low",
                 current_value=new_files,
                 threshold=threshold,
-                metrics={"new_files": new_files}
+                metrics={"new_files": new_files},
             )
 
         return None
@@ -320,7 +310,7 @@ class OptimizationTrigger:
                 priority="low",
                 current_value=todo_count,
                 threshold=threshold,
-                metrics={"todo_count": todo_count}
+                metrics={"todo_count": todo_count},
             )
 
         # HACK标记
@@ -334,7 +324,7 @@ class OptimizationTrigger:
                 priority="medium",
                 current_value=hack_count,
                 threshold=threshold,
-                metrics={"hack_comments": hack_count}
+                metrics={"hack_comments": hack_count},
             )
 
         return None
@@ -359,7 +349,7 @@ class OptimizationTrigger:
                     priority="low",
                     current_value=days_since,
                     threshold=threshold,
-                    metrics={"days_since_last_optimization": days_since}
+                    metrics={"days_since_last_optimization": days_since},
                 )
 
         # 距上次检查的提交次数
@@ -373,7 +363,7 @@ class OptimizationTrigger:
                 priority="low",
                 current_value=commits_since,
                 threshold=threshold,
-                metrics={"commits_since_last_check": commits_since}
+                metrics={"commits_since_last_check": commits_since},
             )
 
         return None
@@ -382,9 +372,9 @@ class OptimizationTrigger:
         """检查是否应该自动触发（根据钩子配置）"""
         hooks_config = self.config.get_hooks_config()
         return (
-            hooks_config.get("enable_on_review", False) or
-            hooks_config.get("enable_on_test", False) or
-            hooks_config.get("enable_on_commit", False)
+            hooks_config.get("enable_on_review", False)
+            or hooks_config.get("enable_on_test", False)
+            or hooks_config.get("enable_on_commit", False)
         )
 
     def requires_confirmation(self) -> bool:

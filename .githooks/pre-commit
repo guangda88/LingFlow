@@ -50,12 +50,12 @@ check_p0_flake8() {
     log_info "检查文件: $(echo $python_files | wc -w) 个"
 
     # 运行 flake8
-    if flake8 $python_files --max-line-length=88 --ignore=E203,W503,E501 2>&1; then
+    if flake8 $python_files --max-line-length=127 --max-complexity=15 --ignore=E203,E266,E501,W503,W504,E402 2>&1; then
         log_pass "代码质量检查通过"
         return 0
     else
         local result=$?
-        ai_suggest_fix "flake8" "$(flake8 $python_files 2>&1 | head -5)"
+        ai_suggest_fix "flake8" "$(flake8 $python_files --max-line-length=127 --max-complexity=15 --ignore=E203,E266,E501,W503,W504,E402 2>&1 | head -5)"
         quality_gate $HOOKS_P0_FLAKE8 "代码质量" $result
         return $?
     fi
@@ -141,7 +141,7 @@ check_p1_format() {
     local python_files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$' || true)
     [ -z "$python_files" ] && return 0
 
-    if black --check $python_files 2>/dev/null; then
+    if black --check --line-length=127 $python_files 2>/dev/null; then
         log_pass "代码格式检查通过"
         return 0
     else
