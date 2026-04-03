@@ -83,12 +83,8 @@ class ComplianceReport:
             "compliant_principles": self.compliant_principles,
             "violations_count": len(self.violations),
             "coverage": f"{self.coverage:.2%}",
-            "must_violations": sum(
-                1 for v in self.violations if v.severity == EnforcementLevel.MUST
-            ),
-            "should_violations": sum(
-                1 for v in self.violations if v.severity == EnforcementLevel.SHOULD
-            ),
+            "must_violations": sum(1 for v in self.violations if v.severity == EnforcementLevel.MUST),
+            "should_violations": sum(1 for v in self.violations if v.severity == EnforcementLevel.SHOULD),
             "may_violations": sum(1 for v in self.violations if v.severity == EnforcementLevel.MAY),
         }
 
@@ -117,10 +113,7 @@ class Constitution:
             cwe="CWE-89",
             name="SQL Injection",
             level=EnforcementLevel.MUST,
-            constraint=(
-                "Database queries MUST use parameterized statements "
-                "or ORM methods exclusively"
-            ),
+            constraint=("Database queries MUST use parameterized statements " "or ORM methods exclusively"),
             implementation_pattern="SQLAlchemy, parameterized queries, prepared statements",
             rationale="Prevents arbitrary SQL command execution via user input",
         ),
@@ -157,10 +150,7 @@ class Constitution:
             name="Path Traversal",
             level=EnforcementLevel.MUST,
             constraint="MUST validate and sanitize all file path inputs",
-            implementation_pattern=(
-                "Use os.path.abspath, validate file paths "
-                "against allowed directories"
-            ),
+            implementation_pattern=("Use os.path.abspath, validate file paths " "against allowed directories"),
             rationale="Prevents unauthorized file system access",
         ),
         ConstitutionalPrinciple(
@@ -178,10 +168,7 @@ class Constitution:
             name="Deserialization of Untrusted Data",
             level=EnforcementLevel.MUST,
             constraint="MUST avoid deserializing untrusted data",
-            implementation_pattern=(
-                "Use safe serialization formats (JSON), "
-                "validate serialized data"
-            ),
+            implementation_pattern=("Use safe serialization formats (JSON), " "validate serialized data"),
             rationale="Deserialization can lead to arbitrary code execution",
         ),
         ConstitutionalPrinciple(
@@ -226,7 +213,7 @@ class Constitution:
             if p.cwe not in self._principles_by_cwe:
                 self._principles_by_cwe[p.cwe] = []
             self._principles_by_cwe[p.cwe].append(p)
-        
+
         # Cache for compiled regex patterns
         self._compiled_patterns: Dict[str, re.Pattern] = {}
 
@@ -260,9 +247,7 @@ class Constitution:
             logger.info("Using default principles")
             self.principles = self.DEFAULT_PRINCIPLES.copy()
 
-    def get_principles(
-        self, level: Optional[EnforcementLevel] = None
-    ) -> List[ConstitutionalPrinciple]:
+    def get_principles(self, level: Optional[EnforcementLevel] = None) -> List[ConstitutionalPrinciple]:
         """
         Get principles by enforcement level
 
@@ -297,9 +282,7 @@ class Constitution:
         Returns:
             ComplianceReport with violations
         """
-        report = ComplianceReport(
-            is_compliant=True, total_principles=len(self.principles), compliant_principles=0
-        )
+        report = ComplianceReport(is_compliant=True, total_principles=len(self.principles), compliant_principles=0)
 
         # Check each MUST principle (non-negotiable)
         must_principles = self.get_principles(EnforcementLevel.MUST)
@@ -323,17 +306,11 @@ class Constitution:
                 report.compliant_principles += 1
 
         # Calculate coverage
-        report.coverage = (
-            report.compliant_principles / report.total_principles
-            if report.total_principles > 0
-            else 0
-        )
+        report.coverage = report.compliant_principles / report.total_principles if report.total_principles > 0 else 0
 
         return report
 
-    def _check_principle(
-        self, code: str, principle: ConstitutionalPrinciple, file_path: str
-    ) -> List[Violation]:
+    def _check_principle(self, code: str, principle: ConstitutionalPrinciple, file_path: str) -> List[Violation]:
         """
         Check a single principle against code
 
@@ -364,9 +341,7 @@ class Constitution:
 
         return violations
 
-    def _check_xss(
-        self, code: str, principle: ConstitutionalPrinciple, file_path: str
-    ) -> List[Violation]:
+    def _check_xss(self, code: str, principle: ConstitutionalPrinciple, file_path: str) -> List[Violation]:
         """Check for XSS vulnerabilities"""
         violations = []
 
@@ -398,9 +373,7 @@ class Constitution:
 
         return violations
 
-    def _check_sql_injection(
-        self, code: str, principle: ConstitutionalPrinciple, file_path: str
-    ) -> List[Violation]:
+    def _check_sql_injection(self, code: str, principle: ConstitutionalPrinciple, file_path: str) -> List[Violation]:
         """Check for SQL injection vulnerabilities - Enhanced version"""
         violations = []
 
@@ -413,18 +386,18 @@ class Constitution:
             # f-strings with SQL
             r'f["\'].*(?:SELECT|INSERT|UPDATE|DELETE|DROP|ALTER).*\{',
             # format method
-            r'\.format\s*\(\s*.*(?:SELECT|INSERT|UPDATE|DELETE)',
+            r"\.format\s*\(\s*.*(?:SELECT|INSERT|UPDATE|DELETE)",
             # % formatting
             r'["\'].*(?:SELECT|INSERT|UPDATE|DELETE).*%\s*\w',
         ]
 
         # Safe patterns (parameterized queries)
         safe_patterns = [
-            r'%s',           # PostgreSQL/MySQL placeholder
-            r'%\(\w+\)s',  # Named placeholder
-            r':\w+',         # SQLite/PostgreSQL named param
-            r'\?',           # SQLite/MySQL positional param
-            r'\$\d+',        # PostgreSQL positional param
+            r"%s",  # PostgreSQL/MySQL placeholder
+            r"%\(\w+\)s",  # Named placeholder
+            r":\w+",  # SQLite/PostgreSQL named param
+            r"\?",  # SQLite/MySQL positional param
+            r"\$\d+",  # PostgreSQL positional param
         ]
 
         lines = code.split("\n")
@@ -434,21 +407,18 @@ class Constitution:
                 if compiled.search(line):
                     # Check if it's a safe parameterized query
                     is_safe = any(re.search(safe, line) for safe in safe_patterns)
-                    
+
                     # Also check for common safe function names
-                    if any(safe_func in line for safe_func in ['escape', 'quote', 'parameterize']):
+                    if any(safe_func in line for safe_func in ["escape", "quote", "parameterize"]):
                         is_safe = True
-                    
+
                     if not is_safe:
                         violations.append(
                             Violation(
                                 principle_id=principle.id,
                                 principle_name=principle.name,
                                 severity=principle.level,
-                                description=(
-                                    f"Potential SQL injection vulnerability: "
-                                    f"{line.strip()}"
-                                ),
+                                description=(f"Potential SQL injection vulnerability: " f"{line.strip()}"),
                                 location=file_path,
                                 line_number=i,
                                 suggested_fix=principle.implementation_pattern,
@@ -458,9 +428,7 @@ class Constitution:
 
         return violations
 
-    def _check_hardcoded_credentials(
-        self, code: str, principle: ConstitutionalPrinciple, file_path: str
-    ) -> List[Violation]:
+    def _check_hardcoded_credentials(self, code: str, principle: ConstitutionalPrinciple, file_path: str) -> List[Violation]:
         """Check for hardcoded credentials"""
         violations = []
 
@@ -495,9 +463,7 @@ class Constitution:
 
         return violations
 
-    def _check_path_traversal(
-        self, code: str, principle: ConstitutionalPrinciple, file_path: str
-    ) -> List[Violation]:
+    def _check_path_traversal(self, code: str, principle: ConstitutionalPrinciple, file_path: str) -> List[Violation]:
         """Check for path traversal vulnerabilities"""
         violations = []
 
@@ -531,9 +497,7 @@ class Constitution:
 
         return violations
 
-    def _check_weak_crypto(
-        self, code: str, principle: ConstitutionalPrinciple, file_path: str
-    ) -> List[Violation]:
+    def _check_weak_crypto(self, code: str, principle: ConstitutionalPrinciple, file_path: str) -> List[Violation]:
         """Check for weak cryptographic algorithms"""
         violations = []
 

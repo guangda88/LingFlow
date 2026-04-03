@@ -4,12 +4,13 @@
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Callable
+from typing import Any, Dict, Optional, Callable
 from enum import Enum
 
 
 class ToolCategory(str, Enum):
     """工具类别"""
+
     ANALYSIS = "analysis"
     GENERATION = "generation"
     REFACTORING = "refactoring"
@@ -20,6 +21,7 @@ class ToolCategory(str, Enum):
 @dataclass
 class ToolRequest:
     """工具请求"""
+
     name: str
     arguments: Dict[str, Any] = field(default_factory=dict)
 
@@ -27,6 +29,7 @@ class ToolRequest:
 @dataclass
 class ToolResponse:
     """工具响应"""
+
     success: bool
     data: Any = None
     error: Optional[str] = None
@@ -36,6 +39,7 @@ class ToolResponse:
 @dataclass
 class TestContext:
     """测试上下文"""
+
     test_name: str
     test_id: str
     temp_dir: str
@@ -69,12 +73,7 @@ class ToolDefinition:
         self.category = category
         self._handler = handler
 
-    def handle(
-        self,
-        request: ToolRequest,
-        response: ToolResponse,
-        context: TestContext
-    ) -> None:
+    def handle(self, request: ToolRequest, response: ToolResponse, context: TestContext) -> None:
         """处理工具调用
 
         Args:

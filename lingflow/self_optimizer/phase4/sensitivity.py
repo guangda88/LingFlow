@@ -6,9 +6,8 @@ LingFlow Phase 4: 参数敏感性分析器
 
 import logging
 import numpy as np
-from typing import Dict, Any, List, Callable, Optional
+from typing import Dict, Any, List, Callable
 from dataclasses import dataclass, field
-from datetime import datetime
 import time
 
 logger = logging.getLogger(__name__)
@@ -17,6 +16,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class SensitivityResult:
     """敏感性分析结果"""
+
     parameter_name: str
     sensitivity_score: float  # 0-1，越高越敏感
     method: str
@@ -33,13 +33,14 @@ class SensitivityResult:
             "method": self.method,
             "baseline_value": self.baseline_value,
             "variations": self.variations,
-            "variation_impacts": self.variation_impacts
+            "variation_impacts": self.variation_impacts,
         }
 
 
 @dataclass
 class SobolResult:
     """Sobol敏感性分析结果（全局敏感性）"""
+
     first_order: Dict[str, float]  # 一阶效应（主效应）
     total_order: Dict[str, float]  # 总效应（包含交互）
     parameters: List[str]
@@ -47,20 +48,12 @@ class SobolResult:
 
     def get_most_sensitive(self, n: int = 5) -> List[tuple]:
         """获取最敏感的n个参数"""
-        sorted_params = sorted(
-            self.total_order.items(),
-            key=lambda x: x[1],
-            reverse=True
-        )
+        sorted_params = sorted(self.total_order.items(), key=lambda x: x[1], reverse=True)
         return sorted_params[:n]
 
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典"""
-        return {
-            "first_order": self.first_order,
-            "total_order": self.total_order,
-            "parameters": self.parameters
-        }
+        return {"first_order": self.first_order, "total_order": self.total_order, "parameters": self.parameters}
 
 
 class SensitivityAnalyzer:
@@ -70,10 +63,7 @@ class SensitivityAnalyzer:
     """
 
     def __init__(
-        self,
-        search_space: Dict[str, Any],
-        objective: Callable[[Dict[str, Any]], float],
-        base_params: Dict[str, Any] = None
+        self, search_space: Dict[str, Any], objective: Callable[[Dict[str, Any]], float], base_params: Dict[str, Any] = None
     ):
         """初始化敏感性分析器
 
@@ -99,15 +89,12 @@ class SensitivityAnalyzer:
                 params[name] = (space["min"] + space["max"]) / 2
             elif space_type == "log":
                 import math
+
                 params[name] = math.sqrt(space["min"] * space["max"])
 
         return params
 
-    def analyze_local(
-        self,
-        n_samples: int = 10,
-        perturbation_ratio: float = 0.1
-    ) -> Dict[str, SensitivityResult]:
+    def analyze_local(self, n_samples: int = 10, perturbation_ratio: float = 0.1) -> Dict[str, SensitivityResult]:
         """局部敏感性分析
 
         通过单变量扰动分析参数敏感性。
@@ -126,24 +113,13 @@ class SensitivityAnalyzer:
 
         # 对每个参数进行分析
         for param_name, space in self.search_space.items():
-            result = self._analyze_parameter_local(
-                param_name,
-                space,
-                baseline_score,
-                n_samples,
-                perturbation_ratio
-            )
+            result = self._analyze_parameter_local(param_name, space, baseline_score, n_samples, perturbation_ratio)
             results[param_name] = result
 
         return results
 
     def _analyze_parameter_local(
-        self,
-        param_name: str,
-        space: Dict[str, Any],
-        baseline_score: float,
-        n_samples: int,
-        perturbation_ratio: float
+        self, param_name: str, space: Dict[str, Any], baseline_score: float, n_samples: int, perturbation_ratio: float
     ) -> SensitivityResult:
         """分析单个参数的局部敏感性"""
         variations = []
@@ -209,14 +185,10 @@ class SensitivityAnalyzer:
             method="local_perturbation",
             baseline_value=self.base_params.get(param_name),
             variations=variations,
-            variation_impacts=impacts
+            variation_impacts=impacts,
         )
 
-    def analyze_global_sobol(
-        self,
-        n_samples: int = 100,
-        calc_second_order: bool = False
-    ) -> SobolResult:
+    def analyze_global_sobol(self, n_samples: int = 100, calc_second_order: bool = False) -> SobolResult:
         """全局敏感性分析（Sobol方法）
 
         使用Sobol序列进行采样，计算一阶和总效应指数。
@@ -236,20 +208,16 @@ class SensitivityAnalyzer:
             return self._analyze_global_simple(n_samples)
 
         # 定义SALib问题
-        problem = {
-            'num_vars': len(self.search_space),
-            'names': list(self.search_space.keys()),
-            'bounds': []
-        }
+        problem = {"num_vars": len(self.search_space), "names": list(self.search_space.keys()), "bounds": []}
 
         for name, space in self.search_space.items():
             space_type = space.get("type")
 
             if space_type == "categorical":
                 # 对类别变量，使用0到n-1的范围
-                problem['bounds'].append([0, len(space["choices"]) - 1])
+                problem["bounds"].append([0, len(space["choices"]) - 1])
             else:
-                problem['bounds'].append([space["min"], space["max"]])
+                problem["bounds"].append([space["min"], space["max"]])
 
         # 生成样本
         param_values = saltelli.sample(problem, n_samples, calc_second_order=calc_second_order)
@@ -262,7 +230,7 @@ class SensitivityAnalyzer:
                 Y.append(score)
             except Exception as e:
                 logger.error(f"评估失败: {e}")
-                Y.append(float('inf'))
+                Y.append(float("inf"))
 
         # 执行Sobol分析
         Si = sobol.analyze(problem, np.array(Y), calc_second_order=calc_second_order)
@@ -271,15 +239,11 @@ class SensitivityAnalyzer:
         first_order = {}
         total_order = {}
 
-        for i, name in enumerate(problem['names']):
-            first_order[name] = Si['S1'][i] if 'S1' in Si else 0.0
-            total_order[name] = Si['ST'][i] if 'ST' in Si else 0.0
+        for i, name in enumerate(problem["names"]):
+            first_order[name] = Si["S1"][i] if "S1" in Si else 0.0
+            total_order[name] = Si["ST"][i] if "ST" in Si else 0.0
 
-        return SobolResult(
-            first_order=first_order,
-            total_order=total_order,
-            parameters=list(problem['names'])
-        )
+        return SobolResult(first_order=first_order, total_order=total_order, parameters=list(problem["names"]))
 
     def _analyze_global_simple(self, n_samples: int) -> SobolResult:
         """简化的全局敏感性分析（不依赖SALib）"""
@@ -303,8 +267,6 @@ class SensitivityAnalyzer:
 
         for param_name in self.search_space.keys():
             # 单独变化该参数
-            variations = []
-            base_value = self.base_params.get(param_name)
 
             if param_name in param_ranges:
                 rng = param_ranges[param_name]
@@ -335,11 +297,7 @@ class SensitivityAnalyzer:
                 first_order[param_name] = sensitivity
                 total_order[param_name] = sensitivity  # 简化：不考虑交互效应
 
-        return SobolResult(
-            first_order=first_order,
-            total_order=total_order,
-            parameters=list(self.search_space.keys())
-        )
+        return SobolResult(first_order=first_order, total_order=total_order, parameters=list(self.search_space.keys()))
 
     def _convert_samples_to_dicts(self, param_values: np.ndarray) -> List[Dict[str, Any]]:
         """将SALib样本转换为参数字典"""
@@ -366,10 +324,7 @@ class SensitivityAnalyzer:
 
         return param_dicts
 
-    def analyze_morris(
-        self,
-        n_trajectories: int = 20
-    ) -> Dict[str, Dict[str, float]]:
+    def analyze_morris(self, n_trajectories: int = 20) -> Dict[str, Dict[str, float]]:
         """Morris方法敏感性分析
 
         适合高维问题的筛选。
@@ -388,19 +343,15 @@ class SensitivityAnalyzer:
             return {}
 
         # 定义问题
-        problem = {
-            'num_vars': len(self.search_space),
-            'names': list(self.search_space.keys()),
-            'bounds': []
-        }
+        problem = {"num_vars": len(self.search_space), "names": list(self.search_space.keys()), "bounds": []}
 
         for name, space in self.search_space.items():
             space_type = space.get("type")
 
             if space_type == "categorical":
-                problem['bounds'].append([0, len(space["choices"]) - 1])
+                problem["bounds"].append([0, len(space["choices"]) - 1])
             else:
-                problem['bounds'].append([space["min"], space["max"]])
+                problem["bounds"].append([space["min"], space["max"]])
 
         # 生成样本
         param_values = morris_sample.sample(problem, n_trajectories, optimal_trajectories=None)
@@ -412,19 +363,15 @@ class SensitivityAnalyzer:
                 score = self.objective(params_dict)
                 Y.append(score)
             except Exception:
-                Y.append(float('inf'))
+                Y.append(float("inf"))
 
         # 分析
         Si = morris.analyze(problem, param_values, np.array(Y))
 
         # 提取结果
         results = {}
-        for i, name in enumerate(problem['names']):
-            results[name] = {
-                'mu': Si['mu'][i],
-                'mu_star': Si['mu_star'][i],
-                'sigma': Si['sigma'][i]
-            }
+        for i, name in enumerate(problem["names"]):
+            results[name] = {"mu": Si["mu"][i], "mu_star": Si["mu_star"][i], "sigma": Si["sigma"][i]}
 
         return results
 
@@ -434,7 +381,7 @@ def analyze_sensitivity(
     objective: Callable[[Dict[str, Any]], float],
     base_params: Dict[str, Any] = None,
     method: str = "local",
-    n_samples: int = 50
+    n_samples: int = 50,
 ):
     """敏感性分析便捷函数
 
@@ -460,7 +407,7 @@ def analyze_sensitivity(
         raise ValueError(f"未知的分析方法: {method}")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # 测试
     def test_objective(params):
         """测试目标函数"""
@@ -468,21 +415,19 @@ if __name__ == "__main__":
         y = params.get("y", 0)
         z = params.get("z", 0)
         # x影响最大，y次之，z几乎无影响
-        return 100 * x ** 2 + 10 * y + 0.1 * z
+        return 100 * x**2 + 10 * y + 0.1 * z
 
     search_space = {
         "x": {"type": "float", "min": -5, "max": 5},
         "y": {"type": "float", "min": -10, "max": 10},
-        "z": {"type": "float", "min": 0, "max": 100}
+        "z": {"type": "float", "min": 0, "max": 100},
     }
 
     base_params = {"x": 0, "y": 0, "z": 0}
 
     # 局部敏感性分析
     print("=== 局部敏感性分析 ===")
-    local_results = analyze_sensitivity(
-        search_space, test_objective, base_params, method="local", n_samples=20
-    )
+    local_results = analyze_sensitivity(search_space, test_objective, base_params, method="local", n_samples=20)
 
     for param_name, result in local_results.items():
         print(f"{param_name}: {result.sensitivity_score:.4f}")
@@ -490,9 +435,7 @@ if __name__ == "__main__":
     # 全局敏感性分析
     print("\n=== 全局敏感性分析 (Sobol) ===")
     try:
-        sobol_results = analyze_sensitivity(
-            search_space, test_objective, base_params, method="sobol", n_samples=100
-        )
+        sobol_results = analyze_sensitivity(search_space, test_objective, base_params, method="sobol", n_samples=100)
 
         print("总效应 (Total Order):")
         for param, score in sorted(sobol_results.total_order.items(), key=lambda x: -x[1]):

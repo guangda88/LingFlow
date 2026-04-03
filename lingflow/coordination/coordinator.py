@@ -28,14 +28,12 @@ class AgentCoordinator(BaseCoordinator):
         self.completed_tasks: Dict[str, TaskResult] = {}
         self.failed_tasks: Dict[str, TaskResult] = {}
         # 启用高级上下文压缩功能
-        self.compressor = ContextCompressor(
-            target_tokens=4000,
-            level=CompressionLevel.ADVANCED
-        )
+        self.compressor = ContextCompressor(target_tokens=4000, level=CompressionLevel.ADVANCED)
         self.sandbox = SkillSandbox(timeout=30.0, memory_limit=100 * 1024 * 1024)  # 100MB
 
         # 上下文预算管理（基于 40% 安全线防止长上下文退化）
         from lingflow.context.budget import ContextBudgetManager
+
         self._budget_manager = ContextBudgetManager(max_tokens=180000)
 
         self._register_default_agents()
@@ -86,9 +84,7 @@ class AgentCoordinator(BaseCoordinator):
         """
         self.task_queue.append(task)
 
-    async def execute_tasks_parallel(
-        self, tasks: List[Task], max_parallel: int = 2
-    ) -> Dict[str, TaskResult]:
+    async def execute_tasks_parallel(self, tasks: List[Task], max_parallel: int = 2) -> Dict[str, TaskResult]:
         """Execute multiple tasks in parallel.
 
         Args:
@@ -102,10 +98,7 @@ class AgentCoordinator(BaseCoordinator):
         semaphore = asyncio.Semaphore(max_parallel)
 
         # 并行执行所有任务
-        tasks_to_execute = [
-            asyncio.create_task(self._execute_one_task(task, semaphore))
-            for task in tasks
-        ]
+        tasks_to_execute = [asyncio.create_task(self._execute_one_task(task, semaphore)) for task in tasks]
         results_list = await asyncio.gather(*tasks_to_execute, return_exceptions=True)
 
         # 处理结果
@@ -148,6 +141,7 @@ class AgentCoordinator(BaseCoordinator):
         try:
             # 检查上下文预算
             import json
+
             context_str = json.dumps(context) if isinstance(context, dict) else str(context)
             context_tokens = self._budget_manager.estimate_text_tokens(context_str)
             budget_status = self._budget_manager.check_budget(context_tokens)
@@ -156,7 +150,7 @@ class AgentCoordinator(BaseCoordinator):
                 logger.warning(
                     "Context budget %.1f%% (%s), applying aggressive compression",
                     budget_status.usage_ratio * 100,
-                    budget_status.level.value
+                    budget_status.level.value,
                 )
 
             return self.compressor.compress(context)
@@ -312,9 +306,7 @@ class AgentCoordinator(BaseCoordinator):
 
         return str(skill_path)
 
-    def _load_skill_module(
-        self, skill_name: str, skill_path: str
-    ) -> Optional[types.ModuleType]:
+    def _load_skill_module(self, skill_name: str, skill_path: str) -> Optional[types.ModuleType]:
         """加载技能模块（使用沙箱安全验证）
 
         安全特性：
@@ -347,7 +339,7 @@ class AgentCoordinator(BaseCoordinator):
 
         try:
             # 读取技能文件内容
-            with open(skill_path, 'r', encoding='utf-8') as f:
+            with open(skill_path, "r", encoding="utf-8") as f:
                 skill_code = f.read()
 
             # 验证代码安全性
@@ -363,9 +355,7 @@ class AgentCoordinator(BaseCoordinator):
                 raise SkillLoadError(f"Sandbox error loading skill {skill_name}: {str(err)}")
 
             # 使用 importlib 正常加载模块
-            spec = importlib.util.spec_from_file_location(
-                f"skills.{skill_name}.implementation", skill_path
-            )
+            spec = importlib.util.spec_from_file_location(f"skills.{skill_name}.implementation", skill_path)
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
 
@@ -389,11 +379,7 @@ class AgentCoordinator(BaseCoordinator):
                     return self.sandbox.execute(self._execute_func, params)
 
             # 创建并返回包装模块
-            sandbox_module = SandboxModule(
-                f"skills.{skill_name}.implementation",
-                self.sandbox,
-                execute_func
-            )
+            sandbox_module = SandboxModule(f"skills.{skill_name}.implementation", self.sandbox, execute_func)
 
             return sandbox_module
 
@@ -428,7 +414,7 @@ class AgentCoordinator(BaseCoordinator):
 
         # 扫描所有包含 implementation.py 或 SKILL.md 的目录
         for item in skills_dir.iterdir():
-            if not item.is_dir() or item.name.startswith('_'):
+            if not item.is_dir() or item.name.startswith("_"):
                 continue
 
             impl_path = item / "implementation.py"

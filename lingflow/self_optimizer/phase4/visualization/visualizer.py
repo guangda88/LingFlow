@@ -31,12 +31,7 @@ class OptimizationVisualizer:
         self.data_processor = DataProcessor()
         self.chart_generator = ChartGenerator()
 
-    def generate_html_report(
-        self,
-        optimization_state,
-        search_space: Dict[str, Any],
-        metadata: Dict[str, Any] = None
-    ) -> str:
+    def generate_html_report(self, optimization_state, search_space: Dict[str, Any], metadata: Dict[str, Any] = None) -> str:
         """生成HTML报告
 
         Args:
@@ -62,24 +57,20 @@ class OptimizationVisualizer:
             convergence_rate=convergence_data["rate"],
             search_space=search_space,
             metadata=metadata or {},
-            timestamp_readable=timestamp_readable
+            timestamp_readable=timestamp_readable,
         )
 
         # 保存文件
         timestamp = self.data_processor.get_timestamp()
         output_file = self.output_dir / f"optimization_report_{timestamp}.html"
 
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             f.write(html)
 
         logger.info(f"HTML报告已生成: {output_file}")
         return str(output_file)
 
-    def generate_sensitivity_heatmap(
-        self,
-        sensitivity_results: Dict[str, Any],
-        output_file: str = None
-    ) -> str:
+    def generate_sensitivity_heatmap(self, sensitivity_results: Dict[str, Any], output_file: str = None) -> str:
         """生成敏感性热力图
 
         Args:
@@ -97,21 +88,16 @@ class OptimizationVisualizer:
 
         # 生成HTML
         html = self.chart_generator.generate_sensitivity_html(
-            parameters=sensitivity_data["parameters"],
-            scores=sensitivity_data["scores"]
+            parameters=sensitivity_data["parameters"], scores=sensitivity_data["scores"]
         )
 
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             f.write(html)
 
         logger.info(f"敏感性热力图已生成: {output_file}")
         return str(output_file)
 
-    def generate_pareto_front_plot(
-        self,
-        pareto_result,
-        output_file: str = None
-    ) -> str:
+    def generate_pareto_front_plot(self, pareto_result, output_file: str = None) -> str:
         """生成Pareto前沿图
 
         Args:
@@ -135,10 +121,10 @@ class OptimizationVisualizer:
         html = self.chart_generator.generate_pareto_html(
             pareto_points=pareto_data["points"],
             objective_names=pareto_data["objective_names"],
-            all_evaluated=pareto_data["all_evaluated"]
+            all_evaluated=pareto_data["all_evaluated"],
         )
 
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             f.write(html)
 
         logger.info(f"Pareto前沿图已生成: {output_file}")
@@ -146,29 +132,19 @@ class OptimizationVisualizer:
 
 
 # 便捷函数
-def plot_optimization_progress(
-    optimization_state,
-    search_space: Dict[str, Any],
-    output_dir: str = ".lingflow/reports"
-) -> str:
+def plot_optimization_progress(optimization_state, search_space: Dict[str, Any], output_dir: str = ".lingflow/reports") -> str:
     """绘制优化进度图（便捷函数）"""
     visualizer = OptimizationVisualizer(output_dir)
     return visualizer.generate_html_report(optimization_state, search_space)
 
 
-def plot_sensitivity_heatmap(
-    sensitivity_results: Dict[str, Any],
-    output_dir: str = ".lingflow/reports"
-) -> str:
+def plot_sensitivity_heatmap(sensitivity_results: Dict[str, Any], output_dir: str = ".lingflow/reports") -> str:
     """绘制敏感性热力图（便捷函数）"""
     visualizer = OptimizationVisualizer(output_dir)
     return visualizer.generate_sensitivity_heatmap(sensitivity_results)
 
 
-def plot_pareto_front(
-    pareto_result,
-    output_dir: str = ".lingflow/reports"
-) -> str:
+def plot_pareto_front(pareto_result, output_dir: str = ".lingflow/reports") -> str:
     """绘制Pareto前沿图（便捷函数）"""
     visualizer = OptimizationVisualizer(output_dir)
     return visualizer.generate_pareto_front_plot(pareto_result)

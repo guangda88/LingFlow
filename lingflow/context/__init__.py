@@ -42,6 +42,7 @@ __all__ = [
 def show_resume():
     """显示会话恢复信息（手动调用）"""
     from .auto_resume import auto_resume
+
     text = auto_resume()
     if text:
-        print(text, file=__import__('sys').stderr)
+        print(text, file=__import__("sys").stderr)

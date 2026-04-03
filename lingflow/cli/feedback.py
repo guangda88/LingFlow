@@ -17,7 +17,6 @@ lf = LingFlow()
 @click.group()
 def feedback():
     """用户反馈管理"""
-    pass
 
 
 @feedback.command("submit")
@@ -26,10 +25,17 @@ def feedback():
 @click.option(
     "--category",
     "-c",
-    type=click.Choice([
-        "bug", "feature", "improvement", "performance",
-        "documentation", "usability", "other",
-    ]),
+    type=click.Choice(
+        [
+            "bug",
+            "feature",
+            "improvement",
+            "performance",
+            "documentation",
+            "usability",
+            "other",
+        ]
+    ),
     default="bug",
     help="反馈类别",
 )
@@ -50,6 +56,7 @@ def submit_feedback(title, description, category, severity, user, email):
     environment = None
     if category == "bug":
         import platform
+
         environment = {
             "os": platform.system(),
             "python_version": platform.python_version(),
@@ -88,6 +95,7 @@ def report_bug(title, description, severity):
 
     # 尝试获取最近的错误信息
     import traceback
+
     stack_trace = traceback.format_exc() if traceback.format_exc().strip() else None
 
     feedback = collector.submit_bug_report(
@@ -102,13 +110,26 @@ def report_bug(title, description, severity):
     click.echo(f"  严重性: {severity}")
 
     if stack_trace:
-        click.echo(f"  堆栈跟踪已附加")
+        click.echo("  堆栈跟踪已附加")
 
 
 @feedback.command("list")
-@click.option("--category", "-c",
-              type=click.Choice(["bug", "feature", "improvement", "performance", "documentation", "usability", "other"]),
-              help="按类别过滤")
+@click.option(
+    "--category",
+    "-c",
+    type=click.Choice(
+        [
+            "bug",
+            "feature",
+            "improvement",
+            "performance",
+            "documentation",
+            "usability",
+            "other",
+        ]
+    ),
+    help="按类别过滤",
+)
 @click.option("--status", "-s", help="按状态过滤 (open/in_progress/resolved/closed)")
 @click.option("--limit", "-l", type=int, default=20, help="返回数量限制")
 def list_feedbacks(category, status, limit):
@@ -162,12 +183,12 @@ def show_feedback(feedback_id):
     click.echo(f"\n描述:\n{feedback.description}")
 
     if feedback.reproduction_steps:
-        click.echo(f"\n复现步骤:")
+        click.echo("\n复现步骤:")
         for i, step in enumerate(feedback.reproduction_steps, 1):
             click.echo(f"  {i}. {step}")
 
     if feedback.environment:
-        click.echo(f"\n环境信息:")
+        click.echo("\n环境信息:")
         for k, v in feedback.environment.items():
             click.echo(f"  {k}: {v}")
 
@@ -198,7 +219,6 @@ def export_feedback(output):
     """导出反馈报告为 Markdown"""
     collector = get_feedback_collector()
 
-    content = collector.export_markdown(output)
     click.echo(f"✓ 反馈报告已导出到: {output}")
     click.echo(f"  包含 {len(collector.get_feedbacks())} 条反馈")
 
@@ -215,9 +235,9 @@ def feedback_stats():
     click.echo(f"  已解决: {stats['resolved']}")
 
     click.echo("\n按类别:")
-    for cat, count in stats['by_category'].items():
+    for cat, count in stats["by_category"].items():
         click.echo(f"  {cat}: {count}")
 
     click.echo("\n按严重性:")
-    for sev, count in stats['by_severity'].items():
+    for sev, count in stats["by_severity"].items():
         click.echo(f"  {sev}: {count}")

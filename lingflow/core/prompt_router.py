@@ -9,7 +9,7 @@
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional, Tuple, Callable
+from typing import List, Dict, Any, Optional, Tuple
 from enum import Enum
 import re
 from datetime import datetime
@@ -19,6 +19,7 @@ from pathlib import Path
 
 class RouteStrategy(Enum):
     """路由策略"""
+
     KEYWORD_MATCH = "keyword_match"
     PATTERN_MATCH = "pattern_match"
     SEMANTIC_SIMILARITY = "semantic_similarity"
@@ -28,6 +29,7 @@ class RouteStrategy(Enum):
 @dataclass
 class RouteRule:
     """路由规则"""
+
     name: str
     keywords: List[str] = field(default_factory=list)
     patterns: List[str] = field(default_factory=list)
@@ -103,6 +105,7 @@ class RouteRule:
 @dataclass
 class RouteTarget:
     """路由目标"""
+
     name: str
     agent_type: str
     description: str
@@ -113,6 +116,7 @@ class RouteTarget:
 @dataclass
 class RouteResult:
     """路由结果"""
+
     prompt: str
     matched_rules: List[Tuple[str, float]]  # (rule_name, score)
     selected_target: Optional[RouteTarget]
@@ -143,7 +147,7 @@ class PromptRouter:
         self._history: List[RouteResult] = []
         self._default_target: Optional[RouteTarget] = None
 
-    def add_rule(self, rule: RouteRule) -> 'PromptRouter':
+    def add_rule(self, rule: RouteRule) -> "PromptRouter":
         """添加路由规则
 
         Args:
@@ -155,7 +159,7 @@ class PromptRouter:
         self._rules[rule.name] = rule
         return self
 
-    def add_target(self, target: RouteTarget) -> 'PromptRouter':
+    def add_target(self, target: RouteTarget) -> "PromptRouter":
         """添加路由目标
 
         Args:
@@ -167,7 +171,7 @@ class PromptRouter:
         self._targets[target.name] = target
         return self
 
-    def set_default_target(self, target: RouteTarget) -> 'PromptRouter':
+    def set_default_target(self, target: RouteTarget) -> "PromptRouter":
         """设置默认目标
 
         Args:
@@ -179,11 +183,7 @@ class PromptRouter:
         self._default_target = target
         return self
 
-    def route(
-        self,
-        prompt: str,
-        top_k: int = 3
-    ) -> RouteResult:
+    def route(self, prompt: str, top_k: int = 3) -> RouteResult:
         """
         路由prompt到最佳目标
 
@@ -216,22 +216,14 @@ class PromptRouter:
         confidence = self._calculate_confidence(top_matches)
 
         # 6. 创建结果
-        result = RouteResult(
-            prompt=prompt,
-            matched_rules=top_matches,
-            selected_target=selected_target,
-            confidence=confidence
-        )
+        result = RouteResult(prompt=prompt, matched_rules=top_matches, selected_target=selected_target, confidence=confidence)
 
         # 7. 保存历史
         self._history.append(result)
 
         return result
 
-    def _select_target(
-        self,
-        matched_rules: List[Tuple[str, float]]
-    ) -> Optional[RouteTarget]:
+    def _select_target(self, matched_rules: List[Tuple[str, float]]) -> Optional[RouteTarget]:
         """根据匹配规则选择目标
 
         Args:
@@ -250,16 +242,13 @@ class PromptRouter:
         # 这里我们使用元数据来关联规则和目标
         if best_rule_name in self._rules:
             rule = self._rules[best_rule_name]
-            target_name = rule.metadata.get('target_name')
+            target_name = rule.metadata.get("target_name")
             if target_name and target_name in self._targets:
                 return self._targets[target_name]
 
         return self._default_target
 
-    def _calculate_confidence(
-        self,
-        matched_rules: List[Tuple[str, float]]
-    ) -> float:
+    def _calculate_confidence(self, matched_rules: List[Tuple[str, float]]) -> float:
         """计算路由置信度
 
         Args:
@@ -281,12 +270,7 @@ class PromptRouter:
             Dict[str, Any]: 包含路由总数、平均置信度、常用目标和规则的统计信息
         """
         if not self._history:
-            return {
-                'total_routes': 0,
-                'avg_confidence': 0.0,
-                'most_used_targets': [],
-                'most_matched_rules': []
-            }
+            return {"total_routes": 0, "avg_confidence": 0.0, "most_used_targets": [], "most_matched_rules": []}
 
         total_routes = len(self._history)
         avg_confidence = sum(r.confidence for r in self._history) / total_routes
@@ -298,11 +282,7 @@ class PromptRouter:
                 target_name = result.selected_target.name
                 target_counts[target_name] = target_counts.get(target_name, 0) + 1
 
-        most_used_targets = sorted(
-            target_counts.items(),
-            key=lambda x: x[1],
-            reverse=True
-        )[:5]
+        most_used_targets = sorted(target_counts.items(), key=lambda x: x[1], reverse=True)[:5]
 
         # 统计最常匹配的规则
         rule_counts = {}
@@ -310,17 +290,13 @@ class PromptRouter:
             for rule_name, _ in result.matched_rules:
                 rule_counts[rule_name] = rule_counts.get(rule_name, 0) + 1
 
-        most_matched_rules = sorted(
-            rule_counts.items(),
-            key=lambda x: x[1],
-            reverse=True
-        )[:5]
+        most_matched_rules = sorted(rule_counts.items(), key=lambda x: x[1], reverse=True)[:5]
 
         return {
-            'total_routes': total_routes,
-            'avg_confidence': avg_confidence,
-            'most_used_targets': most_used_targets,
-            'most_matched_rules': most_matched_rules
+            "total_routes": total_routes,
+            "avg_confidence": avg_confidence,
+            "most_used_targets": most_used_targets,
+            "most_matched_rules": most_matched_rules,
         }
 
     def save_config(self, path: Optional[Path] = None) -> Path:
@@ -338,11 +314,11 @@ class PromptRouter:
         # 序列化规则
         rules_data = {
             name: {
-                'keywords': rule.keywords,
-                'patterns': rule.patterns,
-                'priority': rule.priority,
-                'strategy': rule.strategy.value,
-                'metadata': rule.metadata
+                "keywords": rule.keywords,
+                "patterns": rule.patterns,
+                "priority": rule.priority,
+                "strategy": rule.strategy.value,
+                "metadata": rule.metadata,
             }
             for name, rule in self._rules.items()
         }
@@ -350,28 +326,28 @@ class PromptRouter:
         # 序列化目标
         targets_data = {
             name: {
-                'agent_type': target.agent_type,
-                'description': target.description,
-                'capabilities': target.capabilities,
-                'metadata': target.metadata
+                "agent_type": target.agent_type,
+                "description": target.description,
+                "capabilities": target.capabilities,
+                "metadata": target.metadata,
             }
             for name, target in self._targets.items()
         }
 
         config = {
-            'rules': rules_data,
-            'targets': targets_data,
-            'default_target': self._default_target.name if self._default_target else None,
-            'saved_at': datetime.now().isoformat()
+            "rules": rules_data,
+            "targets": targets_data,
+            "default_target": self._default_target.name if self._default_target else None,
+            "saved_at": datetime.now().isoformat(),
         }
 
-        with open(path, 'w') as f:
+        with open(path, "w") as f:
             json.dump(config, f, indent=2)
 
         return path
 
     @classmethod
-    def load_config(cls, path: Path) -> 'PromptRouter':
+    def load_config(cls, path: Path) -> "PromptRouter":
         """加载路由器配置
 
         Args:
@@ -390,31 +366,31 @@ class PromptRouter:
         router = cls()
 
         # 加载规则
-        for name, rule_data in config['rules'].items():
+        for name, rule_data in config["rules"].items():
             rule = RouteRule(
                 name=name,
-                keywords=rule_data['keywords'],
-                patterns=rule_data['patterns'],
-                priority=rule_data['priority'],
-                strategy=RouteStrategy(rule_data['strategy']),
-                metadata=rule_data['metadata']
+                keywords=rule_data["keywords"],
+                patterns=rule_data["patterns"],
+                priority=rule_data["priority"],
+                strategy=RouteStrategy(rule_data["strategy"]),
+                metadata=rule_data["metadata"],
             )
             router.add_rule(rule)
 
         # 加载目标
-        for name, target_data in config['targets'].items():
+        for name, target_data in config["targets"].items():
             target = RouteTarget(
                 name=name,
-                agent_type=target_data['agent_type'],
-                description=target_data['description'],
-                capabilities=target_data['capabilities'],
-                metadata=target_data['metadata']
+                agent_type=target_data["agent_type"],
+                description=target_data["description"],
+                capabilities=target_data["capabilities"],
+                metadata=target_data["metadata"],
             )
             router.add_target(target)
 
         # 设置默认目标
-        if config['default_target']:
-            default_target = router._targets.get(config['default_target'])
+        if config["default_target"]:
+            default_target = router._targets.get(config["default_target"])
             if default_target:
                 router.set_default_target(default_target)
 
@@ -428,6 +404,7 @@ class PromptRouter:
 # ============================================================================
 # 预定义路由配置
 # ============================================================================
+
 
 def create_default_router() -> PromptRouter:
     """创建默认的 PromptRouter 配置
@@ -450,26 +427,26 @@ def create_default_router() -> PromptRouter:
             name="code_analyzer",
             agent_type="CodeAnalysisAgent",
             description="代码分析和优化",
-            capabilities=["静态分析", "性能优化", "代码重构"]
+            capabilities=["静态分析", "性能优化", "代码重构"],
         ),
         RouteTarget(
             name="writer",
             agent_type="WriterAgent",
             description="文档和内容生成",
-            capabilities=["文档生成", "内容创作", "翻译"]
+            capabilities=["文档生成", "内容创作", "翻译"],
         ),
         RouteTarget(
             name="tester",
             agent_type="TestingAgent",
             description="测试代码生成",
-            capabilities=["单元测试", "集成测试", "测试优化"]
+            capabilities=["单元测试", "集成测试", "测试优化"],
         ),
         RouteTarget(
             name="explainer",
             agent_type="ExplainerAgent",
             description="概念解释和教学",
-            capabilities=["概念解释", "教程生成", "知识解答"]
-        )
+            capabilities=["概念解释", "教程生成", "知识解答"],
+        ),
     ]
 
     for target in targets:
@@ -481,26 +458,23 @@ def create_default_router() -> PromptRouter:
             name="code_analysis",
             keywords=["代码", "优化", "重构", "性能", "分析"],
             priority=1,
-            metadata={"target_name": "code_analyzer"}
+            metadata={"target_name": "code_analyzer"},
         ),
         RouteRule(
             name="testing",
             keywords=["测试", "单元测试", "测试用例", "测试覆盖"],
             priority=1,
-            metadata={"target_name": "tester"}
+            metadata={"target_name": "tester"},
         ),
         RouteRule(
-            name="writing",
-            keywords=["写", "文档", "生成文档", "创作", "翻译"],
-            priority=1,
-            metadata={"target_name": "writer"}
+            name="writing", keywords=["写", "文档", "生成文档", "创作", "翻译"], priority=1, metadata={"target_name": "writer"}
         ),
         RouteRule(
             name="explanation",
             keywords=["解释", "什么是", "如何", "为什么", "原理"],
             priority=1,
-            metadata={"target_name": "explainer"}
-        )
+            metadata={"target_name": "explainer"},
+        ),
     ]
 
     for rule in rules:
@@ -528,21 +502,9 @@ def create_code_focused_router() -> PromptRouter:
 
     # 代码相关目标
     targets = [
-        RouteTarget(
-            name="python_expert",
-            agent_type="PythonExpertAgent",
-            description="Python专家"
-        ),
-        RouteTarget(
-            name="web_dev",
-            agent_type="WebDevAgent",
-            description="Web开发专家"
-        ),
-        RouteTarget(
-            name="data_science",
-            agent_type="DataScienceAgent",
-            description="数据科学专家"
-        )
+        RouteTarget(name="python_expert", agent_type="PythonExpertAgent", description="Python专家"),
+        RouteTarget(name="web_dev", agent_type="WebDevAgent", description="Web开发专家"),
+        RouteTarget(name="data_science", agent_type="DataScienceAgent", description="数据科学专家"),
     ]
 
     for target in targets:
@@ -554,20 +516,17 @@ def create_code_focused_router() -> PromptRouter:
             name="python",
             keywords=["python", "django", "flask", "pandas"],
             priority=2,
-            metadata={"target_name": "python_expert"}
+            metadata={"target_name": "python_expert"},
         ),
         RouteRule(
-            name="web",
-            keywords=["html", "css", "javascript", "react", "vue"],
-            priority=2,
-            metadata={"target_name": "web_dev"}
+            name="web", keywords=["html", "css", "javascript", "react", "vue"], priority=2, metadata={"target_name": "web_dev"}
         ),
         RouteRule(
             name="data",
             keywords=["数据", "机器学习", "深度学习", "ai", "模型"],
             priority=2,
-            metadata={"target_name": "data_science"}
-        )
+            metadata={"target_name": "data_science"},
+        ),
     ]
 
     for rule in rules:

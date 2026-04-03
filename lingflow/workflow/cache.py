@@ -15,7 +15,7 @@ import logging
 import os
 import threading
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class CachedWorkflow:
     """缓存的工作流数据"""
+
     definition: Dict[str, Any]
     file_path: str
     mtime: float  # 文件修改时间
@@ -38,6 +39,7 @@ class CachedWorkflow:
 @dataclass
 class CacheConfig:
     """缓存配置"""
+
     ttl_seconds: int = 300  # 5 分钟
     max_size: int = 100  # 最多缓存 100 个工作流
     enable_file_watching: bool = True  # 是否检测文件变更
@@ -135,10 +137,7 @@ class WorkflowCache:
             return
 
         # 按访问时间和缓存时间排序（最少使用的优先删除）
-        items = sorted(
-            self._cache.items(),
-            key=lambda x: (x[1].access_count, x[1].cached_at)
-        )
+        items = sorted(self._cache.items(), key=lambda x: (x[1].access_count, x[1].cached_at))
 
         # 删除最旧的条目
         to_remove = len(self._cache) - self._config.max_size
@@ -148,6 +147,7 @@ class WorkflowCache:
 
     def _start_cleanup_thread(self):
         """启动定期清理线程"""
+
         def cleanup_worker():
             while True:
                 time.sleep(60)  # 每分钟清理一次

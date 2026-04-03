@@ -3,7 +3,7 @@
 """
 
 import json
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from pathlib import Path
 from datetime import datetime
 
@@ -48,18 +48,18 @@ class ReportGenerator:
         lines.append("代码审查报告")
         lines.append("=" * 60)
 
-        if 'overall_score' in result:
-            score = result['overall_score']
+        if "overall_score" in result:
+            score = result["overall_score"]
             lines.append(f"总体评分: {score:.2f}/5.0")
 
-        if 'dimensions' in result:
+        if "dimensions" in result:
             lines.append("\n各维度评分:")
-            for dim_name, dim_data in result['dimensions'].items():
-                score = dim_data.get('score', 0)
-                issues_count = len(dim_data.get('issues', []))
+            for dim_name, dim_data in result["dimensions"].items():
+                score = dim_data.get("score", 0)
+                issues_count = len(dim_data.get("issues", []))
                 lines.append(f"  {dim_name}: {score:.2f} ({issues_count} 个问题)")
 
-        if 'reviewed_files' in result:
+        if "reviewed_files" in result:
             lines.append(f"\n审查文件数: {len(result['reviewed_files'])}")
 
         return "\n".join(lines)
@@ -73,18 +73,18 @@ class ReportGenerator:
         lines = []
         lines.append("# 代码审查报告\n")
 
-        if 'overall_score' in result:
-            score = result['overall_score']
+        if "overall_score" in result:
+            score = result["overall_score"]
             lines.append(f"## 总体评分: {score:.2f}/5.0\n")
 
-        if 'dimensions' in result:
+        if "dimensions" in result:
             lines.append("## 各维度详情\n")
-            for dim_name, dim_data in result['dimensions'].items():
+            for dim_name, dim_data in result["dimensions"].items():
                 lines.append(f"### {dim_name}")
-                score = dim_data.get('score', 0)
+                score = dim_data.get("score", 0)
                 lines.append(f"**评分**: {score:.2f}/5.0\n")
 
-                issues = dim_data.get('issues', [])
+                issues = dim_data.get("issues", [])
                 if issues:
                     lines.append("**问题**:")
                     for issue in issues[:10]:  # 只显示前10个
@@ -102,7 +102,7 @@ class ReportGenerator:
             file_path: 目标文件路径
         """
         file_path.parent.mkdir(parents=True, exist_ok=True)
-        file_path.write_text(report, encoding='utf-8')
+        file_path.write_text(report, encoding="utf-8")
 
     def generate_filename(self, prefix: str = "review") -> str:
         """

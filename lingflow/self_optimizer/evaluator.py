@@ -3,13 +3,10 @@ LingFlow 自优化评估器
 评估代码结构质量
 """
 
-import os
 import ast
-import time
-import sys
 import importlib.util
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional
 from dataclasses import dataclass
 
 
@@ -32,6 +29,7 @@ def _get_code_review_module():
 @dataclass
 class StructureMetrics:
     """结构指标"""
+
     total_classes: int
     large_classes: int
     total_methods: int
@@ -95,7 +93,7 @@ class StructureEvaluator:
         # 遍历Python文件
         for py_file in self.target_path.rglob("*.py"):
             try:
-                with open(py_file, 'r', encoding='utf-8') as f:
+                with open(py_file, "r", encoding="utf-8") as f:
                     source = f.read()
 
                 tree = ast.parse(source)
@@ -112,10 +110,7 @@ class StructureEvaluator:
                             violations += 1
 
                         # 统计方法数
-                        method_count = len([
-                            n for n in node.body
-                            if isinstance(n, ast.FunctionDef)
-                        ])
+                        method_count = len([n for n in node.body if isinstance(n, ast.FunctionDef)])
                         method_counts.append(method_count)
                         total_methods += method_count
 
@@ -135,6 +130,7 @@ class StructureEvaluator:
             except (SyntaxError, UnicodeDecodeError, PermissionError, OSError) as e:
                 # 跳过解析错误的文件
                 import logging
+
                 logging.getLogger(__name__).warning(f"无法解析文件 {py_file}: {e}")
                 continue
 
@@ -152,7 +148,7 @@ class StructureEvaluator:
             avg_class_size=avg_class_size,
             avg_method_count=avg_method_count,
             high_coupling=high_coupling,
-            violations=violations
+            violations=violations,
         )
 
     def _count_class_lines(self, class_node: ast.ClassDef, source: str) -> int:
@@ -184,7 +180,7 @@ class StructureEvaluator:
             "max_method_count": 25,
             "max_complexity": 20,
             "max_nesting_depth": 6,
-            "coupling_limit": 15.0
+            "coupling_limit": 15.0,
         }
 
         metrics = self._analyze_structure(default_params)
@@ -208,14 +204,10 @@ class StructureEvaluator:
             if module and spec:
                 spec.loader.exec_module(module)
 
-                params = {
-                    "focus": "architecture",
-                    "files": [str(self.target_path)],
-                    "strict": True
-                }
+                params = {"focus": "architecture", "files": [str(self.target_path)], "strict": True}
 
                 return getattr(module, "review_code", lambda x: {})(params)
-        except Exception as e:
+        except Exception:
             pass
 
         # 如果加载失败，返回空结果
@@ -236,7 +228,7 @@ def fallback_evaluate(params: Dict[str, Any], target_path: str = ".") -> float:
     return evaluator.evaluate(params)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # 测试
     evaluator = StructureEvaluator("/home/ai/LingFlow")
 
@@ -245,7 +237,7 @@ if __name__ == "__main__":
         "max_method_count": 15,
         "max_complexity": 10,
         "max_nesting_depth": 4,
-        "coupling_limit": 10.0
+        "coupling_limit": 10.0,
     }
 
     score = evaluator.evaluate(params)

@@ -14,7 +14,6 @@ LingFlow AI 友好接口改进
 import asyncio
 from typing import Any, Dict, List, Optional, Callable
 from pathlib import Path
-from dataclasses import dataclass
 
 from lingflow import LingFlow
 from lingflow.coordination.coordinator import Task
@@ -37,12 +36,7 @@ class AIFriendlyLingFlow(LingFlow):
 
     # ==================== 常见操作的便捷方法 ====================
 
-    def review(
-        self,
-        path: str = ".",
-        rules: Optional[List[str]] = None,
-        **kwargs
-    ) -> Dict[str, Any]:
+    def review(self, path: str = ".", rules: Optional[List[str]] = None, **kwargs) -> Dict[str, Any]:
         """代码审查 - 最常用的操作
 
         智能默认:
@@ -63,19 +57,10 @@ class AIFriendlyLingFlow(LingFlow):
             >>> lingflow.review("src/")  # 审查 src 目录
             >>> lingflow.review(".", rules=["security", "performance"])  # 指定规则
         """
-        params = {
-            "path": str(path),
-            "rules": rules or ["security", "bugs", "code_quality"],
-            **kwargs
-        }
+        params = {"path": str(path), "rules": rules or ["security", "bugs", "code_quality"], **kwargs}
         return self.run_skill("code-review", params)
 
-    def test(
-        self,
-        path: str = ".",
-        verbose: bool = False,
-        **kwargs
-    ) -> Dict[str, Any]:
+    def test(self, path: str = ".", verbose: bool = False, **kwargs) -> Dict[str, Any]:
         """运行测试 - 另一个常用操作
 
         Args:
@@ -90,19 +75,10 @@ class AIFriendlyLingFlow(LingFlow):
             >>> lingflow.test()  # 运行所有测试
             >>> lingflow.test("tests/test_core.py")  # 运行特定测试
         """
-        params = {
-            "path": str(path),
-            "verbose": verbose,
-            **kwargs
-        }
+        params = {"path": str(path), "verbose": verbose, **kwargs}
         return self.run_skill("test-runner", params)
 
-    def refactor(
-        self,
-        path: str = ".",
-        style: str = "clean",
-        **kwargs
-    ) -> Dict[str, Any]:
+    def refactor(self, path: str = ".", style: str = "clean", **kwargs) -> Dict[str, Any]:
         """代码重构
 
         Args:
@@ -113,19 +89,10 @@ class AIFriendlyLingFlow(LingFlow):
         Returns:
             重构结果字典
         """
-        params = {
-            "path": str(path),
-            "style": style,
-            **kwargs
-        }
+        params = {"path": str(path), "style": style, **kwargs}
         return self.run_skill("code-refactor", params)
 
-    def debug(
-        self,
-        error: str,
-        context: Optional[Dict] = None,
-        **kwargs
-    ) -> Dict[str, Any]:
+    def debug(self, error: str, context: Optional[Dict] = None, **kwargs) -> Dict[str, Any]:
         """智能调试
 
         Args:
@@ -136,11 +103,7 @@ class AIFriendlyLingFlow(LingFlow):
         Returns:
             调试分析结果
         """
-        params = {
-            "error": error,
-            "context": context or {},
-            **kwargs
-        }
+        params = {"error": error, "context": context or {}, **kwargs}
         return self.run_skill("systematic-debugging", params)
 
     # ==================== 工作流便捷方法 ====================
@@ -186,11 +149,7 @@ class AIFriendlyLingFlow(LingFlow):
     # ==================== 智能执行（带重试） ====================
 
     async def execute_with_retry(
-        self,
-        skill_name: str,
-        params: Dict[str, Any],
-        max_retries: int = 3,
-        on_retry: Optional[Callable] = None
+        self, skill_name: str, params: Dict[str, Any], max_retries: int = 3, on_retry: Optional[Callable] = None
     ) -> Dict[str, Any]:
         """带智能重试的技能执行
 
@@ -224,17 +183,10 @@ class AIFriendlyLingFlow(LingFlow):
                     on_retry(attempt, e)
 
         # 所有重试都失败，返回错误结果
-        return {
-            "success": False,
-            "error": str(last_error),
-            "attempts": max_retries
-        }
+        return {"success": False, "error": str(last_error), "attempts": max_retries}
 
     async def execute_tasks_with_fallback(
-        self,
-        tasks: List[Task],
-        max_parallel: int = 2,
-        fallback_strategy: str = "skip"
+        self, tasks: List[Task], max_parallel: int = 2, fallback_strategy: str = "skip"
     ) -> Dict[str, Dict[str, Any]]:
         """带回退机制的并行任务执行
 
@@ -256,9 +208,7 @@ class AIFriendlyLingFlow(LingFlow):
             """执行单个任务（带回退）"""
             try:
                 async with semaphore:
-                    result = await asyncio.get_event_loop().run_in_executor(
-                        None, self.run_skill, task.skill_name, task.params
-                    )
+                    result = await asyncio.get_event_loop().run_in_executor(None, self.run_skill, task.skill_name, task.params)
                     return (task.id, result)
             except Exception as e:
                 if fallback_strategy == "abort":
@@ -266,8 +216,7 @@ class AIFriendlyLingFlow(LingFlow):
                 return (task.id, {"success": False, "error": str(e)})
 
         executed = await asyncio.gather(
-            *[execute_one(task) for task in tasks],
-            return_exceptions=(fallback_strategy != "abort")
+            *[execute_one(task) for task in tasks], return_exceptions=(fallback_strategy != "abort")
         )
 
         for item in executed:
@@ -280,10 +229,7 @@ class AIFriendlyLingFlow(LingFlow):
 
     # ==================== 上下文感知 ====================
 
-    def suggest_next_action(
-        self,
-        context: Dict[str, Any]
-    ) -> List[str]:
+    def suggest_next_action(self, context: Dict[str, Any]) -> List[str]:
         """基于上下文建议下一步操作
 
         Args:
@@ -311,11 +257,7 @@ class AIFriendlyLingFlow(LingFlow):
 
     # ==================== 批量操作 ====================
 
-    def batch_review(
-        self,
-        paths: List[str],
-        **kwargs
-    ) -> List[Dict[str, Any]]:
+    def batch_review(self, paths: List[str], **kwargs) -> List[Dict[str, Any]]:
         """批量代码审查
 
         Args:
@@ -331,11 +273,7 @@ class AIFriendlyLingFlow(LingFlow):
             results.append(result)
         return results
 
-    def batch_test(
-        self,
-        paths: List[str],
-        **kwargs
-    ) -> List[Dict[str, Any]]:
+    def batch_test(self, paths: List[str], **kwargs) -> List[Dict[str, Any]]:
         """批量测试
 
         Args:
@@ -353,6 +291,7 @@ class AIFriendlyLingFlow(LingFlow):
 
 
 # ==================== 全局便捷函数 ====================
+
 
 def create_ai_friendly() -> AIFriendlyLingFlow:
     """创建 AI 友好的 LingFlow 实例"""
@@ -373,8 +312,7 @@ def get_ai_friendly() -> AIFriendlyLingFlow:
 
 # ==================== 使用示例 ====================
 
-if __name__ == "__main__":
-    import asyncio
+if __name__ == "__main__":  # pragma: no cover
 
     # 创建 AI 友好实例
     lingflow = create_ai_friendly()
@@ -386,12 +324,9 @@ if __name__ == "__main__":
 
     # 示例 2: 带重试的执行
     print("\n示例 2: 带重试的执行")
+
     async def with_retry():
-        result = await lingflow.execute_with_retry(
-            "code-review",
-            {"path": "src/"},
-            max_retries=2
-        )
+        result = await lingflow.execute_with_retry("code-review", {"path": "src/"}, max_retries=2)
         print(f"执行完成: {result}")
 
     asyncio.run(with_retry())
@@ -408,8 +343,5 @@ if __name__ == "__main__":
 
     # 示例 5: 智能建议
     print("\n示例 5: 智能建议")
-    suggestions = lingflow.suggest_next_action({
-        "stage": "development",
-        "tests": "failing"
-    })
+    suggestions = lingflow.suggest_next_action({"stage": "development", "tests": "failing"})
     print(f"建议操作: {suggestions}")

@@ -5,7 +5,7 @@ LingFlow Phase 4 集成到现有 self_optimizer
 """
 
 import logging
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
 
@@ -30,27 +30,23 @@ class Phase4Integration:
             Phase 4兼容的配置字典
         """
         # 提取目标
-        goal = request.goal if hasattr(request, 'goal') else "structure"
+        goal = request.goal if hasattr(request, "goal") else "structure"
 
         # 提取路径
-        target = request.target if hasattr(request, 'target') else "."
+        target = request.target if hasattr(request, "target") else "."
 
         # 提取配置
-        config = request.config if hasattr(request, 'config') else {}
+        config = request.config if hasattr(request, "config") else {}
 
         # 转换为Phase 4配置
         phase4_config = {
             "n_trials": config.get("max_experiments", 50),
             "timeout": config.get("time_budget", 120),
             "early_stopping_patience": config.get("early_stopping_patience", 10),
-            "generate_reports": True
+            "generate_reports": True,
         }
 
-        return {
-            "target_path": target,
-            "goal": goal,
-            "config": phase4_config
-        }
+        return {"target_path": target, "goal": goal, "config": phase4_config}
 
     @staticmethod
     def convert_to_legacy_result(phase4_result: Dict[str, Any], request):
@@ -68,11 +64,13 @@ class Phase4Integration:
         # 构建历史
         history = []
         for i in range(phase4_result.get("n_trials", 0)):
-            history.append({
-                "experiment_id": i,
-                "params": phase4_result.get("best_params", {}),
-                "score": phase4_result.get("best_score", float('inf'))
-            })
+            history.append(
+                {
+                    "experiment_id": i,
+                    "params": phase4_result.get("best_params", {}),
+                    "score": phase4_result.get("best_score", float("inf")),
+                }
+            )
 
         return OptimizationResult(
             success=True,
@@ -80,7 +78,7 @@ class Phase4Integration:
             best_score=phase4_result.get("best_score", 0),
             experiments=phase4_result.get("n_trials", 0),
             duration=phase4_result.get("total_time", 0),
-            history=history
+            history=history,
         )
 
 
@@ -102,6 +100,7 @@ class EnhancedOptimizerAdapter:
         if use_phase4:
             try:
                 from lingflow.self_optimizer.phase4 import OptimizationEngine
+
                 self.engine = OptimizationEngine()
                 logger.info("使用Phase 4贝叶斯优化器")
             except ImportError as e:
@@ -110,6 +109,7 @@ class EnhancedOptimizerAdapter:
 
         if not self.use_phase4:
             from lingflow.self_optimizer.optimizer import SynchronousOptimizer
+
             self.legacy_optimizer = SynchronousOptimizer()
 
     def optimize(self, request):
@@ -125,9 +125,7 @@ class EnhancedOptimizerAdapter:
             # 使用Phase 4优化
             config = Phase4Integration.enhance_optimizer_request(request)
             result = self.engine.optimize_single_objective(
-                target_path=config["target_path"],
-                goal=config["goal"],
-                config=config["config"]
+                target_path=config["target_path"], goal=config["goal"], config=config["config"]
             )
 
             # 转换结果格式
@@ -146,10 +144,8 @@ def patch_self_optimizer():
         from lingflow import self_optimizer as optimizer_module
 
         # 保存原始类
-        if not hasattr(optimizer_module, '_original_SynchronousOptimizer'):
-            optimizer_module._original_SynchronousOptimizer = (
-                optimizer_module.SynchronousOptimizer
-            )
+        if not hasattr(optimizer_module, "_original_SynchronousOptimizer"):
+            optimizer_module._original_SynchronousOptimizer = optimizer_module.SynchronousOptimizer
 
         # 替换为增强版本
         optimizer_module.SynchronousOptimizer = EnhancedOptimizerAdapter

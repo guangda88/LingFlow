@@ -13,7 +13,6 @@ LingFlow 安全审计日志记录器
 
 import json
 import logging
-import os
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -22,6 +21,7 @@ from typing import Any, Dict, List, Optional
 
 class AuditEventType(Enum):
     """审计事件类型"""
+
     SKILL_EXECUTION = "skill_execution"
     CONFIG_CHANGE = "config_change"
     ACCESS_VIOLATION = "access_violation"
@@ -36,6 +36,7 @@ class AuditEventType(Enum):
 
 class AuditSeverity(Enum):
     """审计事件严重性"""
+
     INFO = "INFO"
     WARNING = "WARNING"
     ERROR = "ERROR"
@@ -126,9 +127,7 @@ class SecurityAuditLogger:
         self.logger.handlers.clear()
 
         # 设置格式
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
         # 控制台处理器
         if enable_console:
@@ -188,9 +187,9 @@ class SecurityAuditLogger:
             self.logger.info(log_message)
 
         # 记录详细信息到单独的日志文件
-        if hasattr(self, 'log_file'):
+        if hasattr(self, "log_file"):
             json_log_file = self.log_file.parent / f"{self.log_file.stem}_detailed{self.log_file.suffix}"
-            with open(json_log_file, 'a', encoding='utf-8') as f:
+            with open(json_log_file, "a", encoding="utf-8") as f:
                 f.write(event.to_json() + "\n")
 
         # 存储到历史记录
@@ -436,8 +435,7 @@ class SecurityAuditLogger:
 
         # 最近的严重事件
         recent_critical = [
-            e for e in self._event_history[-10:]
-            if e["severity"] in [AuditSeverity.ERROR.value, AuditSeverity.CRITICAL.value]
+            e for e in self._event_history[-10:] if e["severity"] in [AuditSeverity.ERROR.value, AuditSeverity.CRITICAL.value]
         ]
 
         return {

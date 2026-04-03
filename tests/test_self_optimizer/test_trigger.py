@@ -12,7 +12,7 @@ class TestOptimizationTrigger:
 
     def test_quality_trigger(self):
         """测试质量触发条件"""
-        trigger = OptimizationTrigger()
+        trigger = OptimizationTrigger(config=OptimizationConfig())
 
         # 代码审查得分低
         context = {
@@ -27,7 +27,7 @@ class TestOptimizationTrigger:
 
     def test_structure_trigger(self):
         """测试结构触发条件"""
-        trigger = OptimizationTrigger()
+        trigger = OptimizationTrigger(config=OptimizationConfig())
 
         # 复杂度高
         context = {
@@ -42,7 +42,7 @@ class TestOptimizationTrigger:
 
     def test_performance_trigger(self):
         """测试性能触发条件"""
-        trigger = OptimizationTrigger()
+        trigger = OptimizationTrigger(config=OptimizationConfig())
 
         # 执行时间增加
         context = {
@@ -58,7 +58,7 @@ class TestOptimizationTrigger:
 
     def test_no_trigger(self):
         """测试不满足触发条件"""
-        trigger = OptimizationTrigger()
+        trigger = OptimizationTrigger(config=OptimizationConfig())
 
         # 所有指标都正常
         context = {
@@ -75,7 +75,7 @@ class TestOptimizationTrigger:
 
     def test_user_trigger(self):
         """测试用户主动触发"""
-        trigger = OptimizationTrigger()
+        trigger = OptimizationTrigger(config=OptimizationConfig())
 
         context = {
             "user_triggered": True,

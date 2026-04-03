@@ -13,11 +13,7 @@ import sys
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from lingflow.testing.scenario import (
-    CodeTestScenario,
-    CapturedToolCall,
-    TestInteractionType
-)
+from lingflow.testing.scenario import CodeTestScenario, CapturedToolCall
 
 
 class MockSecurityScanner:
@@ -28,18 +24,20 @@ class MockSecurityScanner:
         """扫描 SQL 注入漏洞"""
         vulnerabilities = []
         if "+" in code and "SELECT" in code:
-            vulnerabilities.append({
-                "type": "sql_injection",
-                "severity": "HIGH",
-                "line": 1,
-                "description": "Direct string concatenation in SQL query"
-            })
+            vulnerabilities.append(
+                {
+                    "type": "sql_injection",
+                    "severity": "HIGH",
+                    "line": 1,
+                    "description": "Direct string concatenation in SQL query",
+                }
+            )
 
         return {
             "scanner": "sql_injection",
             "vulnerabilities": vulnerabilities,
             "vulnerability_count": len(vulnerabilities),
-            "safe": len(vulnerabilities) == 0
+            "safe": len(vulnerabilities) == 0,
         }
 
     @staticmethod
@@ -47,18 +45,20 @@ class MockSecurityScanner:
         """扫描 XSS 漏洞"""
         vulnerabilities = []
         if "return user_input" in code:
-            vulnerabilities.append({
-                "type": "xss",
-                "severity": "HIGH",
-                "line": 2,
-                "description": "Direct output of user input without sanitization"
-            })
+            vulnerabilities.append(
+                {
+                    "type": "xss",
+                    "severity": "HIGH",
+                    "line": 2,
+                    "description": "Direct output of user input without sanitization",
+                }
+            )
 
         return {
             "scanner": "xss",
             "vulnerabilities": vulnerabilities,
             "vulnerability_count": len(vulnerabilities),
-            "safe": len(vulnerabilities) == 0
+            "safe": len(vulnerabilities) == 0,
         }
 
     @staticmethod
@@ -66,26 +66,20 @@ class MockSecurityScanner:
         """扫描硬编码密钥"""
         vulnerabilities = []
         if "sk-" in code:
-            vulnerabilities.append({
-                "type": "hardcoded_secret",
-                "severity": "CRITICAL",
-                "line": 1,
-                "description": "Hardcoded API key detected"
-            })
+            vulnerabilities.append(
+                {"type": "hardcoded_secret", "severity": "CRITICAL", "line": 1, "description": "Hardcoded API key detected"}
+            )
 
         if "password = " in code and "123456" in code:
-            vulnerabilities.append({
-                "type": "hardcoded_secret",
-                "severity": "HIGH",
-                "line": 2,
-                "description": "Hardcoded weak password detected"
-            })
+            vulnerabilities.append(
+                {"type": "hardcoded_secret", "severity": "HIGH", "line": 2, "description": "Hardcoded weak password detected"}
+            )
 
         return {
             "scanner": "hardcoded_secrets",
             "vulnerabilities": vulnerabilities,
             "vulnerability_count": len(vulnerabilities),
-            "safe": len(vulnerabilities) == 0
+            "safe": len(vulnerabilities) == 0,
         }
 
 
@@ -102,7 +96,7 @@ class TestSecurityScenarios:
             code_content="def get_user(user_id):\n    query = 'SELECT * FROM users WHERE id = ' + user_id\n    return db.execute(query)",
             max_turns=2,
             expected_tools=["security_scan"],
-            expectations=lambda calls: self._validate_sql_injection(calls)
+            expectations=lambda calls: self._validate_sql_injection(calls),
         )
 
         calls = [
@@ -117,12 +111,12 @@ class TestSecurityScenarios:
                             "type": "sql_injection",
                             "severity": "HIGH",
                             "line": 2,
-                            "description": "Direct string concatenation in SQL query"
+                            "description": "Direct string concatenation in SQL query",
                         }
                     ],
                     "vulnerability_count": 1,
-                    "safe": False
-                }
+                    "safe": False,
+                },
             )
         ]
 
@@ -147,7 +141,7 @@ class TestSecurityScenarios:
             code_content="def render_comment(user_input):\n    return user_input",
             max_turns=2,
             expected_tools=["security_scan"],
-            expectations=lambda calls: self._validate_xss(calls)
+            expectations=lambda calls: self._validate_xss(calls),
         )
 
         calls = [
@@ -162,12 +156,12 @@ class TestSecurityScenarios:
                             "type": "xss",
                             "severity": "HIGH",
                             "line": 2,
-                            "description": "Direct output of user input without sanitization"
+                            "description": "Direct output of user input without sanitization",
                         }
                     ],
                     "vulnerability_count": 1,
-                    "safe": False
-                }
+                    "safe": False,
+                },
             )
         ]
 
@@ -191,7 +185,7 @@ class TestSecurityScenarios:
             code_content="api_key = 'sk-1234567890abcdef'\npassword = '123456'",
             max_turns=2,
             expected_tools=["security_scan"],
-            expectations=lambda calls: self._validate_hardcoded_secrets(calls)
+            expectations=lambda calls: self._validate_hardcoded_secrets(calls),
         )
 
         calls = [
@@ -206,18 +200,18 @@ class TestSecurityScenarios:
                             "type": "hardcoded_secret",
                             "severity": "CRITICAL",
                             "line": 1,
-                            "description": "Hardcoded API key detected"
+                            "description": "Hardcoded API key detected",
                         },
                         {
                             "type": "hardcoded_secret",
                             "severity": "HIGH",
                             "line": 2,
-                            "description": "Hardcoded weak password detected"
-                        }
+                            "description": "Hardcoded weak password detected",
+                        },
                     ],
                     "vulnerability_count": 2,
-                    "safe": False
-                }
+                    "safe": False,
+                },
             )
         ]
 
@@ -242,7 +236,7 @@ class TestSecurityScenarios:
             code_content="def process_data(user_input, user_id):\n    query = 'SELECT * FROM data WHERE id = ' + user_id\n    import os\n    os.system('process ' + user_input)\n    api_key = 'sk-abc123'\n    return result",
             max_turns=5,
             expected_tools=["security_scan"],
-            expectations=lambda calls: self._validate_comprehensive_scan(calls)
+            expectations=lambda calls: self._validate_comprehensive_scan(calls),
         )
 
         calls = [
@@ -250,14 +244,14 @@ class TestSecurityScenarios:
                 name="security_scan",
                 args={"scanner": "sql_injection"},
                 timestamp=0.0,
-                result={"vulnerability_count": 1, "safe": False}
+                result={"vulnerability_count": 1, "safe": False},
             ),
             CapturedToolCall(
                 name="security_scan",
                 args={"scanner": "hardcoded_secrets"},
                 timestamp=1.0,
-                result={"vulnerability_count": 1, "safe": False}
-            )
+                result={"vulnerability_count": 1, "safe": False},
+            ),
         ]
 
         scenario.expectations(calls)
@@ -314,7 +308,7 @@ class TestSecurityScannerFunctionality:
 
 
 # 主测试入口
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     import logging
 
     logging.basicConfig(level=logging.INFO)

@@ -5,7 +5,7 @@
 
 import asyncio
 import logging
-from typing import Dict, List, Any, Optional, Set
+from typing import Dict, List, Any, Optional
 from enum import Enum
 from dataclasses import dataclass, field
 
@@ -18,37 +18,41 @@ logger = logging.getLogger(__name__)
 
 class WorkflowType(Enum):
     """工程流类型"""
-    FAST = "fast"              # 快速工程流
-    STABLE = "stable"          # 稳定工程流
-    DEV = "dev"                # 开发工程流
-    TEST = "test"              # 测试工程流
-    DOCUMENTATION = "doc"      # 文档工程流
+
+    FAST = "fast"  # 快速工程流
+    STABLE = "stable"  # 稳定工程流
+    DEV = "dev"  # 开发工程流
+    TEST = "test"  # 测试工程流
+    DOCUMENTATION = "doc"  # 文档工程流
     OPTIMIZATION = "optimize"  # 优化工程流
-    REVIEW = "review"          # 审查工程流
-    DEPLOY = "deploy"          # 部署工程流
+    REVIEW = "review"  # 审查工程流
+    DEPLOY = "deploy"  # 部署工程流
 
 
 class WorkflowPriority(Enum):
     """工程流优先级"""
-    CRITICAL = 0   # 关键路径
-    HIGH = 1       # 高优先级
-    NORMAL = 2     # 正常优先级
-    LOW = 3        # 低优先级
+
+    CRITICAL = 0  # 关键路径
+    HIGH = 1  # 高优先级
+    NORMAL = 2  # 正常优先级
+    LOW = 3  # 低优先级
 
 
 class WorkflowStatus(Enum):
     """工程流状态"""
-    PENDING = "pending"       # 等待执行
-    RUNNING = "running"       # 执行中
-    COMPLETED = "completed"   # 已完成
-    FAILED = "failed"         # 失败
-    BLOCKED = "blocked"       # 被阻塞
-    SKIPPED = "skipped"       # 已跳过
+
+    PENDING = "pending"  # 等待执行
+    RUNNING = "running"  # 执行中
+    COMPLETED = "completed"  # 已完成
+    FAILED = "failed"  # 失败
+    BLOCKED = "blocked"  # 被阻塞
+    SKIPPED = "skipped"  # 已跳过
 
 
 @dataclass
 class WorkflowResult:
     """工程流执行结果"""
+
     workflow_id: str
     success: bool
     status: WorkflowStatus
@@ -65,6 +69,7 @@ class WorkflowResult:
 @dataclass
 class WorkflowConfig:
     """工程流配置"""
+
     skip_steps: List[str] = field(default_factory=list)
     required_steps: List[str] = field(default_factory=list)
     quality_thresholds: Dict[str, Any] = field(default_factory=dict)
@@ -85,7 +90,7 @@ class BaseWorkflow:
         workflow_type: WorkflowType,
         priority: WorkflowPriority = WorkflowPriority.NORMAL,
         coordinator: Optional[AgentCoordinator] = None,
-        config: Optional[WorkflowConfig] = None
+        config: Optional[WorkflowConfig] = None,
     ):
         self.workflow_id = workflow_id
         self.workflow_type = workflow_type
@@ -110,7 +115,7 @@ class BaseWorkflow:
     def add_task(self, task: Task) -> None:
         """添加任务到工程流"""
         task.context = task.context or {}
-        task.context['workflow_id'] = self.workflow_id
+        task.context["workflow_id"] = self.workflow_id
         self.tasks.append(task)
 
     def validate(self) -> bool:
@@ -152,7 +157,7 @@ class BaseWorkflow:
                 workflow_id=self.workflow_id,
                 success=False,
                 status=WorkflowStatus.FAILED,
-                error="Validation failed"
+                error="Validation failed",
             )
 
         # 检查依赖是否满足
@@ -162,7 +167,7 @@ class BaseWorkflow:
                 workflow_id=self.workflow_id,
                 success=False,
                 status=WorkflowStatus.BLOCKED,
-                error="Dependencies not satisfied"
+                error="Dependencies not satisfied",
             )
 
         self.status = WorkflowStatus.RUNNING
@@ -172,8 +177,7 @@ class BaseWorkflow:
             # 执行任务
             if self.orchestrator:
                 task_results = await self.orchestrator.execute_workflow(
-                    self.tasks,
-                    max_parallel=3 if self.config.parallel_execution else 1
+                    self.tasks, max_parallel=3 if self.config.parallel_execution else 1
                 )
             else:
                 # 如果没有orchestrator，直接执行（简化模式）
@@ -182,10 +186,7 @@ class BaseWorkflow:
             execution_time = asyncio.get_event_loop().time() - start_time
 
             # 检查是否所有任务都成功
-            all_success = all(
-                result.success for result in task_results.values()
-                if isinstance(result, TaskResult)
-            )
+            all_success = all(result.success for result in task_results.values() if isinstance(result, TaskResult))
 
             self.status = WorkflowStatus.COMPLETED if all_success else WorkflowStatus.FAILED
 
@@ -194,10 +195,17 @@ class BaseWorkflow:
                 success=all_success,
                 status=self.status,
                 execution_time=execution_time,
-                tasks_results=task_results
+                tasks_results=task_results,
             )
 
-        except (RuntimeError, ValueError, TypeError, KeyError, AttributeError, asyncio.TimeoutError) as e:
+        except (
+            RuntimeError,
+            ValueError,
+            TypeError,
+            KeyError,
+            AttributeError,
+            asyncio.TimeoutError,
+        ) as e:
             execution_time = asyncio.get_event_loop().time() - start_time
             self.status = WorkflowStatus.FAILED
             logger.error("Workflow %s failed: %s", self.workflow_id, e)
@@ -207,7 +215,7 @@ class BaseWorkflow:
                 success=False,
                 status=WorkflowStatus.FAILED,
                 error=str(e),
-                execution_time=execution_time
+                execution_time=execution_time,
             )
 
     def _check_dependencies(self, context: Dict[str, Any]) -> bool:
@@ -270,19 +278,16 @@ class FastTrackWorkflow(BaseWorkflow):
         self,
         workflow_id: str,
         coordinator: Optional[AgentCoordinator] = None,
-        config: Optional[WorkflowConfig] = None
+        config: Optional[WorkflowConfig] = None,
     ):
         if config is None:
             config = WorkflowConfig(
                 skip_steps=["full_test_suite", "code_review", "documentation"],
                 required_steps=["syntax_check", "unit_test"],
-                quality_thresholds={
-                    "test_coverage": 0.30,
-                    "code_quality": 6.0
-                },
+                quality_thresholds={"test_coverage": 0.30, "code_quality": 6.0},
                 auto_commit=True,
                 bypass_hooks=True,
-                parallel_execution=True
+                parallel_execution=True,
             )
 
         super().__init__(
@@ -290,7 +295,7 @@ class FastTrackWorkflow(BaseWorkflow):
             workflow_type=WorkflowType.FAST,
             priority=WorkflowPriority.HIGH,
             coordinator=coordinator,
-            config=config
+            config=config,
         )
 
 
@@ -307,24 +312,29 @@ class StableTrackWorkflow(BaseWorkflow):
         self,
         workflow_id: str,
         coordinator: Optional[AgentCoordinator] = None,
-        config: Optional[WorkflowConfig] = None
+        config: Optional[WorkflowConfig] = None,
     ):
         if config is None:
             config = WorkflowConfig(
                 skip_steps=[],
                 required_steps=[
-                    "syntax_check", "linting", "unit_test",
-                    "integration_test", "e2e_test", "code_review",
-                    "security_scan", "documentation"
+                    "syntax_check",
+                    "linting",
+                    "unit_test",
+                    "integration_test",
+                    "e2e_test",
+                    "code_review",
+                    "security_scan",
+                    "documentation",
                 ],
                 quality_thresholds={
                     "test_coverage": 0.70,
                     "code_quality": 9.0,
-                    "security_scan": True
+                    "security_scan": True,
                 },
                 auto_commit=False,
                 bypass_hooks=False,
-                parallel_execution=True
+                parallel_execution=True,
             )
 
         super().__init__(
@@ -332,7 +342,7 @@ class StableTrackWorkflow(BaseWorkflow):
             workflow_type=WorkflowType.STABLE,
             priority=WorkflowPriority.CRITICAL,
             coordinator=coordinator,
-            config=config
+            config=config,
         )
 
 
@@ -343,20 +353,17 @@ class DevWorkflow(BaseWorkflow):
         self,
         workflow_id: str,
         coordinator: Optional[AgentCoordinator] = None,
-        config: Optional[WorkflowConfig] = None
+        config: Optional[WorkflowConfig] = None,
     ):
         if config is None:
-            config = WorkflowConfig(
-                quality_thresholds={"test_coverage": 0.50},
-                parallel_execution=True
-            )
+            config = WorkflowConfig(quality_thresholds={"test_coverage": 0.50}, parallel_execution=True)
 
         super().__init__(
             workflow_id=workflow_id,
             workflow_type=WorkflowType.DEV,
             priority=WorkflowPriority.CRITICAL,
             coordinator=coordinator,
-            config=config
+            config=config,
         )
 
 
@@ -367,20 +374,17 @@ class TestWorkflow(BaseWorkflow):
         self,
         workflow_id: str,
         coordinator: Optional[AgentCoordinator] = None,
-        config: Optional[WorkflowConfig] = None
+        config: Optional[WorkflowConfig] = None,
     ):
         if config is None:
-            config = WorkflowConfig(
-                quality_thresholds={"test_coverage": 0.70},
-                parallel_execution=True
-            )
+            config = WorkflowConfig(quality_thresholds={"test_coverage": 0.70}, parallel_execution=True)
 
         super().__init__(
             workflow_id=workflow_id,
             workflow_type=WorkflowType.TEST,
             priority=WorkflowPriority.HIGH,
             coordinator=coordinator,
-            config=config
+            config=config,
         )
 
 
@@ -391,14 +395,14 @@ class DocWorkflow(BaseWorkflow):
         self,
         workflow_id: str,
         coordinator: Optional[AgentCoordinator] = None,
-        config: Optional[WorkflowConfig] = None
+        config: Optional[WorkflowConfig] = None,
     ):
         super().__init__(
             workflow_id=workflow_id,
             workflow_type=WorkflowType.DOCUMENTATION,
             priority=WorkflowPriority.NORMAL,
             coordinator=coordinator,
-            config=config
+            config=config,
         )
 
 
@@ -409,14 +413,14 @@ class OptimizeWorkflow(BaseWorkflow):
         self,
         workflow_id: str,
         coordinator: Optional[AgentCoordinator] = None,
-        config: Optional[WorkflowConfig] = None
+        config: Optional[WorkflowConfig] = None,
     ):
         super().__init__(
             workflow_id=workflow_id,
             workflow_type=WorkflowType.OPTIMIZATION,
             priority=WorkflowPriority.NORMAL,
             coordinator=coordinator,
-            config=config
+            config=config,
         )
 
 
@@ -427,14 +431,14 @@ class ReviewWorkflow(BaseWorkflow):
         self,
         workflow_id: str,
         coordinator: Optional[AgentCoordinator] = None,
-        config: Optional[WorkflowConfig] = None
+        config: Optional[WorkflowConfig] = None,
     ):
         super().__init__(
             workflow_id=workflow_id,
             workflow_type=WorkflowType.REVIEW,
             priority=WorkflowPriority.HIGH,
             coordinator=coordinator,
-            config=config
+            config=config,
         )
 
 
@@ -445,22 +449,23 @@ class DeployWorkflow(BaseWorkflow):
         self,
         workflow_id: str,
         coordinator: Optional[AgentCoordinator] = None,
-        config: Optional[WorkflowConfig] = None
+        config: Optional[WorkflowConfig] = None,
     ):
         super().__init__(
             workflow_id=workflow_id,
             workflow_type=WorkflowType.DEPLOY,
             priority=WorkflowPriority.CRITICAL,
             coordinator=coordinator,
-            config=config
+            config=config,
         )
 
 
 class ExecutionStrategy(Enum):
     """执行策略"""
-    PARALLEL = "parallel"      # 完全并行
+
+    PARALLEL = "parallel"  # 完全并行
     SEQUENTIAL = "sequential"  # 顺序执行
-    HYBRID = "hybrid"          # 混合模式
+    HYBRID = "hybrid"  # 混合模式
 
 
 class MultiWorkflowCoordinator:
@@ -472,7 +477,7 @@ class MultiWorkflowCoordinator:
     def __init__(
         self,
         max_parallel_workflows: int = 3,
-        coordinator: Optional[AgentCoordinator] = None
+        coordinator: Optional[AgentCoordinator] = None,
     ):
         self.workflows: Dict[str, BaseWorkflow] = {}
         self.max_parallel = max_parallel_workflows
@@ -491,7 +496,11 @@ class MultiWorkflowCoordinator:
             workflow.orchestrator = WorkflowOrchestrator(self.coordinator)
 
         self.workflows[workflow.workflow_id] = workflow
-        logger.info("Registered workflow: %s (%s)", workflow.workflow_id, workflow.workflow_type.value)
+        logger.info(
+            "Registered workflow: %s (%s)",
+            workflow.workflow_id,
+            workflow.workflow_type.value,
+        )
 
     def get_workflow(self, workflow_id: str) -> Optional[BaseWorkflow]:
         """获取工程流"""
@@ -514,7 +523,7 @@ class MultiWorkflowCoordinator:
     async def execute_all(
         self,
         strategy: ExecutionStrategy = ExecutionStrategy.PARALLEL,
-        context: Optional[Dict[str, Any]] = None
+        context: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, WorkflowResult]:
         """执行所有工程流
 
@@ -526,7 +535,11 @@ class MultiWorkflowCoordinator:
             工作流ID到结果的映射
         """
         context = context or {}
-        logger.info("Executing %d workflows with strategy: %s", len(self.workflows), strategy.value)
+        logger.info(
+            "Executing %d workflows with strategy: %s",
+            len(self.workflows),
+            strategy.value,
+        )
 
         if strategy == ExecutionStrategy.PARALLEL:
             return await self._execute_parallel(context)
@@ -546,10 +559,7 @@ class MultiWorkflowCoordinator:
                 ctx[f"workflow:{workflow.workflow_id}"] = result
                 return result
 
-        tasks = [
-            execute_with_limit(wf, context.copy())
-            for wf in self.workflows.values()
-        ]
+        tasks = [execute_with_limit(wf, context.copy()) for wf in self.workflows.values()]
 
         results_list = await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -572,9 +582,9 @@ class MultiWorkflowCoordinator:
         while len(executed) < len(self.workflows):
             # 找出所有依赖已满足的工程流
             ready = [
-                wf for wf in self.workflows.values()
-                if wf.workflow_id not in executed and
-                all(dep in executed for dep in wf.dependencies)
+                wf
+                for wf in self.workflows.values()
+                if wf.workflow_id not in executed and all(dep in executed for dep in wf.dependencies)
             ]
 
             if not ready:
@@ -595,9 +605,7 @@ class MultiWorkflowCoordinator:
         """混合执行策略：关键路径优先"""
         # 1. 识别关键路径（CRITICAL优先级 + 无依赖）
         critical_workflows = [
-            wf for wf in self.workflows.values()
-            if wf.priority == WorkflowPriority.CRITICAL
-            and not wf.dependencies
+            wf for wf in self.workflows.values() if wf.priority == WorkflowPriority.CRITICAL and not wf.dependencies
         ]
 
         # 2. 并行执行关键路径
@@ -611,11 +619,7 @@ class MultiWorkflowCoordinator:
 
         return {**critical_results, **remaining_results}
 
-    async def _execute_workflows(
-        self,
-        workflows: List[BaseWorkflow],
-        context: Dict[str, Any]
-    ) -> Dict[str, WorkflowResult]:
+    async def _execute_workflows(self, workflows: List[BaseWorkflow], context: Dict[str, Any]) -> Dict[str, WorkflowResult]:
         """执行一组工程流"""
         results = {}
         for wf in workflows:
@@ -634,9 +638,8 @@ class MultiWorkflowCoordinator:
 
             # 检查依赖
             deps_met = all(
-                context.get(f"workflow:{dep}", WorkflowStatus(
-                    dep, "", WorkflowStatus.PENDING
-                )).status == WorkflowStatus.COMPLETED
+                context.get(f"workflow:{dep}", WorkflowStatus(dep, "", WorkflowStatus.PENDING)).status
+                == WorkflowStatus.COMPLETED
                 for dep in wf.dependencies
             )
 
@@ -651,7 +654,7 @@ class MultiWorkflowCoordinator:
         self,
         from_workflow_id: str,
         to_type: WorkflowType,
-        new_workflow_id: Optional[str] = None
+        new_workflow_id: Optional[str] = None,
     ) -> Optional[BaseWorkflow]:
         """将一个工程流提升到另一种类型
 
@@ -704,30 +707,18 @@ class MultiWorkflowCoordinator:
         """获取所有工程流的状态"""
         return {
             "total_workflows": len(self.workflows),
-            "completed": sum(
-                1 for wf in self.workflows.values()
-                if wf.status == WorkflowStatus.COMPLETED
-            ),
-            "failed": sum(
-                1 for wf in self.workflows.values()
-                if wf.status == WorkflowStatus.FAILED
-            ),
-            "running": sum(
-                1 for wf in self.workflows.values()
-                if wf.status == WorkflowStatus.RUNNING
-            ),
-            "pending": sum(
-                1 for wf in self.workflows.values()
-                if wf.status == WorkflowStatus.PENDING
-            ),
+            "completed": sum(1 for wf in self.workflows.values() if wf.status == WorkflowStatus.COMPLETED),
+            "failed": sum(1 for wf in self.workflows.values() if wf.status == WorkflowStatus.FAILED),
+            "running": sum(1 for wf in self.workflows.values() if wf.status == WorkflowStatus.RUNNING),
+            "pending": sum(1 for wf in self.workflows.values() if wf.status == WorkflowStatus.PENDING),
             "workflows": {
                 wf_id: {
                     "type": wf.workflow_type.value,
                     "status": wf.status.value,
-                    "priority": wf.priority.value
+                    "priority": wf.priority.value,
                 }
                 for wf_id, wf in self.workflows.items()
-            }
+            },
         }
 
     def reset(self) -> None:

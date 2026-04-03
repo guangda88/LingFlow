@@ -14,10 +14,8 @@ from lingflow.self_optimizer.phase5.models import (
     AIFeedback,
     FeedbackSource,
     FeedbackSeverity,
-    FeedbackCategory,
 )
 from lingflow.self_optimizer.phase5.adapters.base_adapter import AIToolAdapter
-
 
 logger = logging.getLogger(__name__)
 
@@ -58,13 +56,7 @@ class RuffAdapter(AIToolAdapter):
 
     def _run_scan_impl(self, target_path: str, **kwargs) -> List[AIFeedback]:
         """运行Ruff扫描"""
-        cmd = [
-            "ruff",
-            "check",
-            "--output-format=json",
-            "--no-fix",
-            target_path
-        ]
+        cmd = ["ruff", "check", "--output-format=json", "--no-fix", target_path]
 
         # 添加select选项
         if self.select:
@@ -107,11 +99,7 @@ class RuffAdapter(AIToolAdapter):
                         source=FeedbackSource.RUFF,
                         rule_id=result.get("code", ""),
                         message=self._format_ruff_message(result),
-                        category=self._parse_category(
-                            result.get("code", ""),
-                            result.get("message", ""),
-                            {}
-                        ),
+                        category=self._parse_category(result.get("code", ""), result.get("message", ""), {}),
                         severity=self._parse_ruff_severity(result),
                         file_path=location.get("path", ""),
                         line_no=location.get("row", 0),
@@ -120,10 +108,7 @@ class RuffAdapter(AIToolAdapter):
                         end_column_no=location.get("end_column", 0),
                         code_snippet=self._extract_ruff_snippet(result),
                         suggestion=self._extract_ruff_fix(result),
-                        metadata={
-                            "tags": result.get("tags", []),
-                            "url": result.get("url", None)
-                        }
+                        metadata={"tags": result.get("tags", []), "url": result.get("url", None)},
                     )
                     feedback_list.append(feedback)
                 except Exception as e:

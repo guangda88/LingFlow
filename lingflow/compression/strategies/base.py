@@ -5,9 +5,9 @@
 
 import logging
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -17,11 +17,12 @@ class CompressionTier(Enum):
 
     定义不同的压缩强度。
     """
-    NONE = "none"           # 不压缩
-    LIGHT = "light"         # 轻度压缩 (保留 80%)
-    MEDIUM = "medium"       # 中度压缩 (保留 50%)
+
+    NONE = "none"  # 不压缩
+    LIGHT = "light"  # 轻度压缩 (保留 80%)
+    MEDIUM = "medium"  # 中度压缩 (保留 50%)
     AGGRESSIVE = "aggressive"  # 激进压缩 (保留 30%)
-    EXTREME = "extreme"     # 极限压缩 (保留 10%)
+    EXTREME = "extreme"  # 极限压缩 (保留 10%)
 
 
 @dataclass
@@ -30,6 +31,7 @@ class CompressionPlan:
 
     定义如何压缩消息列表。
     """
+
     target_tokens: int
     current_tokens: int
     tier: CompressionTier
@@ -46,8 +48,7 @@ class CompressionPlan:
         return 1.0 - (self.target_tokens / self.current_tokens)
 
     def __str__(self) -> str:
-        return (f"CompressionPlan(target={self.target_tokens}, "
-                f"current={self.current_tokens}, tier={self.tier.value})")
+        return f"CompressionPlan(target={self.target_tokens}, " f"current={self.current_tokens}, tier={self.tier.value})"
 
 
 class CompressionStrategy(ABC):
@@ -55,11 +56,7 @@ class CompressionStrategy(ABC):
 
     @abstractmethod
     def create_plan(
-        self,
-        messages: List[Dict],
-        current_tokens: int,
-        target_tokens: int,
-        scores: Optional[List] = None
+        self, messages: List[Dict], current_tokens: int, target_tokens: int, scores: Optional[List] = None
     ) -> CompressionPlan:
         """创建压缩计划
 
@@ -72,15 +69,9 @@ class CompressionStrategy(ABC):
         Returns:
             压缩计划
         """
-        pass
 
     @abstractmethod
-    def execute_plan(
-        self,
-        messages: List[Dict],
-        plan: CompressionPlan,
-        scores: Optional[List] = None
-    ) -> List[Dict]:
+    def execute_plan(self, messages: List[Dict], plan: CompressionPlan, scores: Optional[List] = None) -> List[Dict]:
         """执行压缩计划
 
         Args:
@@ -91,7 +82,6 @@ class CompressionStrategy(ABC):
         Returns:
             压缩后的消息列表
         """
-        pass
 
 
 class TieredCompressionStrategy(CompressionStrategy):
@@ -147,11 +137,7 @@ class TieredCompressionStrategy(CompressionStrategy):
         self.configs = custom_configs or self.TIER_CONFIGS
 
     def create_plan(
-        self,
-        messages: List[Dict],
-        current_tokens: int,
-        target_tokens: int,
-        scores: Optional[List] = None
+        self, messages: List[Dict], current_tokens: int, target_tokens: int, scores: Optional[List] = None
     ) -> CompressionPlan:
         """创建压缩计划
 
@@ -187,15 +173,10 @@ class TieredCompressionStrategy(CompressionStrategy):
             remove_system=config["remove_system"],
             keep_first_n=config["keep_first_n"],
             keep_last_n=config["keep_last_n"],
-            score_threshold=config["score_threshold"]
+            score_threshold=config["score_threshold"],
         )
 
-    def execute_plan(
-        self,
-        messages: List[Dict],
-        plan: CompressionPlan,
-        scores: Optional[List] = None
-    ) -> List[Dict]:
+    def execute_plan(self, messages: List[Dict], plan: CompressionPlan, scores: Optional[List] = None) -> List[Dict]:
         """执行压缩计划
 
         Args:
@@ -223,27 +204,24 @@ class TieredCompressionStrategy(CompressionStrategy):
             keep_last = []
             middle_messages = []
         else:
-            keep_first = other_messages[:plan.keep_first_n]
-            keep_last = other_messages[-plan.keep_last_n:] if plan.keep_last_n > 0 else []
-            middle_messages = other_messages[
-                plan.keep_first_n:
-            ] if plan.keep_first_n < len(other_messages) else []
+            keep_first = other_messages[: plan.keep_first_n]
+            keep_last = other_messages[-plan.keep_last_n :] if plan.keep_last_n > 0 else []
+            middle_messages = other_messages[plan.keep_first_n :] if plan.keep_first_n < len(other_messages) else []
             if plan.keep_last_n > 0 and len(middle_messages) > plan.keep_last_n:
-                middle_messages = middle_messages[:-plan.keep_last_n]
+                middle_messages = middle_messages[: -plan.keep_last_n]
 
         # 根据评分过滤中间消息
         if scores and plan.score_threshold > 0:
             # 假设 scores 和 messages 对应
-            middle_scores = scores[
-                len(system_messages) + plan.keep_first_n:
-                len(scores) - plan.keep_last_n
-            ] if plan.keep_last_n > 0 else scores[
-                len(system_messages) + plan.keep_first_n:
-            ]
+            middle_scores = (
+                scores[len(system_messages) + plan.keep_first_n : len(scores) - plan.keep_last_n]
+                if plan.keep_last_n > 0
+                else scores[len(system_messages) + plan.keep_first_n :]
+            )
 
             filtered_middle = []
             for msg, score in zip(middle_messages, middle_scores):
-                score_value = score.score if hasattr(score, 'score') else score
+                score_value = score.score if hasattr(score, "score") else score
                 if score_value >= plan.score_threshold:
                     filtered_middle.append(msg)
             middle_messages = filtered_middle
@@ -251,9 +229,6 @@ class TieredCompressionStrategy(CompressionStrategy):
         # 组合结果
         result = system_messages + keep_first + middle_messages + keep_last
 
-        logger.info(
-            f"压缩完成: {len(messages)} -> {len(result)} 条消息 "
-            f"({plan.tier.value} 压缩)"
-        )
+        logger.info(f"压缩完成: {len(messages)} -> {len(result)} 条消息 " f"({plan.tier.value} 压缩)")
 
         return result

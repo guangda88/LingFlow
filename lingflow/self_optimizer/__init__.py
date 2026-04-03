@@ -3,44 +3,27 @@ LingFlow 自优化系统
 基于 LingMinOpt 的自我优化能力
 """
 
-from lingflow.self_optimizer.config import (
-    OptimizationConfig,
-    get_global_config,
-    DEFAULT_CONFIG
-)
+from lingflow.self_optimizer.config import OptimizationConfig, get_global_config, DEFAULT_CONFIG
 
 # 向后兼容：保留ConfigManager作为别名
 ConfigManager = OptimizationConfig
 
-from lingflow.self_optimizer.trigger import (
-    OptimizationTrigger,
-    TriggerInfo
-)
+from lingflow.self_optimizer.trigger import OptimizationTrigger, TriggerInfo
 
 from lingflow.self_optimizer.optimizer import (
     ProcessIsolatedOptimizer,
     SynchronousOptimizer,
     OptimizationRequest,
-    OptimizationResult
+    OptimizationResult,
 )
 
-from lingflow.self_optimizer.evaluator import (
-    StructureEvaluator,
-    fallback_evaluate
-)
+from lingflow.self_optimizer.evaluator import StructureEvaluator, fallback_evaluate
 
-from lingflow.self_optimizer.performance_evaluator import (
-    PerformanceEvaluator as PerfEvaluator
-)
+from lingflow.self_optimizer.performance_evaluator import PerformanceEvaluator as PerfEvaluator
 
-from lingflow.self_optimizer.simplicity_evaluator import (
-    SimplicityEvaluator
-)
+from lingflow.self_optimizer.simplicity_evaluator import SimplicityEvaluator
 
-from lingflow.self_optimizer.advisor import (
-    OptimizationAdvisor
-)
-
+from lingflow.self_optimizer.advisor import OptimizationAdvisor
 
 __all__ = [
     # Config
@@ -48,34 +31,26 @@ __all__ = [
     "ConfigManager",  # 向后兼容的别名
     "get_global_config",
     "DEFAULT_CONFIG",
-
     # Trigger
     "OptimizationTrigger",
     "TriggerInfo",
-
     # Optimizer
     "ProcessIsolatedOptimizer",
     "SynchronousOptimizer",
     "OptimizationRequest",
     "OptimizationResult",
-
     # Evaluators
     "StructureEvaluator",
     "PerfEvaluator",
     "SimplicityEvaluator",
     "fallback_evaluate",
-
     # Advisor
     "OptimizationAdvisor",
 ]
 
 
 # 便捷函数
-def quick_optimize(
-    target: str = ".",
-    goal: str = "structure",
-    async_mode: bool = False
-) -> OptimizationResult:
+def quick_optimize(target: str = ".", goal: str = "structure", async_mode: bool = False) -> OptimizationResult:
     """快速优化（便捷函数）
 
     Args:
@@ -89,12 +64,7 @@ def quick_optimize(
     config = get_global_config()
     opt_config = config.get_optimization_config()
 
-    request = OptimizationRequest(
-        target=target,
-        goal=goal,
-        params={},
-        config=opt_config
-    )
+    request = OptimizationRequest(target=target, goal=goal, params={}, config=opt_config)
 
     if async_mode:
         optimizer = ProcessIsolatedOptimizer()
@@ -106,11 +76,7 @@ def quick_optimize(
         return optimizer.optimize(request)
 
 
-def check_and_optimize(
-    context: dict,
-    target: str = ".",
-    goal: str = "structure"
-) -> tuple[bool, OptimizationResult]:
+def check_and_optimize(context: dict, target: str = ".", goal: str = "structure") -> tuple[bool, OptimizationResult]:
     """检查条件并优化
 
     Args:
@@ -135,7 +101,7 @@ def check_and_optimize(
     # 3. 确认是否优化
     if trigger.requires_confirmation():
         response = input("\n是否启动优化? [y/N] ")
-        if response.lower() != 'y':
+        if response.lower() != "y":
             return False, None
 
     # 4. 运行优化

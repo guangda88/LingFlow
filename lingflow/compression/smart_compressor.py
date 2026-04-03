@@ -25,7 +25,7 @@ from lingflow.compression.token_estimator import TokenEstimator
 from lingflow.compression.scoring import MessageScorer
 from lingflow.compression.strategies.base import (
     TieredCompressionStrategy,
-    CompressionStrategy
+    CompressionStrategy,
 )
 from lingflow.compression.summarizer import ConversationSummarizer
 from lingflow.compression.result import CompressionResult
@@ -44,6 +44,7 @@ class CompressionConfig:
         enable_summarization: 是否启用摘要
         score_messages: 是否对消息评分
     """
+
     max_tokens: int = 8000
     warning_threshold: float = 0.8  # 80% 时预警
     default_strategy: str = "tiered"
@@ -61,11 +62,7 @@ class SmartContextCompressor:
     4. 对话摘要
     """
 
-    def __init__(
-        self,
-        config: Optional[CompressionConfig] = None,
-        model: str = "claude-3"
-    ):
+    def __init__(self, config: Optional[CompressionConfig] = None, model: str = "claude-3"):
         """初始化压缩器
 
         Args:
@@ -126,7 +123,7 @@ class SmartContextCompressor:
         self,
         messages: List[Dict],
         target_tokens: Optional[int] = None,
-        strategy: Optional[CompressionStrategy] = None
+        strategy: Optional[CompressionStrategy] = None,
     ) -> CompressionResult:
         """压缩消息列表
 
@@ -151,7 +148,7 @@ class SmartContextCompressor:
                     original_tokens=current_tokens,
                     compressed_tokens=current_tokens,
                     strategy="none",
-                    tier="none"
+                    tier="none",
                 )
 
             # 对消息评分
@@ -165,15 +162,13 @@ class SmartContextCompressor:
                 messages=messages,
                 current_tokens=current_tokens,
                 target_tokens=target_tokens,
-                scores=scores
+                scores=scores,
             )
 
             # 执行压缩
             compressed = strategy.execute_plan(messages, plan, scores)
 
-            if (self.summarizer and
-                len(compressed) < len(messages) and
-                len(compressed) > 0):
+            if self.summarizer and len(compressed) < len(messages) and len(compressed) > 0:
 
                 removed = [m for m in messages if m not in compressed]
                 if removed:
@@ -193,17 +188,10 @@ class SmartContextCompressor:
                 compressed_tokens=final_tokens,
                 strategy=strategy.__class__.__name__,
                 tier=plan.tier.value,
-                metadata={
-                    "plan": str(plan),
-                    "score_threshold": plan.score_threshold
-                }
+                metadata={"plan": str(plan), "score_threshold": plan.score_threshold},
             )
 
-    def compress_if_needed(
-        self,
-        messages: List[Dict],
-        target_tokens: Optional[int] = None
-    ) -> List[Dict]:
+    def compress_if_needed(self, messages: List[Dict], target_tokens: Optional[int] = None) -> List[Dict]:
         """按需压缩消息
 
         只在超出限制时才压缩。
@@ -250,7 +238,7 @@ class SmartContextCompressor:
             "usage_ratio": token_count / self.config.max_tokens,
             "warning_threshold": self.config.warning_threshold,
             "needs_compression": token_count > self.config.max_tokens,
-            "needs_warning": token_count > (self.config.max_tokens * self.config.warning_threshold)
+            "needs_warning": token_count > (self.config.max_tokens * self.config.warning_threshold),
         }
 
 
@@ -266,10 +254,7 @@ def get_default_compressor() -> SmartContextCompressor:
     return _default_compressor
 
 
-def compress_messages(
-    messages: List[Dict],
-    target_tokens: Optional[int] = None
-) -> List[Dict]:
+def compress_messages(messages: List[Dict], target_tokens: Optional[int] = None) -> List[Dict]:
     """便捷函数：压缩消息
 
     Args:

@@ -14,12 +14,7 @@ class ChartGenerator:
     生成各种优化相关的HTML图表。
     """
 
-    def generate_progress_chart_data(
-        self,
-        trials: List[int],
-        scores: List[float],
-        best_score: float
-    ) -> Dict[str, Any]:
+    def generate_progress_chart_data(self, trials: List[int], scores: List[float], best_score: float) -> Dict[str, Any]:
         """生成进度图表数据
 
         Args:
@@ -30,11 +25,7 @@ class ChartGenerator:
         Returns:
             图表数据字典
         """
-        return {
-            "trials": trials,
-            "scores": scores,
-            "bestScore": best_score
-        }
+        return {"trials": trials, "scores": scores, "bestScore": best_score}
 
     def generate_optimization_html(
         self,
@@ -44,7 +35,7 @@ class ChartGenerator:
         convergence_rate: float,
         search_space: Dict[str, Any],
         metadata: Dict[str, Any],
-        timestamp_readable: str
+        timestamp_readable: str,
     ) -> str:
         """生成优化报告HTML
 
@@ -65,11 +56,7 @@ class ChartGenerator:
         trial_ids = list(range(1, len(history) + 1))
 
         # 生成JSON数据
-        chart_data = {
-            "trials": trial_ids,
-            "scores": scores,
-            "bestScore": best_score
-        }
+        chart_data = {"trials": trial_ids, "scores": scores, "bestScore": best_score}
 
         html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -226,17 +213,22 @@ class ChartGenerator:
                 </tr>
 """
 
-        html += """
+        html += (
+            """
             </tbody>
         </table>
 
         <div class="timestamp">
-            报告生成时间: """ + timestamp_readable + """
+            报告生成时间: """
+            + timestamp_readable
+            + """
         </div>
     </div>
 
     <script>
-        const chartData = """ + json.dumps(chart_data) + """;
+        const chartData = """
+            + json.dumps(chart_data)
+            + """;
 
         const ctx = document.getElementById('progressChart').getContext('2d');
         new Chart(ctx, {
@@ -298,13 +290,10 @@ class ChartGenerator:
 </body>
 </html>
 """
+        )
         return html
 
-    def generate_sensitivity_html(
-        self,
-        parameters: List[str],
-        scores: List[float]
-    ) -> str:
+    def generate_sensitivity_html(self, parameters: List[str], scores: List[float]) -> str:
         """生成敏感性分析HTML
 
         Args:
@@ -314,7 +303,7 @@ class ChartGenerator:
         Returns:
             完整的HTML字符串
         """
-        html = f"""<!DOCTYPE html>
+        html = """<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -395,15 +384,15 @@ class ChartGenerator:
             </tr>
 """
 
-        html += """
+        html += (
+            """
         </tbody>
     </table>
 
     <script>
-        const data = """ + json.dumps({
-            "labels": parameters,
-            "scores": scores
-        }) + """;
+        const data = """
+            + json.dumps({"labels": parameters, "scores": scores})
+            + """;
 
         const ctx = document.getElementById('sensitivityChart').getContext('2d');
         new Chart(ctx, {
@@ -450,14 +439,10 @@ class ChartGenerator:
 </body>
 </html>
 """
+        )
         return html
 
-    def generate_pareto_html(
-        self,
-        pareto_points: List,
-        objective_names: List[str],
-        all_evaluated: List
-    ) -> str:
+    def generate_pareto_html(self, pareto_points: List, objective_names: List[str], all_evaluated: List) -> str:
         """生成Pareto前沿HTML
 
         Args:
@@ -535,19 +520,24 @@ class ChartGenerator:
                 html += f"<td>{obj_value:.4f}</td>"
             html += f"<td>{point.aggregated_score:.4f}</td></tr>"
 
-        html += """
+        html += (
+            """
         </tbody>
     </table>
 
     <script>
-        const paretoData = """ + json.dumps([
-            {
-                "x": point.objectives.get(objective_names[0], 0),
-                "y": point.objectives.get(objective_names[1], 0) if len(objective_names) > 1 else 0,
-                "objectives": point.objectives
-            }
-            for point in pareto_points
-        ]) + """;
+        const paretoData = """
+            + json.dumps(
+                [
+                    {
+                        "x": point.objectives.get(objective_names[0], 0),
+                        "y": point.objectives.get(objective_names[1], 0) if len(objective_names) > 1 else 0,
+                        "objectives": point.objectives,
+                    }
+                    for point in pareto_points
+                ]
+            )
+            + """;
 
         const ctx = document.getElementById('paretoChart').getContext('2d');
         new Chart(ctx, {{
@@ -562,11 +552,17 @@ class ChartGenerator:
                     pointHoverRadius: 10
                 }}, {{
                     label: '所有评估点',
-                    data: """ + json.dumps([
-                        {"x": p.objectives.get(objective_names[0], 0),
-                         "y": p.objectives.get(objective_names[1], 0) if len(objective_names) > 1 else 0}
-                        for p in all_evaluated
-                    ]) + """,
+                    data: """
+            + json.dumps(
+                [
+                    {
+                        "x": p.objectives.get(objective_names[0], 0),
+                        "y": p.objectives.get(objective_names[1], 0) if len(objective_names) > 1 else 0,
+                    }
+                    for p in all_evaluated
+                ]
+            )
+            + """,
                     backgroundColor: 'rgba(189, 195, 199, 0.3)',
                     borderColor: 'rgba(189, 195, 199, 0.5)',
                     pointRadius: 4
@@ -608,4 +604,5 @@ class ChartGenerator:
 </body>
 </html>
 """
+        )
         return html

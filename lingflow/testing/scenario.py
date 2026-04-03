@@ -5,13 +5,14 @@
 参考 Chrome DevTools MCP 的 eval_scenarios 模式
 """
 
-from typing import Protocol, Callable, Optional, List, Dict, Any
+from typing import Callable, Optional, List, Dict, Any
 from dataclasses import dataclass, field
 from enum import Enum
 
 
 class TestInteractionType(Enum):
     """测试交互类型"""
+
     CODE_ANALYSIS = "code_analysis"
     CODE_GENERATION = "code_generation"
     CODE_REFACTORING = "code_refactoring"
@@ -23,6 +24,7 @@ class TestInteractionType(Enum):
 @dataclass
 class CapturedToolCall:
     """捕获的工具调用"""
+
     name: str
     args: Dict[str, Any]
     timestamp: float
@@ -36,18 +38,19 @@ class CodeTestScenario:
     基于 Chrome DevTools MCP 的 TestScenario 模式
     支持场景驱动的 AI 测试评估
     """
+
     # 基础信息
-    name: str                                    # 场景名称
-    prompt: str                                   # AI 提示词
-    description: str                              # 场景描述
+    name: str  # 场景名称
+    prompt: str  # AI 提示词
+    description: str  # 场景描述
 
     # 代码内容
-    code_content: str                             # 测试代码片段
-    language: str = "python"                     # 编程语言
+    code_content: str  # 测试代码片段
+    language: str = "python"  # 编程语言
 
     # 测试配置
-    max_turns: int = 3                           # 最大交互轮数
-    timeout: int = 60                             # 超时时间（秒）
+    max_turns: int = 3  # 最大交互轮数
+    timeout: int = 60  # 超时时间（秒）
 
     # 工具期望
     expected_tools: List[str] = field(default_factory=list)  # 期望调用的工具列表
@@ -61,8 +64,8 @@ class CodeTestScenario:
 
     # 场景元数据
     category: TestInteractionType = TestInteractionType.CODE_ANALYSIS
-    priority: int = 1                             # 优先级（1-5，5最高）
-    tags: List[str] = field(default_factory=list)   # 标签
+    priority: int = 1  # 优先级（1-5，5最高）
+    tags: List[str] = field(default_factory=list)  # 标签
 
     def validate(self) -> bool:
         """验证场景配置是否有效"""
@@ -91,7 +94,7 @@ class CodeTestScenario:
             "category": self.category.value,
             "priority": self.priority,
             "tags": self.tags,
-            "context": self.context
+            "context": self.context,
         }
 
 
@@ -117,16 +120,10 @@ def process_user_data(users, filters, options):
 """,
     language="python",
     max_turns=5,
-    expected_tools=[
-        "analyze_complexity",
-        "identify_smells",
-        "suggest_refactoring",
-        "apply_refactoring",
-        "verify_equivalence"
-    ],
+    expected_tools=["analyze_complexity", "identify_smells", "suggest_refactoring", "apply_refactoring", "verify_equivalence"],
     category=TestInteractionType.CODE_REFACTORING,
     priority=5,
-    tags=["refactoring", "complexity", "optimization"]
+    tags=["refactoring", "complexity", "optimization"],
 )
 
 
@@ -141,15 +138,11 @@ def login(username, password):
 """,
     language="python",
     max_turns=3,
-    expected_tools=[
-        "security_scan",
-        "sql_injection_check",
-        "report_vulnerability"
-    ],
+    expected_tools=["security_scan", "sql_injection_check", "report_vulnerability"],
     required_tools=["security_scan"],
     category=TestInteractionType.SECURITY_SCAN,
     priority=5,
-    tags=["security", "sql_injection", "vulnerability"]
+    tags=["security", "sql_injection", "vulnerability"],
 )
 
 
@@ -169,35 +162,21 @@ def find_duplicates(items):
 """,
     language="python",
     max_turns=4,
-    expected_tools=[
-        "analyze_performance",
-        "identify_bottlenecks",
-        "suggest_optimizations"
-    ],
+    expected_tools=["analyze_performance", "identify_bottlenecks", "suggest_optimizations"],
     category=TestInteractionType.PERFORMANCE_TEST,
     priority=4,
-    tags=["performance", "optimization", "efficiency"]
+    tags=["performance", "optimization", "efficiency"],
 )
 
 
 def create_custom_scenario(
-    name: str,
-    prompt: str,
-    code_content: str,
-    description: str = "Custom scenario",
-    **kwargs
+    name: str, prompt: str, code_content: str, description: str = "Custom scenario", **kwargs
 ) -> CodeTestScenario:
     """创建自定义测试场景"""
-    return CodeTestScenario(
-        name=name,
-        prompt=prompt,
-        code_content=code_content,
-        description=description,
-        **kwargs
-    )
+    return CodeTestScenario(name=name, prompt=prompt, code_content=code_content, description=description, **kwargs)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # 示例：运行场景验证
     print("验证预定义场景...")
 

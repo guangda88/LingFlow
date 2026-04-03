@@ -9,21 +9,17 @@ import sys
 import logging
 import tempfile
 import shutil
-from pathlib import Path
 
 # 设置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
 def test_storage_save_and_load():
     """测试存储的保存和加载功能"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试存储保存和加载")
-    print("="*60)
+    print("=" * 60)
 
     from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore
 
@@ -32,30 +28,16 @@ def test_storage_save_and_load():
 
     try:
         # 创建存储实例
-        store = FileSystemParameterStore(
-            base_path=temp_dir
-        )
+        store = FileSystemParameterStore(base_path=temp_dir)
 
         # 测试数据
-        params = {
-            "learning_rate": 0.001,
-            "batch_size": 32,
-            "optimizer": "adam"
-        }
-        metadata = {
-            "description": "Test parameters",
-            "author": "test"
-        }
+        params = {"learning_rate": 0.001, "batch_size": 32, "optimizer": "adam"}
+        metadata = {"description": "Test parameters", "author": "test"}
 
         # 保存参数
-        version = store.save(
-            params=params,
-            metadata=metadata,
-            project="test_project",
-            parent=None
-        )
+        version = store.save(params=params, metadata=metadata, project="test_project", parent=None)
 
-        print(f"\n保存的版本:")
+        print("\n保存的版本:")
         print(f"  版本ID: {version.version_id}")
         print(f"  校验和: {version.checksum}")
         print(f"  参数: {version.params}")
@@ -79,39 +61,23 @@ def test_storage_save_and_load():
 
 def test_storage_version_history():
     """测试版本历史链功能"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试版本历史链")
-    print("="*60)
+    print("=" * 60)
 
     from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore
 
     temp_dir = tempfile.mkdtemp()
 
     try:
-        store = FileSystemParameterStore(
-            base_path=temp_dir
-        )
+        store = FileSystemParameterStore(base_path=temp_dir)
 
         # 创建版本链: v1 -> v2 -> v3
-        v1 = store.save(
-            params={"x": 1},
-            metadata={"version": 1},
-            project="test_history"
-        )
+        v1 = store.save(params={"x": 1}, metadata={"version": 1}, project="test_history")
 
-        v2 = store.save(
-            params={"x": 2},
-            metadata={"version": 2},
-            project="test_history",
-            parent=v1.version_id
-        )
+        v2 = store.save(params={"x": 2}, metadata={"version": 2}, project="test_history", parent=v1.version_id)
 
-        v3 = store.save(
-            params={"x": 3},
-            metadata={"version": 3},
-            project="test_history",
-            parent=v2.version_id
-        )
+        v3 = store.save(params={"x": 3}, metadata={"version": 3}, project="test_history", parent=v2.version_id)
 
         # 获取历史链
         history = store.get_history(v3.version_id)
@@ -121,9 +87,9 @@ def test_storage_version_history():
         assert history[1].version_id == v2.version_id, "第二个应该是v2"
         assert history[2].version_id == v1.version_id, "第三个应该是v1"
 
-        print(f"\n版本历史链:")
+        print("\n版本历史链:")
         for i, version in enumerate(history):
-            print(f"  {i+1}. {version.version_id}: x={version.params['x']}")
+            print(f"  {i + 1}. {version.version_id}: x={version.params['x']}")
 
         print("\n✓ 版本历史链测试通过")
         return True
@@ -134,26 +100,22 @@ def test_storage_version_history():
 
 def test_storage_list_and_filter():
     """测试列出版本和过滤功能"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试列出版本和过滤")
-    print("="*60)
+    print("=" * 60)
 
     from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore
 
     temp_dir = tempfile.mkdtemp()
 
     try:
-        store = FileSystemParameterStore(
-            base_path=temp_dir
-        )
+        store = FileSystemParameterStore(base_path=temp_dir)
 
         # 保存多个版本
         versions = []
         for i in range(5):
             version = store.save(
-                params={"value": i},
-                metadata={"index": i},
-                project=f"project_{i % 2}"  # 交替使用project_0和project_1
+                params={"value": i}, metadata={"index": i}, project=f"project_{i % 2}"  # 交替使用project_0和project_1
             )
             versions.append(version)
 
@@ -169,7 +131,7 @@ def test_storage_list_and_filter():
         latest = store.get_latest(project="project_0")
         assert latest is not None, "应该有最新版本"
 
-        print(f"\n版本列表:")
+        print("\n版本列表:")
         for version in all_versions:
             print(f"  {version.version_id}: value={version.params['value']}")
 
@@ -185,18 +147,16 @@ def test_storage_list_and_filter():
 
 def test_storage_delete():
     """测试删除功能"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试删除功能")
-    print("="*60)
+    print("=" * 60)
 
     from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore
 
     temp_dir = tempfile.mkdtemp()
 
     try:
-        store = FileSystemParameterStore(
-            base_path=temp_dir
-        )
+        store = FileSystemParameterStore(base_path=temp_dir)
 
         # 保存版本
         version = store.save(params={"test": 1}, project="test_delete")
@@ -222,24 +182,20 @@ def test_storage_delete():
 
 def test_storage_checkpoints():
     """测试检查点功能（使用版本作为检查点）"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试检查点功能（使用版本作为检查点）")
-    print("="*60)
+    print("=" * 60)
 
     from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore
 
     temp_dir = tempfile.mkdtemp()
 
     try:
-        store = FileSystemParameterStore(
-            base_path=temp_dir
-        )
+        store = FileSystemParameterStore(base_path=temp_dir)
 
         # 使用save方法保存检查点
         checkpoint_version = store.save(
-            params={"epoch": 100, "loss": 0.01},
-            metadata={"status": "completed", "type": "checkpoint"},
-            project="checkpoints"
+            params={"epoch": 100, "loss": 0.01}, metadata={"status": "completed", "type": "checkpoint"}, project="checkpoints"
         )
 
         print(f"\n保存的检查点版本: {checkpoint_version.version_id}")
@@ -269,18 +225,16 @@ def test_storage_checkpoints():
 
 def test_storage_stats():
     """测试统计信息功能"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试统计信息")
-    print("="*60)
+    print("=" * 60)
 
     from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore
 
     temp_dir = tempfile.mkdtemp()
 
     try:
-        store = FileSystemParameterStore(
-            base_path=temp_dir
-        )
+        store = FileSystemParameterStore(base_path=temp_dir)
 
         # 保存一些版本
         for i in range(10):
@@ -289,13 +243,13 @@ def test_storage_stats():
         # 获取统计信息
         stats = store.get_stats()
 
-        print(f"\n存储统计:")
+        print("\n存储统计:")
         print(f"  总版本数: {stats['total_versions']}")
         print(f"  项目列表: {stats['projects']}")
         print(f"  存储路径: {stats['storage_path']}")
 
-        assert stats['total_versions'] == 10, "应该有10个版本"
-        assert "test_stats" in stats['projects'], "test_stats项目应该存在"
+        assert stats["total_versions"] == 10, "应该有10个版本"
+        assert "test_stats" in stats["projects"], "test_stats项目应该存在"
 
         print("\n✓ 统计信息测试通过")
         return True
@@ -306,9 +260,9 @@ def test_storage_stats():
 
 def test_cache_basic_operations():
     """测试缓存基本操作"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试缓存基本操作")
-    print("="*60)
+    print("=" * 60)
 
     from lingflow.self_optimizer.phase4.cache import ParameterCache
     from lingflow.self_optimizer.phase4.data_types import ParameterVersion
@@ -318,19 +272,9 @@ def test_cache_basic_operations():
     cache = ParameterCache(max_size=3, ttl_seconds=60)
 
     # 创建测试版本
-    version1 = ParameterVersion(
-        version_id="v1",
-        params={"x": 1},
-        metadata={},
-        created_at=datetime.now()
-    )
+    version1 = ParameterVersion(version_id="v1", params={"x": 1}, metadata={}, created_at=datetime.now())
 
-    version2 = ParameterVersion(
-        version_id="v2",
-        params={"x": 2},
-        metadata={},
-        created_at=datetime.now()
-    )
+    version2 = ParameterVersion(version_id="v2", params={"x": 2}, metadata={}, created_at=datetime.now())
 
     # 测试put和get
     cache.put("key1", version1)
@@ -346,15 +290,15 @@ def test_cache_basic_operations():
 
     # 测试统计
     stats = cache.get_stats()
-    print(f"\n缓存统计:")
+    print("\n缓存统计:")
     print(f"  大小: {stats['size']}")
     print(f"  命中次数: {stats['hits']}")
     print(f"  未命中次数: {stats['misses']}")
     print(f"  命中率: {stats['hit_rate']:.2%}")
 
-    assert stats['size'] == 2, "缓存大小应该是2"
-    assert stats['hits'] == 1, "应该有1次命中"
-    assert stats['misses'] == 1, "应该有1次未命中"
+    assert stats["size"] == 2, "缓存大小应该是2"
+    assert stats["hits"] == 1, "应该有1次命中"
+    assert stats["misses"] == 1, "应该有1次未命中"
 
     print("\n✓ 缓存基本操作测试通过")
     return True
@@ -362,9 +306,9 @@ def test_cache_basic_operations():
 
 def test_cache_lru_eviction():
     """测试LRU淘汰策略"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试LRU淘汰策略")
-    print("="*60)
+    print("=" * 60)
 
     from lingflow.self_optimizer.phase4.cache import ParameterCache
     from lingflow.self_optimizer.phase4.data_types import ParameterVersion
@@ -375,12 +319,7 @@ def test_cache_lru_eviction():
 
     # 添加3个版本
     for i in range(3):
-        version = ParameterVersion(
-            version_id=f"v{i}",
-            params={"x": i},
-            metadata={},
-            created_at=datetime.now()
-        )
+        version = ParameterVersion(version_id=f"v{i}", params={"x": i}, metadata={}, created_at=datetime.now())
         cache.put(f"key{i}", version)
 
     # 第一个应该被淘汰
@@ -404,9 +343,9 @@ def test_cache_lru_eviction():
 
 def test_cache_expiration():
     """测试缓存过期"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试缓存过期")
-    print("="*60)
+    print("=" * 60)
 
     from lingflow.self_optimizer.phase4.cache import ParameterCache
     from lingflow.self_optimizer.phase4.data_types import ParameterVersion
@@ -416,12 +355,7 @@ def test_cache_expiration():
     # 创建短TTL缓存
     cache = ParameterCache(max_size=10, ttl_seconds=1)
 
-    version = ParameterVersion(
-        version_id="v1",
-        params={"x": 1},
-        metadata={},
-        created_at=datetime.now()
-    )
+    version = ParameterVersion(version_id="v1", params={"x": 1}, metadata={}, created_at=datetime.now())
 
     cache.put("key1", version)
 
@@ -446,9 +380,9 @@ def test_cache_expiration():
 
 def test_cached_store():
     """测试带缓存的存储"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试带缓存的存储")
-    print("="*60)
+    print("=" * 60)
 
     from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore
     from lingflow.self_optimizer.phase4.cache import CachedParameterStore
@@ -457,22 +391,13 @@ def test_cached_store():
 
     try:
         # 创建底层存储
-        store = FileSystemParameterStore(
-            base_path=temp_dir
-        )
+        store = FileSystemParameterStore(base_path=temp_dir)
 
         # 创建带缓存的存储
-        cached_store = CachedParameterStore(
-            store=store,
-            cache_size=10,
-            cache_ttl=60
-        )
+        cached_store = CachedParameterStore(store=store, cache_size=10, cache_ttl=60)
 
         # 保存参数
-        version = cached_store.save(
-            params={"cached": True},
-            project="test_project"
-        )
+        version = cached_store.save(params={"cached": True}, project="test_project")
 
         print(f"\n保存的版本: {version.version_id}")
 
@@ -486,14 +411,14 @@ def test_cached_store():
 
         # 检查缓存统计
         cache_stats = cached_store.get_cache_stats()
-        print(f"\n缓存统计:")
+        print("\n缓存统计:")
         print(f"  命中次数: {cache_stats['hits']}")
         print(f"  未命中次数: {cache_stats['misses']}")
         print(f"  命中率: {cache_stats['hit_rate']:.2%}")
 
         # 第一次从缓存加载（save时已添加到缓存），第二次也是从缓存
-        assert cache_stats['hits'] >= 1, "至少应该有1次缓存命中"
-        assert cache_stats['hit_rate'] > 0, "命中率应该大于0"
+        assert cache_stats["hits"] >= 1, "至少应该有1次缓存命中"
+        assert cache_stats["hit_rate"] > 0, "命中率应该大于0"
 
         # 使缓存失效
         cached_store.invalidate(version.version_id, "test_project")
@@ -511,9 +436,9 @@ def test_cached_store():
 
 def main():
     """运行所有测试"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("LingFlow Phase 4: 存储和缓存测试套件")
-    print("="*60)
+    print("=" * 60)
 
     tests = [
         ("存储保存和加载", test_storage_save_and_load),
@@ -539,9 +464,9 @@ def main():
             results.append((test_name, False))
 
     # 输出测试摘要
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试摘要")
-    print("="*60)
+    print("=" * 60)
 
     passed = sum(1 for _, success in results if success)
     total = len(results)
@@ -560,5 +485,5 @@ def main():
         return 1
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     sys.exit(main())

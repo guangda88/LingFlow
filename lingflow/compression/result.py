@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 
 @dataclass
@@ -24,6 +24,7 @@ class CompressionResult:
         timestamp: 压缩时间
         metadata: 额外的元数据
     """
+
     original_messages: List[Dict]
     compressed_messages: List[Dict]
     original_tokens: int
@@ -68,7 +69,7 @@ class CompressionResult:
             "strategy": self.strategy,
             "tier": self.tier,
             "timestamp": self.timestamp.isoformat(),
-            "metadata": self.metadata
+            "metadata": self.metadata,
         }
 
     def __str__(self) -> str:

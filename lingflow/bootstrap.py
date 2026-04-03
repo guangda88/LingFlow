@@ -28,31 +28,19 @@ def get_version() -> str:
     return __version__
 
 
-def init_logging(
-    level: int = logging.INFO,
-    format_string: Optional[str] = None
-) -> None:
+def init_logging(level: int = logging.INFO, format_string: Optional[str] = None) -> None:
     """初始化日志系统
 
     Args:
         level: 日志级别
         format_string: 日志格式字符串
     """
-    format_string = format_string or (
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
-    logging.basicConfig(
-        level=level,
-        format=format_string,
-        force=True  # 允许重新配置
-    )
+    format_string = format_string or ("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    logging.basicConfig(level=level, format=format_string, force=True)  # 允许重新配置
 
 
 def init_smart_compression(
-    max_tokens: int = 180000,
-    warning_threshold: float = 0.75,
-    compress_threshold: float = 0.85,
-    enabled: bool = True
+    max_tokens: int = 180000, warning_threshold: float = 0.75, compress_threshold: float = 0.85, enabled: bool = True
 ) -> Optional[object]:
     """初始化智能上下文压缩器
 
@@ -70,10 +58,9 @@ def init_smart_compression(
 
     try:
         from lingflow.compression import enable_smart_compression
+
         compressor = enable_smart_compression(
-            max_tokens=max_tokens,
-            warning_threshold=warning_threshold,
-            compress_threshold=compress_threshold
+            max_tokens=max_tokens, warning_threshold=warning_threshold, compress_threshold=compress_threshold
         )
         return compressor
     except Exception as e:
@@ -89,16 +76,14 @@ def init_context_manager() -> Optional[object]:
     """
     try:
         from lingflow.context import get_context_manager
+
         return get_context_manager()
     except Exception as e:
         _STARTUP_ERRORS.append(f"上下文管理器初始化失败: {e}")
         return None
 
 
-def show_session_resume(
-    enabled: bool = True,
-    force: bool = False
-) -> None:
+def show_session_resume(enabled: bool = True, force: bool = False) -> None:
     """显示会话恢复信息
 
     Args:
@@ -135,6 +120,7 @@ def init_hooks(enabled: bool = True) -> Optional[object]:
 
     try:
         from lingflow.hooks import get_global_hook
+
         hook = get_global_hook()
         return hook
     except Exception as e:
@@ -142,12 +128,7 @@ def init_hooks(enabled: bool = True) -> Optional[object]:
         return None
 
 
-def bootstrap(
-    compression: bool = True,
-    auto_resume: bool = True,
-    hooks: bool = True,
-    verbose: bool = False
-) -> dict:
+def bootstrap(compression: bool = True, auto_resume: bool = True, hooks: bool = True, verbose: bool = False) -> dict:
     """执行完整的启动流程
 
     Args:
@@ -167,7 +148,7 @@ def bootstrap(
         "context_manager": None,
         "hooks": None,
         "errors": [],
-        "success": True
+        "success": True,
     }
 
     # 1. 初始化日志
@@ -212,15 +193,11 @@ def get_startup_errors() -> list:
 # 自动启动（模块导入时执行）
 # ============================================================================
 
+
 def _auto_bootstrap():
     """模块导入时自动执行启动"""
     if not _STARTUP_COMPLETED:
-        bootstrap(
-            compression=True,
-            auto_resume=True,
-            hooks=True,
-            verbose=False
-        )
+        bootstrap(compression=True, auto_resume=True, hooks=True, verbose=False)
 
 
 # 延迟启动 - 由 __init__.py 显式调用

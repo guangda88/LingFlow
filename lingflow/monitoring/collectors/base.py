@@ -10,11 +10,12 @@ from typing import Dict, Optional
 
 try:
     import psutil
+
     PSUTIL_AVAILABLE = True
 except ImportError:
     PSUTIL_AVAILABLE = False
 
-from ..metrics.models import SystemMetrics
+from ..metrics.models import HealthCheckResult, SystemMetrics
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,7 @@ class MetricCollector:
                 disk_usage_percent=0.0,
                 disk_used_gb=0.0,
                 disk_free_gb=0.0,
-                timestamp=datetime.now()
+                timestamp=datetime.now(),
             )
 
         try:
@@ -62,7 +63,7 @@ class MetricCollector:
             memory_available_mb = memory.available / (1024 * 1024)
 
             # 磁盘指标
-            disk = psutil.disk_usage('/')
+            disk = psutil.disk_usage("/")
             disk_usage_percent = disk.percent
             disk_used_gb = disk.used / (1024 * 1024 * 1024)
             disk_free_gb = disk.free / (1024 * 1024 * 1024)
@@ -73,7 +74,7 @@ class MetricCollector:
                 "bytes_sent": net_io.bytes_sent,
                 "bytes_recv": net_io.bytes_recv,
                 "packets_sent": net_io.packets_sent,
-                "packets_recv": net_io.packets_recv
+                "packets_recv": net_io.packets_recv,
             }
 
             # 进程数
@@ -89,7 +90,7 @@ class MetricCollector:
                 disk_free_gb=disk_free_gb,
                 network_io=network_io,
                 process_count=process_count,
-                timestamp=datetime.now()
+                timestamp=datetime.now(),
             )
 
         except Exception as e:
@@ -102,7 +103,7 @@ class MetricCollector:
                 disk_usage_percent=0.0,
                 disk_used_gb=0.0,
                 disk_free_gb=0.0,
-                timestamp=datetime.now()
+                timestamp=datetime.now(),
             )
 
     def collect_process_metrics(self, pid: Optional[int] = None) -> Dict[str, float]:
@@ -119,14 +120,15 @@ class MetricCollector:
 
         try:
             import os
+
             process = psutil.Process(pid or os.getpid())
 
             return {
                 "cpu_percent": process.cpu_percent(),
                 "memory_mb": process.memory_info().rss / (1024 * 1024),
                 "num_threads": process.num_threads(),
-                "num_fds": process.num_fds() if hasattr(process, 'num_fds') else 0,
-                "connections": len(process.connections())
+                "num_fds": process.num_fds() if hasattr(process, "num_fds") else 0,
+                "connections": len(process.connections()),
             }
 
         except Exception as e:
@@ -154,7 +156,7 @@ class HealthCheckCollector:
         self.checks[name] = check_func
         logger.debug(f"注册健康检查: {name}")
 
-    def run_check(self, name: str) -> Optional['HealthCheckResult']:
+    def run_check(self, name: str) -> Optional["HealthCheckResult"]:
         """运行单个健康检查
 
         Args:
@@ -173,7 +175,7 @@ class HealthCheckCollector:
             logger.error(f"健康检查失败 {name}: {e}")
             return None
 
-    def run_all_checks(self) -> Dict[str, 'HealthCheckResult']:
+    def run_all_checks(self) -> Dict[str, "HealthCheckResult"]:
         """运行所有健康检查
 
         Returns:
@@ -190,7 +192,7 @@ class HealthCheckCollector:
 
         return results
 
-    def check_disk_space(self, path: str = '/', threshold: float = 90.0) -> 'HealthCheckResult':
+    def check_disk_space(self, path: str = "/", threshold: float = 90.0) -> "HealthCheckResult":
         """检查磁盘空间
 
         Args:
@@ -219,12 +221,12 @@ class HealthCheckCollector:
                 "total_gb": usage.total / (1024**3),
                 "used_gb": usage.used / (1024**3),
                 "free_gb": usage.free / (1024**3),
-                "percent": percent
+                "percent": percent,
             },
-            response_time_ms=elapsed
+            response_time_ms=elapsed,
         )
 
-    def check_memory(self, threshold: float = 90.0) -> 'HealthCheckResult':
+    def check_memory(self, threshold: float = 90.0) -> "HealthCheckResult":
         """检查内存使用
 
         Args:
@@ -244,7 +246,7 @@ class HealthCheckCollector:
                 healthy=True,
                 message="psutil不可用，无法检查",
                 timestamp=datetime.now(),
-                response_time_ms=(time.time() - start) * 1000
+                response_time_ms=(time.time() - start) * 1000,
             )
 
         memory = psutil.virtual_memory()
@@ -258,10 +260,6 @@ class HealthCheckCollector:
             healthy=healthy,
             message=f"内存使用率: {percent:.1f}%" + (" (正常)" if healthy else " (告警)"),
             timestamp=datetime.now(),
-            metrics={
-                "total_gb": memory.total / (1024**3),
-                "available_gb": memory.available / (1024**3),
-                "percent": percent
-            },
-            response_time_ms=elapsed
+            metrics={"total_gb": memory.total / (1024**3), "available_gb": memory.available / (1024**3), "percent": percent},
+            response_time_ms=elapsed,
         )

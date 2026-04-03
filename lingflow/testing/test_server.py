@@ -6,8 +6,6 @@
 创建和管理动态测试代码环境
 """
 
-import os
-import sys
 import tempfile
 import shutil
 from pathlib import Path
@@ -64,7 +62,7 @@ class CodeTestServer:
             test_module.py
         """
         file_path = self.temp_dir / f"{name}.py"
-        file_path.write_text(code, encoding='utf-8')
+        file_path.write_text(code, encoding="utf-8")
         self.routes[name] = file_path
 
         logger.debug(f"✓ 添加 Python 路由: {name} -> {file_path}")
@@ -87,7 +85,7 @@ class CodeTestServer:
             test_test_foo.py
         """
         file_path = self.temp_dir / f"test_{name}.py"
-        file_path.write_text(test_code, encoding='utf-8')
+        file_path.write_text(test_code, encoding="utf-8")
         self.test_files[name] = file_path
 
         logger.debug(f"✓ 添加测试路由: {name} -> {file_path}")
@@ -112,7 +110,7 @@ class CodeTestServer:
         self.requirements.extend(packages)
         file_path = self.temp_dir / "requirements.txt"
         content = "\n".join(packages)
-        file_path.write_text(content, encoding='utf-8')
+        file_path.write_text(content, encoding="utf-8")
 
         logger.debug(f"✓ 添加依赖: {', '.join(packages)}")
         return file_path
@@ -136,14 +134,15 @@ class CodeTestServer:
         """
         if isinstance(content, (dict, list)):
             import json
+
             # 如果 name 已经有 .json 后缀，不重复添加
-            if not name.endswith('.json'):
+            if not name.endswith(".json"):
                 name = f"{name}.json"
             file_path = self.temp_dir / name
-            file_path.write_text(json.dumps(content, indent=2, ensure_ascii=False), encoding='utf-8')
+            file_path.write_text(json.dumps(content, indent=2, ensure_ascii=False), encoding="utf-8")
         else:
             file_path = self.temp_dir / name
-            file_path.write_text(str(content), encoding='utf-8')
+            file_path.write_text(str(content), encoding="utf-8")
 
         logger.debug(f"✓ 添加固件: {name} -> {file_path}")
         return file_path
@@ -289,7 +288,7 @@ class CodeTestServer:
         req_file = self.temp_dir / "requirements.txt"
         req_file.unlink(missing_ok=True)
 
-        logger.info(f"✓ CodeTestServer 已清理")
+        logger.info("✓ CodeTestServer 已清理")
 
     def cleanup(self):
         """完全清理临时目录
@@ -334,7 +333,7 @@ class CodeTestServer:
 
 # 示例使用
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     logging.basicConfig(level=logging.INFO)
 
     print("=" * 70)
@@ -378,7 +377,7 @@ def test_calculate_product_negative():
         # 添加依赖
         req_path = server.add_requirements(["pytest", "pytest-cov"])
         print(f"\n✓ 添加依赖: {req_path}")
-        print(f"  包: pytest, pytest-cov")
+        print("  包: pytest, pytest-cov")
 
         # 使用上下文管理器
         print("\n" + "-" * 70)

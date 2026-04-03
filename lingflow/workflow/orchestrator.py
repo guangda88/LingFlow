@@ -55,14 +55,14 @@ class WorkflowOrchestrator:
         if not path.exists():
             raise FileNotFoundError(f"Workflow file not found: {filepath}")
 
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             workflow_data = yaml.safe_load(f)
 
         if not workflow_data:
             raise ValueError(f"Empty workflow file: {filepath}")
 
         # 兼容不同字段名
-        tasks_data = workflow_data.get('tasks') or workflow_data.get('stages', [])
+        tasks_data = workflow_data.get("tasks") or workflow_data.get("stages", [])
 
         if not tasks_data:
             logger.warning("No tasks found in workflow: %s", filepath)
@@ -70,44 +70,35 @@ class WorkflowOrchestrator:
 
         tasks = []
         for task_def in tasks_data:
-            task_id = task_def.get('id', task_def.get('name'))
+            task_id = task_def.get("id", task_def.get("name"))
             if not task_id:
                 logger.warning("Task missing id/name: %s", task_def)
                 continue
 
             # 解析优先级
-            priority_str = task_def.get(
-                'priority',
-                task_def.get('metadata', {}).get('priority', 'normal')
-            )
-            priority_map = {
-                'high': TaskPriority.HIGH,
-                'normal': TaskPriority.NORMAL,
-                'low': TaskPriority.LOW
-            }
+            priority_str = task_def.get("priority", task_def.get("metadata", {}).get("priority", "normal"))
+            priority_map = {"high": TaskPriority.HIGH, "normal": TaskPriority.NORMAL, "low": TaskPriority.LOW}
             priority = priority_map.get(priority_str.lower(), TaskPriority.NORMAL)
 
             # 解析依赖
-            dependencies = task_def.get('depends_on', task_def.get('dependencies', []))
+            dependencies = task_def.get("depends_on", task_def.get("dependencies", []))
 
             # 创建任务
             task = Task(
                 task_id=task_id,
-                name=task_def.get('skill', task_id),
-                description=task_def.get('description', ''),
-                agent_type=task_def.get('skill', 'general'),
-                context=task_def.get('params', {}),
+                name=task_def.get("skill", task_id),
+                description=task_def.get("description", ""),
+                agent_type=task_def.get("skill", "general"),
+                context=task_def.get("params", {}),
                 priority=priority,
-                dependencies=dependencies
+                dependencies=dependencies,
             )
             tasks.append(task)
 
         logger.info("Loaded %d tasks from %s", len(tasks), filepath)
         return tasks
 
-    async def execute_workflow(
-        self, tasks: List[Task], max_parallel: int = DEFAULT_MAX_PARALLEL
-    ) -> Dict[str, TaskResult]:
+    async def execute_workflow(self, tasks: List[Task], max_parallel: int = DEFAULT_MAX_PARALLEL) -> Dict[str, TaskResult]:
         """Execute a workflow with task dependencies.
 
         Tasks are scheduled based on their dependencies. Independent tasks
@@ -128,10 +119,7 @@ class WorkflowOrchestrator:
             logger.warning("No tasks provided to execute_workflow")
             return {}
 
-        logger.info(
-            "Starting workflow execution with %d tasks, max_parallel=%d",
-            len(tasks), max_parallel
-        )
+        logger.info("Starting workflow execution with %d tasks, max_parallel=%d", len(tasks), max_parallel)
         results = {}
 
         # 从配置获取最大并行数
@@ -144,9 +132,7 @@ class WorkflowOrchestrator:
                 self.coordinator.submit_task(task)
             except (ValueError, TypeError, RuntimeError, AttributeError) as e:
                 logger.error("Failed to submit task %s: %s", task.task_id, e)
-                results[task.task_id] = TaskResult(
-                    task_id=task.task_id, success=False, error=str(e)
-                )
+                results[task.task_id] = TaskResult(task_id=task.task_id, success=False, error=str(e))
 
         # 持续调度直到所有任务完成或失败
         iteration = 0
@@ -166,9 +152,7 @@ class WorkflowOrchestrator:
 
             # 并行执行准备好的任务
             try:
-                batch_results = await self.coordinator.execute_tasks_parallel(
-                    ready_tasks, max_parallel
-                )
+                batch_results = await self.coordinator.execute_tasks_parallel(ready_tasks, max_parallel)
                 results.update(batch_results)
             except (RuntimeError, ValueError, asyncio.TimeoutError) as e:
                 logger.error("Failed to execute batch of tasks: %s", e)
@@ -185,15 +169,15 @@ class WorkflowOrchestrator:
         total_completed = len(self.coordinator.completed_tasks) + len(self.coordinator.failed_tasks)
         if total_completed < len(tasks):
             logger.warning(
-                "Workflow incomplete: %d/%d tasks completed. "
-                "Possible dependency cycle or timeout.",
-                total_completed, len(tasks)
+                "Workflow incomplete: %d/%d tasks completed. " "Possible dependency cycle or timeout.",
+                total_completed,
+                len(tasks),
             )
 
         logger.info(
             "Workflow execution completed: %d succeeded, %d failed",
             len(self.coordinator.completed_tasks),
-            len(self.coordinator.failed_tasks)
+            len(self.coordinator.failed_tasks),
         )
 
         return results
@@ -212,16 +196,11 @@ class WorkflowOrchestrator:
 
         for task in all_tasks:
             # 跳过已完成或已失败的任务
-            if (
-                task.task_id in self.coordinator.completed_tasks
-                or task.task_id in self.coordinator.failed_tasks
-            ):
+            if task.task_id in self.coordinator.completed_tasks or task.task_id in self.coordinator.failed_tasks:
                 continue
 
             # 检查依赖是否满足
-            dependencies_met = all(
-                dep_id in self.coordinator.completed_tasks for dep_id in task.dependencies
-            )
+            dependencies_met = all(dep_id in self.coordinator.completed_tasks for dep_id in task.dependencies)
 
             if dependencies_met:
                 ready_tasks.append(task)
@@ -284,6 +263,7 @@ class WorkflowOrchestrator:
 
         if self._degradation_detector is None:
             from lingflow.context.degradation import DegradationDetector
+
             self._degradation_detector = DegradationDetector()
 
         report = self._degradation_detector.get_health_score(self._workflow_messages)
@@ -294,15 +274,12 @@ class WorkflowOrchestrator:
                 "工作流退化检测: 状态=%s, 得分=%.2f, 退化类型=%s",
                 report.health.value,
                 report.score,
-                [t.value for t in report.detected_types]
+                [t.value for t in report.detected_types],
             )
             for rec in report.recommendations:
                 logger.warning("  退化建议: %s", rec)
         elif report.health.value == "degraded":
-            logger.info(
-                "工作流退化检测: 状态=%s, 得分=%.2f",
-                report.health.value, report.score
-            )
+            logger.info("工作流退化检测: 状态=%s, 得分=%.2f", report.health.value, report.score)
 
     def get_degradation_report(self) -> Optional[Dict]:
         """获取最近的退化检测报告

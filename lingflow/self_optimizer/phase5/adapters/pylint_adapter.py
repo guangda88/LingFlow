@@ -15,10 +15,8 @@ from lingflow.self_optimizer.phase5.models import (
     AIFeedback,
     FeedbackSource,
     FeedbackSeverity,
-    FeedbackCategory,
 )
 from lingflow.self_optimizer.phase5.adapters.base_adapter import AIToolAdapter
-
 
 logger = logging.getLogger(__name__)
 
@@ -109,11 +107,7 @@ class PylintAdapter(AIToolAdapter):
                         source=FeedbackSource.PYLINT,
                         rule_id=result.get("message-id", ""),
                         message=result.get("msg", ""),
-                        category=self._parse_category(
-                            result.get("message-id", ""),
-                            result.get("msg", ""),
-                            {}
-                        ),
+                        category=self._parse_category(result.get("message-id", ""), result.get("msg", ""), {}),
                         severity=self._parse_pylint_severity(result),
                         file_path=result.get("path", ""),
                         line_no=result.get("line", 0),
@@ -125,8 +119,8 @@ class PylintAdapter(AIToolAdapter):
                             "symbol": result.get("symbol", ""),
                             "module": result.get("module", ""),
                             "obj": result.get("obj", ""),
-                            "category": result.get("category", "")
-                        }
+                            "category": result.get("category", ""),
+                        },
                     )
                     feedback_list.append(feedback)
                 except Exception as e:

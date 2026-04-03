@@ -4,24 +4,24 @@ LingFlow 进程隔离的优化器
 """
 
 import multiprocessing as mp
-import time
 from typing import Dict, Any, Optional
 from dataclasses import dataclass, field
-from pathlib import Path
 
 
 @dataclass
 class OptimizationRequest:
     """优化请求"""
-    target: str                       # 目标路径
-    goal: str                         # 优化目标: "structure", "performance", "simplicity"
-    params: Dict[str, Any]            # 当前参数
-    config: Dict[str, Any]            # 优化配置
+
+    target: str  # 目标路径
+    goal: str  # 优化目标: "structure", "performance", "simplicity"
+    params: Dict[str, Any]  # 当前参数
+    config: Dict[str, Any]  # 优化配置
 
 
 @dataclass
 class OptimizationResult:
     """优化结果"""
+
     success: bool
     best_params: Dict[str, Any]
     best_score: float
@@ -36,7 +36,8 @@ def _optimization_worker(request: OptimizationRequest, result_queue: mp.Queue):
     try:
         # 尝试导入LingMinOpt
         try:
-            from lingminopt import MinimalOptimizer, SearchSpace, ExperimentConfig
+            from lingminopt import MinimalOptimizer, ExperimentConfig
+
             HAS_LINGMINOPT = True
         except ImportError:
             HAS_LINGMINOPT = False
@@ -49,16 +50,20 @@ def _optimization_worker(request: OptimizationRequest, result_queue: mp.Queue):
             # 根据目标选择评估器
             if request.goal == "structure":
                 from lingflow.self_optimizer.evaluator import StructureEvaluator
+
                 evaluator = StructureEvaluator(request.target)
             elif request.goal == "performance":
                 from lingflow.self_optimizer.performance_evaluator import PerformanceEvaluator
+
                 evaluator = PerformanceEvaluator(request.target)
             elif request.goal == "simplicity":
                 from lingflow.self_optimizer.simplicity_evaluator import SimplicityEvaluator
+
                 evaluator = SimplicityEvaluator(request.target)
             else:
                 # 默认使用结构评估器
                 from lingflow.self_optimizer.evaluator import StructureEvaluator
+
                 evaluator = StructureEvaluator(request.target)
 
             def evaluate(params):
@@ -69,54 +74,52 @@ def _optimization_worker(request: OptimizationRequest, result_queue: mp.Queue):
                 max_experiments=request.config.get("max_experiments", 20),
                 time_budget=request.config.get("time_budget", 300),
                 early_stopping_patience=request.config.get("early_stopping_patience", 10),
-                direction="minimize"
+                direction="minimize",
             )
 
-            optimizer = MinimalOptimizer(
-                evaluate=evaluate,
-                search_space=search_space,
-                config=config
-            )
+            optimizer = MinimalOptimizer(evaluate=evaluate, search_space=search_space, config=config)
 
             # 运行优化
             result = optimizer.run()
 
             # 将结果放入队列
-            result_queue.put(OptimizationResult(
-                success=True,
-                best_params=result.best_params,
-                best_score=result.best_score,
-                experiments=result.total_experiments,
-                duration=result.total_time,
-                history=result.history
-            ))
+            result_queue.put(
+                OptimizationResult(
+                    success=True,
+                    best_params=result.best_params,
+                    best_score=result.best_score,
+                    experiments=result.total_experiments,
+                    duration=result.total_time,
+                    history=result.history,
+                )
+            )
 
         else:
             # 降级到简单网格搜索
-            result = _grid_search(
-                search_space,
-                request.target,
-                request.config.get("max_experiments", 20)
-            )
+            result = _grid_search(search_space, request.target, request.config.get("max_experiments", 20))
 
             result_queue.put(result)
 
     except Exception as e:
         import traceback
-        result_queue.put(OptimizationResult(
-            success=False,
-            best_params={},
-            best_score=0,
-            experiments=0,
-            duration=0,
-            error=str(e) + "\n" + traceback.format_exc()
-        ))
+
+        result_queue.put(
+            OptimizationResult(
+                success=False,
+                best_params={},
+                best_score=0,
+                experiments=0,
+                duration=0,
+                error=str(e) + "\n" + traceback.format_exc(),
+            )
+        )
 
 
 def _create_search_space(goal: str):
     """创建搜索空间"""
     try:
         from lingminopt import SearchSpace
+
         search_space = SearchSpace()
     except ImportError:
         # 降级到简单实现
@@ -147,11 +150,12 @@ def _grid_search(search_space, target_path: str, max_experiments: int) -> Optimi
     from lingflow.self_optimizer.evaluator import StructureEvaluator
 
     evaluator = StructureEvaluator(target_path)
-    best_score = float('inf')
+    best_score = float("inf")
     best_params = {}
 
     # 生成网格搜索点（简化版：随机采样）
     import random
+
     random.seed(42)
 
     for i in range(max_experiments):
@@ -163,12 +167,7 @@ def _grid_search(search_space, target_path: str, max_experiments: int) -> Optimi
             best_params = params
 
     return OptimizationResult(
-        success=True,
-        best_params=best_params,
-        best_score=best_score,
-        experiments=max_experiments,
-        duration=0,
-        history=[]
+        success=True, best_params=best_params, best_score=best_score, experiments=max_experiments, duration=0, history=[]
     )
 
 
@@ -177,6 +176,7 @@ class SimpleSearchSpace:
 
     def __init__(self):
         import random
+
         self.parameters = {}
         self._rng = random.Random()
 
@@ -219,10 +219,7 @@ class ProcessIsolatedOptimizer:
         self.result_queue = mp.Queue()
 
         # 启动进程
-        self.process = mp.Process(
-            target=_optimization_worker,
-            args=(request, self.result_queue)
-        )
+        self.process = mp.Process(target=_optimization_worker, args=(request, self.result_queue))
         self.process.start()
 
         return True
@@ -262,7 +259,7 @@ class ProcessIsolatedOptimizer:
                 # 非阻塞
                 if not self.result_queue.empty():
                     return self.result_queue.get_nowait()
-        except:
+        except Exception:
             pass
 
         return None
@@ -303,7 +300,7 @@ class SynchronousOptimizer:
             优化结果
         """
         try:
-            from lingminopt import MinimalOptimizer, SearchSpace, ExperimentConfig
+            from lingminopt import MinimalOptimizer, ExperimentConfig
 
             # 创建搜索空间
             search_space = _create_search_space(request.goal)
@@ -311,16 +308,20 @@ class SynchronousOptimizer:
             # 根据目标选择评估器
             if request.goal == "structure":
                 from lingflow.self_optimizer.evaluator import StructureEvaluator
+
                 evaluator = StructureEvaluator(request.target)
             elif request.goal == "performance":
                 from lingflow.self_optimizer.performance_evaluator import PerformanceEvaluator
+
                 evaluator = PerformanceEvaluator(request.target)
             elif request.goal == "simplicity":
                 from lingflow.self_optimizer.simplicity_evaluator import SimplicityEvaluator
+
                 evaluator = SimplicityEvaluator(request.target)
             else:
                 # 默认使用结构评估器
                 from lingflow.self_optimizer.evaluator import StructureEvaluator
+
                 evaluator = StructureEvaluator(request.target)
 
             def evaluate(params):
@@ -331,14 +332,10 @@ class SynchronousOptimizer:
                 max_experiments=request.config.get("max_experiments", 20),
                 time_budget=request.config.get("time_budget", 300),
                 early_stopping_patience=request.config.get("early_stopping_patience", 10),
-                direction="minimize"
+                direction="minimize",
             )
 
-            optimizer = MinimalOptimizer(
-                evaluate=evaluate,
-                search_space=search_space,
-                config=config
-            )
+            optimizer = MinimalOptimizer(evaluate=evaluate, search_space=search_space, config=config)
 
             # 运行优化
             result = optimizer.run()
@@ -349,36 +346,30 @@ class SynchronousOptimizer:
                 best_score=result.best_score,
                 experiments=result.total_experiments,
                 duration=result.total_time,
-                history=result.history
+                history=result.history,
             )
 
         except ImportError:
             # 降级到简单搜索
             search_space = _create_search_space(request.goal)
-            return _grid_search(
-                search_space,
-                request.target,
-                request.config.get("max_experiments", 20)
-            )
+            return _grid_search(search_space, request.target, request.config.get("max_experiments", 20))
         except Exception as e:
             import traceback
+
             return OptimizationResult(
                 success=False,
                 best_params={},
                 best_score=0,
                 experiments=0,
                 duration=0,
-                error=str(e) + "\n" + traceback.format_exc()
+                error=str(e) + "\n" + traceback.format_exc(),
             )
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # 测试
     request = OptimizationRequest(
-        target="/home/ai/LingFlow/lingflow",
-        goal="structure",
-        params={},
-        config={"max_experiments": 5}
+        target="/home/ai/LingFlow/lingflow", goal="structure", params={}, config={"max_experiments": 5}
     )
 
     # 同步测试

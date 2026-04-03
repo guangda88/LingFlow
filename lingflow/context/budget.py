@@ -27,16 +27,18 @@ logger = logging.getLogger(__name__)
 
 class BudgetLevel(Enum):
     """预算级别"""
-    SAFE = "safe"           # < 30% — 完全安全
-    MODERATE = "moderate"    # 30-40% — 接近断崖点
-    WARNING = "warning"      # 40-60% — 已过断崖点，需要压缩
-    CRITICAL = "critical"    # 60-80% — 严重退化，立即行动
+
+    SAFE = "safe"  # < 30% — 完全安全
+    MODERATE = "moderate"  # 30-40% — 接近断崖点
+    WARNING = "warning"  # 40-60% — 已过断崖点，需要压缩
+    CRITICAL = "critical"  # 60-80% — 严重退化，立即行动
     EMERGENCY = "emergency"  # > 80% — 必须交接
 
 
 @dataclass
 class BudgetStatus:
     """预算状态"""
+
     level: BudgetLevel
     current_tokens: int
     max_tokens: int
@@ -131,30 +133,21 @@ class ContextBudgetManager:
         if ratio >= self.EMERGENCY_RATIO:
             level = BudgetLevel.EMERGENCY
             action = "handoff"
-            message = (
-                f"Token 使用率 {ratio:.1%} 超过紧急阈值 {self.EMERGENCY_RATIO:.0%}，"
-                "必须进行会话交接"
-            )
+            message = f"Token 使用率 {ratio:.1%} 超过紧急阈值 {self.EMERGENCY_RATIO:.0%}，" "必须进行会话交接"
         elif ratio >= self.CRITICAL_RATIO:
             level = BudgetLevel.CRITICAL
             action = "compress_aggressive"
             message = (
-                f"Token 使用率 {ratio:.1%} 超过临界阈值 {self.CRITICAL_RATIO:.0%}，"
-                "LLM 性能已严重退化，需要立即激进压缩"
+                f"Token 使用率 {ratio:.1%} 超过临界阈值 {self.CRITICAL_RATIO:.0%}，" "LLM 性能已严重退化，需要立即激进压缩"
             )
         elif ratio >= self.WARNING_RATIO:
             level = BudgetLevel.WARNING
             action = "compress"
-            message = (
-                f"Token 使用率 {ratio:.1%} 超过安全阈值 {self.WARNING_RATIO:.0%}，"
-                "建议压缩以防止性能退化"
-            )
+            message = f"Token 使用率 {ratio:.1%} 超过安全阈值 {self.WARNING_RATIO:.0%}，" "建议压缩以防止性能退化"
         elif ratio >= self.safety_ratio * 0.75:
             level = BudgetLevel.MODERATE
             action = "monitor"
-            message = (
-                f"Token 使用率 {ratio:.1%}，接近安全阈值，持续监控"
-            )
+            message = f"Token 使用率 {ratio:.1%}，接近安全阈值，持续监控"
         else:
             level = BudgetLevel.SAFE
             action = "none"

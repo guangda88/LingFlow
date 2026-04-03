@@ -21,12 +21,10 @@ logger = logging.getLogger(__name__)
 
 class ReviewerError(Exception):
     """审查器异常基类"""
-    pass
 
 
 class FileNotFoundError(ReviewerError):
     """文件未找到异常"""
-    pass
 
 
 class BaseCodeReviewer(ABC):
@@ -52,11 +50,11 @@ class BaseCodeReviewer(ABC):
 
     # 默认配置
     DEFAULT_CONFIG = {
-        'complexity_threshold': 15,
-        'max_file_lines': 300,
-        'max_class_methods': 15,
-        'max_imports': 20,
-        'nested_loop_threshold': 3,
+        "complexity_threshold": 15,
+        "max_file_lines": 300,
+        "max_class_methods": 15,
+        "max_imports": 20,
+        "nested_loop_threshold": 3,
     }
 
     def __init__(self, config: Optional[Dict[str, Any]] = None):
@@ -100,7 +98,6 @@ class BaseCodeReviewer(ABC):
                 或者:
                 - error: 错误信息（如果审查失败）
         """
-        pass
 
     def review_directory(self, dir_path: str, **kwargs) -> Dict[str, Any]:
         """
@@ -125,52 +122,44 @@ class BaseCodeReviewer(ABC):
         dir_path_obj = Path(dir_path)
 
         if not dir_path_obj.exists():
-            return {
-                'error': f'目录不存在: {dir_path}',
-                'reviewed_files': [],
-                'overall_score': 0
-            }
+            return {"error": f"目录不存在: {dir_path}", "reviewed_files": [], "overall_score": 0}
 
         if not dir_path_obj.is_dir():
-            return {
-                'error': f'路径不是目录: {dir_path}',
-                'reviewed_files': [],
-                'overall_score': 0
-            }
+            return {"error": f"路径不是目录: {dir_path}", "reviewed_files": [], "overall_score": 0}
 
         # 初始化结果结构
         result = {
-            'reviewed_files': [],
-            'dimensions': {
-                'security': {'issues': [], 'suggestions': [], 'score': 0},
-                'bugs': {'issues': [], 'suggestions': [], 'score': 0},
-                'code_quality': {'issues': [], 'suggestions': [], 'score': 0},
-                'architecture': {'issues': [], 'suggestions': [], 'score': 0},
-                'performance': {'issues': [], 'suggestions': [], 'score': 0},
-                'maintainability': {'issues': [], 'suggestions': [], 'score': 0},
-                'best_practices': {'issues': [], 'suggestions': [], 'score': 0},
+            "reviewed_files": [],
+            "dimensions": {
+                "security": {"issues": [], "suggestions": [], "score": 0},
+                "bugs": {"issues": [], "suggestions": [], "score": 0},
+                "code_quality": {"issues": [], "suggestions": [], "score": 0},
+                "architecture": {"issues": [], "suggestions": [], "score": 0},
+                "performance": {"issues": [], "suggestions": [], "score": 0},
+                "maintainability": {"issues": [], "suggestions": [], "score": 0},
+                "best_practices": {"issues": [], "suggestions": [], "score": 0},
             },
-            'summary': '',
-            'overall_score': 0,
-            'review_time': datetime.now().isoformat()
+            "summary": "",
+            "overall_score": 0,
+            "review_time": datetime.now().isoformat(),
         }
 
         # 审查目录中的所有 Python 文件
         file_count = 0
-        for file_path in dir_path_obj.rglob('*.py'):
+        for file_path in dir_path_obj.rglob("*.py"):
             try:
                 file_result = self.review_file(file_path, **kwargs)
-                result['reviewed_files'].append(str(file_path))
+                result["reviewed_files"].append(str(file_path))
                 self._merge_results(result, file_result)
                 file_count += 1
             except Exception as e:
                 logger.error(f"审查文件 {file_path} 时出错: {e}")
 
         # 计算得分
-        result['overall_score'] = self.scorer.calculate_score(result)
+        result["overall_score"] = self.scorer.calculate_score(result)
 
         # 生成摘要
-        result['summary'] = self._generate_summary(result, file_count)
+        result["summary"] = self._generate_summary(result, file_count)
 
         logger.info(f"目录审查完成: {file_count} 个文件，总分: {result['overall_score']:.2f}")
 
@@ -190,11 +179,11 @@ class BaseCodeReviewer(ABC):
             Dict[str, Any]: 审查结果字典
         """
         try:
-            content = file_path.read_text(encoding='utf-8')
-            lines = content.split('\n')
+            content = file_path.read_text(encoding="utf-8")
+            lines = content.split("\n")
 
             # 检查文件长度
-            if len(lines) > self.config.get('max_file_lines', 300):
+            if len(lines) > self.config.get("max_file_lines", 300):
                 logger.warning(f"文件过长: {file_path} ({len(lines)} 行)")
 
             # 解析 AST
@@ -231,23 +220,18 @@ class BaseCodeReviewer(ABC):
             error_msg += f": {error.text.strip()}"
 
         return {
-            'file': str(file_path),
-            'code_quality': {
-                'issues': [{
-                    'file': str(file_path),
-                    'issue': error_msg,
-                    'severity': 'critical',
-                    'line': error.lineno or 0
-                }],
-                'suggestions': [],
-                'score': 0
+            "file": str(file_path),
+            "code_quality": {
+                "issues": [{"file": str(file_path), "issue": error_msg, "severity": "critical", "line": error.lineno or 0}],
+                "suggestions": [],
+                "score": 0,
             },
-            'security': {'issues': [], 'suggestions': [], 'score': 0},
-            'bugs': {'issues': [], 'suggestions': [], 'score': 0},
-            'architecture': {'issues': [], 'suggestions': [], 'score': 0},
-            'performance': {'issues': [], 'suggestions': [], 'score': 0},
-            'maintainability': {'issues': [], 'suggestions': [], 'score': 0},
-            'best_practices': {'issues': [], 'suggestions': [], 'score': 0},
+            "security": {"issues": [], "suggestions": [], "score": 0},
+            "bugs": {"issues": [], "suggestions": [], "score": 0},
+            "architecture": {"issues": [], "suggestions": [], "score": 0},
+            "performance": {"issues": [], "suggestions": [], "score": 0},
+            "maintainability": {"issues": [], "suggestions": [], "score": 0},
+            "best_practices": {"issues": [], "suggestions": [], "score": 0},
         }
 
     def _create_error_result(self, file_path: Path, error: str) -> Dict:
@@ -262,15 +246,15 @@ class BaseCodeReviewer(ABC):
             Dict: 包含错误信息的结果字典
         """
         return {
-            'error': error,
-            'file': str(file_path),
-            'code_quality': {'issues': [], 'suggestions': [], 'score': 0},
-            'security': {'issues': [], 'suggestions': [], 'score': 0},
-            'bugs': {'issues': [], 'suggestions': [], 'score': 0},
-            'architecture': {'issues': [], 'suggestions': [], 'score': 0},
-            'performance': {'issues': [], 'suggestions': [], 'score': 0},
-            'maintainability': {'issues': [], 'suggestions': [], 'score': 0},
-            'best_practices': {'issues': [], 'suggestions': [], 'score': 0},
+            "error": error,
+            "file": str(file_path),
+            "code_quality": {"issues": [], "suggestions": [], "score": 0},
+            "security": {"issues": [], "suggestions": [], "score": 0},
+            "bugs": {"issues": [], "suggestions": [], "score": 0},
+            "architecture": {"issues": [], "suggestions": [], "score": 0},
+            "performance": {"issues": [], "suggestions": [], "score": 0},
+            "maintainability": {"issues": [], "suggestions": [], "score": 0},
+            "best_practices": {"issues": [], "suggestions": [], "score": 0},
         }
 
     def _organize_results(self, issues: List[Dict], file_path: Path) -> Dict:
@@ -285,35 +269,39 @@ class BaseCodeReviewer(ABC):
             Dict: 按维度组织的结果字典
         """
         result = {
-            'file': str(file_path),
-            'code_quality': {'issues': [], 'suggestions': [], 'score': 5.0},
-            'security': {'issues': [], 'suggestions': [], 'score': 5.0},
-            'bugs': {'issues': [], 'suggestions': [], 'score': 5.0},
-            'architecture': {'issues': [], 'suggestions': [], 'score': 5.0},
-            'performance': {'issues': [], 'suggestions': [], 'score': 5.0},
-            'maintainability': {'issues': [], 'suggestions': [], 'score': 5.0},
-            'best_practices': {'issues': [], 'suggestions': [], 'score': 5.0},
+            "file": str(file_path),
+            "code_quality": {"issues": [], "suggestions": [], "score": 5.0},
+            "security": {"issues": [], "suggestions": [], "score": 5.0},
+            "bugs": {"issues": [], "suggestions": [], "score": 5.0},
+            "architecture": {"issues": [], "suggestions": [], "score": 5.0},
+            "performance": {"issues": [], "suggestions": [], "score": 5.0},
+            "maintainability": {"issues": [], "suggestions": [], "score": 5.0},
+            "best_practices": {"issues": [], "suggestions": [], "score": 5.0},
         }
 
         # 分类问题
         for issue in issues:
-            category = self._map_category_to_dimension(issue.get('category', 'general'))
+            category = self._map_category_to_dimension(issue.get("category", "general"))
             if category in result:
-                result[category]['issues'].append({
-                    'file': str(file_path),
-                    'issue': issue['issue'],
-                    'severity': issue['severity'],
-                    'line': issue.get('line', 0),
-                    'rule_id': issue.get('rule_id'),
-                })
+                result[category]["issues"].append(
+                    {
+                        "file": str(file_path),
+                        "issue": issue["issue"],
+                        "severity": issue["severity"],
+                        "line": issue.get("line", 0),
+                        "rule_id": issue.get("rule_id"),
+                    }
+                )
 
                 # 添加建议
-                if issue.get('suggestion'):
-                    result[category]['suggestions'].append({
-                        'file': str(file_path),
-                        'suggestion': issue['suggestion'],
-                        'priority': issue.get('severity', 'low'),
-                    })
+                if issue.get("suggestion"):
+                    result[category]["suggestions"].append(
+                        {
+                            "file": str(file_path),
+                            "suggestion": issue["suggestion"],
+                            "priority": issue.get("severity", "low"),
+                        }
+                    )
 
         return result
 
@@ -328,12 +316,12 @@ class BaseCodeReviewer(ABC):
             str: 对应的维度名称
         """
         mapping = {
-            'security': 'security',
-            'performance': 'performance',
-            'code_quality': 'code_quality',
-            'architecture': 'architecture',
+            "security": "security",
+            "performance": "performance",
+            "code_quality": "code_quality",
+            "architecture": "architecture",
         }
-        return mapping.get(category, 'best_practices')
+        return mapping.get(category, "best_practices")
 
     def _merge_results(self, target: Dict, source: Dict) -> None:
         """
@@ -346,16 +334,12 @@ class BaseCodeReviewer(ABC):
             source: 源结果字典（可能包含dimensions键或直接包含维度键）
         """
         # 检查source的结构
-        source_dimensions = source.get('dimensions', source)
+        source_dimensions = source.get("dimensions", source)
 
-        for dimension in target['dimensions']:
+        for dimension in target["dimensions"]:
             if dimension in source_dimensions:
-                target['dimensions'][dimension]['issues'].extend(
-                    source_dimensions[dimension].get('issues', [])
-                )
-                target['dimensions'][dimension]['suggestions'].extend(
-                    source_dimensions[dimension].get('suggestions', [])
-                )
+                target["dimensions"][dimension]["issues"].extend(source_dimensions[dimension].get("issues", []))
+                target["dimensions"][dimension]["suggestions"].extend(source_dimensions[dimension].get("suggestions", []))
 
     def _generate_summary(self, result: Dict, file_count: int) -> str:
         """
@@ -368,14 +352,11 @@ class BaseCodeReviewer(ABC):
         Returns:
             str: 摘要文本
         """
-        score = result.get('overall_score', 0)
+        score = result.get("overall_score", 0)
         grade = self.scorer.get_score_grade(score)
         emoji = self.scorer.get_score_emoji(score)
 
-        total_issues = sum(
-            len(d.get('issues', []))
-            for d in result.get('dimensions', {}).values()
-        )
+        total_issues = sum(len(d.get("issues", [])) for d in result.get("dimensions", {}).values())
 
         return f"""审查了 {file_count} 个文件
 总体评分: {score:.2f}/5.0 {emoji} ({grade}级)
@@ -391,13 +372,7 @@ class BaseCodeReviewer(ABC):
         return self.rule_engine
 
     def add_custom_rule(
-        self,
-        rule_id: str,
-        name: str,
-        category: str,
-        check_func: callable,
-        severity: Severity,
-        suggestion_template: str
+        self, rule_id: str, name: str, category: str, check_func: callable, severity: Severity, suggestion_template: str
     ) -> None:
         """
         添加自定义规则
@@ -418,7 +393,7 @@ class BaseCodeReviewer(ABC):
             category=category,
             check_func=check_func,
             severity=severity,
-            suggestion_template=suggestion_template
+            suggestion_template=suggestion_template,
         )
         self.rule_engine.register_rule(rule)
         logger.debug(f"已注册自定义规则: {rule_id}")

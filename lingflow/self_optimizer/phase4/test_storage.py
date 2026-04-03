@@ -9,17 +9,8 @@ import tempfile
 import shutil
 from pathlib import Path
 
-from lingflow.self_optimizer.phase4.storage import (
-    FileSystemParameterStore,
-    get_default_store,
-    save_params,
-    load_params,
-    get_latest_params
-)
-from lingflow.self_optimizer.phase4.cache import (
-    ParameterCache,
-    CachedParameterStore
-)
+from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore, save_params, load_params, get_latest_params
+from lingflow.self_optimizer.phase4.cache import ParameterCache, CachedParameterStore
 from lingflow.self_optimizer.phase4.data_types import ParameterVersion
 
 
@@ -127,11 +118,7 @@ class TestParameterCache:
     def test_put_and_get(self):
         """测试放入和获取"""
         cache = ParameterCache(max_size=10)
-        version = ParameterVersion(
-            version_id="test_1",
-            params={"temp": 0.7},
-            metadata={}
-        )
+        version = ParameterVersion(version_id="test_1", params={"temp": 0.7}, metadata={})
 
         cache.put("key1", version)
         assert cache.get("key1") == version
@@ -142,11 +129,7 @@ class TestParameterCache:
         cache = ParameterCache(max_size=3)
 
         for i in range(4):
-            version = ParameterVersion(
-                version_id=f"v{i}",
-                params={"value": i},
-                metadata={}
-            )
+            version = ParameterVersion(version_id=f"v{i}", params={"value": i}, metadata={})
             cache.put(f"key{i}", version)
 
         # 应该只有3个，第一个被淘汰
@@ -157,11 +140,7 @@ class TestParameterCache:
     def test_hit_rate(self):
         """测试命中率"""
         cache = ParameterCache()
-        version = ParameterVersion(
-            version_id="test",
-            params={"x": 1},
-            metadata={}
-        )
+        version = ParameterVersion(version_id="test", params={"x": 1}, metadata={})
 
         cache.put("key", version)
 

@@ -9,7 +9,7 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 
-from .loaders.rule_loader import RuleLoader, get_registry
+from .loaders.rule_loader import get_registry
 from .rules.models import Rule, RuleResult, RuleNotFoundError
 from .severity import Severity
 
@@ -42,45 +42,72 @@ class RuleEngine:
 
     def _register_default_rules(self):
         """注册默认规则"""
-        import re as _re
 
         existing = set(self.loader.get_all_rules().keys())
 
         defaults = []
 
         if "SEC001" not in existing:
-            defaults.append(Rule(
-                id="SEC001", name="eval_usage", category="security",
-                check_func=lambda c, t, p: ("使用 eval() 存在安全风险" if any(
-                    isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "eval"
-                    for n in ast.walk(t)
-                ) else None),
-                severity=Severity.CRITICAL, suggestion_template="避免使用 eval()",
-            ))
+            defaults.append(
+                Rule(
+                    id="SEC001",
+                    name="eval_usage",
+                    category="security",
+                    check_func=lambda c, t, p: (
+                        "使用 eval() 存在安全风险"
+                        if any(
+                            isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "eval"
+                            for n in ast.walk(t)
+                        )
+                        else None
+                    ),
+                    severity=Severity.CRITICAL,
+                    suggestion_template="避免使用 eval()",
+                )
+            )
 
         if "SEC002" not in existing:
-            defaults.append(Rule(
-                id="SEC002", name="exec_usage", category="security",
-                check_func=lambda c, t, p: ("使用 exec() 存在安全风险" if any(
-                    isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "exec"
-                    for n in ast.walk(t)
-                ) else None),
-                severity=Severity.CRITICAL, suggestion_template="避免使用 exec()",
-            ))
+            defaults.append(
+                Rule(
+                    id="SEC002",
+                    name="exec_usage",
+                    category="security",
+                    check_func=lambda c, t, p: (
+                        "使用 exec() 存在安全风险"
+                        if any(
+                            isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "exec"
+                            for n in ast.walk(t)
+                        )
+                        else None
+                    ),
+                    severity=Severity.CRITICAL,
+                    suggestion_template="避免使用 exec()",
+                )
+            )
 
         if "PERF001" not in existing:
-            defaults.append(Rule(
-                id="PERF001", name="string_concat_in_loop", category="performance",
-                check_func=lambda c, t, p: None,
-                severity=Severity.MEDIUM, suggestion_template="使用 join() 代替循环内字符串拼接",
-            ))
+            defaults.append(
+                Rule(
+                    id="PERF001",
+                    name="string_concat_in_loop",
+                    category="performance",
+                    check_func=lambda c, t, p: None,
+                    severity=Severity.MEDIUM,
+                    suggestion_template="使用 join() 代替循环内字符串拼接",
+                )
+            )
 
         if "QUALITY001" not in existing:
-            defaults.append(Rule(
-                id="QUALITY001", name="naming_convention", category="code_quality",
-                check_func=lambda c, t, p: None,
-                severity=Severity.LOW, suggestion_template="遵循命名规范",
-            ))
+            defaults.append(
+                Rule(
+                    id="QUALITY001",
+                    name="naming_convention",
+                    category="code_quality",
+                    check_func=lambda c, t, p: None,
+                    severity=Severity.LOW,
+                    suggestion_template="遵循命名规范",
+                )
+            )
 
         for rule in defaults:
             self.loader.register_rule(rule)
@@ -154,12 +181,7 @@ class RuleEngine:
 
         return list(self.loader.get_all_rules().values())
 
-    def run_rules(
-        self,
-        content: str,
-        tree: ast.AST,
-        file_path: Path
-    ) -> List[RuleResult]:
+    def run_rules(self, content: str, tree: ast.AST, file_path: Path) -> List[RuleResult]:
         """对所有启用的规则运行检查
 
         Args:
@@ -186,13 +208,7 @@ class RuleEngine:
 
         return results
 
-    def run_rule(
-        self,
-        rule_id: str,
-        content: str,
-        tree: ast.AST,
-        file_path: Path
-    ) -> Optional[RuleResult]:
+    def run_rule(self, rule_id: str, content: str, tree: ast.AST, file_path: Path) -> Optional[RuleResult]:
         """运行单个规则
 
         Args:
@@ -216,13 +232,7 @@ class RuleEngine:
 
         return self._run_single_rule(rule, content, tree, file_path)
 
-    def _run_single_rule(
-        self,
-        rule: Rule,
-        content: str,
-        tree: ast.AST,
-        file_path: Path
-    ) -> Optional[RuleResult]:
+    def _run_single_rule(self, rule: Rule, content: str, tree: ast.AST, file_path: Path) -> Optional[RuleResult]:
         """运行单个规则
 
         Args:
@@ -251,14 +261,10 @@ class RuleEngine:
             suggestion=rule.suggestion_template,
             file_path=str(file_path),
             line=line,
-            column=column
+            column=column,
         )
 
-    def _find_issue_location(
-        self,
-        content: str,
-        message: str
-    ) -> tuple[int, int]:
+    def _find_issue_location(self, content: str, message: str) -> tuple[int, int]:
         """查找问题位置
 
         Args:
@@ -268,11 +274,11 @@ class RuleEngine:
         Returns:
             (行号, 列号)
         """
-        lines = content.split('\n')
 
         # 尝试从消息中提取行号
         import re
-        line_match = re.search(r'line[:\s]+(\d+)', message, re.IGNORECASE)
+
+        line_match = re.search(r"line[:\s]+(\d+)", message, re.IGNORECASE)
         if line_match:
             line = int(line_match.group(1))
             return (line, 0)
@@ -329,5 +335,5 @@ class RuleEngine:
             "total_rules": len(rules),
             "enabled_rules": enabled_count,
             "disabled_rules": disabled_count,
-            "categories": category_count
+            "categories": category_count,
         }

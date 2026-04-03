@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 class ScorerError(Exception):
     """评分器异常基类"""
-    pass
 
 
 class QualityScorer:
@@ -72,22 +71,22 @@ class QualityScorer:
         Raises:
             KeyError: 如果审查结果缺少必需的键
         """
-        if 'dimensions' not in review_result:
+        if "dimensions" not in review_result:
             logger.warning("审查结果缺少 'dimensions' 键，返回0分")
             return 0.0
 
         dimension_scores = {}
 
-        for dimension, data in review_result.get('dimensions', {}).items():
-            issues = data.get('issues', [])
-            suggestions = data.get('suggestions', [])
+        for dimension, data in review_result.get("dimensions", {}).items():
+            issues = data.get("issues", [])
+            suggestions = data.get("suggestions", [])
 
             # 计算扣分
             penalty = 0.0
 
             for issue in issues:
                 try:
-                    severity = Severity(issue.get('severity', 'low'))
+                    severity = Severity(issue.get("severity", "low"))
                     penalty += SeverityWeight.get_weight(severity)
                 except ValueError:
                     logger.warning(f"未知的严重程度: {issue.get('severity')}")
@@ -95,7 +94,7 @@ class QualityScorer:
 
             for suggestion in suggestions:
                 try:
-                    priority = Severity(suggestion.get('priority', 'low'))
+                    priority = Severity(suggestion.get("priority", "low"))
                     penalty += SeverityWeight.get_weight(priority)
                 except ValueError:
                     logger.warning(f"未知的优先级: {suggestion.get('priority')}")
@@ -107,7 +106,7 @@ class QualityScorer:
             dimension_scores[dimension] = dimension_score
 
             # 更新维度数据中的得分
-            data['score'] = dimension_score
+            data["score"] = dimension_score
 
         # 计算加权总分
         total_score = 0.0
@@ -135,8 +134,8 @@ class QualityScorer:
             Dict[str, float]: 各维度得分字典
         """
         breakdown = {}
-        for dimension, data in review_result.get('dimensions', {}).items():
-            breakdown[dimension] = data.get('score', 0.0)
+        for dimension, data in review_result.get("dimensions", {}).items():
+            breakdown[dimension] = data.get("score", 0.0)
         return breakdown
 
     def get_score_grade(self, score: float) -> str:

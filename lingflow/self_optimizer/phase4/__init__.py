@@ -15,8 +15,8 @@ LingFlow Phase 4: 参数优化系统
     print(f"最佳分数: {result['best_score']}")
 """
 
-# 版本信息
-__version__ = "4.0.0-alpha"
+# 版本信息 (与主项目版本保持一致)
+__version__ = "3.8.0"
 __author__ = "LingFlow Team"
 
 # 核心引擎
@@ -68,6 +68,7 @@ except ImportError:
         history: List[Experiment]
         convergence_curve: List[float]
         improvement_percentage: float
+
 
 # 优化器
 from lingflow.self_optimizer.phase4.bayesian_optimizer import (
@@ -128,25 +129,20 @@ from lingflow.self_optimizer.phase4.engine import (
     quick_sensitivity_analysis,
 )
 
-
 __all__ = [
     # 版本信息
     "__version__",
     "__author__",
-
     # 核心引擎
     "OptimizationEngine",
-
     # 配置类（新增）
     "OptimizationConfig",
     "Experiment",
     "OptimizationResult",
-
     # 搜索空间（新增）
     "SearchSpace",
     "Parameter",
     "ParameterType",
-
     # 优化器
     "BayesianOptimizer",
     "GridSearchOptimizer",
@@ -154,30 +150,25 @@ __all__ = [
     "get_default_search_space",
     "OptimizationTrial",
     "OptimizationState",
-
     # 多目标优化
     "MultiObjectiveOptimizer",
     "MultiObjectiveResult",
     "ParetoPoint",
     "optimize_multiple_objectives",
-
     # 敏感性分析
     "SensitivityAnalyzer",
     "SensitivityResult",
     "SobolResult",
     "analyze_sensitivity",
-
     # 可视化
     "OptimizationVisualizer",
     "plot_optimization_progress",
     "plot_sensitivity_heatmap",
     "plot_pareto_front",
-
     # 便捷函数
     "quick_optimize",
     "quick_multi_optimize",
     "quick_sensitivity_analysis",
-
     # 存储和缓存
     "FileSystemParameterStore",
     "get_default_store",

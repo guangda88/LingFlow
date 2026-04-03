@@ -12,56 +12,50 @@ LingFlow 安全沙箱执行器
 """
 
 import multiprocessing
-import signal
 import sys
 import time
-import traceback
 import logging
 import resource
-import threading
-from typing import Any, Callable, Dict, Optional, Set
+from typing import Any, Callable, Dict, Optional
 
 from lingflow.common.security_analyzer import (
     SecurityAnalyzer,
     analyze_code_security,
     get_security_report,
-    SecurityViolation
 )
 
 
 class SandboxError(Exception):
     """沙箱执行错误"""
-    pass
 
 
 class SandboxTimeoutError(SandboxError):
     """沙箱执行超时"""
-    pass
 
 
 class SandboxMemoryLimitError(SandboxError):
     """沙箱内存超限"""
-    pass
 
 
 class SandboxCPULimitError(SandboxError):
     """沙箱CPU时间超限"""
-    pass
 
 
 class SandboxLoopLimitError(SandboxError):
     """沙箱循环迭代超限"""
-    pass
 
 
 # 模块级别的安全导入函数
+
+
 def _create_safe_import(allowed_modules):
     """创建安全的 __import__ 函数"""
+
     def safe_import(name, *args, **kwargs):
         """安全的导入函数，只允许白名单模块"""
         # 解析完整的模块名
-        if '.' in name:
-            base_module = name.split('.')[0]
+        if "." in name:
+            base_module = name.split(".")[0]
         else:
             base_module = name
 
@@ -71,7 +65,9 @@ def _create_safe_import(allowed_modules):
 
         # 使用原始的 __import__
         import builtins
+
         return builtins.__import__(name, *args, **kwargs)
+
     return safe_import
 
 
@@ -84,41 +80,41 @@ class SkillSandbox:
 
     # 安全的内置函数白名单
     SAFE_BUILTINS = {
-        '__builtins__': {
-            'abs': abs,
-            'all': all,
-            'any': any,
-            'bool': bool,
-            'dict': dict,
-            'enumerate': enumerate,
-            'filter': filter,
-            'float': float,
-            'int': int,
-            'isinstance': isinstance,
-            'len': len,
-            'list': list,
-            'map': map,
-            'max': max,
-            'min': min,
-            'range': range,
-            'reversed': reversed,
-            'round': round,
-            'set': set,
-            'sorted': sorted,
-            'str': str,
-            'sum': sum,
-            'tuple': tuple,
-            'zip': zip,
+        "__builtins__": {
+            "abs": abs,
+            "all": all,
+            "any": any,
+            "bool": bool,
+            "dict": dict,
+            "enumerate": enumerate,
+            "filter": filter,
+            "float": float,
+            "int": int,
+            "isinstance": isinstance,
+            "len": len,
+            "list": list,
+            "map": map,
+            "max": max,
+            "min": min,
+            "range": range,
+            "reversed": reversed,
+            "round": round,
+            "set": set,
+            "sorted": sorted,
+            "str": str,
+            "sum": sum,
+            "tuple": tuple,
+            "zip": zip,
         }
     }
 
     # 允许的模块白名单
     ALLOWED_MODULES = {
-        'typing',
-        'dataclasses',
-        'datetime',
-        'math',
-        'time',
+        "typing",
+        "dataclasses",
+        "datetime",
+        "math",
+        "time",
     }
 
     def __init__(
@@ -128,7 +124,7 @@ class SkillSandbox:
         max_processes: Optional[int] = None,
         max_recursion_depth: int = 100,
         max_loop_iterations: int = 1000000,
-        enable_ast_analysis: bool = True
+        enable_ast_analysis: bool = True,
     ):
         """
         初始化沙箱
@@ -150,12 +146,7 @@ class SkillSandbox:
         self.security_analyzer = SecurityAnalyzer(self.ALLOWED_MODULES)
         self.logger = logging.getLogger(__name__)
 
-    def execute(
-        self,
-        func: Callable,
-        *args,
-        **kwargs
-    ) -> Any:
+    def execute(self, func: Callable, *args, **kwargs) -> Any:
         """
         在沙箱中执行函数
 
@@ -178,10 +169,7 @@ class SkillSandbox:
         error_queue = manager.Queue()
 
         # 创建并启动子进程
-        process = multiprocessing.Process(
-            target=self._execute_wrapper,
-            args=(func, args, kwargs, result_queue, error_queue)
-        )
+        process = multiprocessing.Process(target=self._execute_wrapper, args=(func, args, kwargs, result_queue, error_queue))
 
         # 启动进程
         process.start()
@@ -198,9 +186,7 @@ class SkillSandbox:
                 process.kill()
                 process.join()
 
-            raise SandboxTimeoutError(
-                f"Skill execution timed out after {self.timeout} seconds"
-            )
+            raise SandboxTimeoutError(f"Skill execution timed out after {self.timeout} seconds")
 
         # 检查是否有错误
         if not error_queue.empty():
@@ -210,6 +196,7 @@ class SkillSandbox:
         # 获取结果
         # 等待一小段时间以确保结果已写入队列
         import time
+
         time.sleep(0.01)
 
         if result_queue.empty():
@@ -223,7 +210,7 @@ class SkillSandbox:
         args: tuple,
         kwargs: dict,
         result_queue: multiprocessing.Queue,
-        error_queue: multiprocessing.Queue
+        error_queue: multiprocessing.Queue,
     ) -> None:
         """
         在子进程中执行函数的包装器
@@ -244,10 +231,7 @@ class SkillSandbox:
             error_queue.put(e)
 
     def execute_code(
-        self,
-        code: str,
-        globals_dict: Optional[Dict[str, Any]] = None,
-        locals_dict: Optional[Dict[str, Any]] = None
+        self, code: str, globals_dict: Optional[Dict[str, Any]] = None, locals_dict: Optional[Dict[str, Any]] = None
     ) -> Any:
         """
         在沙箱中执行代码
@@ -268,7 +252,7 @@ class SkillSandbox:
         """
         # 编译代码以验证语法
         try:
-            compile(code, '<sandbox>', 'exec')
+            compile(code, "<sandbox>", "exec")
         except SyntaxError as e:
             raise SyntaxError(f"Syntax error in skill code: {e}")
 
@@ -295,7 +279,7 @@ class SkillSandbox:
             执行后的局部命名空间
         """
         # 记录开始时的资源使用
-        start_time = time.time()
+
         start_cpu = time.process_time()
         start_memory = self._get_memory_usage()
 
@@ -313,26 +297,24 @@ class SkillSandbox:
                 self.logger.warning("Could not set memory limit")
 
         # 循环计数器
-        loop_counter = {'count': 0}
+        loop_counter = {"count": 0}
 
         def trace_hook(frame, event, arg):
             """跟踪函数，用于监控循环迭代"""
-            if event == 'line':
+            if event == "line":
                 # 简单的循环检测：检查是否在循环中
-                if loop_counter['count'] >= self.max_loop_iterations:
-                    raise SandboxLoopLimitError(
-                        f"Loop iteration count exceeded limit: {self.max_loop_iterations}"
-                    )
-                loop_counter['count'] += 1
+                if loop_counter["count"] >= self.max_loop_iterations:
+                    raise SandboxLoopLimitError(f"Loop iteration count exceeded limit: {self.max_loop_iterations}")
+                loop_counter["count"] += 1
             return trace_hook
 
         try:
             # 启用跟踪（仅在需要时）
-            if self.max_loop_iterations < float('inf'):
+            if self.max_loop_iterations < float("inf"):
                 sys.settrace(trace_hook)
 
             # 在子进程中重新编译代码
-            compiled_code = compile(code, '<sandbox>', 'exec')
+            compiled_code = compile(code, "<sandbox>", "exec")
             exec(compiled_code, globals_dict, locals_dict)
 
             # 停止跟踪
@@ -346,16 +328,12 @@ class SkillSandbox:
                 end_memory = self._get_memory_usage()
                 memory_used = end_memory - start_memory
                 if memory_used > self.memory_limit:
-                    raise SandboxMemoryLimitError(
-                        f"Memory usage {memory_used} bytes exceeded limit {self.memory_limit} bytes"
-                    )
+                    raise SandboxMemoryLimitError(f"Memory usage {memory_used} bytes exceeded limit {self.memory_limit} bytes")
 
             # 检查CPU时间（超时检查已经通过进程超时机制完成）
             elapsed_cpu = time.process_time() - start_cpu
             if elapsed_cpu > self.timeout:
-                raise SandboxCPULimitError(
-                    f"CPU time {elapsed_cpu:.2f}s exceeded timeout {self.timeout}s"
-                )
+                raise SandboxCPULimitError(f"CPU time {elapsed_cpu:.2f}s exceeded timeout {self.timeout}s")
 
             # 过滤掉不可序列化的对象（如模块）
             result = {}
@@ -363,6 +341,7 @@ class SkillSandbox:
                 try:
                     # 尝试 pickle 值，如果失败则跳过
                     import pickle
+
                     pickle.dumps(value)
                     result[key] = value
                 except (pickle.PickleError, TypeError):
@@ -404,6 +383,7 @@ class SkillSandbox:
         """
         try:
             import resource
+
             # 在Unix系统上获取RSS（驻留集大小）
             return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024  # 转换为字节
         except (ImportError, AttributeError):
@@ -422,36 +402,36 @@ class SkillSandbox:
 
         # 创建安全的 builtins 字典
         safe_builtins = {
-            '__import__': safe_import,
-            'abs': abs,
-            'all': all,
-            'any': any,
-            'bool': bool,
-            'dict': dict,
-            'enumerate': enumerate,
-            'filter': filter,
-            'float': float,
-            'int': int,
-            'isinstance': isinstance,
-            'len': len,
-            'list': list,
-            'map': map,
-            'max': max,
-            'min': min,
-            'range': range,
-            'reversed': reversed,
-            'round': round,
-            'set': set,
-            'sorted': sorted,
-            'str': str,
-            'sum': sum,
-            'tuple': tuple,
-            'zip': zip,
+            "__import__": safe_import,
+            "abs": abs,
+            "all": all,
+            "any": any,
+            "bool": bool,
+            "dict": dict,
+            "enumerate": enumerate,
+            "filter": filter,
+            "float": float,
+            "int": int,
+            "isinstance": isinstance,
+            "len": len,
+            "list": list,
+            "map": map,
+            "max": max,
+            "min": min,
+            "range": range,
+            "reversed": reversed,
+            "round": round,
+            "set": set,
+            "sorted": sorted,
+            "str": str,
+            "sum": sum,
+            "tuple": tuple,
+            "zip": zip,
         }
 
         return {
-            '__builtins__': safe_builtins,
-            '__import__': safe_import,
+            "__builtins__": safe_builtins,
+            "__import__": safe_import,
         }
 
     def validate_code(self, code: str) -> bool:
@@ -466,7 +446,7 @@ class SkillSandbox:
         """
         # 首先检查语法
         try:
-            compile(code, '<sandbox>', 'exec')
+            compile(code, "<sandbox>", "exec")
         except SyntaxError:
             return False
 
@@ -478,13 +458,11 @@ class SkillSandbox:
                 if not is_safe:
                     # 记录安全违规
                     report = get_security_report(code, self.ALLOWED_MODULES)
-                    self.logger.warning(
-                        f"Security violations detected: {report['total_violations']} violations"
-                    )
+                    self.logger.warning(f"Security violations detected: {report['total_violations']} violations")
 
                     # 记录CRITICAL和HIGH级别的违规详情
-                    for severity in ['CRITICAL', 'HIGH']:
-                        for violation in report['by_severity'][severity]:
+                    for severity in ["CRITICAL", "HIGH"]:
+                        for violation in report["by_severity"][severity]:
                             self.logger.warning(
                                 f"  [{severity}] {violation['violation_type']}: "
                                 f"{violation['message']} at line {violation['line']}"
@@ -514,9 +492,18 @@ class SkillSandbox:
         try:
             # 检查危险的导入
             dangerous_imports = [
-                'import os', 'import sys', 'import subprocess',
-                'os.', 'sys.', 'subprocess.', 'eval(', 'exec(',
-                'compile(', '__import__', 'open(', 'open  '
+                "import os",
+                "import sys",
+                "import subprocess",
+                "os.",
+                "sys.",
+                "subprocess.",
+                "eval(",
+                "exec(",
+                "compile(",
+                "__import__",
+                "open(",
+                "open  ",
             ]
 
             code_lower = code.lower()
@@ -544,14 +531,12 @@ class SkillSandbox:
             # 如果未启用AST分析，返回简单的报告
             is_valid = self._validate_code_simple(code)
             return {
-                'is_safe': is_valid,
-                'total_violations': 0 if is_valid else 1,
-                'by_severity': {
-                    'HIGH': [] if is_valid else [{'message': 'Validation failed'}]
-                },
-                'by_type': {},
-                'has_recursion': False,
-                'max_loop_depth': 0,
+                "is_safe": is_valid,
+                "total_violations": 0 if is_valid else 1,
+                "by_severity": {"HIGH": [] if is_valid else [{"message": "Validation failed"}]},
+                "by_type": {},
+                "has_recursion": False,
+                "max_loop_depth": 0,
             }
 
 
@@ -569,17 +554,12 @@ def get_default_sandbox() -> SkillSandbox:
             max_processes=1,
             max_recursion_depth=100,
             max_loop_iterations=1000000,
-            enable_ast_analysis=True
+            enable_ast_analysis=True,
         )
     return _default_sandbox
 
 
-def execute_in_sandbox(
-    func: Callable,
-    *args,
-    timeout: Optional[float] = None,
-    **kwargs
-) -> Any:
+def execute_in_sandbox(func: Callable, *args, timeout: Optional[float] = None, **kwargs) -> Any:
     """
     在沙箱中执行函数（便捷函数）
 

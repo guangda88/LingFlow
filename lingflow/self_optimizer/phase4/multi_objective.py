@@ -8,7 +8,6 @@ LingFlow Phase 4: 多目标优化器实现
 import logging
 from typing import Dict, Any, List, Callable, Optional
 from dataclasses import dataclass, field
-from datetime import datetime
 import time
 
 logger = logging.getLogger(__name__)
@@ -17,13 +16,14 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ParetoPoint:
     """Pareto前沿点"""
+
     params: Dict[str, Any]
     objectives: Dict[str, float]  # 目标名称 -> 值
     aggregated_score: float
     dominated: bool = False
     timestamp: float = field(default_factory=time.time)
 
-    def dominates(self, other: 'ParetoPoint') -> bool:
+    def dominates(self, other: "ParetoPoint") -> bool:
         """判断当前点是否支配另一个点
 
         当前点支配另一个点，当且仅当：
@@ -35,7 +35,7 @@ class ParetoPoint:
         at_least_one_better = False
 
         for obj_name, obj_value in self.objectives.items():
-            other_value = other.objectives.get(obj_name, float('inf'))
+            other_value = other.objectives.get(obj_name, float("inf"))
 
             if obj_value > other_value:
                 return False  # 有一个目标更差，不支配
@@ -50,13 +50,14 @@ class ParetoPoint:
             "params": self.params,
             "objectives": self.objectives,
             "aggregated_score": self.aggregated_score,
-            "dominated": self.dominated
+            "dominated": self.dominated,
         }
 
 
 @dataclass
 class MultiObjectiveResult:
     """多目标优化结果"""
+
     pareto_front: List[ParetoPoint]
     all_evaluated: List[ParetoPoint]
     n_evaluations: int
@@ -73,7 +74,7 @@ class MultiObjectiveResult:
         if not candidates:
             return None
 
-        return min(candidates, key=lambda p: p.objectives.get(objective_name, float('inf')))
+        return min(candidates, key=lambda p: p.objectives.get(objective_name, float("inf")))
 
     def get_balanced_solution(self) -> Optional[ParetoPoint]:
         """获取平衡解（所有目标的加权和最小）"""
@@ -117,7 +118,7 @@ class MultiObjectiveOptimizer:
         search_space: Dict[str, Any],
         objectives: Dict[str, Callable[[Dict[str, Any]], float]],
         weights: Optional[Dict[str, float]] = None,
-        config: Dict[str, Any] = None
+        config: Dict[str, Any] = None,
     ):
         """初始化多目标优化器
 
@@ -164,7 +165,7 @@ class MultiObjectiveOptimizer:
                 results[name] = score
             except Exception as e:
                 logger.error(f"评估目标 {name} 失败: {e}")
-                results[name] = float('inf')
+                results[name] = float("inf")
 
         return results
 
@@ -229,17 +230,9 @@ class MultiObjectiveOptimizer:
             return self.calculate_aggregated_score(objectives)
 
         # 创建优化器
-        optimizer_config = {
-            "n_trials": self.max_evaluations,
-            "timeout": self.timeout,
-            "early_stopping_patience": 20
-        }
+        optimizer_config = {"n_trials": self.max_evaluations, "timeout": self.timeout, "early_stopping_patience": 20}
 
-        optimizer = create_optimizer(
-            self.search_space,
-            aggregated_objective,
-            optimizer_config
-        )
+        optimizer = create_optimizer(self.search_space, aggregated_objective, optimizer_config)
 
         # 运行优化
         state = optimizer.optimize()
@@ -251,10 +244,7 @@ class MultiObjectiveOptimizer:
             aggregated = self.calculate_aggregated_score(all_objectives)
 
             point = ParetoPoint(
-                params=trial.params.copy(),
-                objectives=all_objectives,
-                aggregated_score=aggregated,
-                timestamp=trial.timestamp
+                params=trial.params.copy(), objectives=all_objectives, aggregated_score=aggregated, timestamp=trial.timestamp
             )
 
             self.all_evaluated.append(point)
@@ -269,7 +259,7 @@ class MultiObjectiveOptimizer:
             all_evaluated=self.all_evaluated.copy(),
             n_evaluations=self.evaluation_count,
             total_time=time.time() - self.start_time,
-            converged=converged
+            converged=converged,
         )
 
 
@@ -286,7 +276,7 @@ class NSGA2Optimizer:
         self,
         search_space: Dict[str, Any],
         objectives: Dict[str, Callable[[Dict[str, Any]], float]],
-        config: Dict[str, Any] = None
+        config: Dict[str, Any] = None,
     ):
         """初始化NSGA-II优化器"""
         self.search_space = search_space
@@ -297,10 +287,7 @@ class NSGA2Optimizer:
         self.max_generations = self.config.get("max_generations", 100)
         self.mutation_rate = self.config.get("mutation_rate", 0.1)
 
-    def _fast_non_dominated_sort(
-        self,
-        population: List[ParetoPoint]
-    ) -> List[List[ParetoPoint]]:
+    def _fast_non_dominated_sort(self, population: List[ParetoPoint]) -> List[List[ParetoPoint]]:
         """快速非支配排序
 
         将种群分为多个前沿面
@@ -343,10 +330,7 @@ class NSGA2Optimizer:
 
         return fronts
 
-    def _calculate_crowding_distance(
-        self,
-        front: List[ParetoPoint]
-    ) -> None:
+    def _calculate_crowding_distance(self, front: List[ParetoPoint]) -> None:
         """计算拥挤距离
 
         用于维护前沿面的多样性
@@ -359,15 +343,14 @@ class NSGA2Optimizer:
             p.crowding_distance = 0.0
 
         # 对每个目标计算拥挤距离
-        num_objectives = len(front[0].objectives)
 
         for obj_name in front[0].objectives.keys():
             # 按该目标排序
             sorted_front = sorted(front, key=lambda p: p.objectives[obj_name])
 
             # 边界点设为无穷大
-            sorted_front[0].crowding_distance = float('inf')
-            sorted_front[-1].crowding_distance = float('inf')
+            sorted_front[0].crowding_distance = float("inf")
+            sorted_front[-1].crowding_distance = float("inf")
 
             # 计算中间点的拥挤距离
             obj_range = sorted_front[-1].objectives[obj_name] - sorted_front[0].objectives[obj_name]
@@ -376,16 +359,12 @@ class NSGA2Optimizer:
                 continue
 
             for i in range(1, len(sorted_front) - 1):
-                distance = (
-                    sorted_front[i + 1].objectives[obj_name] -
-                    sorted_front[i - 1].objectives[obj_name]
-                ) / obj_range
+                distance = (sorted_front[i + 1].objectives[obj_name] - sorted_front[i - 1].objectives[obj_name]) / obj_range
                 sorted_front[i].crowding_distance += distance
 
     def optimize(self) -> MultiObjectiveResult:
         """运行NSGA-II优化"""
         # 简化实现：使用随机采样 + Pareto过滤
-        import random
 
         pareto_front: List[ParetoPoint] = []
         all_evaluated: List[ParetoPoint] = []
@@ -396,11 +375,7 @@ class NSGA2Optimizer:
             objectives = self.evaluate_all_objectives(params)
             aggregated = sum(objectives.values()) / len(objectives)
 
-            point = ParetoPoint(
-                params=params,
-                objectives=objectives,
-                aggregated_score=aggregated
-            )
+            point = ParetoPoint(params=params, objectives=objectives, aggregated_score=aggregated)
 
             all_evaluated.append(point)
             self.update_pareto_front(point, pareto_front)
@@ -410,12 +385,13 @@ class NSGA2Optimizer:
             all_evaluated=all_evaluated,
             n_evaluations=len(all_evaluated),
             total_time=0.0,
-            converged=False
+            converged=False,
         )
 
     def _random_sample(self) -> Dict[str, Any]:
         """随机采样参数"""
         import random
+
         params = {}
 
         for name, space in self.search_space.items():
@@ -439,15 +415,11 @@ class NSGA2Optimizer:
                 results[name] = score
             except Exception as e:
                 logger.error(f"评估目标 {name} 失败: {e}")
-                results[name] = float('inf')
+                results[name] = float("inf")
 
         return results
 
-    def update_pareto_front(
-        self,
-        point: ParetoPoint,
-        front: List[ParetoPoint]
-    ) -> None:
+    def update_pareto_front(self, point: ParetoPoint, front: List[ParetoPoint]) -> None:
         """更新Pareto前沿"""
         for existing in front:
             if existing.dominates(point):
@@ -466,7 +438,7 @@ def optimize_multiple_objectives(
     search_space: Dict[str, Any],
     objectives: Dict[str, Callable],
     weights: Dict[str, float] = None,
-    config: Dict[str, Any] = None
+    config: Dict[str, Any] = None,
 ) -> MultiObjectiveResult:
     """多目标优化便捷函数
 
@@ -479,17 +451,12 @@ def optimize_multiple_objectives(
     Returns:
         多目标优化结果
     """
-    optimizer = MultiObjectiveOptimizer(
-        search_space=search_space,
-        objectives=objectives,
-        weights=weights,
-        config=config
-    )
+    optimizer = MultiObjectiveOptimizer(search_space=search_space, objectives=objectives, weights=weights, config=config)
 
     return optimizer.optimize()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # 测试
     def quality_obj(params):
         """质量目标：越小越好"""
@@ -501,29 +468,15 @@ if __name__ == "__main__":
         y = params.get("y", 0)
         return (y - 3) ** 2
 
-    search_space = {
-        "x": {"type": "float", "min": 0, "max": 10},
-        "y": {"type": "float", "min": 0, "max": 10}
-    }
+    search_space = {"x": {"type": "float", "min": 0, "max": 10}, "y": {"type": "float", "min": 0, "max": 10}}
 
-    objectives = {
-        "quality": quality_obj,
-        "performance": performance_obj
-    }
+    objectives = {"quality": quality_obj, "performance": performance_obj}
 
-    weights = {
-        "quality": 0.6,
-        "performance": 0.4
-    }
+    weights = {"quality": 0.6, "performance": 0.4}
 
-    config = {
-        "max_evaluations": 100,
-        "timeout": 30
-    }
+    config = {"max_evaluations": 100, "timeout": 30}
 
-    result = optimize_multiple_objectives(
-        search_space, objectives, weights, config
-    )
+    result = optimize_multiple_objectives(search_space, objectives, weights, config)
 
     print(result.get_summary())
 

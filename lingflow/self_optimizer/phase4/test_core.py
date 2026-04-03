@@ -10,23 +10,17 @@ import logging
 from pathlib import Path
 
 # 设置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
 def test_bayesian_optimizer():
     """测试贝叶斯优化器"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试贝叶斯优化器")
-    print("="*60)
+    print("=" * 60)
 
-    from lingflow.self_optimizer.phase4 import (
-        BayesianOptimizer,
-        get_default_search_space
-    )
+    from lingflow.self_optimizer.phase4 import BayesianOptimizer
 
     # 创建测试目标函数
     def test_objective(params):
@@ -36,17 +30,10 @@ def test_bayesian_optimizer():
         return (x - 2) ** 2 + (y - 3) ** 2
 
     # 定义搜索空间
-    search_space = {
-        "x": {"type": "float", "min": 0, "max": 10},
-        "y": {"type": "float", "min": 0, "max": 10}
-    }
+    search_space = {"x": {"type": "float", "min": 0, "max": 10}, "y": {"type": "float", "min": 0, "max": 10}}
 
     # 创建优化器
-    config = {
-        "n_trials": 30,
-        "timeout": 30,
-        "seed": 42
-    }
+    config = {"n_trials": 30, "timeout": 30, "seed": 42}
 
     optimizer = BayesianOptimizer(search_space, test_objective, config)
 
@@ -54,7 +41,7 @@ def test_bayesian_optimizer():
     state = optimizer.optimize()
 
     # 输出结果
-    print(f"\n优化结果:")
+    print("\n优化结果:")
     print(f"  最佳参数: {state.get_best_params()}")
     print(f"  最佳分数: {state.get_best_score():.6f}")
     print(f"  试验次数: {state.current_trial}")
@@ -72,9 +59,9 @@ def test_bayesian_optimizer():
 
 def test_multi_objective_optimizer():
     """测试多目标优化器"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试多目标优化器")
-    print("="*60)
+    print("=" * 60)
 
     from lingflow.self_optimizer.phase4 import (
         optimize_multiple_objectives,
@@ -84,38 +71,25 @@ def test_multi_objective_optimizer():
     def quality_obj(params):
         """质量目标：x^2"""
         x = params.get("x", 0)
-        return x ** 2
+        return x**2
 
     def performance_obj(params):
         """性能目标：(x-5)^2"""
         x = params.get("x", 0)
         return (x - 5) ** 2
 
-    search_space = {
-        "x": {"type": "float", "min": 0, "max": 10}
-    }
+    search_space = {"x": {"type": "float", "min": 0, "max": 10}}
 
-    objectives = {
-        "quality": quality_obj,
-        "performance": performance_obj
-    }
+    objectives = {"quality": quality_obj, "performance": performance_obj}
 
-    weights = {
-        "quality": 0.5,
-        "performance": 0.5
-    }
+    weights = {"quality": 0.5, "performance": 0.5}
 
-    config = {
-        "max_evaluations": 50,
-        "timeout": 20
-    }
+    config = {"max_evaluations": 50, "timeout": 20}
 
-    result = optimize_multiple_objectives(
-        search_space, objectives, weights, config
-    )
+    result = optimize_multiple_objectives(search_space, objectives, weights, config)
 
     # 输出结果
-    print(f"\n多目标优化结果:")
+    print("\n多目标优化结果:")
     print(f"  评估次数: {result.n_evaluations}")
     print(f"  Pareto前沿解数: {len(result.get_pareto_front())}")
     print(f"  总耗时: {result.total_time:.2f}秒")
@@ -141,11 +115,12 @@ def test_multi_objective_optimizer():
 
 def test_sensitivity_analyzer():
     """测试敏感性分析器"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试敏感性分析器")
-    print("="*60)
+    print("=" * 60)
 
     import numpy as np
+
     np.random.seed(42)  # 设置随机种子以确保可重复性
 
     from lingflow.self_optimizer.phase4 import analyze_sensitivity
@@ -162,9 +137,9 @@ def test_sensitivity_analyzer():
     # 设置范围与系数成反比，这样每个参数的总影响应该相似
     # x的系数最大，所以范围最小；z的系数最小，所以范围最大
     search_space = {
-        "x": {"type": "float", "min": -1, "max": 1},    # 系数10, 范围2
-        "y": {"type": "float", "min": -5, "max": 5},    # 系数5, 范围10
-        "z": {"type": "float", "min": 0, "max": 20}     # 系数1, 范围20
+        "x": {"type": "float", "min": -1, "max": 1},  # 系数10, 范围2
+        "y": {"type": "float", "min": -5, "max": 5},  # 系数5, 范围10
+        "z": {"type": "float", "min": 0, "max": 20},  # 系数1, 范围20
     }
 
     base_params = {"x": 0, "y": 0, "z": 0}
@@ -172,8 +147,7 @@ def test_sensitivity_analyzer():
     # 局部敏感性分析
     print("\n局部敏感性分析:")
     local_results = analyze_sensitivity(
-        search_space, test_objective, base_params,
-        method="local", n_samples=50  # 增加样本数提高稳定性
+        search_space, test_objective, base_params, method="local", n_samples=50  # 增加样本数提高稳定性
     )
 
     for param_name, result in local_results.items():
@@ -199,15 +173,15 @@ def test_sensitivity_analyzer():
 
 def test_visualization():
     """测试可视化功能"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试可视化功能")
-    print("="*60)
+    print("=" * 60)
 
     from lingflow.self_optimizer.phase4 import (
         OptimizationVisualizer,
         OptimizationTrial,
         OptimizationState,
-        get_default_search_space
+        get_default_search_space,
     )
 
     # 创建模拟优化状态
@@ -217,31 +191,19 @@ def test_visualization():
             trial_id=f"trial_{i}",
             params={"x": 2 + 0.5 * (0.9 ** (i / 5))},  # 收敛到2
             score=1.0 + 10 * (0.9 ** (i / 5)),  # 模拟收敛
-            timestamp=i
+            timestamp=i,
         )
         history.append(trial)
 
-    best_trial = OptimizationTrial(
-        trial_id="best",
-        params={"x": 2.05},
-        score=1.02
-    )
+    best_trial = OptimizationTrial(trial_id="best", params={"x": 2.05}, score=1.02)
 
-    state = OptimizationState(
-        current_trial=30,
-        best_trial=best_trial,
-        convergence_rate=0.92,
-        history=history
-    )
+    state = OptimizationState(current_trial=30, best_trial=best_trial, convergence_rate=0.92, history=history)
 
     search_space = get_default_search_space("structure")
 
     # 生成HTML报告
     visualizer = OptimizationVisualizer(output_dir=".lingflow/reports")
-    report_path = visualizer.generate_html_report(
-        state, search_space,
-        metadata={"test": True}
-    )
+    report_path = visualizer.generate_html_report(state, search_space, metadata={"test": True})
 
     print(f"\n生成的报告: {report_path}")
 
@@ -254,13 +216,12 @@ def test_visualization():
 
 def test_integration_with_evaluators():
     """测试与现有评估器的集成"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试与现有评估器集成")
-    print("="*60)
+    print("=" * 60)
 
     try:
         from lingflow.self_optimizer.phase4 import OptimizationEngine
-        from lingflow.self_optimizer.evaluator import StructureEvaluator
 
         # 使用当前项目作为测试目标
         target_path = "lingflow"
@@ -270,12 +231,10 @@ def test_integration_with_evaluators():
 
         # 运行优化（少量试验）
         result = engine.optimize_single_objective(
-            target_path=target_path,
-            goal="structure",
-            config={"n_trials": 5, "timeout": 30}
+            target_path=target_path, goal="structure", config={"n_trials": 5, "timeout": 30}
         )
 
-        print(f"\n集成测试结果:")
+        print("\n集成测试结果:")
         print(f"  目标路径: {target_path}")
         print(f"  最佳分数: {result['best_score']:.4f}")
         print(f"  试验次数: {result['n_trials']}")
@@ -291,9 +250,9 @@ def test_integration_with_evaluators():
 
 def main():
     """运行所有测试"""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("LingFlow Phase 4 核心算法测试套件")
-    print("="*60)
+    print("=" * 60)
 
     tests = [
         ("贝叶斯优化器", test_bayesian_optimizer),
@@ -314,9 +273,9 @@ def main():
             results.append((test_name, False))
 
     # 输出测试摘要
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("测试摘要")
-    print("="*60)
+    print("=" * 60)
 
     passed = sum(1 for _, success in results if success)
     total = len(results)
@@ -335,5 +294,5 @@ def main():
         return 1
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     sys.exit(main())

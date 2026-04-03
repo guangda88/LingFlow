@@ -5,7 +5,6 @@
 """
 
 import pytest
-from pathlib import Path
 
 from lingflow.testing import (
     CodeTestScenario,
@@ -13,7 +12,7 @@ from lingflow.testing import (
     REFACTORING_SCENARIO,
     DETECT_SECURITY_ISSUE,
     OPTIMIZATION_SCENARIO,
-    create_custom_scenario
+    create_custom_scenario,
 )
 
 
@@ -23,10 +22,7 @@ class TestCodeTestScenario:
     def test_create_scenario_success(self):
         """测试成功创建场景"""
         scenario = CodeTestScenario(
-            name="test_scenario",
-            prompt="测试提示词",
-            description="测试描述",
-            code_content="def foo(): pass"
+            name="test_scenario", prompt="测试提示词", description="测试描述", code_content="def foo(): pass"
         )
 
         assert scenario.name == "test_scenario"
@@ -37,60 +33,34 @@ class TestCodeTestScenario:
 
     def test_validate_success(self):
         """测试验证成功"""
-        scenario = CodeTestScenario(
-            name="test",
-            prompt="提示词",
-            description="描述",
-            code_content="x = 1"
-        )
+        scenario = CodeTestScenario(name="test", prompt="提示词", description="描述", code_content="x = 1")
 
         assert scenario.validate() is True
 
     def test_validate_missing_name(self):
         """测试缺少名称验证失败"""
-        scenario = CodeTestScenario(
-            name="",
-            prompt="提示词",
-            description="描述",
-            code_content="x = 1"
-        )
+        scenario = CodeTestScenario(name="", prompt="提示词", description="描述", code_content="x = 1")
 
         with pytest.raises(ValueError, match="Scenario name is required"):
             scenario.validate()
 
     def test_validate_missing_prompt(self):
         """测试缺少提示词验证失败"""
-        scenario = CodeTestScenario(
-            name="test",
-            prompt="",
-            description="描述",
-            code_content="x = 1"
-        )
+        scenario = CodeTestScenario(name="test", prompt="", description="描述", code_content="x = 1")
 
         with pytest.raises(ValueError, match="Scenario prompt is required"):
             scenario.validate()
 
     def test_validate_missing_code(self):
         """测试缺少代码验证失败"""
-        scenario = CodeTestScenario(
-            name="test",
-            prompt="提示词",
-            description="描述",
-            code_content=""
-        )
+        scenario = CodeTestScenario(name="test", prompt="提示词", description="描述", code_content="")
 
         with pytest.raises(ValueError, match="Scenario code_content is required"):
             scenario.validate()
 
     def test_validate_invalid_max_turns(self):
         """测试无效最大轮数验证失败"""
-        scenario = CodeTestScenario(
-            name="test",
-            prompt="提示词",
-            description="描述",
-            code_content="x = 1",
-            max_turns=0
-        )
+        scenario = CodeTestScenario(name="test", prompt="提示词", description="描述", code_content="x = 1", max_turns=0)
 
         with pytest.raises(ValueError, match="max_turns must be at least 1"):
             scenario.validate()
@@ -98,12 +68,7 @@ class TestCodeTestScenario:
     def test_to_dict(self):
         """测试转换为字典"""
         scenario = CodeTestScenario(
-            name="test",
-            prompt="提示词",
-            description="描述",
-            code_content="x = 1",
-            max_turns=5,
-            tags=["test", "demo"]
+            name="test", prompt="提示词", description="描述", code_content="x = 1", max_turns=5, tags=["test", "demo"]
         )
 
         data = scenario.to_dict()
@@ -138,11 +103,7 @@ class TestPredefinedScenarios:
 
     def test_scenarios_validate(self):
         """测试预定义场景验证通过"""
-        scenarios = [
-            REFACTORING_SCENARIO,
-            DETECT_SECURITY_ISSUE,
-            OPTIMIZATION_SCENARIO
-        ]
+        scenarios = [REFACTORING_SCENARIO, DETECT_SECURITY_ISSUE, OPTIMIZATION_SCENARIO]
 
         for scenario in scenarios:
             assert scenario.validate() is True
@@ -154,7 +115,7 @@ class TestPredefinedScenarios:
             "identify_smells",
             "suggest_refactoring",
             "apply_refactoring",
-            "verify_equivalence"
+            "verify_equivalence",
         ]
 
         assert REFACTORING_SCENARIO.expected_tools == expected_tools
@@ -172,10 +133,7 @@ class TestCreateCustomScenario:
     def test_create_custom_scenario_success(self):
         """测试成功创建自定义场景"""
         scenario = create_custom_scenario(
-            name="custom_test",
-            prompt="自定义提示词",
-            code_content="def custom(): pass",
-            description="自定义描述"
+            name="custom_test", prompt="自定义提示词", code_content="def custom(): pass", description="自定义描述"
         )
 
         assert scenario.name == "custom_test"
@@ -185,12 +143,7 @@ class TestCreateCustomScenario:
     def test_create_custom_scenario_with_kwargs(self):
         """测试使用 kwargs 创建自定义场景"""
         scenario = create_custom_scenario(
-            name="custom_test",
-            prompt="提示词",
-            code_content="x = 1",
-            max_turns=10,
-            timeout=120,
-            priority=5
+            name="custom_test", prompt="提示词", code_content="x = 1", max_turns=10, timeout=120, priority=5
         )
 
         assert scenario.max_turns == 10
@@ -198,5 +151,5 @@ class TestCreateCustomScenario:
         assert scenario.priority == 5
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])

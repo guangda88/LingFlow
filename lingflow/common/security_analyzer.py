@@ -16,20 +16,13 @@ LingFlow 增强的沙箱安全验证模块
 """
 
 import ast
-import re
 from typing import List, Dict, Any, Optional, Set, Tuple
 
 
 class SecurityViolation:
     """安全违规"""
-    def __init__(
-        self,
-        severity: str,
-        violation_type: str,
-        message: str,
-        line: int,
-        col_offset: int
-    ):
+
+    def __init__(self, severity: str, violation_type: str, message: str, line: int, col_offset: int):
         self.severity = severity  # CRITICAL, HIGH, MEDIUM, LOW
         self.violation_type = violation_type
         self.message = message
@@ -39,11 +32,11 @@ class SecurityViolation:
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典"""
         return {
-            'severity': self.severity,
-            'violation_type': self.violation_type,
-            'message': self.message,
-            'line': self.line,
-            'col_offset': self.col_offset
+            "severity": self.severity,
+            "violation_type": self.violation_type,
+            "message": self.message,
+            "line": self.line,
+            "col_offset": self.col_offset,
         }
 
 
@@ -53,16 +46,16 @@ class SecurityAnalyzer(ast.NodeVisitor):
     def __init__(self, allowed_modules: Optional[Set[str]] = None):
         self.violations: List[SecurityViolation] = []
         self.allowed_modules = allowed_modules or {
-            'typing',
-            'dataclasses',
-            'datetime',
-            'math',
-            'time',
-            'json',
-            'random',
-            'decimal',
-            'fractions',
-            'collections',
+            "typing",
+            "dataclasses",
+            "datetime",
+            "math",
+            "time",
+            "json",
+            "random",
+            "decimal",
+            "fractions",
+            "collections",
         }
         self.function_depth = 0
         self.loop_depth = 0
@@ -74,13 +67,15 @@ class SecurityAnalyzer(ast.NodeVisitor):
             tree = ast.parse(code)
             self.visit(tree)
         except SyntaxError as e:
-            self.violations.append(SecurityViolation(
-                severity='CRITICAL',
-                violation_type='SYNTAX_ERROR',
-                message=f'Syntax error: {e.msg}',
-                line=e.lineno or 0,
-                col_offset=e.offset or 0
-            ))
+            self.violations.append(
+                SecurityViolation(
+                    severity="CRITICAL",
+                    violation_type="SYNTAX_ERROR",
+                    message=f"Syntax error: {e.msg}",
+                    line=e.lineno or 0,
+                    col_offset=e.offset or 0,
+                )
+            )
         return self.violations
 
     def visit_Import(self, node: ast.Import) -> None:
@@ -89,15 +84,17 @@ class SecurityAnalyzer(ast.NodeVisitor):
             module_name = alias.name
 
             # 检查模块是否在白名单中
-            base_module = module_name.split('.')[0]
+            base_module = module_name.split(".")[0]
             if base_module not in self.allowed_modules:
-                self.violations.append(SecurityViolation(
-                    severity='CRITICAL',
-                    violation_type='FORBIDDEN_IMPORT',
-                    message=f'Import of module "{module_name}" is not allowed',
-                    line=node.lineno,
-                    col_offset=node.col_offset
-                ))
+                self.violations.append(
+                    SecurityViolation(
+                        severity="CRITICAL",
+                        violation_type="FORBIDDEN_IMPORT",
+                        message=f'Import of module "{module_name}" is not allowed',
+                        line=node.lineno,
+                        col_offset=node.col_offset,
+                    )
+                )
 
         self.generic_visit(node)
 
@@ -107,21 +104,23 @@ class SecurityAnalyzer(ast.NodeVisitor):
             module_name = node.module
 
             # 特殊检查：from __future__ imports（优先检查）
-            if module_name == '__future__':
+            if module_name == "__future__":
                 # __future__ imports are allowed
                 self.generic_visit(node)
                 return
 
             # 检查模块是否在白名单中
-            base_module = module_name.split('.')[0]
+            base_module = module_name.split(".")[0]
             if base_module not in self.allowed_modules:
-                self.violations.append(SecurityViolation(
-                    severity='CRITICAL',
-                    violation_type='FORBIDDEN_IMPORT',
-                    message=f'Import from module "{module_name}" is not allowed',
-                    line=node.lineno,
-                    col_offset=node.col_offset
-                ))
+                self.violations.append(
+                    SecurityViolation(
+                        severity="CRITICAL",
+                        violation_type="FORBIDDEN_IMPORT",
+                        message=f'Import from module "{module_name}" is not allowed',
+                        line=node.lineno,
+                        col_offset=node.col_offset,
+                    )
+                )
 
         self.generic_visit(node)
 
@@ -133,20 +132,33 @@ class SecurityAnalyzer(ast.NodeVisitor):
 
             # 危险的内置函数
             dangerous_builtins = {
-                'eval', 'exec', 'compile', 'open', '__import__',
-                'globals', 'locals', 'vars', 'dir',
-                'input', 'raw_input',
-                'getattr', 'setattr', 'delattr', 'hasattr',  # 动态属性访问
+                "eval",
+                "exec",
+                "compile",
+                "open",
+                "__import__",
+                "globals",
+                "locals",
+                "vars",
+                "dir",
+                "input",
+                "raw_input",
+                "getattr",
+                "setattr",
+                "delattr",
+                "hasattr",  # 动态属性访问
             }
 
             if func_name in dangerous_builtins:
-                self.violations.append(SecurityViolation(
-                    severity='CRITICAL',
-                    violation_type='FORBIDDEN_FUNCTION',
-                    message=f'Use of dangerous built-in function "{func_name}" is prohibited',
-                    line=node.lineno,
-                    col_offset=node.col_offset
-                ))
+                self.violations.append(
+                    SecurityViolation(
+                        severity="CRITICAL",
+                        violation_type="FORBIDDEN_FUNCTION",
+                        message=f'Use of dangerous built-in function "{func_name}" is prohibited',
+                        line=node.lineno,
+                        col_offset=node.col_offset,
+                    )
+                )
 
         # 检查属性访问调用 (e.g., os.system)
         if isinstance(node.func, ast.Attribute):
@@ -156,20 +168,31 @@ class SecurityAnalyzer(ast.NodeVisitor):
 
                 # 检查是否在调用危险模块的方法
                 dangerous_modules = {
-                    'os', 'sys', 'subprocess', 'shutil',
-                    'socket', 'http', 'urllib', 'ftplib',
-                    'pickle', 'shelve', 'marshal',
-                    'importlib', 'types',
+                    "os",
+                    "sys",
+                    "subprocess",
+                    "shutil",
+                    "socket",
+                    "http",
+                    "urllib",
+                    "ftplib",
+                    "pickle",
+                    "shelve",
+                    "marshal",
+                    "importlib",
+                    "types",
                 }
 
                 if module_name in dangerous_modules:
-                    self.violations.append(SecurityViolation(
-                        severity='CRITICAL',
-                        violation_type='FORBIDDEN_MODULE_ACCESS',
-                        message=f'Access to module "{module_name}.{func_name}" is prohibited',
-                        line=node.lineno,
-                        col_offset=node.col_offset
-                    ))
+                    self.violations.append(
+                        SecurityViolation(
+                            severity="CRITICAL",
+                            violation_type="FORBIDDEN_MODULE_ACCESS",
+                            message=f'Access to module "{module_name}.{func_name}" is prohibited',
+                            line=node.lineno,
+                            col_offset=node.col_offset,
+                        )
+                    )
 
         self.generic_visit(node)
 
@@ -179,18 +202,26 @@ class SecurityAnalyzer(ast.NodeVisitor):
         if isinstance(node.value, ast.Name):
             # __dict__, __class__ 等特殊属性
             dangerous_attrs = {
-                '__dict__', '__class__', '__bases__', '__subclasses__',
-                '__mro__', '__code__', '__globals__', '__closure__',
+                "__dict__",
+                "__class__",
+                "__bases__",
+                "__subclasses__",
+                "__mro__",
+                "__code__",
+                "__globals__",
+                "__closure__",
             }
 
             if node.attr in dangerous_attrs:
-                self.violations.append(SecurityViolation(
-                    severity='HIGH',
-                    violation_type='DANGEROUS_ATTRIBUTE',
-                    message=f'Access to dangerous attribute "{node.attr}" is prohibited',
-                    line=node.lineno,
-                    col_offset=node.col_offset
-                ))
+                self.violations.append(
+                    SecurityViolation(
+                        severity="HIGH",
+                        violation_type="DANGEROUS_ATTRIBUTE",
+                        message=f'Access to dangerous attribute "{node.attr}" is prohibited',
+                        line=node.lineno,
+                        col_offset=node.col_offset,
+                    )
+                )
 
         self.generic_visit(node)
 
@@ -212,13 +243,15 @@ class SecurityAnalyzer(ast.NodeVisitor):
             if isinstance(child, ast.Call):
                 if isinstance(child.func, ast.Name) and child.func.id == node.name:
                     self.has_recursion = True
-                    self.violations.append(SecurityViolation(
-                        severity='MEDIUM',
-                        violation_type='RECURSION_DETECTED',
-                        message=f'Function "{node.name}" contains recursive calls',
-                        line=node.lineno,
-                        col_offset=node.col_offset
-                    ))
+                    self.violations.append(
+                        SecurityViolation(
+                            severity="MEDIUM",
+                            violation_type="RECURSION_DETECTED",
+                            message=f'Function "{node.name}" contains recursive calls',
+                            line=node.lineno,
+                            col_offset=node.col_offset,
+                        )
+                    )
                     break
 
     def visit_For(self, node: ast.For) -> None:
@@ -227,13 +260,15 @@ class SecurityAnalyzer(ast.NodeVisitor):
 
         # 检查循环嵌套深度
         if self.loop_depth > 3:
-            self.violations.append(SecurityViolation(
-                severity='LOW',
-                violation_type='DEEP_NESTING',
-                message=f'Loop nesting depth of {self.loop_depth} exceeds recommended limit (3)',
-                line=node.lineno,
-                col_offset=node.col_offset
-            ))
+            self.violations.append(
+                SecurityViolation(
+                    severity="LOW",
+                    violation_type="DEEP_NESTING",
+                    message=f"Loop nesting depth of {self.loop_depth} exceeds recommended limit (3)",
+                    line=node.lineno,
+                    col_offset=node.col_offset,
+                )
+            )
 
         self.generic_visit(node)
 
@@ -245,13 +280,15 @@ class SecurityAnalyzer(ast.NodeVisitor):
 
         # 检查是否有while True（潜在无限循环）
         if isinstance(node.test, ast.Constant) and node.test.value is True:
-            self.violations.append(SecurityViolation(
-                severity='HIGH',
-                violation_type='POTENTIAL_INFINITE_LOOP',
-                message='while True loop detected - potential infinite loop',
-                line=node.lineno,
-                col_offset=node.col_offset
-            ))
+            self.violations.append(
+                SecurityViolation(
+                    severity="HIGH",
+                    violation_type="POTENTIAL_INFINITE_LOOP",
+                    message="while True loop detected - potential infinite loop",
+                    line=node.lineno,
+                    col_offset=node.col_offset,
+                )
+            )
 
         self.generic_visit(node)
 
@@ -271,14 +308,16 @@ class SecurityAnalyzer(ast.NodeVisitor):
         # 检查是否在f-string中调用eval/exec
         if isinstance(node.value, ast.Call):
             if isinstance(node.value.func, ast.Name):
-                if node.value.func.id in ('eval', 'exec'):
-                    self.violations.append(SecurityViolation(
-                        severity='CRITICAL',
-                        violation_type='CODE_INJECTION',
-                        message='Code injection attempt detected in f-string',
-                        line=node.lineno,
-                        col_offset=node.col_offset
-                    ))
+                if node.value.func.id in ("eval", "exec"):
+                    self.violations.append(
+                        SecurityViolation(
+                            severity="CRITICAL",
+                            violation_type="CODE_INJECTION",
+                            message="Code injection attempt detected in f-string",
+                            line=node.lineno,
+                            col_offset=node.col_offset,
+                        )
+                    )
 
     def visit_AugAssign(self, node: ast.AugAssign) -> None:
         """检查增强赋值（用于检测字符串拼接绕过）"""
@@ -289,15 +328,16 @@ class SecurityAnalyzer(ast.NodeVisitor):
 
             if right_str:
                 # 检查字符串是否包含危险内容
-                if any(dangerous in right_str.lower() for dangerous in
-                       ['import', 'eval', 'exec', 'open', '__']):
-                    self.violations.append(SecurityViolation(
-                        severity='HIGH',
-                        violation_type='STRING_CONCAT_BYPASS',
-                        message=f'String concatenation that may form dangerous code: "{right_str}"',
-                        line=node.lineno,
-                        col_offset=node.col_offset
-                    ))
+                if any(dangerous in right_str.lower() for dangerous in ["import", "eval", "exec", "open", "__"]):
+                    self.violations.append(
+                        SecurityViolation(
+                            severity="HIGH",
+                            violation_type="STRING_CONCAT_BYPASS",
+                            message=f'String concatenation that may form dangerous code: "{right_str}"',
+                            line=node.lineno,
+                            col_offset=node.col_offset,
+                        )
+                    )
 
         self.generic_visit(node)
 
@@ -310,15 +350,16 @@ class SecurityAnalyzer(ast.NodeVisitor):
 
             if left_str and right_str:
                 combined = left_str + right_str
-                if any(dangerous in combined.lower() for dangerous in
-                       ['import', 'eval', 'exec', 'open', '__']):
-                    self.violations.append(SecurityViolation(
-                        severity='HIGH',
-                        violation_type='STRING_CONCAT_BYPASS',
-                        message=f'String concatenation that may form dangerous code: "{combined}"',
-                        line=node.lineno,
-                        col_offset=node.col_offset
-                    ))
+                if any(dangerous in combined.lower() for dangerous in ["import", "eval", "exec", "open", "__"]):
+                    self.violations.append(
+                        SecurityViolation(
+                            severity="HIGH",
+                            violation_type="STRING_CONCAT_BYPASS",
+                            message=f'String concatenation that may form dangerous code: "{combined}"',
+                            line=node.lineno,
+                            col_offset=node.col_offset,
+                        )
+                    )
 
         self.generic_visit(node)
 
@@ -338,21 +379,20 @@ class SecurityAnalyzer(ast.NodeVisitor):
             # 检查except块是否过于宽泛
             for handler in node.handlers:
                 if handler.type is None:
-                    self.violations.append(SecurityViolation(
-                        severity='MEDIUM',
-                        violation_type='BROAD_EXCEPTION',
-                        message='Bare except clause detected - may hide security issues',
-                        line=handler.lineno,
-                        col_offset=handler.col_offset
-                    ))
+                    self.violations.append(
+                        SecurityViolation(
+                            severity="MEDIUM",
+                            violation_type="BROAD_EXCEPTION",
+                            message="Bare except clause detected - may hide security issues",
+                            line=handler.lineno,
+                            col_offset=handler.col_offset,
+                        )
+                    )
 
         self.generic_visit(node)
 
 
-def analyze_code_security(
-    code: str,
-    allowed_modules: Optional[Set[str]] = None
-) -> Tuple[bool, List[SecurityViolation]]:
+def analyze_code_security(code: str, allowed_modules: Optional[Set[str]] = None) -> Tuple[bool, List[SecurityViolation]]:
     """
     分析代码安全性
 
@@ -369,8 +409,8 @@ def analyze_code_security(
     violations = analyzer.analyze(code)
 
     # 分类违规
-    critical = [v for v in violations if v.severity == 'CRITICAL']
-    high = [v for v in violations if v.severity == 'HIGH']
+    critical = [v for v in violations if v.severity == "CRITICAL"]
+    high = [v for v in violations if v.severity == "HIGH"]
 
     # 如果有CRITICAL或HIGH违规，代码不安全
     is_safe = len(critical) == 0 and len(high) == 0
@@ -378,10 +418,7 @@ def analyze_code_security(
     return is_safe, violations
 
 
-def get_security_report(
-    code: str,
-    allowed_modules: Optional[Set[str]] = None
-) -> Dict[str, Any]:
+def get_security_report(code: str, allowed_modules: Optional[Set[str]] = None) -> Dict[str, Any]:
     """
     获取详细的安全报告
 
@@ -396,10 +433,10 @@ def get_security_report(
 
     # 按严重程度分组
     by_severity = {
-        'CRITICAL': [v.to_dict() for v in violations if v.severity == 'CRITICAL'],
-        'HIGH': [v.to_dict() for v in violations if v.severity == 'HIGH'],
-        'MEDIUM': [v.to_dict() for v in violations if v.severity == 'MEDIUM'],
-        'LOW': [v.to_dict() for v in violations if v.severity == 'LOW'],
+        "CRITICAL": [v.to_dict() for v in violations if v.severity == "CRITICAL"],
+        "HIGH": [v.to_dict() for v in violations if v.severity == "HIGH"],
+        "MEDIUM": [v.to_dict() for v in violations if v.severity == "MEDIUM"],
+        "LOW": [v.to_dict() for v in violations if v.severity == "LOW"],
     }
 
     # 按类型分组
@@ -410,10 +447,10 @@ def get_security_report(
         by_type[v.violation_type].append(v.to_dict())
 
     return {
-        'is_safe': is_safe,
-        'total_violations': len(violations),
-        'by_severity': by_severity,
-        'by_type': by_type,
-        'has_recursion': any(v.violation_type == 'RECURSION_DETECTED' for v in violations),
-        'max_loop_depth': 0,  # 将在分析器中跟踪
+        "is_safe": is_safe,
+        "total_violations": len(violations),
+        "by_severity": by_severity,
+        "by_type": by_type,
+        "has_recursion": any(v.violation_type == "RECURSION_DETECTED" for v in violations),
+        "max_loop_depth": 0,  # 将在分析器中跟踪
     }

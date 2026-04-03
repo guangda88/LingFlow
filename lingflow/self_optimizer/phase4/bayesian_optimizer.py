@@ -7,9 +7,8 @@ LingFlow Phase 4: 贝叶斯优化器实现
 
 import logging
 import time
-from typing import Dict, Any, List, Optional, Callable
+from typing import Dict, Any, List, Callable
 from dataclasses import dataclass, field
-from datetime import datetime
 import hashlib
 
 logger = logging.getLogger(__name__)
@@ -18,6 +17,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class OptimizationTrial:
     """优化试验记录"""
+
     trial_id: str
     params: Dict[str, Any]
     score: float
@@ -35,13 +35,14 @@ class OptimizationTrial:
             "metrics": self.metrics,
             "timestamp": self.timestamp,
             "converged": self.converged,
-            "duration": self.duration
+            "duration": self.duration,
         }
 
 
 @dataclass
 class OptimizationState:
     """优化状态"""
+
     current_trial: int
     best_trial: OptimizationTrial
     convergence_rate: float
@@ -64,10 +65,7 @@ class BayesianOptimizer:
     """
 
     def __init__(
-        self,
-        search_space: Dict[str, Any],
-        objective: Callable[[Dict[str, Any]], float],
-        config: Dict[str, Any] = None
+        self, search_space: Dict[str, Any], objective: Callable[[Dict[str, Any]], float], config: Dict[str, Any] = None
     ):
         """初始化贝叶斯优化器
 
@@ -94,7 +92,7 @@ class BayesianOptimizer:
         # 内部状态
         self.study = None
         self.history: List[OptimizationTrial] = []
-        self.best_score = float('inf')
+        self.best_score = float("inf")
         self.best_params: Dict[str, Any] = {}
         self.start_time = None
         self.trial_count = 0
@@ -108,25 +106,13 @@ class BayesianOptimizer:
             import optuna
 
             # 创建采样器
-            sampler = optuna.samplers.TPESampler(
-                seed=self.seed,
-                multivariate=True,
-                group=True
-            )
+            sampler = optuna.samplers.TPESampler(seed=self.seed, multivariate=True, group=True)
 
             # 创建剪枝器（可选）
-            pruner = optuna.pruners.MedianPruner(
-                n_startup_trials=5,
-                n_warmup_steps=10,
-                interval_steps=1
-            )
+            pruner = optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=10, interval_steps=1)
 
             # 创建study
-            self.study = optuna.create_study(
-                direction="minimize",
-                sampler=sampler,
-                pruner=pruner
-            )
+            self.study = optuna.create_study(direction="minimize", sampler=sampler, pruner=pruner)
 
             logger.info("成功创建Optuna Study")
 
@@ -162,20 +148,15 @@ class BayesianOptimizer:
             space_type = space.get("type")
 
             if space_type == "categorical":
-                params[name] = trial.suggest_categorical(
-                    name, space["choices"]
-                )
+                params[name] = trial.suggest_categorical(name, space["choices"])
             elif space_type == "int":
-                params[name] = trial.suggest_int(
-                    name, space["min"], space["max"]
-                )
+                params[name] = trial.suggest_int(name, space["min"], space["max"])
             elif space_type == "float":
-                params[name] = trial.suggest_float(
-                    name, space["min"], space["max"]
-                )
+                params[name] = trial.suggest_float(name, space["min"], space["max"])
             elif space_type == "log":
                 # 对数尺度
                 import math
+
                 log_min = math.log(space["min"])
                 log_max = math.log(space["max"])
                 log_value = trial.suggest_float(name, log_min, log_max)
@@ -203,6 +184,7 @@ class BayesianOptimizer:
                 params[name] = random.uniform(space["min"], space["max"])
             elif space_type == "log":
                 import math
+
                 log_min = math.log(space["min"])
                 log_max = math.log(space["max"])
                 log_value = random.uniform(log_min, log_max)
@@ -222,10 +204,7 @@ class BayesianOptimizer:
 
         # 记录试验
         trial = OptimizationTrial(
-            trial_id=self._generate_trial_id(params),
-            params=params.copy(),
-            score=score,
-            metrics=kwargs.copy()
+            trial_id=self._generate_trial_id(params), params=params.copy(), score=score, metrics=kwargs.copy()
         )
         self.history.append(trial)
 
@@ -235,13 +214,13 @@ class BayesianOptimizer:
             self.best_params = params.copy()
 
         # 如果使用Optuna，通知结果
-        if self.study is not None and hasattr(self, '_current_trial'):
+        if self.study is not None and hasattr(self, "_current_trial"):
             try:
                 self.study.tell(score)
             except Exception as e:
                 logger.error(f"通知Optuna结果失败: {e}")
             finally:
-                delattr(self, '_current_trial')
+                delattr(self, "_current_trial")
 
     def _generate_trial_id(self, params: Dict[str, Any]) -> str:
         """生成试验ID"""
@@ -267,7 +246,7 @@ class BayesianOptimizer:
 
         # 检查收敛
         if len(self.history) >= self.early_stopping_patience + 10:
-            recent_scores = [t.score for t in self.history[-self.early_stopping_patience:]]
+            recent_scores = [t.score for t in self.history[-self.early_stopping_patience :]]
             if len(recent_scores) > 0:
                 improvement = (recent_scores[0] - recent_scores[-1]) / (recent_scores[0] + 1e-6)
                 if improvement < self.min_improvement:
@@ -301,12 +280,7 @@ class BayesianOptimizer:
                 continue
 
         # 创建优化状态
-        best_trial = OptimizationTrial(
-            trial_id="best",
-            params=self.best_params,
-            score=self.best_score,
-            timestamp=time.time()
-        )
+        best_trial = OptimizationTrial(trial_id="best", params=self.best_params, score=self.best_score, timestamp=time.time())
 
         # 计算收敛率
         convergence_rate = self._calculate_convergence_rate()
@@ -316,7 +290,7 @@ class BayesianOptimizer:
             best_trial=best_trial,
             convergence_rate=convergence_rate,
             should_stop=True,
-            history=self.history.copy()
+            history=self.history.copy(),
         )
 
         return state
@@ -329,6 +303,7 @@ class BayesianOptimizer:
         # 使用最近10次试验的标准差
         recent_scores = [t.score for t in self.history[-10:]]
         import statistics
+
         mean_score = statistics.mean(recent_scores)
         std_score = statistics.stdev(recent_scores) if len(recent_scores) > 1 else 0
 
@@ -364,12 +339,9 @@ class BayesianOptimizer:
             return sum(t.duration for t in self.history)
         return 0.0
 
-    def get_n_trials(self) -> int:
         """获取试验次数（兼容方法）"""
         return self.trial_count
 
-    def get_history(self) -> List[OptimizationTrial]:
-        """获取历史记录（兼容方法）"""
         return self.history.copy()
 
 
@@ -380,10 +352,7 @@ class GridSearchOptimizer:
     """
 
     def __init__(
-        self,
-        search_space: Dict[str, Any],
-        objective: Callable[[Dict[str, Any]], float],
-        config: Dict[str, Any] = None
+        self, search_space: Dict[str, Any], objective: Callable[[Dict[str, Any]], float], config: Dict[str, Any] = None
     ):
         """初始化网格搜索优化器"""
         self.search_space = search_space
@@ -394,7 +363,7 @@ class GridSearchOptimizer:
         self.timeout = self.config.get("timeout", 120)
 
         self.history: List[OptimizationTrial] = []
-        self.best_score = float('inf')
+        self.best_score = float("inf")
         self.best_params: Dict[str, Any] = {}
         self.trial_count = 0
         self.start_time = None
@@ -402,6 +371,7 @@ class GridSearchOptimizer:
     def _generate_grid_points(self) -> List[Dict[str, Any]]:
         """生成网格搜索点"""
         import random
+
         random.seed(42)
 
         points = []
@@ -441,10 +411,7 @@ class GridSearchOptimizer:
 
                 # 记录
                 trial = OptimizationTrial(
-                    trial_id=self._generate_trial_id(params),
-                    params=params,
-                    score=score,
-                    duration=trial_duration
+                    trial_id=self._generate_trial_id(params), params=params, score=score, duration=trial_duration
                 )
                 self.history.append(trial)
                 self.trial_count += 1
@@ -459,11 +426,7 @@ class GridSearchOptimizer:
                 continue
 
         # 创建状态
-        best_trial = OptimizationTrial(
-            trial_id="best",
-            params=self.best_params,
-            score=self.best_score
-        )
+        best_trial = OptimizationTrial(trial_id="best", params=self.best_params, score=self.best_score)
 
         convergence_rate = self._calculate_convergence_rate()
 
@@ -472,7 +435,7 @@ class GridSearchOptimizer:
             best_trial=best_trial,
             convergence_rate=convergence_rate,
             should_stop=True,
-            history=self.history
+            history=self.history,
         )
 
         # 兼容方法
@@ -485,6 +448,7 @@ class GridSearchOptimizer:
     def _generate_trial_id(self, params: Dict[str, Any]) -> str:
         """生成试验ID"""
         import hashlib
+
         param_str = str(sorted(params.items()))
         hash_val = hashlib.md5(param_str.encode(), usedforsecurity=False).hexdigest()[:8]
         return f"grid_{self.trial_count}_{hash_val}"
@@ -496,6 +460,7 @@ class GridSearchOptimizer:
 
         recent_scores = [t.score for t in self.history[-10:]]
         import statistics
+
         mean_score = statistics.mean(recent_scores)
         std_score = statistics.stdev(recent_scores) if len(recent_scores) > 1 else 0
 
@@ -510,8 +475,8 @@ def create_optimizer(
     search_space: Dict[str, Any],
     objective: Callable[[Dict[str, Any]], float],
     config: Dict[str, Any] = None,
-    prefer_bayesian: bool = True
-) -> 'BayesianOptimizer':
+    prefer_bayesian: bool = True,
+) -> "BayesianOptimizer":
     """创建优化器工厂函数
 
     Args:
@@ -527,7 +492,7 @@ def create_optimizer(
 
     if prefer_bayesian:
         try:
-            import optuna
+
             logger.info("使用贝叶斯优化器（Optuna）")
             return BayesianOptimizer(search_space, objective, config)
         except ImportError:
@@ -555,7 +520,7 @@ DEFAULT_SEARCH_SPACES = {
         "complexity_threshold": {"type": "int", "min": 5, "max": 15},
         "duplication_penalty": {"type": "float", "min": 0.5, "max": 2.0},
         "max_line_length": {"type": "categorical", "choices": [80, 100, 120]},
-    }
+    },
 }
 
 
@@ -564,7 +529,7 @@ def get_default_search_space(goal: str) -> Dict[str, Any]:
     return DEFAULT_SEARCH_SPACES.get(goal, {}).copy()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # 测试
     def test_objective(params):
         """测试目标函数：简单的二次函数"""
@@ -572,16 +537,9 @@ if __name__ == "__main__":
         y = params.get("y", 0)
         return (x - 2) ** 2 + (y - 3) ** 2
 
-    search_space = {
-        "x": {"type": "float", "min": -10, "max": 10},
-        "y": {"type": "float", "min": -10, "max": 10}
-    }
+    search_space = {"x": {"type": "float", "min": -10, "max": 10}, "y": {"type": "float", "min": -10, "max": 10}}
 
-    config = {
-        "n_trials": 50,
-        "timeout": 30,
-        "seed": 42
-    }
+    config = {"n_trials": 50, "timeout": 30, "seed": 42}
 
     optimizer = create_optimizer(search_space, test_objective, config)
     state = optimizer.optimize()

@@ -41,7 +41,7 @@ class RuleLoader:
             raise FileNotFoundError(f"规则文件不存在: {file_path}")
 
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
         except json.JSONDecodeError as e:
             raise RuleValidationError(f"规则文件格式错误: {e}")
@@ -133,10 +133,7 @@ class RuleLoader:
         Returns:
             规则列表
         """
-        return [
-            rule for rule in self._rules.values()
-            if rule.category == category and rule.enabled
-        ]
+        return [rule for rule in self._rules.values() if rule.category == category and rule.enabled]
 
     def enable_rule(self, rule_id: str) -> bool:
         """启用规则
@@ -189,7 +186,7 @@ class RuleLoader:
                 severity=Severity(data.get("severity", "medium")),
                 suggestion_template=data.get("suggestion", ""),
                 enabled=data.get("enabled", True),
-                metadata=data.get("metadata", {})
+                metadata=data.get("metadata", {}),
             )
 
             return rule
@@ -212,6 +209,7 @@ class RuleLoader:
 
         if pattern:
             import re
+
             compiled_pattern = re.compile(pattern)
 
             def check_func(content, tree, file_path):
@@ -233,7 +231,8 @@ class RuleRegistry:
 
     全局单例，管理所有规则。
     """
-    _instance: Optional['RuleRegistry'] = None
+
+    _instance: Optional["RuleRegistry"] = None
     _loader: Optional[RuleLoader] = None
 
     def __new__(cls):

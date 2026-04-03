@@ -4,7 +4,6 @@ LingFlow CLI 辅助函数
 用于降低主命令函数的复杂度，提取可重用的逻辑。
 """
 
-import sys
 from typing import List, Tuple, Dict, Any
 from lingflow.self_optimizer.phase5.adapters import (
     SemgrepAdapter,
@@ -42,7 +41,7 @@ def detect_available_tools(verbose: bool = False) -> List[str]:
                 if verbose:
                     version = adapter.get_version()
                     print(f"  ✓ {tool_name}: {version}")
-        except Exception as e:
+        except Exception:
             if verbose:
                 print(f"  ✗ {tool_name}: 不可用")
 
@@ -94,7 +93,7 @@ def extract_and_save_rules(
     all_feedback: List[Dict[str, Any]],
     target: str,
     rules_only: bool = False,
-    verbose: bool = False
+    verbose: bool = False,
 ) -> Tuple[List[Dict], List, object]:
     """从反馈中提取规则并保存
 
@@ -109,13 +108,9 @@ def extract_and_save_rules(
     """
     # 提取规则
     if verbose:
-        print(f"\n🔍 提取规则...")
+        print("\n🔍 提取规则...")
 
-    extractor = RuleExtractor(
-        min_frequency=2,
-        min_confidence=0.6,
-        max_rules=500
-    )
+    extractor = RuleExtractor(min_frequency=2, min_confidence=0.6, max_rules=500)
 
     rules = extractor.extract_rules(all_feedback)
     print(f"✓ 提取了 {len(rules)} 条规则")
@@ -124,7 +119,7 @@ def extract_and_save_rules(
     patterns = []
     if not rules_only:
         if verbose:
-            print(f"\n🔍 识别模式...")
+            print("\n🔍 识别模式...")
 
         recognizer = PatternRecognizer()
 
@@ -154,6 +149,7 @@ def click_progressbar(iterable, **kwargs):
     """进度条的兼容包装器"""
     try:
         from click import progressbar
+
         return progressbar(iterable, **kwargs)
     except ImportError:
         # 如果没有click，返回简单的迭代器

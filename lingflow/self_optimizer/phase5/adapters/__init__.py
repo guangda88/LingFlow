@@ -12,7 +12,6 @@ from lingflow.self_optimizer.phase5.adapters.semgrep_adapter import SemgrepAdapt
 from lingflow.self_optimizer.phase5.adapters.ruff_adapter import RuffAdapter
 from lingflow.self_optimizer.phase5.adapters.pylint_adapter import PylintAdapter
 
-
 __all__ = [
     "AIToolAdapter",
     "SemgrepAdapter",
@@ -55,7 +54,6 @@ def get_available_adapters(configs: Dict[FeedbackSource, Dict[str, Any]] = None)
     Returns:
         可用的适配器实例列表
     """
-    from typing import List
 
     configs = configs or {}
     adapters = []

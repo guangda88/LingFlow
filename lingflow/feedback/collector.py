@@ -9,25 +9,26 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from dataclasses import dataclass, field, asdict
-
+from dataclasses import dataclass, asdict
 
 logger = logging.getLogger(__name__)
 
 
 class FeedbackCategory(str, Enum):
     """反馈类别"""
-    BUG = "bug"                    # Bug 报告
-    FEATURE = "feature"            # 功能请求
-    IMPROVEMENT = "improvement"    # 改进建议
-    PERFORMANCE = "performance"    # 性能问题
-    DOCUMENTATION = "documentation" # 文档问题
-    USABILITY = "usability"        # 易用性问题
-    OTHER = "other"                # 其他
+
+    BUG = "bug"  # Bug 报告
+    FEATURE = "feature"  # 功能请求
+    IMPROVEMENT = "improvement"  # 改进建议
+    PERFORMANCE = "performance"  # 性能问题
+    DOCUMENTATION = "documentation"  # 文档问题
+    USABILITY = "usability"  # 易用性问题
+    OTHER = "other"  # 其他
 
 
 class FeedbackSeverity(str, Enum):
     """反馈严重性"""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -37,6 +38,7 @@ class FeedbackSeverity(str, Enum):
 @dataclass
 class Feedback:
     """用户反馈"""
+
     id: str
     category: FeedbackCategory
     severity: FeedbackSeverity
@@ -301,8 +303,9 @@ class FeedbackCollector:
         """获取 LingFlow 版本"""
         try:
             from lingflow import __version__
+
             return __version__
-        except:
+        except Exception:
             return "unknown"
 
     def _report_to_remote(self, feedback: Feedback) -> bool:
@@ -433,60 +436,72 @@ class FeedbackCollector:
 
         # 统计信息
         stats = self.get_statistics()
-        lines.extend([
-            "## 统计概览",
-            "",
-            f"- **总计**: {stats['total']}",
-            f"- **待处理**: {stats['open']}",
-            f"- **已解决**: {stats['resolved']}",
-            "",
-            "### 按类别",
-            "",
-        ])
+        lines.extend(
+            [
+                "## 统计概览",
+                "",
+                f"- **总计**: {stats['total']}",
+                f"- **待处理**: {stats['open']}",
+                f"- **已解决**: {stats['resolved']}",
+                "",
+                "### 按类别",
+                "",
+            ]
+        )
         for cat, count in stats["by_category"].items():
             lines.append(f"- {cat}: {count}")
 
-        lines.extend([
-            "",
-            "### 按严重性",
-            "",
-        ])
+        lines.extend(
+            [
+                "",
+                "### 按严重性",
+                "",
+            ]
+        )
         for sev, count in stats["by_severity"].items():
             lines.append(f"- {sev}: {count}")
 
         # 详细列表
-        lines.extend([
-            "",
-            "## 反馈详情",
-            "",
-        ])
+        lines.extend(
+            [
+                "",
+                "## 反馈详情",
+                "",
+            ]
+        )
 
         for f in self._feedbacks:
             if f.status != "closed":
-                lines.extend([
-                    f"### {f.id}: {f.title}",
-                    "",
-                    f"- **类别**: {f.category.value}",
-                    f"- **严重性**: {f.severity.value}",
-                    f"- **状态**: {f.status}",
-                    f"- **时间**: {f.timestamp}",
-                    "",
-                    f"**描述**: {f.description}",
-                    "",
-                ])
-                if f.reproduction_steps:
-                    lines.extend([
-                        "**复现步骤**:",
+                lines.extend(
+                    [
+                        f"### {f.id}: {f.title}",
                         "",
-                    ])
+                        f"- **类别**: {f.category.value}",
+                        f"- **严重性**: {f.severity.value}",
+                        f"- **状态**: {f.status}",
+                        f"- **时间**: {f.timestamp}",
+                        "",
+                        f"**描述**: {f.description}",
+                        "",
+                    ]
+                )
+                if f.reproduction_steps:
+                    lines.extend(
+                        [
+                            "**复现步骤**:",
+                            "",
+                        ]
+                    )
                     for i, step in enumerate(f.reproduction_steps, 1):
                         lines.append(f"{i}. {step}")
                     lines.append("")
                 if f.resolution:
-                    lines.extend([
-                        f"**解决方案**: {f.resolution}",
-                        "",
-                    ])
+                    lines.extend(
+                        [
+                            f"**解决方案**: {f.resolution}",
+                            "",
+                        ]
+                    )
 
         content = "\n".join(lines)
 

@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class SnapshotMetadata:
     """快照元数据"""
+
     test_name: str
     created_at: str
     updated_at: Optional[str] = None
@@ -86,11 +87,7 @@ class SnapshotTest:
             return str(value)
 
     def assert_match(
-        self,
-        test_name: str,
-        actual: Dict[str, Any],
-        update: bool = False,
-        metadata: Optional[SnapshotMetadata] = None
+        self, test_name: str, actual: Dict[str, Any], update: bool = False, metadata: Optional[SnapshotMetadata] = None
     ) -> bool:
         """断言实际结果与快照匹配
 
@@ -119,9 +116,7 @@ class SnapshotTest:
         # 创建快照元数据
         if metadata is None:
             metadata = SnapshotMetadata(
-                test_name=test_name,
-                created_at=datetime.now().isoformat(),
-                description=f"快照测试: {test_name}"
+                test_name=test_name, created_at=datetime.now().isoformat(), description=f"快照测试: {test_name}"
             )
 
         # 更新模式或快照不存在
@@ -134,19 +129,14 @@ class SnapshotTest:
         expected = self._load_snapshot(snapshot_path)
 
         # 比较
-        if actual_normalized != expected['data']:
-            self._report_mismatch(test_name, expected['data'], actual_normalized, snapshot_path)
+        if actual_normalized != expected["data"]:
+            self._report_mismatch(test_name, expected["data"], actual_normalized, snapshot_path)
             return False
 
         logger.debug(f"✓ 快照匹配: {test_name}")
         return True
 
-    def _save_snapshot(
-        self,
-        snapshot_path: Path,
-        data: Dict[str, Any],
-        metadata: SnapshotMetadata
-    ):
+    def _save_snapshot(self, snapshot_path: Path, data: Dict[str, Any], metadata: SnapshotMetadata):
         """保存快照
 
         Args:
@@ -154,15 +144,9 @@ class SnapshotTest:
             data: 快照数据
             metadata: 快照元数据
         """
-        snapshot = {
-            "metadata": asdict(metadata),
-            "data": data
-        }
+        snapshot = {"metadata": asdict(metadata), "data": data}
 
-        snapshot_path.write_text(
-            json.dumps(snapshot, indent=2, ensure_ascii=False),
-            encoding='utf-8'
-        )
+        snapshot_path.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False), encoding="utf-8")
 
     def _load_snapshot(self, snapshot_path: Path) -> Dict[str, Any]:
         """加载快照
@@ -177,16 +161,10 @@ class SnapshotTest:
             FileNotFoundError: 快照文件不存在
             json.JSONDecodeError: 快照格式错误
         """
-        content = snapshot_path.read_text(encoding='utf-8')
+        content = snapshot_path.read_text(encoding="utf-8")
         return json.loads(content)
 
-    def _report_mismatch(
-        self,
-        test_name: str,
-        expected: Dict[str, Any],
-        actual: Dict[str, Any],
-        snapshot_path: Path
-    ):
+    def _report_mismatch(self, test_name: str, expected: Dict[str, Any], actual: Dict[str, Any], snapshot_path: Path):
         """报告不匹配
 
         Args:
@@ -200,9 +178,9 @@ class SnapshotTest:
         """
         diff = self._compute_diff(expected, actual)
 
-        error_message = f"\n{'='*70}\n"
+        error_message = f"\n{'=' * 70}\n"
         error_message += f"❌ 快照不匹配: {test_name}\n"
-        error_message += f"{'='*70}\n"
+        error_message += f"{'=' * 70}\n"
         error_message += f"快照路径: {snapshot_path}\n\n"
         error_message += f"期望值:\n{json.dumps(expected, indent=2, ensure_ascii=False)}\n\n"
         error_message += f"实际值:\n{json.dumps(actual, indent=2, ensure_ascii=False)}\n\n"
@@ -210,18 +188,14 @@ class SnapshotTest:
         if diff:
             error_message += f"差异:\n{diff}\n\n"
 
-        error_message += f"要更新快照，运行:\n"
+        error_message += "要更新快照，运行:\n"
         error_message += f"  snapshot.assert_match('{test_name}', actual, update=True)\n"
-        error_message += f"{'='*70}\n"
+        error_message += f"{'=' * 70}\n"
 
         logger.error(error_message)
         raise AssertionError(error_message)
 
-    def _compute_diff(
-        self,
-        expected: Dict[str, Any],
-        actual: Dict[str, Any]
-    ) -> str:
+    def _compute_diff(self, expected: Dict[str, Any], actual: Dict[str, Any]) -> str:
         """计算差异
 
         Args:
@@ -279,7 +253,7 @@ class SnapshotTest:
         snapshots = []
         for file_path in self.snapshot_dir.glob("*.snapshot.json"):
             # 移除 .snapshot.json 后缀，只保留测试名称
-            name = file_path.name.replace('.snapshot.json', '')
+            name = file_path.name.replace(".snapshot.json", "")
             snapshots.append(name)
 
         return sorted(snapshots)
@@ -315,7 +289,7 @@ class SnapshotTest:
 
 # 示例使用
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     import tempfile
 
     logging.basicConfig(level=logging.INFO)
@@ -334,29 +308,17 @@ if __name__ == "__main__":
         print("测试 1: 创建新快照")
         print("-" * 70)
 
-        result1 = {
-            "function": "calculate_sum",
-            "parameters": ["a", "b"],
-            "return_type": "int",
-            "complexity": 1,
-            "lines": 3
-        }
+        result1 = {"function": "calculate_sum", "parameters": ["a", "b"], "return_type": "int", "complexity": 1, "lines": 3}
 
         snapshot.assert_match("test_calculate_sum", result1)
-        print(f"✓ 快照已创建")
+        print("✓ 快照已创建")
 
         # 测试 2: 验证快照匹配
         print("\n" + "-" * 70)
         print("测试 2: 验证快照匹配")
         print("-" * 70)
 
-        result2 = {
-            "function": "calculate_sum",
-            "parameters": ["a", "b"],
-            "return_type": "int",
-            "complexity": 1,
-            "lines": 3
-        }
+        result2 = {"function": "calculate_sum", "parameters": ["a", "b"], "return_type": "int", "complexity": 1, "lines": 3}
 
         matches = snapshot.assert_match("test_calculate_sum", result2)
         print(f"✓ 快照匹配: {matches}")
@@ -370,14 +332,14 @@ if __name__ == "__main__":
             "function": "calculate_sum",
             "parameters": ["a", "b"],
             "return_type": "float",  # 改为 float
-            "complexity": 2,        # 改为 2
-            "lines": 4
+            "complexity": 2,  # 改为 2
+            "lines": 4,
         }
 
         try:
             snapshot.assert_match("test_calculate_sum", result3)
             print("❌ 应该失败但没有")
-        except AssertionError as e:
+        except AssertionError:
             print("✓ 正确检测到不匹配")
 
         # 测试 4: 更新快照
@@ -390,11 +352,11 @@ if __name__ == "__main__":
             "parameters": ["a", "b"],
             "return_type": "int",
             "complexity": 1,
-            "lines": 3
+            "lines": 3,
         }
 
         snapshot.assert_match("test_calculate_product", result4)
-        print(f"✓ 新快照已创建")
+        print("✓ 新快照已创建")
 
         # 测试 5: 批量更新
         print("\n" + "-" * 70)
@@ -404,11 +366,11 @@ if __name__ == "__main__":
         batch_data = {
             "test_min": {"value": 1, "desc": "minimum"},
             "test_max": {"value": 100, "desc": "maximum"},
-            "test_avg": {"value": 50.5, "desc": "average"}
+            "test_avg": {"value": 50.5, "desc": "average"},
         }
 
         snapshot.update_snapshots(batch_data)
-        print(f"✓ 批量更新完成")
+        print("✓ 批量更新完成")
 
         # 测试 6: 列出快照
         print("\n" + "-" * 70)

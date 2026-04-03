@@ -5,7 +5,6 @@ This module provides standardized types for the LingFlow framework.
 
 from typing import Any, Dict, Generic, Optional, TypeVar
 
-
 T = TypeVar("T")
 
 
@@ -128,8 +127,4 @@ class Result(Generic[T]):
         """Compare two Results."""
         if not isinstance(other, Result):
             return False
-        return (
-            self._data == other._data
-            and self._error == other._error
-            and self._code == other._code
-        )
+        return self._data == other._data and self._error == other._error and self._code == other._code

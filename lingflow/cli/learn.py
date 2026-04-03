@@ -11,26 +11,15 @@ import click
 @click.group()
 def learn():
     """AI工具学习系统 (Phase 5)"""
-    pass
 
 
 @learn.command()
-@click.option("--tools", "-t",
-              help="工具列表 (逗号分隔): semgrep, ruff, pylint, bandit, mypy")
-@click.option("--target",
-              default=".",
-              help="目标路径 (默认: 当前目录)")
-@click.option("--output", "-o",
-              help="输出报告路径")
-@click.option("--apply",
-              is_flag=True,
-              help="自动应用学习到的改进")
-@click.option("--rules-only",
-              is_flag=True,
-              help="仅提取规则，不运行模式检测")
-@click.option("--verbose", "-v",
-              is_flag=True,
-              help="详细输出")
+@click.option("--tools", "-t", help="工具列表 (逗号分隔): semgrep, ruff, pylint, bandit, mypy")
+@click.option("--target", default=".", help="目标路径 (默认: 当前目录)")
+@click.option("--output", "-o", help="输出报告路径")
+@click.option("--apply", is_flag=True, help="自动应用学习到的改进")
+@click.option("--rules-only", is_flag=True, help="仅提取规则，不运行模式检测")
+@click.option("--verbose", "-v", is_flag=True, help="详细输出")
 def run_learn(tools, target, output, apply, rules_only, verbose):
     """从AI工具学习规则和模式"""
     # 导入辅助函数
@@ -40,7 +29,7 @@ def run_learn(tools, target, output, apply, rules_only, verbose):
         extract_and_save_rules,
     )
 
-    click.echo(f"\n🧠 启动 AI 工具学习...")
+    click.echo("\n🧠 启动 AI 工具学习...")
     click.echo(f"目标: {target}")
 
     # 解析工具列表
@@ -67,12 +56,10 @@ def run_learn(tools, target, output, apply, rules_only, verbose):
     click.echo(f"\n📊 总共收集 {len(all_feedback)} 条反馈")
 
     # 提取规则和模式，并保存到知识库
-    rules, patterns, knowledge_base = extract_and_save_rules(
-        all_feedback, target, rules_only, verbose
-    )
+    rules, patterns, knowledge_base = extract_and_save_rules(all_feedback, target, rules_only, verbose)
 
     # 显示知识库统计
-    click.echo(f"\n📚 知识库统计:")
+    click.echo("\n📚 知识库统计:")
     click.echo(f"  规则: {len(knowledge_base.get_all_rules())}")
     click.echo(f"  模式: {len(knowledge_base.get_all_patterns())}")
 
@@ -93,7 +80,7 @@ def run_learn(tools, target, output, apply, rules_only, verbose):
             click.echo("取消应用")
             return
 
-        click.echo(f"\n🔧 应用改进...")
+        click.echo("\n🔧 应用改进...")
 
         # 实现自动应用逻辑
         applied_count = 0
@@ -103,7 +90,7 @@ def run_learn(tools, target, output, apply, rules_only, verbose):
         auto_fixable = [f for f in all_feedback if f.fix_available and f.suggestion]
 
         if not auto_fixable:
-            click.echo(f"⚠️  没有找到可自动修复的改进项")
+            click.echo("⚠️  没有找到可自动修复的改进项")
             return
 
         click.echo(f"找到 {len(auto_fixable)} 个可自动修复的改进项\n")
@@ -118,18 +105,18 @@ def run_learn(tools, target, output, apply, rules_only, verbose):
                 # 或调用工具的自动修复功能
 
                 applied_count += 1
-                click.echo(f"    ✓ 已应用")
+                click.echo("    ✓ 已应用")
 
             except Exception as e:
                 click.echo(f"    ✗ 应用失败: {e}")
                 skipped_count += 1
 
-        click.echo(f"\n✓ 自动应用完成:")
+        click.echo("\n✓ 自动应用完成:")
         click.echo(f"  成功: {applied_count} 个")
         click.echo(f"  跳过: {skipped_count} 个")
 
         if applied_count > 0:
-            click.echo(f"\n💡 建议: 运行 'lingflow analyze' 验证更改")
+            click.echo("\n💡 建议: 运行 'lingflow analyze' 验证更改")
 
 
 @learn.command("list-rules")
@@ -203,13 +190,7 @@ def list_recognized_patterns(type, limit):
         click.echo()
 
 
-def _generate_learning_report(
-    report_path: Path,
-    tools: List[str],
-    feedback_items: List,
-    rules: List,
-    patterns: List
-):
+def _generate_learning_report(report_path: Path, tools: List[str], feedback_items: List, rules: List, patterns: List):
     """生成学习报告"""
     content = f"""# AI 工具学习报告
 
@@ -228,7 +209,7 @@ def _generate_learning_report(
     for tool in tools:
         content += f"- `{tool}`\n"
 
-    content += f"\n## 📋 提取的规则 (Top 10)\n\n"
+    content += "\n## 📋 提取的规则 (Top 10)\n\n"
     for i, rule in enumerate(rules[:10], 1):
         content += f"### {i}. {rule.title}\n"
         content += f"- **ID**: {rule.id}\n"
@@ -241,7 +222,7 @@ def _generate_learning_report(
         content += "\n"
 
     if patterns:
-        content += f"\n## 🔍 识别的模式 (Top 10)\n\n"
+        content += "\n## 🔍 识别的模式 (Top 10)\n\n"
         for i, pattern in enumerate(patterns[:10], 1):
             content += f"### {i}. {pattern.description}\n"
             content += f"- **类型**: {pattern.pattern_type}\n"

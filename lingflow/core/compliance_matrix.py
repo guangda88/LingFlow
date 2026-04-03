@@ -118,10 +118,7 @@ class ComplianceMatrix:
 
                 self.entries = {}
                 for entry_data in data.get("entries", []):
-                    implementations = [
-                        Implementation(**imp_data)
-                        for imp_data in entry_data.get("implementations", [])
-                    ]
+                    implementations = [Implementation(**imp_data) for imp_data in entry_data.get("implementations", [])]
 
                     entry = ComplianceEntry(
                         principle_id=entry_data["principle_id"],
@@ -152,14 +149,11 @@ class ComplianceMatrix:
 
     def _entry_to_dict(self, entry: ComplianceEntry) -> Dict[str, Any]:
         """Convert compliance entry to dictionary"""
+
         def implementation_to_dict(imp: Implementation) -> Dict[str, Any]:
             """Convert implementation to dictionary with enum serialization"""
             imp_dict = asdict(imp)
-            imp_dict["status"] = (
-                imp.status.value
-                if isinstance(imp.status, VerificationStatus)
-                else imp.status
-            )
+            imp_dict["status"] = imp.status.value if isinstance(imp.status, VerificationStatus) else imp.status
             return imp_dict
 
         return {
@@ -172,9 +166,7 @@ class ComplianceMatrix:
             "coverage": entry.coverage,
         }
 
-    def get_or_create_entry(
-        self, principle_id: str, cwe: str, principle_name: str, level: str
-    ) -> ComplianceEntry:
+    def get_or_create_entry(self, principle_id: str, cwe: str, principle_name: str, level: str) -> ComplianceEntry:
         """Get existing entry or create new one"""
         if principle_id not in self.entries:
             self.entries[principle_id] = ComplianceEntry(
@@ -211,9 +203,7 @@ class ComplianceMatrix:
         """
         entry = self.get_or_create_entry(principle_id, cwe, principle_name, level)
 
-        implementation = Implementation(
-            file=file_path, lines=lines, technique=technique, status=VerificationStatus.PENDING
-        )
+        implementation = Implementation(file=file_path, lines=lines, technique=technique, status=VerificationStatus.PENDING)
 
         if content:
             implementation.calculate_hash(content)
@@ -295,14 +285,10 @@ class ComplianceMatrix:
             }
 
         total_principles = len(self.entries)
-        principles_with_implementations = sum(
-            1 for entry in self.entries.values() if entry.implementations
-        )
+        principles_with_implementations = sum(1 for entry in self.entries.values() if entry.implementations)
 
         average_coverage = (
-            sum(entry.coverage for entry in self.entries.values()) / total_principles
-            if total_principles > 0
-            else 0.0
+            sum(entry.coverage for entry in self.entries.values()) / total_principles if total_principles > 0 else 0.0
         )
 
         verified_principles = sum(1 for entry in self.entries.values() if entry.coverage >= 1.0)
@@ -312,24 +298,16 @@ class ComplianceMatrix:
             "principles_with_implementations": principles_with_implementations,
             "average_coverage": f"{average_coverage:.2%}",
             "verified_principles": verified_principles,
-            "verification_rate": (
-                f"{verified_principles / total_principles:.2%}" if total_principles > 0 else "0%"
-            ),
+            "verification_rate": (f"{verified_principles / total_principles:.2%}" if total_principles > 0 else "0%"),
         }
 
     def get_unverified_principles(self) -> List[str]:
         """Get list of principles with unverified implementations"""
-        return [
-            principle_id for principle_id, entry in self.entries.items() if entry.coverage < 1.0
-        ]
+        return [principle_id for principle_id, entry in self.entries.items() if entry.coverage < 1.0]
 
     def get_violated_principles(self) -> List[str]:
         """Get list of principles with no implementations"""
-        return [
-            principle_id
-            for principle_id, entry in self.entries.items()
-            if not entry.implementations
-        ]
+        return [principle_id for principle_id, entry in self.entries.items() if not entry.implementations]
 
     def _add_overall_status(self, lines: list):
         """Add overall compliance status to report"""
@@ -339,8 +317,7 @@ class ComplianceMatrix:
                 "## Overall Status",
                 "",
                 f"- **Total Principles**: {overall['total_principles']}",
-                f"- **Principles with Implementations**: "
-                f"{overall['principles_with_implementations']}",
+                f"- **Principles with Implementations**: " f"{overall['principles_with_implementations']}",
                 f"- **Verified Principles**: {overall['verified_principles']}",
                 f"- **Average Coverage**: {overall['average_coverage']}",
                 f"- **Verification Rate**: {overall['verification_rate']}",
@@ -400,10 +377,7 @@ class ComplianceMatrix:
         lines.extend(["**Implementations**:", ""])
         for imp in implementations:
             status_icon = "✅" if imp.is_verified() else "⏳"
-            lines.append(
-                f"- {status_icon} **{imp.file}:{','.join(map(str, imp.lines))}** "
-                f"({imp.technique})"
-            )
+            lines.append(f"- {status_icon} **{imp.file}:{','.join(map(str, imp.lines))}** " f"({imp.technique})")
             if imp.verified_by:
                 lines.append(f"  - Verified by: {imp.verified_by} at {imp.verified_at}")
             if imp.notes:
@@ -558,11 +532,7 @@ class ComplianceMatrix:
             for imp in entry.implementations:
                 if imp.file == file_path:
                     # Handle both enum and string status
-                    status_value = (
-                        imp.status.value
-                        if isinstance(imp.status, VerificationStatus)
-                        else imp.status
-                    )
+                    status_value = imp.status.value if isinstance(imp.status, VerificationStatus) else imp.status
                     principles.append(
                         {
                             "principle_id": principle_id,

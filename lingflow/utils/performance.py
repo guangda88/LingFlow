@@ -54,7 +54,7 @@ class PerformanceMonitor:
         if len(self.metrics[key]) > self._max_metrics_per_key:
             # 保留最新的指标
             removed = len(self.metrics[key]) - self._max_metrics_per_key
-            self.metrics[key] = self.metrics[key][-self._max_metrics_per_key:]
+            self.metrics[key] = self.metrics[key][-self._max_metrics_per_key :]
             self._total_metrics_count -= removed
             logger.debug(f"Trimmed {removed} metrics for {key}")
 
@@ -89,6 +89,7 @@ class PerformanceMonitor:
             Returns:
                 包装后的函数，带有性能追踪功能
             """
+
             @functools.wraps(func)
             def wrapper(*args: Any, **kwargs: Any) -> Any:
                 if not self._enabled:
@@ -243,7 +244,9 @@ def track_performance(metric_name: Optional[str] = None) -> Callable[[Callable[.
 
 
 # Cache decorator with monitoring
-def cached_with_monitor(maxsize: int = 128, metric_name: Optional[str] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+def cached_with_monitor(
+    maxsize: int = 128, metric_name: Optional[str] = None
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
     带性能监控的 LRU 缓存装饰器
 
@@ -365,7 +368,7 @@ class ContextTimer:
 
 
 # Example usage
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # Enable logging
     logging.basicConfig(level=logging.INFO)
 

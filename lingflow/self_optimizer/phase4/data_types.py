@@ -12,6 +12,7 @@ from enum import Enum
 
 class OptimizationGoal(Enum):
     """优化目标类型"""
+
     STRUCTURE = "structure"
     PERFORMANCE = "performance"
     SIMPLICITY = "simplicity"
@@ -20,6 +21,7 @@ class OptimizationGoal(Enum):
 
 class MetricType(Enum):
     """评估指标类型"""
+
     STRUCTURE = "structure"
     PERFORMANCE = "performance"
     SIMPLICITY = "simplicity"
@@ -28,15 +30,17 @@ class MetricType(Enum):
 
 class ParameterType(Enum):
     """参数类型"""
+
     CATEGORICAL = "categorical"  # 离散类别
-    INT = "int"                  # 整数范围
-    FLOAT = "float"              # 浮点范围
-    LOG = "log"                  # 对数尺度
+    INT = "int"  # 整数范围
+    FLOAT = "float"  # 浮点范围
+    LOG = "log"  # 对数尺度
 
 
 @dataclass
 class SearchSpace:
     """搜索空间定义"""
+
     name: str
     type: ParameterType
     # 对于categorical: choices
@@ -62,6 +66,7 @@ class SearchSpace:
 @dataclass
 class OptimizationRequest:
     """优化请求"""
+
     # 目标配置
     target_path: str
     goal: str  # structure, performance, simplicity, all
@@ -92,6 +97,7 @@ class OptimizationRequest:
 @dataclass
 class OptimizationTrial:
     """优化试验记录"""
+
     trial_id: str
     params: Dict[str, Any]
     score: float
@@ -104,6 +110,7 @@ class OptimizationTrial:
 @dataclass
 class OptimizationResult:
     """优化结果"""
+
     # 最佳参数
     best_params: Dict[str, Any]
     best_score: float
@@ -148,18 +155,14 @@ class OptimizationResult:
             f"收敛状态: {'是' if self.converged else '否'}",
             f"收敛率: {self.convergence_rate:.2%}",
             "",
-            "最佳参数:"
+            "最佳参数:",
         ]
         for key, value in sorted(self.best_params.items()):
             lines.append(f"  {key}: {value}")
 
         if self.sensitivities:
             lines.extend(["", "参数敏感性:"])
-            for param, sensitivity in sorted(
-                self.sensitivities.items(),
-                key=lambda x: x[1],
-                reverse=True
-            ):
+            for param, sensitivity in sorted(self.sensitivities.items(), key=lambda x: x[1], reverse=True):
                 lines.append(f"  {param}: {sensitivity:.3f}")
 
         return "\n".join(lines)
@@ -168,6 +171,7 @@ class OptimizationResult:
 @dataclass
 class Metric:
     """评估指标"""
+
     name: str
     value: float
     type: MetricType
@@ -184,6 +188,7 @@ class Metric:
 @dataclass
 class EvaluationResult:
     """评估结果"""
+
     metrics: Dict[str, Metric]
     overall_score: float
     converged: bool
@@ -201,6 +206,7 @@ class EvaluationResult:
 @dataclass
 class ParameterVersion:
     """参数版本"""
+
     version_id: str
     params: Dict[str, Any]
     metadata: Dict[str, Any]
@@ -216,6 +222,7 @@ class ParameterVersion:
 @dataclass
 class ConvergenceInfo:
     """收敛信息"""
+
     converged: bool
     convergence_rate: float
     window_size: int
@@ -232,6 +239,7 @@ class ConvergenceInfo:
 @dataclass
 class SensitivityResult:
     """敏感性分析结果"""
+
     sensitivities: Dict[str, float]
     method: str
     n_samples: int
@@ -239,11 +247,7 @@ class SensitivityResult:
 
     def get_ranking(self) -> List[tuple]:
         """获取敏感性排名"""
-        return sorted(
-            self.sensitivities.items(),
-            key=lambda x: x[1],
-            reverse=True
-        )
+        return sorted(self.sensitivities.items(), key=lambda x: x[1], reverse=True)
 
     def get_top_sensitive(self, n: int = 5) -> List[tuple]:
         """获取最敏感的前N个参数"""
@@ -253,6 +257,7 @@ class SensitivityResult:
 @dataclass
 class TransferResult:
     """知识迁移结果"""
+
     transferred: bool
     source_project: Optional[str]
     target_project: str
@@ -275,6 +280,7 @@ class TransferResult:
 @dataclass
 class ComparisonResult:
     """A/B测试比较结果"""
+
     params_a: Dict[str, Any]
     params_b: Dict[str, Any]
     mean_a: float
@@ -290,7 +296,7 @@ class ComparisonResult:
         sig_marker = "***" if self.significant else "ns"
         return (
             f"A/B测试结果\n"
-            f"{'='*40}\n"
+            f"{'=' * 40}\n"
             f"方案A平均分: {self.mean_a:.4f}\n"
             f"方案B平均分: {self.mean_b:.4f}\n"
             f"改进幅度: {self.improvement:.2%}\n"

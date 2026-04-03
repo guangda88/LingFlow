@@ -7,15 +7,18 @@ import json
 from datetime import datetime
 import uuid
 
+
 @dataclass(frozen=True)
 class SessionSnapshot:
     """不可变的Session快照（Claude Code风格）"""
+
     session_id: str
     messages: Tuple[str, ...]
     input_tokens: int
     output_tokens: int
     created_at: str
     metadata: Dict[str, Any] = field(default_factory=dict)
+
 
 class SessionManager:
     """Session管理器
@@ -64,7 +67,7 @@ class SessionManager:
             messages=tuple(self._current_messages),
             input_tokens=self._current_input_tokens,
             output_tokens=self._current_output_tokens,
-            created_at=datetime.now().isoformat()
+            created_at=datetime.now().isoformat(),
         )
 
     def save_session(self, session_id: str = None) -> Path:
@@ -79,15 +82,19 @@ class SessionManager:
         snapshot = self.create_snapshot(session_id)
         session_path = self.session_dir / f"{snapshot.session_id}.json"
 
-        with open(session_path, 'w') as f:
-            json.dump({
-                'session_id': snapshot.session_id,
-                'messages': snapshot.messages,
-                'input_tokens': snapshot.input_tokens,
-                'output_tokens': snapshot.output_tokens,
-                'created_at': snapshot.created_at,
-                'metadata': snapshot.metadata
-            }, f, indent=2)
+        with open(session_path, "w") as f:
+            json.dump(
+                {
+                    "session_id": snapshot.session_id,
+                    "messages": snapshot.messages,
+                    "input_tokens": snapshot.input_tokens,
+                    "output_tokens": snapshot.output_tokens,
+                    "created_at": snapshot.created_at,
+                    "metadata": snapshot.metadata,
+                },
+                f,
+                indent=2,
+            )
 
         return session_path
 
@@ -98,8 +105,8 @@ class SessionManager:
             Dict[str, Any]: 包含消息数量、token 使用量的摘要
         """
         return {
-            'message_count': len(self._current_messages),
-            'input_tokens': self._current_input_tokens,
-            'output_tokens': self._current_output_tokens,
-            'total_tokens': self._current_input_tokens + self._current_output_tokens
+            "message_count": len(self._current_messages),
+            "input_tokens": self._current_input_tokens,
+            "output_tokens": self._current_output_tokens,
+            "total_tokens": self._current_input_tokens + self._current_output_tokens,
         }

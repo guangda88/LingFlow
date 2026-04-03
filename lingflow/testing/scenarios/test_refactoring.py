@@ -13,11 +13,7 @@ import sys
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from lingflow.testing.scenario import (
-    CodeTestScenario,
-    CapturedToolCall,
-    TestInteractionType
-)
+from lingflow.testing.scenario import CodeTestScenario, CapturedToolCall
 from lingflow.testing.test_server import CodeTestServer
 
 
@@ -37,19 +33,19 @@ class MockRefactoringTool:
         Returns:
             重构结果
         """
-        lines = code.split('\n')
-        extracted = '\n'.join(lines[start_line-1:end_line])
+        lines = code.split("\n")
+        extracted = "\n".join(lines[start_line - 1 : end_line])
 
         # 替换原代码为函数调用
-        new_lines = lines[:start_line-1] + [f"    {name}()"] + lines[end_line:]
-        refactored = '\n'.join(new_lines)
+        new_lines = lines[: start_line - 1] + [f"    {name}()"] + lines[end_line:]
+        refactored = "\n".join(new_lines)
 
         return {
             "operation": "extract_function",
             "function_name": name,
             "extracted_code": extracted,
             "refactored_code": refactored,
-            "success": True
+            "success": True,
         }
 
     @staticmethod
@@ -73,7 +69,7 @@ class MockRefactoringTool:
             "new_name": new_name,
             "replacements": count,
             "refactored_code": refactored,
-            "success": True
+            "success": True,
         }
 
     @staticmethod
@@ -94,14 +90,10 @@ class MockRefactoringTool:
                 "original": "if not x != y",
                 "simplified": "if x == y",
                 "refactored_code": simplified,
-                "success": True
+                "success": True,
             }
 
-        return {
-            "operation": "simplify_condition",
-            "message": "No simplifications found",
-            "success": False
-        }
+        return {"operation": "simplify_condition", "message": "No simplifications found", "success": False}
 
 
 class TestRefactoringScenarios:
@@ -159,25 +151,21 @@ def process_more_data(data):
 """,
             max_turns=3,
             expected_tools=["extract_function"],
-            expectations=lambda calls: self._validate_extract_function(calls)
+            expectations=lambda calls: self._validate_extract_function(calls),
         )
 
         # 模拟工具调用
         calls = [
             CapturedToolCall(
                 name="extract_function",
-                args={
-                    "start_line": 5,
-                    "end_line": 7,
-                    "name": "process_item"
-                },
+                args={"start_line": 5, "end_line": 7, "name": "process_item"},
                 timestamp=0.0,
                 result={
                     "operation": "extract_function",
                     "function_name": "process_item",
                     "refactored_code": "def process_data(data):\n    result = []\n    for item in data:\n        process_item()\n    return result",
-                    "success": True
-                }
+                    "success": True,
+                },
             )
         ]
 
@@ -219,17 +207,14 @@ def process_data(data):
 """,
             max_turns=2,
             expected_tools=["rename_variable"],
-            expectations=lambda calls: self._validate_rename_variable(calls)
+            expectations=lambda calls: self._validate_rename_variable(calls),
         )
 
         # 模拟工具调用
         calls = [
             CapturedToolCall(
                 name="rename_variable",
-                args={
-                    "old_name": "data",
-                    "new_name": "input_data"
-                },
+                args={"old_name": "data", "new_name": "input_data"},
                 timestamp=0.0,
                 result={
                     "operation": "rename_variable",
@@ -237,8 +222,8 @@ def process_data(data):
                     "new_name": "input_data",
                     "replacements": 2,
                     "refactored_code": "def process_data(input_data):\n    result = input_data * 2\n    return result",
-                    "success": True
-                }
+                    "success": True,
+                },
             )
         ]
 
@@ -281,7 +266,7 @@ def compare(x, y):
 """,
             max_turns=2,
             expected_tools=["simplify_condition"],
-            expectations=lambda calls: self._validate_simplify_condition(calls)
+            expectations=lambda calls: self._validate_simplify_condition(calls),
         )
 
         # 模拟工具调用
@@ -295,8 +280,8 @@ def compare(x, y):
                     "original": "if not x != y",
                     "simplified": "if x == y",
                     "refactored_code": "def compare(x, y):\n    if x == y:\n        return True\n    return False",
-                    "success": True
-                }
+                    "success": True,
+                },
             )
         ]
 
@@ -317,7 +302,6 @@ def compare(x, y):
 
         # 创建临时目录
         import tempfile
-        import os
 
         temp_dir = tempfile.mkdtemp(prefix="test_refactoring_")
 
@@ -325,7 +309,7 @@ def compare(x, y):
         server = CodeTestServer(Path(temp_dir))
 
         # 创建测试代码文件
-        test_code = '''
+        test_code = """
 class Calculator:
     def __init__(self):
         self.data = 0
@@ -337,7 +321,7 @@ class Calculator:
     def multiply(self, x):
         self.data = self.data * x
         return self.data
-'''
+"""
 
         code_file = server.add_python_route("calculator.py", test_code)
 
@@ -356,7 +340,7 @@ class Calculator:
             code_content=test_code,
             max_turns=5,
             expected_tools=["rename_variable", "simplify_condition"],
-            expectations=lambda calls: True  # 简单验证，只要调用了工具
+            expectations=lambda calls: True,  # 简单验证，只要调用了工具
         )
 
         # 模拟多轮工具调用
@@ -365,14 +349,14 @@ class Calculator:
                 name="rename_variable",
                 args={"old_name": "data", "new_name": "accumulator"},
                 timestamp=0.0,
-                result={"success": True, "replacements": 3}
+                result={"success": True, "replacements": 3},
             ),
             CapturedToolCall(
                 name="simplify_condition",
                 args={},
                 timestamp=1.0,
-                result={"success": True, "simplified": "self.accumulator += x"}
-            )
+                result={"success": True, "simplified": "self.accumulator += x"},
+            ),
         ]
 
         # 验证期望
@@ -389,13 +373,13 @@ class TestRefactoringToolFunctionality:
         """测试函数提取功能"""
         tool = MockRefactoringTool()
 
-        code = '''
+        code = """
 def func():
     x = 1
     y = 2
     z = x + y
     return z
-'''
+"""
 
         result = tool.extract_function(code, 3, 4, "sum")
 
@@ -448,7 +432,7 @@ class TestScenarioValidation:
             code_content="code",
             max_turns=1,
             expected_tools=["tool1"],
-            expectations=lambda calls: True
+            expectations=lambda calls: True,
         )
 
         # 验证场景属性
@@ -458,12 +442,7 @@ class TestScenarioValidation:
 
     def test_tool_call_validation(self):
         """测试工具调用验证"""
-        call = CapturedToolCall(
-            name="test_tool",
-            args={"arg1": "value1"},
-            timestamp=0.0,
-            result={"success": True}
-        )
+        call = CapturedToolCall(name="test_tool", args={"arg1": "value1"}, timestamp=0.0, result={"success": True})
 
         # 验证工具调用属性
         assert call.name == "test_tool"
@@ -471,7 +450,7 @@ class TestScenarioValidation:
 
 
 # 主测试入口
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     import logging
 
     logging.basicConfig(level=logging.INFO)

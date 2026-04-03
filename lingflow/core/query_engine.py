@@ -19,6 +19,7 @@ import uuid
 
 class StopReason(Enum):
     """查询停止原因"""
+
     COMPLETED = "completed"
     MAX_TURNS_REACHED = "max_turns_reached"
     MAX_BUDGET_REACHED = "max_budget_reached"
@@ -29,6 +30,7 @@ class StopReason(Enum):
 @dataclass(frozen=True)
 class QueryEngineConfig:
     """QueryEngine配置（不可变）"""
+
     max_turns: int = 8
     max_budget_tokens: int = 200000
     compact_after_turns: int = 12
@@ -41,6 +43,7 @@ class QueryEngineConfig:
 @dataclass(frozen=True)
 class TurnResult:
     """单轮查询结果（不可变）"""
+
     prompt: str
     output: str
     matched_tools: Tuple[str, ...]
@@ -55,6 +58,7 @@ class TurnResult:
 @dataclass
 class UsageSummary:
     """使用量摘要"""
+
     total_input_tokens: int = 0
     total_output_tokens: int = 0
     turn_count: int = 0
@@ -65,10 +69,10 @@ class UsageSummary:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            'total_input_tokens': self.total_input_tokens,
-            'total_output_tokens': self.total_output_tokens,
-            'total_tokens': self.total_tokens,
-            'turn_count': self.turn_count
+            "total_input_tokens": self.total_input_tokens,
+            "total_output_tokens": self.total_output_tokens,
+            "total_tokens": self.total_tokens,
+            "turn_count": self.turn_count,
         }
 
 
@@ -76,11 +80,7 @@ class MessageCompactor:
     """消息紧凑化工具"""
 
     @staticmethod
-    def compact_messages(
-        messages: List[str],
-        target_tokens: int,
-        current_tokens: int
-    ) -> Tuple[List[str], int]:
+    def compact_messages(messages: List[str], target_tokens: int, current_tokens: int) -> Tuple[List[str], int]:
         """
         紧凑化消息列表，保留最近的重要消息
 
@@ -117,7 +117,7 @@ class MessageCompactor:
         summary_parts = [
             f"总消息数: {len(messages)}",
             f"最早消息: {messages[0][:50]}..." if messages else "",
-            f"最近消息: {messages[-1][:50]}..." if messages else ""
+            f"最近消息: {messages[-1][:50]}..." if messages else "",
         ]
 
         return " | ".join([p for p in summary_parts if p])
@@ -133,11 +133,7 @@ class QueryEngine:
     - 工具和Agent匹配
     """
 
-    def __init__(
-        self,
-        config: QueryEngineConfig,
-        session_id: str = None
-    ):
+    def __init__(self, config: QueryEngineConfig, session_id: str = None):
         self.config = config
         self.session_id = session_id or str(uuid.uuid4())
         self._messages: List[str] = []
@@ -151,9 +147,7 @@ class QueryEngine:
     def usage_summary(self) -> UsageSummary:
         """获取使用量摘要"""
         return UsageSummary(
-            total_input_tokens=self._input_tokens,
-            total_output_tokens=self._output_tokens,
-            turn_count=self._turn_count
+            total_input_tokens=self._input_tokens, total_output_tokens=self._output_tokens, turn_count=self._turn_count
         )
 
     def submit(
@@ -161,7 +155,7 @@ class QueryEngine:
         prompt: str,
         tools: Optional[List[str]] = None,
         agents: Optional[List[str]] = None,
-        process_func: Optional[Callable[[str], str]] = None
+        process_func: Optional[Callable[[str], str]] = None,
     ) -> TurnResult:
         """
         提交查询
@@ -185,7 +179,7 @@ class QueryEngine:
                 input_tokens=0,
                 output_tokens=0,
                 stop_reason=StopReason.MAX_TURNS_REACHED,
-                error=f"已达到最大轮数限制 ({self.config.max_turns})"
+                error=f"已达到最大轮数限制 ({self.config.max_turns})",
             )
 
         # 2. 检查Token预算
@@ -198,7 +192,7 @@ class QueryEngine:
                 input_tokens=0,
                 output_tokens=0,
                 stop_reason=StopReason.MAX_BUDGET_REACHED,
-                error=f"已达到Token预算限制 ({self.config.max_budget_tokens})"
+                error=f"已达到Token预算限制 ({self.config.max_budget_tokens})",
             )
 
         # 3. 添加提示词到消息历史
@@ -234,7 +228,7 @@ class QueryEngine:
             matched_agents=tuple(matched_agents),
             input_tokens=input_tokens,
             output_tokens=output_tokens,
-            stop_reason=self._determine_stop_reason()
+            stop_reason=self._determine_stop_reason(),
         )
 
         # 10. 保存到历史
@@ -246,12 +240,7 @@ class QueryEngine:
 
         return result
 
-    def _default_process(
-        self,
-        prompt: str,
-        tools: Optional[List[str]],
-        agents: Optional[List[str]]
-    ) -> str:
+    def _default_process(self, prompt: str, tools: Optional[List[str]], agents: Optional[List[str]]) -> str:
         """默认处理函数（模拟）"""
 
         # 模拟响应
@@ -317,18 +306,13 @@ class QueryEngine:
 
         # 检查是否需要紧凑化
         should_compact = (
-            self._turn_count >= self.config.compact_after_turns or
-            total_tokens >= self.config.compact_threshold_tokens
+            self._turn_count >= self.config.compact_after_turns or total_tokens >= self.config.compact_threshold_tokens
         )
 
         if should_compact and len(self._messages) > 2:
             # 执行紧凑化
             target_tokens = self.config.compact_threshold_tokens // 2
-            self._messages, new_tokens = self._compactor.compact_messages(
-                self._messages,
-                target_tokens,
-                total_tokens
-            )
+            self._messages, new_tokens = self._compactor.compact_messages(self._messages, target_tokens, total_tokens)
 
             # 更新token统计（简化处理）
             # 注意：实际中应该使用更精确的tokenizer
@@ -345,55 +329,55 @@ class QueryEngine:
         path.parent.mkdir(parents=True, exist_ok=True)
 
         state = {
-            'session_id': self.session_id,
-            'config': {
-                'max_turns': self.config.max_turns,
-                'max_budget_tokens': self.config.max_budget_tokens,
-                'compact_after_turns': self.config.compact_after_turns,
-                'auto_compact': self.config.auto_compact
+            "session_id": self.session_id,
+            "config": {
+                "max_turns": self.config.max_turns,
+                "max_budget_tokens": self.config.max_budget_tokens,
+                "compact_after_turns": self.config.compact_after_turns,
+                "auto_compact": self.config.auto_compact,
             },
-            'messages': self._messages,
-            'usage': self.usage_summary.to_dict(),
-            'history': [
+            "messages": self._messages,
+            "usage": self.usage_summary.to_dict(),
+            "history": [
                 {
-                    'prompt': r.prompt,
-                    'output': r.output,
-                    'input_tokens': r.input_tokens,
-                    'output_tokens': r.output_tokens,
-                    'stop_reason': r.stop_reason.value
+                    "prompt": r.prompt,
+                    "output": r.output,
+                    "input_tokens": r.input_tokens,
+                    "output_tokens": r.output_tokens,
+                    "stop_reason": r.stop_reason.value,
                 }
                 for r in self._history
             ],
-            'saved_at': datetime.now().isoformat()
+            "saved_at": datetime.now().isoformat(),
         }
 
-        with open(path, 'w') as f:
+        with open(path, "w") as f:
             json.dump(state, f, indent=2)
 
         return path
 
     @classmethod
-    def load_state(cls, path: Path) -> 'QueryEngine':
+    def load_state(cls, path: Path) -> "QueryEngine":
         """加载引擎状态"""
         with open(path) as f:
             state = json.load(f)
 
         # 重建配置
         config = QueryEngineConfig(
-            max_turns=state['config']['max_turns'],
-            max_budget_tokens=state['config']['max_budget_tokens'],
-            compact_after_turns=state['config']['compact_after_turns'],
-            auto_compact=state['config']['auto_compact']
+            max_turns=state["config"]["max_turns"],
+            max_budget_tokens=state["config"]["max_budget_tokens"],
+            compact_after_turns=state["config"]["compact_after_turns"],
+            auto_compact=state["config"]["auto_compact"],
         )
 
         # 创建引擎
-        engine = cls(config, session_id=state['session_id'])
+        engine = cls(config, session_id=state["session_id"])
 
         # 恢复状态
-        engine._messages = state['messages']
-        engine._input_tokens = state['usage']['total_input_tokens']
-        engine._output_tokens = state['usage']['total_output_tokens']
-        engine._turn_count = state['usage']['turn_count']
+        engine._messages = state["messages"]
+        engine._input_tokens = state["usage"]["total_input_tokens"]
+        engine._output_tokens = state["usage"]["total_output_tokens"]
+        engine._turn_count = state["usage"]["turn_count"]
 
         return engine
 
@@ -412,22 +396,23 @@ class QueryEngine:
     def get_stats(self) -> Dict[str, Any]:
         """获取统计信息"""
         return {
-            'session_id': self.session_id,
-            'turn_count': self._turn_count,
-            'message_count': len(self._messages),
-            'usage': self.usage_summary.to_dict(),
-            'config': {
-                'max_turns': self.config.max_turns,
-                'max_budget_tokens': self.config.max_budget_tokens,
-                'compact_after_turns': self.config.compact_after_turns,
-                'auto_compact': self.config.auto_compact
-            }
+            "session_id": self.session_id,
+            "turn_count": self._turn_count,
+            "message_count": len(self._messages),
+            "usage": self.usage_summary.to_dict(),
+            "config": {
+                "max_turns": self.config.max_turns,
+                "max_budget_tokens": self.config.max_budget_tokens,
+                "compact_after_turns": self.config.compact_after_turns,
+                "auto_compact": self.config.auto_compact,
+            },
         }
 
 
 # ============================================================================
 # 便捷函数
 # ============================================================================
+
 
 def create_default_engine() -> QueryEngine:
     """创建默认配置的QueryEngine"""
@@ -437,20 +422,11 @@ def create_default_engine() -> QueryEngine:
 
 def create_budget_conscious_engine(budget: int) -> QueryEngine:
     """创建预算敏感的QueryEngine"""
-    config = QueryEngineConfig(
-        max_budget_tokens=budget,
-        compact_after_turns=6,  # 更早紧凑化
-        auto_compact=True
-    )
+    config = QueryEngineConfig(max_budget_tokens=budget, compact_after_turns=6, auto_compact=True)  # 更早紧凑化
     return QueryEngine(config)
 
 
 def create_long_conversation_engine() -> QueryEngine:
     """创建长对话QueryEngine"""
-    config = QueryEngineConfig(
-        max_turns=20,
-        max_budget_tokens=500000,
-        compact_after_turns=15,
-        auto_compact=True
-    )
+    config = QueryEngineConfig(max_turns=20, max_budget_tokens=500000, compact_after_turns=15, auto_compact=True)
     return QueryEngine(config)

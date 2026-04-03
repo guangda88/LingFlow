@@ -5,20 +5,20 @@ LingFlow 性能评估器
 
 import time
 import psutil
-import os
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any
 from dataclasses import dataclass
 
 
 @dataclass
 class PerformanceMetrics:
     """性能指标"""
-    execution_time: float      # 执行时间（秒）
-    memory_usage_mb: float     # 内存使用（MB）
-    cpu_percent: float         # CPU使用率
-    io_operations: int         # IO操作次数
-    cache_hit_rate: float      # 缓存命中率
+
+    execution_time: float  # 执行时间（秒）
+    memory_usage_mb: float  # 内存使用（MB）
+    cpu_percent: float  # CPU使用率
+    io_operations: int  # IO操作次数
+    cache_hit_rate: float  # 缓存命中率
 
 
 class PerformanceEvaluator:
@@ -52,10 +52,7 @@ class PerformanceEvaluator:
 
         # 3. 计算分数
         # 执行时间权重更高
-        score = (
-            import_time * 10.0 +  # 执行时间
-            memory_mb * 0.1       # 内存使用
-        )
+        score = import_time * 10.0 + memory_mb * 0.1  # 执行时间  # 内存使用
 
         return float(score)
 
@@ -68,13 +65,9 @@ class PerformanceEvaluator:
             # 如果是包，尝试导入
             if (self.target_path / "__init__.py").exists():
                 # 动态导入
-                import sys
                 import importlib.util
 
-                spec = importlib.util.spec_from_file_location(
-                    "target_module",
-                    self.target_path / "__init__.py"
-                )
+                spec = importlib.util.spec_from_file_location("target_module", self.target_path / "__init__.py")
                 if spec and spec.loader:
                     module = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(module)
@@ -134,7 +127,7 @@ class PerformanceEvaluator:
         for _ in range(3):
             try:
                 func(*args, **kwargs)
-            except:
+            except Exception:
                 pass
 
         # 多次运行
@@ -145,9 +138,9 @@ class PerformanceEvaluator:
             # 测量时间
             start_time = time.time()
             try:
-                result = func(*args, **kwargs)
-            except Exception as e:
-                result = e
+                func(*args, **kwargs)
+            except Exception:
+                pass
             elapsed = time.time() - start_time
             times.append(elapsed)
 
@@ -186,11 +179,7 @@ if __name__ == "__main__":
     # 测试
     evaluator = PerformanceEvaluator("/home/ai/LingFlow/lingflow")
 
-    params = {
-        "cache_size": 100,
-        "parallelism": 2,
-        "timeout": 30
-    }
+    params = {"cache_size": 100, "parallelism": 2, "timeout": 30}
 
     score = evaluator.evaluate(params)
     print(f"性能评分: {score:.2f}")

@@ -5,6 +5,7 @@
 Provides command-line interface for executing LingFlow skills and workflows.
 Uses Click for CLI argument parsing and command organization.
 """
+
 import json
 from pathlib import Path
 
@@ -17,12 +18,15 @@ from lingflow.cli.learn import learn
 from lingflow.cli.optimize import optimize
 from lingflow.cli.test import test
 
+__all__ = ["cli", "run", "workflow", "list_skills", "init", "config_cmd"]
+
 lf = LingFlow()
 
 
 def _get_version() -> str:
     try:
         from importlib.metadata import version
+
         return version("lingflow-core")
     except Exception:
         vfile = Path(__file__).parent.parent.parent / "VERSION"
@@ -132,5 +136,5 @@ cli.add_command(optimize)
 cli.add_command(test)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     cli()

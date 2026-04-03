@@ -102,11 +102,7 @@ class AgentAdapter:
         Returns:
             v2 格式的配置
         """
-        v2_config = {
-            "version": "2.0",
-            "description": v1_config.get("description", "Migrated from v1"),
-            "agents": []
-        }
+        v2_config = {"version": "2.0", "description": v1_config.get("description", "Migrated from v1"), "agents": []}
 
         # 转换 settings
         if "settings" in v1_config:
@@ -132,7 +128,7 @@ class AgentAdapter:
             capabilities[v2_cap] = {
                 "description": f"{cap} capability",
                 "context_limit": v1_agent.get("context_limit", 8000),
-                "timeout": v1_agent.get("timeout", 300)
+                "timeout": v1_agent.get("timeout", 300),
             }
 
         return {
@@ -142,8 +138,8 @@ class AgentAdapter:
             "constraints": {
                 "max_concurrent": v1_agent.get("max_tasks", 1),
                 "parallel_safe": v1_agent.get("parallel_safe", True),
-                "requires_isolation": v1_agent.get("requires_isolation", False)
-            }
+                "requires_isolation": v1_agent.get("requires_isolation", False),
+            },
         }
 
     @classmethod
@@ -157,10 +153,7 @@ class AgentAdapter:
             "compression_enabled": v1_settings.get("compression_enabled", True),
             "compression_target_tokens": v1_settings.get("compression_target_tokens", 4000),
             "context_preserve_sections": v1_settings.get("context_preserve_sections", []),
-            "capability_matching": {
-                "strategy": "exact_or_broader",
-                "fallback_enabled": True
-            }
+            "capability_matching": {"strategy": "exact_or_broader", "fallback_enabled": True},
         }
 
     @classmethod
@@ -174,7 +167,7 @@ class AgentAdapter:
             v2 格式的配置
         """
         path = Path(path)
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             config = json.load(f)
 
         version = cls.detect_version(config)
@@ -195,7 +188,7 @@ class AgentAdapter:
             path: 保存路径
         """
         path = Path(path)
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(config, f, indent=2, ensure_ascii=False)
         logger.info(f"Saved config to {path}")
 
@@ -220,28 +213,30 @@ class SkillAdapter:
             "settings": v1_config.get("settings", {}),
             "deprecated": {
                 "skills": [
-                    {
-                        "name": "requesting-code-review",
-                        "replaced_by": "code-review",
-                        "since": "v2.0",
-                        "remove_in": "v4.0"
-                    }
+                    {"name": "requesting-code-review", "replaced_by": "code-review", "since": "v2.0", "remove_in": "v4.0"}
                 ]
-            }
+            },
         }
 
         # Skill 类别映射
         categories = {
             "development-workflow": [
-                "brainstorming", "writing-plans", "test-driven-development",
-                "systematic-debugging", "subagent-driven-development",
-                "verification-before-completion"
+                "brainstorming",
+                "writing-plans",
+                "test-driven-development",
+                "systematic-debugging",
+                "subagent-driven-development",
+                "verification-before-completion",
             ],
             "version-control": ["using-git-worktrees", "finishing-a-development-branch"],
             "code-quality": ["code-review", "code-review-js"],
             "workflow-control": [
-                "dispatching-parallel-agents", "workflow-executor", "task-runner",
-                "conditional-branch", "loop-iterator", "error-handler"
+                "dispatching-parallel-agents",
+                "workflow-executor",
+                "task-runner",
+                "conditional-branch",
+                "loop-iterator",
+                "error-handler",
             ],
             "integration": ["notification"],
             "skill-management": ["skill-creator"],
@@ -303,17 +298,14 @@ class SkillAdapter:
                 "requires_capability": capability_map.get(name),
                 "preferred_agent": agent_map.get(name),
                 "depends_on": v1_skill.get("depends_on", []),
-                "config": {}
+                "config": {},
             }
 
             # 检查是否在废弃列表中
             if name in ["requesting-code-review", "receiving-code-review"]:
-                v2_config["deprecated"]["skills"].append({
-                    "name": name,
-                    "replaced_by": "code-review",
-                    "since": "v2.0",
-                    "remove_in": "v4.0"
-                })
+                v2_config["deprecated"]["skills"].append(
+                    {"name": name, "replaced_by": "code-review", "since": "v2.0", "remove_in": "v4.0"}
+                )
                 continue
 
             v2_config["skills"].append(v2_skill)
@@ -324,7 +316,7 @@ class SkillAdapter:
     def load(cls, path: Union[str, Path]) -> Dict[str, Any]:
         """加载配置文件，自动识别版本并返回 v2 格式"""
         path = Path(path)
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             config = json.load(f)
 
         version = cls.detect_version(config)
@@ -340,7 +332,7 @@ class SkillAdapter:
     def save(cls, config: Dict[str, Any], path: Union[str, Path]) -> None:
         """保存配置文件"""
         path = Path(path)
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(config, f, indent=2, ensure_ascii=False)
         logger.info(f"Saved config to {path}")
 
@@ -368,17 +360,11 @@ class CapabilityMatcher:
             for capability in agent.get("capabilities", {}).keys():
                 if capability not in index:
                     index[capability] = []
-                index[capability].append({
-                    "name": agent_name,
-                    "agent": agent
-                })
+                index[capability].append({"name": agent_name, "agent": agent})
 
         return index
 
-    def find_agents_for_capability(
-        self,
-        capability: Union[str, List[str]]
-    ) -> List[Dict]:
+    def find_agents_for_capability(self, capability: Union[str, List[str]]) -> List[Dict]:
         """查找支持指定 capability 的 agents
 
         Args:
@@ -413,10 +399,7 @@ class CapabilityMatcher:
 
         return [all_agents[name] for name in intersection if name in all_agents]
 
-    def match_skill_to_agent(
-        self,
-        skill: Dict[str, Any]
-    ) -> Optional[Dict]:
+    def match_skill_to_agent(self, skill: Dict[str, Any]) -> Optional[Dict]:
         """为 Skill 匹配最佳 Agent
 
         Args:
