@@ -199,7 +199,8 @@ async def execute_skill(
             raise ValueError(f"Skill not found: {name}")
 
         result = skill.execute(request.params)
-        # TODO: 保存结果到 Redis 或数据库
+        # 结果持久化将在 v3.9.0 异步基础中实现
+        # 参考: docs/architecture/ROADMAP_v3.9.0.md
         return result
 
     # 如果是同步模式，直接返回
