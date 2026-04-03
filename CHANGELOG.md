@@ -7,6 +7,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.9.0] - 2026-04-04
+
+### Added
+
+**情报系统 (Intelligence System)**
+- ✅ 网络声誉监控系统
+  - GitHub Issues/Discussions/Releases 采集
+  - Reddit 讨论采集
+  - Hacker News 搜索
+  - Star 增长追踪
+
+**分析模块**
+- ✅ 情感分析器 (SentimentAnalyzer)
+  - 正面/中性/负面三分类
+  - 支持批量分析
+- ✅ 影响力评分器 (InfluenceAnalyzer)
+  - 平台权重计算
+  - 互动指标分析
+  - high/medium/low 三级评分
+- ✅ 分析器流水线 (AnalyzerPipeline)
+
+**报告系统**
+- ✅ 每日情报简报生成器 (DailyReporter)
+  - 终端输出 (ASCII 边框)
+  - JSON 格式
+  - Markdown 格式
+  - 包含: 统计摘要、情感分析、热门话题、可行动洞察
+
+**数据模型**
+- ✅ MentionData: 统一提及数据模型
+- ✅ SentimentResult: 情感分析结果
+- ✅ InfluenceScore: 影响力分数
+- ✅ DailyReport: 每日报告
+
+**配置管理**
+- ✅ 常量定义 (constants.py)
+  - PlatformWeights: 平台权重
+  - APILimits: API 限制
+  - InfluenceThresholds: 影响力阈值
+  - DataRetention: 数据保留策略
+
+**工具脚本**
+- ✅ intelligence_pipeline.py: 统一运行脚本
+- ✅ lingflow_monitor.py: 监控脚本
+
+**测试覆盖**
+- ✅ 67 个测试用例
+- ✅ tests/intelligence/ 测试包
+
+**文档**
+- ✅ docs/intelligence/README.md: 使用指南
+- ✅ docs/intelligence/EXTENSION_PLAN_V2.md: 扩展设计方案
+- ✅ docs/intelligence/LOGGING_MIGRATION_STATUS.md: 迁移状态
+
+### Changed
+
+- 使用 logging 替代 print 语句
+- 使用常量类替代魔法数字
+
+---
+
 ## [3.5.7] - 2026-03-27
 
 ### Added

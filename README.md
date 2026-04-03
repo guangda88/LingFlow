@@ -1,4 +1,4 @@
-# LingFlow v3.8.0 - AI 生态平台
+# LingFlow v3.9.0 - AI 生态平台
 
 <div align="center">
 
@@ -6,7 +6,7 @@
 [![Docker](https://img.shields.io/badge/docker-latest-blue.svg)](https://hub.docker.com/r/guangda88/lingflow-api)
 [![GitHub Action](https://img.shields.io/badge/action-quality--gate-green.svg)](https://github.com/marketplace/actions/lingflow-actions)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-3.8.0-orange.svg)](https://github.com/guangda88/LingFlow)
+[![Version](https://img.shields.io/badge/version-3.9.0-orange.svg)](https://github.com/guangda88/LingFlow)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **众智混元，万法灵通**
@@ -405,6 +405,7 @@ lingflow optimize structure --target ./
 
 - **[产品定位](POSITIONING.md)** - 详细的产品定位和价值主张
 - **[自优化系统](docs/SELF_OPTIMIZATION.md)** - 完整的自优化文档
+- **[情报系统](docs/intelligence/README.md)** - 网络声誉监控系统（NEW!）
 - **[Agent指南](AGENTS.md)** - 6个Agent的详细说明
 - **[开发规范](docs/reports/DEVELOPMENT_RULES.md)** - 开发规则和最佳实践
 
