@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Optional, Set
 
 from .auto_resume import save_resume_markdown
 from lingflow.compression.token_estimator import TokenEstimator
-from .session_lifecycle import SessionLifecycleManager, LifecyclePhase  # noqa: F401
+from .session_lifecycle import SessionLifecycleManager, LifecyclePhase, SessionSummary  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
@@ -124,6 +124,9 @@ class ContextManager:
         # 加载之前的上下文
         self._load_last_context()
 
+        # 加载上一会话的交接指令（如果有）
+        self._previous_session = self._load_previous_session_summary()
+
     def _generate_session_id(self) -> str:
         """生成会话 ID (使用加密安全的随机生成器)"""
         return secrets.token_urlsafe(12)
@@ -142,6 +145,42 @@ class ContextManager:
                 logger.warning("加载上次上下文失败: %s", e)
         self.last_context = None
         return None
+
+    def _load_previous_session_summary(self) -> Optional[SessionSummary]:
+        """加载上一会话的交接摘要
+
+        在 __init__ 中调用。如果存在上一会话的摘要，注入到日志中
+        作为新会话的上下文起点。
+
+        Returns:
+            上一会话的 SessionSummary，如果不存在返回 None
+        """
+        from .session_lifecycle import SessionLifecycleManager as _SLM
+
+        mgr = _SLM(storage_dir=self.storage_dir)
+        summary = mgr.load_last_session_summary()
+        if summary is not None:
+            logger.info(
+                "检测到上一会话交接: session_id=%s, tokens=%s, reason=%s",
+                summary.session_id,
+                f"{summary.total_tokens:,}",
+                summary.handoff_reason,
+            )
+            if summary.tasks_pending:
+                for t in summary.tasks_pending:
+                    if t not in self.snapshot.tasks_pending:
+                        self.snapshot.tasks_pending.append(t)
+                logger.info("已注入 %d 个待完成任务", len(summary.tasks_pending))
+            if summary.next_steps:
+                self.snapshot.next_steps = summary.next_steps
+            if summary.key_decisions:
+                for d in summary.key_decisions:
+                    if d not in self.snapshot.key_decisions:
+                        self.snapshot.key_decisions.append(d)
+            self.snapshot.context_summary = (
+                f"[从会话 {summary.session_id} 接续] " + summary.context_summary
+            )
+        return summary
 
     def record_message(self, role: str, content: str, is_important: bool = False) -> None:
         """记录一条消息
@@ -253,7 +292,7 @@ class ContextManager:
             logger.info("Token 使用率 %s，接近安全阈值", budget_status.usage_ratio)
 
     def _check_lifecycle(self) -> None:
-        """检查会话生命周期状态（灵依任务）"""
+        """检查会话生命周期状态（灵依任务：检测-预警-过渡）"""
         if self._lifecycle_manager is None:
             self._lifecycle_manager = SessionLifecycleManager(
                 storage_dir=self.storage_dir,
@@ -269,19 +308,79 @@ class ContextManager:
                 f"{self._lifecycle_manager.critical_threshold:,}",
             )
         elif status.phase == LifecyclePhase.EXPIRED:
-            logger.warning("会话已过期，建议开始新会话")
-            summary = self._lifecycle_manager.create_session_summary(
-                session_id=self.session_id,
-                total_tokens=self._cumulative_tokens,
-                total_messages=self.message_count,
-                tasks_completed=self.snapshot.tasks_completed,
-                tasks_pending=self.snapshot.tasks_pending,
-                key_decisions=self.snapshot.key_decisions,
-                important_files=self.snapshot.important_files,
-                next_steps=self.snapshot.next_steps,
-                handoff_reason="lifecycle_expired",
-            )
-            self._lifecycle_manager.save_session_summary(summary)
+            self._transition_to_new_session()
+
+    def _transition_to_new_session(self) -> None:
+        """会话过渡：保存旧会话状态，重置内部状态，准备新会话
+
+        完整的检测-预警-过渡闭环：
+        1. 保存会话摘要（JSON + Markdown）
+        2. 生成交接文档
+        3. 重置 ContextManager 内部状态
+        4. 加载交接指令到新会话快照
+        """
+        old_session_id = self.session_id
+
+        logger.info(
+            "会话过渡: %s → 新会话 (cumulative_tokens=%s)",
+            old_session_id,
+            f"{self._cumulative_tokens:,}",
+        )
+
+        # 1. 保存会话摘要
+        summary = self._lifecycle_manager.create_session_summary(
+            session_id=self.session_id,
+            total_tokens=self._cumulative_tokens,
+            total_messages=self.message_count,
+            tasks_completed=self.snapshot.tasks_completed,
+            tasks_pending=self.snapshot.tasks_pending,
+            key_decisions=self.snapshot.key_decisions,
+            important_files=self.snapshot.important_files,
+            next_steps=self.snapshot.next_steps,
+            context_summary=self.snapshot.context_summary,
+            handoff_reason="lifecycle_expired",
+        )
+        self._lifecycle_manager.save_session_summary(summary)
+
+        # 2. 生成交接文档
+        self.generate_handoff(reason="lifecycle_expired")
+
+        # 3. 保存过渡指令
+        handoff_instructions = self._lifecycle_manager.get_handoff_instructions(summary)
+        handoff_path = self.storage_dir / "SESSION_HANDOFF_INSTRUCTIONS.md"
+        handoff_path.write_text(handoff_instructions, encoding="utf-8")
+
+        # 4. 重置内部状态
+        self.session_id = self._generate_session_id()
+        self.message_count = 0
+        self.estimated_tokens = 0
+        self._cumulative_tokens = 0
+        self._messages = []
+
+        # 5. 保留 pending tasks 和 decisions 到新快照
+        self.snapshot = ContextSnapshot(
+            timestamp=datetime.now().isoformat(),
+            session_id=self.session_id,
+            tasks_pending=summary.tasks_pending,
+            key_decisions=summary.key_decisions,
+            next_steps=summary.next_steps,
+            context_summary=f"[从会话 {old_session_id} 过渡] " + summary.context_summary,
+        )
+
+        # 6. 重置懒加载的管理器
+        self._budget_manager = None
+        self._smart_compressor = None
+        self._degradation_detector = None
+        self._lifecycle_manager = None
+
+        # 7. 保存新快照
+        self._save_snapshot()
+
+        logger.info(
+            "会话过渡完成: 新会话 %s，待完成任务 %d 个",
+            self.session_id,
+            len(self.snapshot.tasks_pending),
+        )
 
     def _save_snapshot(self) -> None:
         """保存当前快照"""
