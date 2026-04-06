@@ -2,7 +2,7 @@
 LingFlow REST API 服务
 快速启动模板
 """
-from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
+from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, Field
@@ -13,6 +13,9 @@ import os
 from datetime import datetime
 
 from app.core.config import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 # ===== 应用初始化 =====
 app = FastAPI(
@@ -99,6 +102,17 @@ class TaskStatusResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+class DiscussionPayload(BaseModel):
+    """讨论通知payload"""
+    event: str
+    discussion_id: str
+    topic: str
+    from_: str = Field(alias="from")
+    timestamp: str
+
+    class Config:
+        populate_by_name = True
+
 # ===== API 路由 =====
 
 @app.get("/")
@@ -118,6 +132,123 @@ async def health_check():
         "status": "healthy",
         "timestamp": datetime.now().isoformat()
     }
+
+@app.get("/council/health")
+async def council_health():
+    """议事厅健康检查 - 用于LingYi council唤醒"""
+    return {
+        "status": "ok",
+        "service": "LingFlow",
+        "member_id": "lingtong",
+        "member_name": "灵通",
+        "version": settings.APP_VERSION,
+        "timestamp": datetime.now().isoformat()
+    }
+
+@app.post("/test/post")
+async def test_post(test: str = None):
+    """测试POST请求"""
+    logger.info(f"收到测试POST请求: test={test}")
+    return {"status": "ok", "received": test}
+
+@app.post("/api/v1/discuss")
+async def handle_discussion(payload: DiscussionPayload):
+    """接收LingYi council讨论请求 - 灵通自动回复"""
+    import sys
+    import traceback
+    sys.path.insert(0, "/home/ai/LingYi/src")
+
+    try:
+        event = payload.event
+        discussion_id = payload.discussion_id
+        topic = payload.topic
+
+        logger.info(f"灵通收到讨论通知: {topic} (ID: {discussion_id})")
+
+        if event == "new_message" and discussion_id:
+            try:
+                from lingyi.llm_utils import create_client, call_llm_with_fallback
+                from lingyi.lingmessage import send_message, read_discussion
+            except Exception as e:
+                error_msg = f"导入LingYi模块失败: {e}"
+                logger.error(error_msg)
+                logger.error(f"Traceback: {traceback.format_exc()}")
+                return {"status": "error", "message": error_msg, "traceback": traceback.format_exc()}
+
+            try:
+                # 读取讨论内容
+                discussion = read_discussion(discussion_id)
+                if not discussion:
+                    error_msg = f"无法读取讨论: {discussion_id}"
+                    logger.error(error_msg)
+                    return {"status": "error", "message": error_msg}
+
+                # 构建回复上下文
+                messages_summary = "\n".join([
+                    f"- {msg.get('from_name', msg.get('from_id', 'unknown'))}: {msg.get('content', '')[:100]}"
+                    for msg in discussion.get("messages", [])[-5:]
+                ])
+
+                logger.info(f"讨论摘要: {messages_summary[:200]}...")
+
+                # 调用LLM生成回复
+                client = create_client()
+                prompt = f"""你是灵通（LingFlow），工作流编排专家。
+
+讨论主题：{topic}
+
+最近消息：
+{messages_summary}
+
+请以灵通的身份，基于工作流编排的专业视角，对上述讨论提出你的观点或建议。要求：
+1. 从工作流设计、流程优化、系统集成的角度分析
+2. 提供具体可行的建议
+3. 回复简洁，不超过200字
+4. 不要重复已有的观点
+"""
+
+                llm_messages = [{"role": "user", "content": prompt}]
+                logger.info(f"准备调用LLM...")
+                llm_response_tuple = call_llm_with_fallback(client, llm_messages)
+                llm_response = llm_response_tuple[0] if isinstance(llm_response_tuple, tuple) else llm_response_tuple
+                logger.info(f"LLM调用完成: {type(llm_response)}")
+
+                # 提取LLM回复内容
+                if hasattr(llm_response, 'choices') and len(llm_response.choices) > 0:
+                    content = llm_response.choices[0].message.content
+                else:
+                    content = str(llm_response)
+
+                logger.info(f"LLM回复内容: {content[:100]}...")
+
+                # 发送回复到讨论
+                send_message(
+                    topic=topic,
+                    content=content,
+                    from_id="lingtong"
+                )
+
+                logger.info(f"灵通已回复讨论: {topic[:30]}...")
+                return {
+                    "status": "success",
+                    "action": "replied",
+                    "discussion_id": discussion_id,
+                    "topic": topic
+                }
+
+            except Exception as e:
+                error_msg = f"处理讨论失败: {e}"
+                logger.error(error_msg)
+                logger.error(f"Traceback: {traceback.format_exc()}")
+                return {"status": "error", "message": error_msg, "traceback": traceback.format_exc()}
+
+        return {"status": "ok", "message": "Notification received"}
+
+    except Exception as e:
+        error_msg = f"处理请求时出错: {e}"
+        logger.error(error_msg)
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return {"status": "error", "message": error_msg, "traceback": traceback.format_exc()}
 
 # ========== 技能系统 API ==========
 
@@ -416,7 +547,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
-        port=8000,
+        port=8100,
         reload=True,
         log_level="info"
     )
