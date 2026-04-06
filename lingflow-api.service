@@ -1,0 +1,15 @@
+[Unit]
+Description=LingFlow API Server - Workflow Engine
+After=network.target
+
+[Service]
+Type=simple
+User=ai
+WorkingDirectory=/home/ai/LingFlow/lingflow-api
+Environment="PATH=/home/ai/.local/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart=/usr/local/bin/python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8100
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
