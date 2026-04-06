@@ -76,15 +76,15 @@ class AIFeedback:
     source: FeedbackSource  # 来源工具
     category: FeedbackCategory  # 问题类别
     severity: FeedbackSeverity  # 严重程度
-    rule_id: Optional[str]  # 规则ID
-    message: str  # 反馈消息
-    file_path: str  # 文件路径
-    line_no: int  # 行号
-    column_no: Optional[int]  # 列号
-    end_line_no: Optional[int]  # 结束行号
-    end_column_no: Optional[int]  # 结束列号
-    code_snippet: Optional[str]  # 代码片段
-    suggestion: Optional[str]  # 修复建议
+    rule_id: Optional[str] = None  # 规则ID
+    message: str = ""  # 反馈消息
+    file_path: str = ""  # 文件路径
+    line_no: int = 0  # 行号
+    column_no: Optional[int] = None  # 列号
+    end_line_no: Optional[int] = None  # 结束行号
+    end_column_no: Optional[int] = None  # 结束列号
+    code_snippet: Optional[str] = None  # 代码片段
+    suggestion: Optional[str] = None  # 修复建议
     fix_available: bool = False  # 是否有自动修复
     metadata: Dict[str, Any] = field(default_factory=dict)  # 额外元数据
     timestamp: datetime = field(default_factory=datetime.now)  # 时间戳
