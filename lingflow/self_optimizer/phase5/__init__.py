@@ -39,6 +39,7 @@ from lingflow.self_optimizer.phase5.models import (
     FeedbackItem,
     ToolType,
     FeedbackCategory,
+    FeedbackSeverity,
     SeverityLevel,
     LearnedRule,
     Pattern,
@@ -68,6 +69,20 @@ from lingflow.self_optimizer.phase5.patterns import (
 from lingflow.self_optimizer.phase5.knowledge import (
     KnowledgeBase,
     InMemoryKnowledgeBase,
+)
+
+# 规则应用导出
+from lingflow.self_optimizer.phase5.applier import (
+    RuleApplier,
+    AutoFixer,
+    PreCommitHookGenerator,
+)
+
+# 反馈循环导出
+from lingflow.self_optimizer.phase5.feedback import (
+    FeedbackCollector,
+    RuleQualityAdjuster,
+    FeedbackLoop,
 )
 
 # 便捷函数（待core模块实现后启用）
@@ -113,6 +128,7 @@ __all__ = [
     "FeedbackItem",
     "ToolType",
     "FeedbackCategory",
+    "FeedbackSeverity",
     "SeverityLevel",
     "LearnedRule",
     "Pattern",
@@ -133,4 +149,12 @@ __all__ = [
     # 知识库
     "KnowledgeBase",
     "InMemoryKnowledgeBase",
+    # 规则应用
+    "RuleApplier",
+    "AutoFixer",
+    "PreCommitHookGenerator",
+    # 反馈循环
+    "FeedbackCollector",
+    "RuleQualityAdjuster",
+    "FeedbackLoop",
 ]

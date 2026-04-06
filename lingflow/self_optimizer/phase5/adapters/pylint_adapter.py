@@ -113,6 +113,7 @@ class PylintAdapter(AIToolAdapter):
                         line_no=result.get("line", 0),
                         end_line_no=result.get("endLine", result.get("line", 0)),
                         column_no=result.get("column", 0),
+                        end_column_no=None,
                         code_snippet="",  # Pylint JSON不包含代码片段
                         suggestion=None,  # Pylint消息本身即是建议
                         metadata={

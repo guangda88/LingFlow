@@ -93,6 +93,10 @@ class RuffAdapter(AIToolAdapter):
                 try:
                     # Ruff的location对象
                     location = result.get("location", {})
+                    end_location = result.get("end_location", {})
+
+                    # Ruff使用filename字段
+                    filename = result.get("filename", "")
 
                     feedback = AIFeedback(
                         id=self._generate_feedback_id(),
@@ -101,11 +105,11 @@ class RuffAdapter(AIToolAdapter):
                         message=self._format_ruff_message(result),
                         category=self._parse_category(result.get("code", ""), result.get("message", ""), {}),
                         severity=self._parse_ruff_severity(result),
-                        file_path=location.get("path", ""),
+                        file_path=filename,
                         line_no=location.get("row", 0),
-                        end_line_no=location.get("end_row", 0),
+                        end_line_no=end_location.get("row", 0) if end_location else None,
                         column_no=location.get("column", 0),
-                        end_column_no=location.get("end_column", 0),
+                        end_column_no=end_location.get("column", 0) if end_location else None,
                         code_snippet=self._extract_ruff_snippet(result),
                         suggestion=self._extract_ruff_fix(result),
                         metadata={"tags": result.get("tags", []), "url": result.get("url", None)},
