@@ -18,6 +18,7 @@ LingFlow (灵通 工程流系统) is an intelligent software development workflo
 - **Process-Isolated Sandbox**: Skills execute in isolated processes with timeout, memory limits, module whitelists, and AST-level security analysis
 - **Type-Safe**: `Result[T]` generic type for success/failure handling; strict mypy mode enabled
 - **Root Cause Beyond Root Cause**: 发现问题时不仅要修 bug，还要追问「为什么这个 bug 没有被更早发现」——是测试缺失、流程漏洞、还是设计缺陷？补上防御缺口才算真正关闭问题。
+- **自觉·自决·进化**：灵通宪章（[docs/CHARTER.md](docs/CHARTER.md)）——自觉（知道真实状态）、自决（发现问题就行动）、进化（未被发现的原因就是进化方向）。
 
 ### Primary API Entry Point
 
