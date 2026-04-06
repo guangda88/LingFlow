@@ -1,4 +1,4 @@
-# LingFlow v3.9.0 - AI 生态平台
+# LingFlow v3.9.1 - AI 生态平台
 
 <div align="center">
 
@@ -6,7 +6,7 @@
 [![Docker](https://img.shields.io/badge/docker-latest-blue.svg)](https://hub.docker.com/r/guangda88/lingflow-api)
 [![GitHub Action](https://img.shields.io/badge/action-quality--gate-green.svg)](https://github.com/marketplace/actions/lingflow-actions)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-3.9.0-orange.svg)](https://github.com/guangda88/LingFlow)
+[![Version](https://img.shields.io/badge/version-3.9.1-orange.svg)](https://github.com/guangda88/LingFlow)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **众智混元，万法灵通**

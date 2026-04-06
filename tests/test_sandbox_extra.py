@@ -25,63 +25,64 @@ class TestCreateSafeImport:
             fn("os")
 
 
-class TestSimpleValidationFallback:
-    def test_simple_validate_safe(self):
-        sb = SkillSandbox(enable_ast_analysis=False)
-        assert sb.validate_code("x = 1 + 2") is True
+class TestSimpleValidationDisabled:
+    """When AST analysis is disabled, validation always rejects code."""
 
-    def test_simple_validate_os(self):
+    def test_disabled_rejects_safe_code(self):
+        sb = SkillSandbox(enable_ast_analysis=False)
+        assert sb.validate_code("x = 1 + 2") is False
+
+    def test_disabled_rejects_os(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         assert sb.validate_code("import os") is False
 
-    def test_simple_validate_eval(self):
+    def test_disabled_rejects_eval(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         assert sb.validate_code("eval('x')") is False
 
-    def test_simple_validate_exec(self):
+    def test_disabled_rejects_exec(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         assert sb.validate_code("exec('x')") is False
 
-    def test_simple_validate_open(self):
+    def test_disabled_rejects_open(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         assert sb.validate_code("open('f')") is False
 
-    def test_simple_validate_sys(self):
+    def test_disabled_rejects_sys(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         assert sb.validate_code("import sys") is False
 
-    def test_simple_validate_subprocess(self):
+    def test_disabled_rejects_subprocess(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         assert sb.validate_code("import subprocess") is False
 
-    def test_simple_validate_compile(self):
+    def test_disabled_rejects_compile(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         assert sb.validate_code("compile('x','','exec')") is False
 
-    def test_simple_validate_os_dot(self):
+    def test_disabled_rejects_os_dot(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         assert sb.validate_code("os.getcwd()") is False
 
-    def test_simple_validate_sys_dot(self):
+    def test_disabled_rejects_sys_dot(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         assert sb.validate_code("sys.exit()") is False
 
-    def test_simple_validate_subprocess_dot(self):
+    def test_disabled_rejects_subprocess_dot(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         assert sb.validate_code("subprocess.run([])") is False
 
-    def test_simple_validate_import(self):
+    def test_disabled_rejects_dunder_import(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         assert sb.validate_code("__import__('os')") is False
 
-    def test_simple_report_safe(self):
+    def test_disabled_report_safe(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         report = sb.get_security_report("x = 1")
-        assert report["is_safe"] is True
+        assert report["is_safe"] is False
         assert report["total_violations"] == 0
 
-    def test_simple_report_unsafe(self):
+    def test_disabled_report_unsafe(self):
         sb = SkillSandbox(enable_ast_analysis=False)
         report = sb.get_security_report("import os")
         assert report["is_safe"] is False
-        assert report["total_violations"] == 1

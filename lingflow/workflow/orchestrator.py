@@ -4,7 +4,7 @@ import asyncio
 import logging
 import yaml
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from lingflow.common.config import get_config
 from lingflow.common.models import Task, TaskResult, TaskPriority
@@ -36,7 +36,7 @@ class WorkflowOrchestrator:
         self.coordinator = coordinator
         self._degradation_detector = None
         self._workflow_messages: List[Dict[str, str]] = []
-        self._degradation_report: Optional[Dict[str, any]] = None
+        self._degradation_report: Optional[Dict[str, Any]] = None
 
     def load_workflow_from_yaml(self, filepath: str) -> List[Task]:
         """从 YAML 文件加载工作流任务

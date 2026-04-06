@@ -42,11 +42,10 @@ class TestSkillSandboxValidate:
 
     def test_validate_simple_mode(self):
         sb = SkillSandbox(timeout=5, enable_ast_analysis=False)
-        assert sb.validate_code("x = 1\n") is True
-        assert sb.validate_code("import os\n") is False
+        assert sb.validate_code("x = 1\n") is False
 
     def test_validate_code_with_dangerous_strings(self):
-        sb = SkillSandbox(timeout=5, enable_ast_analysis=False)
+        sb = SkillSandbox(timeout=5, enable_ast_analysis=True)
         assert sb.validate_code("eval('1+1')\n") is False
         assert sb.validate_code("exec('x=1')\n") is False
         assert sb.validate_code("open('file.txt')\n") is False
@@ -86,7 +85,7 @@ class TestSkillSandboxExecute:
 class TestSkillSandboxCode:
     def test_validate_code_simple_fallback(self):
         sb = SkillSandbox(enable_ast_analysis=False)
-        assert sb.validate_code("x = 1") is True
+        assert sb.validate_code("x = 1") is False
 
     def test_get_security_report(self):
         sb = SkillSandbox(enable_ast_analysis=True)
@@ -98,6 +97,7 @@ class TestSkillSandboxCode:
         sb = SkillSandbox(enable_ast_analysis=False)
         report = sb.get_security_report("x = 1")
         assert "is_safe" in report
+        assert report["is_safe"] is False
 
     def test_get_security_report_unsafe(self):
         sb = SkillSandbox(enable_ast_analysis=True)

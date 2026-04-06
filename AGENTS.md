@@ -1,8 +1,8 @@
 # LingFlow Agent Guide
 
-**Version**: v3.5.7
+**Version**: v3.9.1
 **Status**: Production Ready
-**Last Updated**: 2026-03-31
+**Last Updated**: 2026-04-05
 
 ---
 
@@ -889,6 +889,23 @@ Skill code with `implementation.py` runs in a sandbox:
 - Warning at 75%, auto-compress at 85%, emergency at 95%
 - System messages always preserved
 - `requirements`, `constraints`, `critical_requirements` sections preserved
+
+### Host Infrastructure Paths
+
+这些是主机上的关键路径，不要随意更改：
+
+| 路径 | 用途 | 说明 |
+|------|------|------|
+| `/home/ai/lingtongask/.openlist/` | OpenList 服务 | 二进制 + 数据目录，端口 4255 |
+| `/home/ai/lingtongask/.openlist/data/` | OpenList 数据 | config.json, data.db, 日志 |
+| `/data/openlist_data_backup/` | OpenList 备份 | backup.json 含所有网盘存储配置 |
+| `/home/ai/.config/rclone/rclone.conf` | rclone 配置 | 连接 OpenList WebDAV (openlist remote) |
+| `/mnt/openlist/` | rclone 挂载点 | 通过 rclone mount 挂载 OpenList 的所有网盘 |
+| `/opt/openlist/` | 旧版 OpenList | 端口 2455，已停用，数据库 63GB 不再使用 |
+
+**OpenList 网盘列表**（7个）：115 Open、百度云x2、阿里云盘、夸克、豆包、一刻相册
+
+**systemd 自启服务**：`openlist.service`、`rclone-openlist.service`（依赖前者）
 
 ---
 
