@@ -17,6 +17,7 @@ LingFlow (灵通 工程流系统) is an intelligent software development workflo
 - **Smart Compression**: tiktoken-based token-aware context management with multi-strategy compression (30-50% token savings)
 - **Process-Isolated Sandbox**: Skills execute in isolated processes with timeout, memory limits, module whitelists, and AST-level security analysis
 - **Type-Safe**: `Result[T]` generic type for success/failure handling; strict mypy mode enabled
+- **Root Cause Beyond Root Cause**: 发现问题时不仅要修 bug，还要追问「为什么这个 bug 没有被更早发现」——是测试缺失、流程漏洞、还是设计缺陷？补上防御缺口才算真正关闭问题。
 
 ### Primary API Entry Point
 

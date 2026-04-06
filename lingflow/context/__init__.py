@@ -19,6 +19,7 @@ from .manager import (
 from .budget import ContextBudgetManager, BudgetLevel, BudgetStatus
 from .degradation import DegradationDetector, DegradationReport, HealthStatus
 from .handoff import HandoffDocument
+from .session_lifecycle import SessionLifecycleManager, LifecyclePhase, SessionSummary
 
 __all__ = [
     "ContextManager",
@@ -36,6 +37,9 @@ __all__ = [
     "DegradationReport",
     "HealthStatus",
     "HandoffDocument",
+    "SessionLifecycleManager",
+    "LifecyclePhase",
+    "SessionSummary",
 ]
 
 
