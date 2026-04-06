@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.9.1] - 2026-04-05
+
+### Fixed
+
+**Security**
+- 🔒 S-02: Remove insecure string validation fallback in sandbox `validate_code()` — AST analysis is now mandatory; code is rejected when AST analysis fails or is disabled
+- 🔒 S-09: Replace hardcoded npm token with `${NPM_TOKEN}` env var reference in `mcp_server/.npmrc`
+
+**Bug Fixes**
+- 🐛 M-01: Fix closure bug in `applier._find_pattern_matches` — late-binding lambda captured wrong variable
+- 🐛 M-02: Fix uninitialized `original_mem_limit` in `sandbox._execute_code_wrapper` — prevents `NameError` in `finally` block
+- 🐛 H-01: Fix `Dict[str, any]` → `Dict[str, Any]` type annotation in `orchestrator.py`
+
+**Improvements**
+- ♻️ S-04: Add `.bak` backup mechanism to `AutoFixer.fix_file()` before writing
+- ♻️ M-03/M-08: Remove unused imports in `applier.py`, `feedback.py`, `test_tools.py`
+- ♻️ Refactor `_execute_code_wrapper` to reduce cyclomatic complexity (C901)
+- 📝 Update audit report: remove false findings (S-01, S-03), downgrade S-04 (CRITICAL→HIGH)
+
+---
+
 ## [3.9.0] - 2026-04-04
 
 ### Added

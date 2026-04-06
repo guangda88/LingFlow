@@ -3,11 +3,10 @@
 提供测试执行、覆盖率分析和报告生成功能。
 """
 
-import asyncio
 import json
 import logging
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any
 from datetime import datetime
 
 logger = logging.getLogger(__name__)

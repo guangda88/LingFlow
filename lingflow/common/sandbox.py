@@ -266,6 +266,42 @@ class SkillSandbox:
         # 使用 _execute_code_wrapper 在子进程中执行
         return self.execute(self._execute_code_wrapper, code, final_globals, final_locals)
 
+    def _setup_memory_limit(self) -> Optional[Any]:
+        """设置内存限制，返回原始限制值"""
+        if not self.memory_limit:
+            return None
+        original = None
+        try:
+            original = resource.getrlimit(resource.RLIMIT_AS)
+        except (ValueError, resource.error):
+            self.logger.warning("Could not read current memory limit")
+        try:
+            resource.setrlimit(resource.RLIMIT_AS, (self.memory_limit, self.memory_limit))
+        except (ValueError, resource.error):
+            self.logger.warning("Could not set memory limit")
+        return original
+
+    def _restore_memory_limit(self, original: Optional[Any]) -> None:
+        """恢复原始内存限制"""
+        if self.memory_limit and original is not None:
+            try:
+                resource.setrlimit(resource.RLIMIT_AS, original)
+            except (ValueError, resource.error):
+                pass
+
+    def _filter_serializable(self, locals_dict: Dict[str, Any]) -> Dict[str, Any]:
+        """过滤掉不可序列化的对象"""
+        result = {}
+        for key, value in locals_dict.items():
+            try:
+                import pickle
+
+                pickle.dumps(value)
+                result[key] = value
+            except (pickle.PickleError, TypeError):
+                pass
+        return result
+
     def _execute_code_wrapper(self, code: str, globals_dict: Dict[str, Any], locals_dict: Dict[str, Any]) -> Dict[str, Any]:
         """
         在子进程中执行代码的包装器
@@ -278,77 +314,45 @@ class SkillSandbox:
         Returns:
             执行后的局部命名空间
         """
-        # 记录开始时的资源使用
-
         start_cpu = time.process_time()
         start_memory = self._get_memory_usage()
 
-        # 设置递归深度限制
         original_recursion_limit = sys.getrecursionlimit()
         sys.setrecursionlimit(self.max_recursion_depth)
 
-        # 设置内存限制
-        if self.memory_limit:
-            original_mem_limit = resource.getrlimit(resource.RLIMIT_AS)
-            try:
-                resource.setrlimit(resource.RLIMIT_AS, (self.memory_limit, self.memory_limit))
-            except (ValueError, resource.error):
-                # 在某些平台上可能无法设置内存限制
-                self.logger.warning("Could not set memory limit")
+        original_mem_limit = self._setup_memory_limit()
 
-        # 循环计数器
         loop_counter = {"count": 0}
 
         def trace_hook(frame, event, arg):
             """跟踪函数，用于监控循环迭代"""
             if event == "line":
-                # 简单的循环检测：检查是否在循环中
                 if loop_counter["count"] >= self.max_loop_iterations:
                     raise SandboxLoopLimitError(f"Loop iteration count exceeded limit: {self.max_loop_iterations}")
                 loop_counter["count"] += 1
             return trace_hook
 
         try:
-            # 启用跟踪（仅在需要时）
             if self.max_loop_iterations < float("inf"):
                 sys.settrace(trace_hook)
 
-            # 在子进程中重新编译代码
             compiled_code = compile(code, "<sandbox>", "exec")
             exec(compiled_code, globals_dict, locals_dict)
 
-            # 停止跟踪
             sys.settrace(None)
-
-            # 恢复原始递归限制
             sys.setrecursionlimit(original_recursion_limit)
 
-            # 检查内存使用
             if self.memory_limit:
                 end_memory = self._get_memory_usage()
                 memory_used = end_memory - start_memory
                 if memory_used > self.memory_limit:
                     raise SandboxMemoryLimitError(f"Memory usage {memory_used} bytes exceeded limit {self.memory_limit} bytes")
 
-            # 检查CPU时间（超时检查已经通过进程超时机制完成）
             elapsed_cpu = time.process_time() - start_cpu
             if elapsed_cpu > self.timeout:
                 raise SandboxCPULimitError(f"CPU time {elapsed_cpu:.2f}s exceeded timeout {self.timeout}s")
 
-            # 过滤掉不可序列化的对象（如模块）
-            result = {}
-            for key, value in locals_dict.items():
-                try:
-                    # 尝试 pickle 值，如果失败则跳过
-                    import pickle
-
-                    pickle.dumps(value)
-                    result[key] = value
-                except (pickle.PickleError, TypeError):
-                    # 跳过不可序列化的对象
-                    pass
-
-            return result
+            return self._filter_serializable(locals_dict)
 
         except MemoryError:
             self.logger.warning(f"Memory limit exceeded: {self.memory_limit} bytes")
@@ -363,16 +367,9 @@ class SkillSandbox:
             raise
 
         finally:
-            # 清理
             sys.settrace(None)
             sys.setrecursionlimit(original_recursion_limit)
-
-            # 恢复原始内存限制
-            if self.memory_limit:
-                try:
-                    resource.setrlimit(resource.RLIMIT_AS, original_mem_limit)
-                except (ValueError, resource.error):
-                    pass
+            self._restore_memory_limit(original_mem_limit)
 
     def _get_memory_usage(self) -> int:
         """
@@ -456,11 +453,9 @@ class SkillSandbox:
                 is_safe, violations = analyze_code_security(code, self.ALLOWED_MODULES)
 
                 if not is_safe:
-                    # 记录安全违规
                     report = get_security_report(code, self.ALLOWED_MODULES)
                     self.logger.warning(f"Security violations detected: {report['total_violations']} violations")
 
-                    # 记录CRITICAL和HIGH级别的违规详情
                     for severity in ["CRITICAL", "HIGH"]:
                         for violation in report["by_severity"][severity]:
                             self.logger.warning(
@@ -473,11 +468,10 @@ class SkillSandbox:
                 return True
             except Exception as e:
                 self.logger.error(f"Security analysis failed: {e}")
-                # 如果AST分析失败，回退到简单字符串检查
-                return self._validate_code_simple(code)
+                return False
         else:
-            # 使用简单的字符串检查
-            return self._validate_code_simple(code)
+            self.logger.warning("AST analysis disabled; code validation skipped")
+            return False
 
     def _validate_code_simple(self, code: str) -> bool:
         """
@@ -528,12 +522,10 @@ class SkillSandbox:
         if self.enable_ast_analysis:
             return get_security_report(code, self.ALLOWED_MODULES)
         else:
-            # 如果未启用AST分析，返回简单的报告
-            is_valid = self._validate_code_simple(code)
             return {
-                "is_safe": is_valid,
-                "total_violations": 0 if is_valid else 1,
-                "by_severity": {"HIGH": [] if is_valid else [{"message": "Validation failed"}]},
+                "is_safe": False,
+                "total_violations": 0,
+                "by_severity": {"HIGH": []},
                 "by_type": {},
                 "has_recursion": False,
                 "max_loop_depth": 0,
