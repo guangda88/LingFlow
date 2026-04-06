@@ -15,6 +15,7 @@ from typing import Any, Dict, List, Optional, Set
 
 from .auto_resume import save_resume_markdown
 from lingflow.compression.token_estimator import TokenEstimator
+from .session_lifecycle import SessionLifecycleManager, LifecyclePhase  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +80,7 @@ class ContextManager:
         self.session_id = self._generate_session_id()
         self.message_count = 0
         self.estimated_tokens = 0
+        self._cumulative_tokens = 0
 
         # 对话消息列表（用于实际压缩）
         self._messages: List[Dict[str, str]] = []
@@ -116,6 +118,9 @@ class ContextManager:
         # 退化检测器
         self._degradation_detector = None
 
+        # 会话生命周期管理器（灵依任务：20万警戒/30万阈值）
+        self._lifecycle_manager: Optional[SessionLifecycleManager] = None
+
         # 加载之前的上下文
         self._load_last_context()
 
@@ -147,7 +152,9 @@ class ContextManager:
             is_important: 是否为重要消息
         """
         self.message_count += 1
-        self.estimated_tokens += _get_token_estimator().count_tokens(content)
+        new_tokens = _get_token_estimator().count_tokens(content)
+        self.estimated_tokens += new_tokens
+        self._cumulative_tokens += new_tokens
 
         # 保存消息到列表
         self._messages.append({"role": role, "content": content})
@@ -159,8 +166,11 @@ class ContextManager:
         if is_important:
             self._extract_important_info(content)
 
-        # 检查是否需要压缩
+        # 检查是否需要压缩（模型退化预算）
         self._check_and_warn()
+
+        # 检查会话生命周期（灵依任务）
+        self._check_lifecycle()
 
     def _is_important_message(self, content: str) -> bool:
         """检测是否为重要消息"""
@@ -241,6 +251,37 @@ class ContextManager:
             self.compress_now()
         elif budget_status.level.value == "moderate":
             logger.info("Token 使用率 %s，接近安全阈值", budget_status.usage_ratio)
+
+    def _check_lifecycle(self) -> None:
+        """检查会话生命周期状态（灵依任务）"""
+        if self._lifecycle_manager is None:
+            self._lifecycle_manager = SessionLifecycleManager(
+                storage_dir=self.storage_dir,
+            )
+
+        status = self._lifecycle_manager.check(self._cumulative_tokens)
+
+        if status.phase == LifecyclePhase.WARNING:
+            logger.warning(
+                "会话生命周期预警: %s (%s / %s tokens)",
+                status.message,
+                f"{self._cumulative_tokens:,}",
+                f"{self._lifecycle_manager.critical_threshold:,}",
+            )
+        elif status.phase == LifecyclePhase.EXPIRED:
+            logger.warning("会话已过期，建议开始新会话")
+            summary = self._lifecycle_manager.create_session_summary(
+                session_id=self.session_id,
+                total_tokens=self._cumulative_tokens,
+                total_messages=self.message_count,
+                tasks_completed=self.snapshot.tasks_completed,
+                tasks_pending=self.snapshot.tasks_pending,
+                key_decisions=self.snapshot.key_decisions,
+                important_files=self.snapshot.important_files,
+                next_steps=self.snapshot.next_steps,
+                handoff_reason="lifecycle_expired",
+            )
+            self._lifecycle_manager.save_session_summary(summary)
 
     def _save_snapshot(self) -> None:
         """保存当前快照"""
@@ -458,6 +499,7 @@ class ContextManager:
             "session_id": self.session_id,
             "message_count": self.message_count,
             "estimated_tokens": self.estimated_tokens,
+            "cumulative_tokens": self._cumulative_tokens,
             "token_usage_ratio": self.estimated_tokens / self.ESTIMATED_TOKEN_LIMIT,
             "tasks_completed": len(self.snapshot.tasks_completed),
             "tasks_pending": len(self.snapshot.tasks_pending),
@@ -470,6 +512,10 @@ class ContextManager:
         if self._messages and self._degradation_detector:
             health_report = self._degradation_detector.get_health_score(self._messages)
             status["health"] = health_report.to_dict()
+
+        if self._lifecycle_manager:
+            lifecycle_status = self._lifecycle_manager.check(self._cumulative_tokens)
+            status["lifecycle"] = lifecycle_status.to_dict()
 
         return status
 
