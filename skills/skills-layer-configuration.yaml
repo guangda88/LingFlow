@@ -378,6 +378,104 @@ routing:
       - fallback2: "notification"   # 通知失败
 
 # ============================================================================
+# 复杂度感知路由
+# ============================================================================
+# 根据任务复杂度选择不同深度的流程模板。
+# 调用时通过 complexity 参数指定，或由 SkillRouter 自动推断。
+#
+# 设计原则（参考《渐进式 Spec》实践指南）：
+#   - 简单需求不承担复杂流程的成本
+#   - 流程是可选增强，而非强制前提
+#   - Rules 始终生效，Spec 按复杂度加载
+#   - 本质上是在压缩偶然复杂度：
+#     只有本质复杂度够高时，才引入对应重量的流程
+# ============================================================================
+
+complexity_routing:
+
+  # ── 简单任务 ──────────────────────────────────────────
+  # 适用：改字段、修 bug、小调整、单文件改动（≤5 人日）
+  # 特征：影响范围小、无架构变更、无跨模块依赖
+  simple:
+    description: "简单任务 — 直接执行，跳过设计和规划阶段"
+    flow:
+      - skill: "task-runner"
+        role: "执行"
+    bypass:
+      - "brainstorming"
+      - "writing-plans"
+      - "test-driven-development"
+      - "code-review"
+      - "verification-before-completion"
+    examples:
+      - "修复 README 中的拼写错误"
+      - "给某个字段加索引"
+      - "修改配置项的默认值"
+      - "添加一个日志语句"
+
+  # ── 中等任务 ──────────────────────────────────────────
+  # 适用：新功能、模块改动、接口新增（5-20 人日）
+  # 特征：涉及 3-8 个文件、需要设计决策、有测试需求
+  medium:
+    description: "中等任务 — 设计+执行+审查，标准开发流程"
+    flow:
+      - skill: "brainstorming"
+        role: "设计"
+        gate: true
+      - skill: "writing-plans"
+        role: "规划"
+        depends_on: ["brainstorming"]
+      - skill: "subagent-driven-development"
+        role: "执行"
+        depends_on: ["writing-plans"]
+      - skill: "code-review"
+        role: "审查"
+        depends_on: ["subagent-driven-development"]
+    bypass:
+      - "using-git-worktrees"
+      - "finishing-a-development-branch"
+      - "verification-before-completion"
+    examples:
+      - "给 UserService 添加带缓存的分页查询"
+      - "实现一个新的 API 接口"
+      - "重构某个模块的错误处理"
+      - "迁移一个过滤器到新系统"
+
+  # ── 复杂任务 ──────────────────────────────────────────
+  # 适用：架构迁移、跨模块重构、核心流程改动（>20 人日）
+  # 特征：多模块影响、架构决策、需并行开发、需严格验证
+  complex:
+    description: "复杂任务 — 完整开发流程，含工作树和并行执行"
+    flow:
+      - skill: "brainstorming"
+        role: "设计"
+        gate: true
+      - skill: "writing-plans"
+        role: "规划"
+        depends_on: ["brainstorming"]
+      - skill: "using-git-worktrees"
+        role: "隔离"
+        depends_on: ["brainstorming"]
+      - skill: "test-driven-development"
+        role: "实现+测试"
+        depends_on: ["writing-plans"]
+      - skill: "code-review"
+        role: "审查"
+        depends_on: ["test-driven-development"]
+      - skill: "verification-before-completion"
+        role: "验证"
+        depends_on: ["code-review"]
+      - skill: "finishing-a-development-branch"
+        role: "收尾"
+        depends_on: ["verification-before-completion"]
+    bypass: []
+    examples:
+      - "将系统 A 的过滤处理逻辑平行迁移到系统 B"
+      - "重构整个数据访问层"
+      - "引入新的事件驱动架构"
+      - "多服务事务一致性改造"
+
+# ============================================================================
 # 性能配置
 # ============================================================================
 performance:
