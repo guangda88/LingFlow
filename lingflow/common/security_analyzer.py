@@ -57,6 +57,12 @@ class SecurityAnalyzer(ast.NodeVisitor):
             "fractions",
             "collections",
         }
+        # 预处理：为带点的模块（如 os.path）提取 base module
+        # 将 os.path → os 也视为允许
+        self._allowed_base_modules = set()
+        for mod in self.allowed_modules:
+            base = mod.split(".")[0]
+            self._allowed_base_modules.add(base)
         self.function_depth = 0
         self.loop_depth = 0
         self.has_recursion = False
@@ -78,14 +84,20 @@ class SecurityAnalyzer(ast.NodeVisitor):
             )
         return self.violations
 
+    def _is_module_allowed(self, module_name: str) -> bool:
+        """检查模块是否在白名单中（支持精确匹配和 base 匹配）"""
+        if module_name in self.allowed_modules:
+            return True
+        base = module_name.split(".")[0]
+        if base in self._allowed_base_modules:
+            return True
+        return False
+
     def visit_Import(self, node: ast.Import) -> None:
         """检查导入语句"""
         for alias in node.names:
             module_name = alias.name
-
-            # 检查模块是否在白名单中
-            base_module = module_name.split(".")[0]
-            if base_module not in self.allowed_modules:
+            if not self._is_module_allowed(module_name):
                 self.violations.append(
                     SecurityViolation(
                         severity="CRITICAL",
@@ -105,13 +117,10 @@ class SecurityAnalyzer(ast.NodeVisitor):
 
             # 特殊检查：from __future__ imports（优先检查）
             if module_name == "__future__":
-                # __future__ imports are allowed
                 self.generic_visit(node)
                 return
 
-            # 检查模块是否在白名单中
-            base_module = module_name.split(".")[0]
-            if base_module not in self.allowed_modules:
+            if not self._is_module_allowed(module_name):
                 self.violations.append(
                     SecurityViolation(
                         severity="CRITICAL",
@@ -146,7 +155,6 @@ class SecurityAnalyzer(ast.NodeVisitor):
                 "getattr",
                 "setattr",
                 "delattr",
-                "hasattr",  # 动态属性访问
             }
 
             if func_name in dangerous_builtins:
@@ -168,7 +176,6 @@ class SecurityAnalyzer(ast.NodeVisitor):
 
                 # 检查是否在调用危险模块的方法
                 dangerous_modules = {
-                    "os",
                     "sys",
                     "subprocess",
                     "shutil",
@@ -179,11 +186,38 @@ class SecurityAnalyzer(ast.NodeVisitor):
                     "pickle",
                     "shelve",
                     "marshal",
-                    "importlib",
                     "types",
                 }
+                # importlib 危险子模块（但允许 util）
+                _importlib_dangerous = {"__import__", "reload", "invalidate_caches"}
+                # os 的危险子模块调用（但允许 os.path）
+                _os_dangerous = {"system", "popen", "execv", "execve", "spawnl",
+                                 "spawnv", "fork", "kill", "remove", "unlink",
+                                 "rename", "mkdir", "makedirs", "rmdir", "listdir",
+                                 "walk", "chmod", "chown", "environ", "putenv",
+                                 "getenv", "fdopen", "pipe", "dup2"}
 
-                if module_name in dangerous_modules:
+                if module_name == "os" and func_name in _os_dangerous:
+                    self.violations.append(
+                        SecurityViolation(
+                            severity="CRITICAL",
+                            violation_type="FORBIDDEN_MODULE_ACCESS",
+                            message=f'Access to dangerous function "os.{func_name}" is prohibited',
+                            line=node.lineno,
+                            col_offset=node.col_offset,
+                        )
+                    )
+                elif module_name == "importlib" and func_name in _importlib_dangerous:
+                    self.violations.append(
+                        SecurityViolation(
+                            severity="CRITICAL",
+                            violation_type="FORBIDDEN_MODULE_ACCESS",
+                            message=f'Access to dangerous function "importlib.{func_name}" is prohibited',
+                            line=node.lineno,
+                            col_offset=node.col_offset,
+                        )
+                    )
+                elif module_name in dangerous_modules:
                     self.violations.append(
                         SecurityViolation(
                             severity="CRITICAL",
@@ -440,7 +474,7 @@ def get_security_report(code: str, allowed_modules: Optional[Set[str]] = None) -
     }
 
     # 按类型分组
-    by_type = {}
+    by_type: dict[str, list[dict[str, Any]]] = {}
     for v in violations:
         if v.violation_type not in by_type:
             by_type[v.violation_type] = []
