@@ -5,7 +5,6 @@
 """
 
 import os
-import sys
 from pathlib import Path
 
 # 会话文件路径 - 使用环境变量或用户主目录
@@ -89,10 +88,3 @@ def save_resume_markdown(tasks: list, next_steps: list = None, summary: str = ""
     # 清除已显示标记
     if LAST_SHOWN_FILE.exists():
         LAST_SHOWN_FILE.unlink()
-
-
-# 模块导入时尝试自动恢复
-if __name__ != "__main__":
-    resume_text = auto_resume()
-    if resume_text:
-        print(resume_text, file=sys.stderr)

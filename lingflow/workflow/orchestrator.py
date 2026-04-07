@@ -88,7 +88,7 @@ class WorkflowOrchestrator:
                 task_id=task_id,
                 name=task_def.get("skill", task_id),
                 description=task_def.get("description", ""),
-                agent_type=task_def.get("skill", "general"),
+                agent_type=task_def.get("skill", task_def.get("agent_type", "implementation")),
                 context=task_def.get("params", {}),
                 priority=priority,
                 dependencies=dependencies,

@@ -195,10 +195,60 @@ class LingFlow:
         """直接执行工作流定义
 
         Args:
-            workflow_def: 工作流定义
+            workflow_def: 工作流定义，包含 tasks 列表。
+                每个 task 可以是 Task dataclass 或 dict（支持 id/name, description,
+                skill/agent_type, params/context, priority, depends_on/dependencies 等字段）。
 
         Returns:
             工作流执行结果
         """
-        tasks = workflow_def.get("tasks", [])
+        raw_tasks = workflow_def.get("tasks", [])
+        tasks = self._parse_tasks(raw_tasks)
         return self._orchestrator.execute(tasks)
+
+    @staticmethod
+    def _parse_tasks(raw_tasks: list) -> list:
+        """将原始任务定义统一转换为 Task dataclass
+
+        Args:
+            raw_tasks: 混合列表，元素可以是 Task dataclass 或 dict
+
+        Returns:
+            Task dataclass 列表
+        """
+        from .common.models import Task, TaskPriority
+
+        tasks = []
+        for item in raw_tasks:
+            if isinstance(item, Task):
+                tasks.append(item)
+                continue
+            if not isinstance(item, dict):
+                continue
+
+            task_id = item.get("id", item.get("task_id", item.get("name")))
+            if not task_id:
+                continue
+
+            priority_str = item.get("priority", "normal")
+            priority_map = {
+                "critical": TaskPriority.CRITICAL,
+                "high": TaskPriority.HIGH,
+                "normal": TaskPriority.NORMAL,
+                "low": TaskPriority.LOW,
+            }
+            priority = priority_map.get(str(priority_str).lower(), TaskPriority.NORMAL)
+
+            dependencies = item.get("depends_on", item.get("dependencies", []))
+
+            task = Task(
+                task_id=str(task_id),
+                name=item.get("name", str(task_id)),
+                description=item.get("description", ""),
+                agent_type=item.get("skill", item.get("agent_type", "implementation")),
+                context=item.get("params", item.get("context", {})),
+                priority=priority,
+                dependencies=dependencies,
+            )
+            tasks.append(task)
+        return tasks
