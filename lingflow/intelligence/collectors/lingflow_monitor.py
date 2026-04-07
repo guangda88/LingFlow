@@ -313,7 +313,7 @@ class LingFlowMonitor:
                     m.state, 0) + 1
 
         # 按作者统计
-        authors = {}
+        authors: dict[str, int] = {}
         for m in mentions:
             authors[m.author] = authors.get(m.author, 0) + 1
         summary['top_authors'] = sorted(

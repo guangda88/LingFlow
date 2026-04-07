@@ -5,7 +5,7 @@
 
 import re
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 
 @dataclass
@@ -118,7 +118,7 @@ class SentimentAnalyzer:
             label = "neutral"
 
         # 提取关键词
-        key_words = []
+        key_words: list[str] = []
         if positive_matches:
             key_words.extend(set(positive_matches))
         if negative_matches:
@@ -171,7 +171,7 @@ class SentimentAnalyzer:
             热门话题列表
         """
         # 简单的关键词提取
-        topic_keywords = {}
+        topic_keywords: dict[str, int] = {}
         for text in texts:
             words = re.findall(r'\b[a-z]{3,}\b', text.lower())
             for word in words:

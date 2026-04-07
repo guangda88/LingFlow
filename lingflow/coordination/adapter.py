@@ -353,7 +353,7 @@ class CapabilityMatcher:
 
         返回: {capability: [agents_with_capability]}
         """
-        index = {}
+        index: dict[str, list[dict[str, Any]]] = {}
 
         for agent in config.get("agents", []):
             agent_name = agent["name"]

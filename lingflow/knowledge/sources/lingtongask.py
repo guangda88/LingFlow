@@ -97,7 +97,7 @@ class LingTongAskKnowledgeSource(KnowledgeSource):
         context: Optional[SearchContext] = None
     ) -> KnowledgeResult:
         """Search LingTongAsk knowledge"""
-        items = []
+        items: list[KnowledgeItem] = []
 
         # Search charter
         items.extend(await self._search_charter(query))
@@ -130,7 +130,7 @@ class LingTongAskKnowledgeSource(KnowledgeSource):
 
     async def _search_charter(self, query: KnowledgeQuery) -> List[KnowledgeItem]:
         """Search project charter"""
-        items = []
+        items: list[KnowledgeItem] = []
 
         charter = self._cache.get("charter", {})
         content = charter.get("content", "")
@@ -163,7 +163,7 @@ class LingTongAskKnowledgeSource(KnowledgeSource):
 
     async def _search_roadmap(self, query: KnowledgeQuery) -> List[KnowledgeItem]:
         """Search roadmap"""
-        items = []
+        items: list[KnowledgeItem] = []
 
         roadmap = self._cache.get("roadmap", {})
         content = roadmap.get("content", "")
@@ -195,7 +195,7 @@ class LingTongAskKnowledgeSource(KnowledgeSource):
 
     async def _search_docs(self, query: KnowledgeQuery) -> List[KnowledgeItem]:
         """Search documentation"""
-        items = []
+        items: list[KnowledgeItem] = []
 
         if not self._docs_dir.exists():
             return items
@@ -229,7 +229,7 @@ class LingTongAskKnowledgeSource(KnowledgeSource):
 
     async def _search_content(self, query: KnowledgeQuery) -> List[KnowledgeItem]:
         """Search generated content"""
-        items = []
+        items: list[KnowledgeItem] = []
 
         if not self._content_dir.exists():
             return items
@@ -265,14 +265,14 @@ class LingTongAskKnowledgeSource(KnowledgeSource):
         """Parse markdown sections"""
         sections = {}
         current_section = "Overview"
-        current_content = []
+        current_content: list[str] = []
 
         for line in content.split("\n"):
             if line.startswith("## "):
                 if current_content:
                     sections[current_section] = "\n".join(current_content)
                 current_section = line[3:].strip()
-                current_content = []
+                current_content: list[str] = []
             elif line.startswith("# "):
                 continue  # Skip title
             else:
