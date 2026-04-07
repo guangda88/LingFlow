@@ -1,7 +1,6 @@
 """task-runner 技能实现"""
 
-import os
-import json
+import importlib.util
 from pathlib import Path
 
 
@@ -19,7 +18,6 @@ def run_task(skill_name, params):
     
     # 导入技能模块
     try:
-        import importlib.util
         spec = importlib.util.spec_from_file_location(skill_name, str(implementation_file))
         skill_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(skill_module)
