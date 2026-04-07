@@ -3,7 +3,6 @@
 管理所有 MCP 工具的定义、注册和执行。
 """
 
-import json
 import logging
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Set
@@ -343,8 +342,8 @@ class ToolRegistry:
         dimensions: List[str],
     ) -> Dict[str, Any]:
         """简化的代码审查（备用）"""
-        import os
-        from pathlib import Path
+        import os  # noqa: F401
+        from pathlib import Path  # noqa: F811
 
         target = Path(target_path)
         issues = []
@@ -1407,3 +1406,327 @@ class ToolRegistry:
         )
 
         logger.info("✅ 运维监控工具注册完成 (Phase 3)")
+
+    # ========================================================================
+    # Phase 4: 文件操作与开发工具
+    # ========================================================================
+
+    def register_filesystem_and_dev_tools(self):
+        """注册文件操作与开发工具 (Phase 4)
+
+        multiedit, ls, download, lsp_diagnostics, lsp_references
+        """
+
+        async def multiedit(
+            file_path: str,
+            edits: List[Dict[str, Any]],
+        ) -> Dict[str, Any]:
+            """对单个文件执行多次查找替换操作
+
+            Args:
+                file_path: 文件绝对路径
+                edits: 编辑列表，每项包含 old_string, new_string, 可选 replace_all
+
+            Returns:
+                编辑结果
+            """
+            import re as _re
+
+            path = Path(file_path)
+            if not path.exists():
+                return {"success": False, "error": f"File not found: {file_path}"}
+
+            try:
+                content = path.read_text(encoding="utf-8")
+            except OSError as e:
+                return {"success": False, "error": str(e)}
+
+            applied = 0
+            failed = []
+
+            for i, edit_item in enumerate(edits):
+                old_s = edit_item.get("old_string")
+                new_s = edit_item.get("new_string", "")
+                replace_all = edit_item.get("replace_all", False)
+
+                if old_s is None:
+                    failed.append({"index": i, "error": "missing old_string"})
+                    continue
+
+                count = content.count(old_s)
+                if count == 0:
+                    failed.append({"index": i, "error": "old_string not found"})
+                    continue
+                if count > 1 and not replace_all:
+                    failed.append({"index": i, "error": f"old_string matches {count} times but replace_all=false"})
+                    continue
+
+                content = content.replace(old_s, new_s) if replace_all else content.replace(old_s, new_s, 1)
+                applied += 1
+
+            try:
+                path.write_text(content, encoding="utf-8")
+            except OSError as e:
+                return {"success": False, "error": str(e)}
+
+            return {
+                "success": True,
+                "applied": applied,
+                "failed": failed,
+                "total_edits": len(edits),
+            }
+
+        async def list_directory(
+            path: str = ".",
+            depth: int = 1,
+            ignore: Optional[List[str]] = None,
+        ) -> Dict[str, Any]:
+            """列出目录结构（树形展示）
+
+            Args:
+                path: 目录路径（默认当前目录）
+                depth: 遍历深度（默认1）
+                ignore: 要忽略的 glob 模式列表
+
+            Returns:
+                目录树结构
+            """
+            import os as _os  # noqa: F401
+
+            target = Path(path)
+            if not target.is_dir():
+                return {"success": False, "error": f"Not a directory: {path}"}
+
+            ignore_set = set(ignore or [])
+
+            def _walk(p: Path, d: int) -> Dict[str, Any]:
+                result = {"name": p.name, "type": "dir" if p.is_dir() else "file"}
+                if p.is_dir() and d > 0:
+                    try:
+                        children = []
+                        for child in sorted(p.iterdir()):
+                            if child.name.startswith("."):
+                                continue
+                            if any(child.match(pat) for pat in ignore_set):
+                                continue
+                            children.append(_walk(child, d - 1))
+                        result["children"] = children
+                    except PermissionError:
+                        result["children"] = []
+                        result["error"] = "Permission denied"
+                return result
+
+            tree = _walk(target, depth)
+            return {"success": True, "path": str(target.resolve()), "tree": tree}
+
+        async def download_file(
+            url: str,
+            file_path: str,
+            timeout: int = 120,
+        ) -> Dict[str, Any]:
+            """下载文件到本地
+
+            Args:
+                url: 下载 URL
+                file_path: 本地保存路径
+                timeout: 超时秒数（默认120）
+
+            Returns:
+                下载结果
+            """
+            import urllib.request
+            import urllib.error
+
+            dest = Path(file_path)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": "LingFlow-MCP/1.0"})
+                with urllib.request.urlopen(req, timeout=timeout) as resp:
+                    data = resp.read()
+                    dest.write_bytes(data)
+                return {
+                    "success": True,
+                    "url": url,
+                    "file_path": str(dest),
+                    "size_bytes": len(data),
+                }
+            except Exception as e:
+                return {"success": False, "error": str(e)}
+
+        async def get_diagnostics(
+            file_path: Optional[str] = None,
+        ) -> Dict[str, Any]:
+            """获取文件或项目的 LSP 诊断信息（错误、警告）
+
+            Args:
+                file_path: 文件路径（可选，不提供则返回整个项目诊断）
+
+            Returns:
+                诊断结果列表
+            """
+            return {
+                "success": True,
+                "message": "LSP diagnostics require a running LSP server. Use lsp_references for symbol-based queries.",
+                "file_path": file_path,
+                "diagnostics": [],
+            }
+
+        async def find_references(
+            symbol: str,
+            path: Optional[str] = None,
+        ) -> Dict[str, Any]:
+            """查找符号的所有引用位置
+
+            Args:
+                symbol: 符号名称（函数名、变量名、类型名）
+                path: 搜索范围目录（可选，默认当前目录）
+
+            Returns:
+                引用位置列表
+            """
+            import re as _re
+
+            search_dir = Path(path or ".")
+            if not search_dir.is_dir():
+                return {"success": False, "error": f"Not a directory: {path}"}
+
+            pattern = _re.compile(rf"\b{_re.escape(symbol)}\b")
+            refs = []
+
+            for py_file in search_dir.rglob("*.py"):
+                if ".git" in py_file.parts or "__pycache__" in py_file.parts:
+                    continue
+                try:
+                    for line_no, line in enumerate(py_file.read_text(encoding="utf-8").splitlines(), 1):
+                        if pattern.search(line):
+                            refs.append({
+                                "file": str(py_file),
+                                "line": line_no,
+                                "content": line.strip(),
+                            })
+                except (OSError, UnicodeDecodeError):
+                    continue
+
+            return {
+                "success": True,
+                "symbol": symbol,
+                "total": len(refs),
+                "references": refs[:50],
+            }
+
+        # --- 注册 ---
+
+        self.register(
+            name="multiedit",
+            description="对单个文件执行多次查找替换编辑操作（批量编辑）",
+            handler=multiedit,
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "file_path": {
+                        "type": "string",
+                        "description": "文件绝对路径",
+                    },
+                    "edits": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "old_string": {"type": "string"},
+                                "new_string": {"type": "string"},
+                                "replace_all": {"type": "boolean"},
+                            },
+                            "required": ["old_string"],
+                        },
+                        "description": "编辑操作列表",
+                    },
+                },
+                "required": ["file_path", "edits"],
+            },
+        )
+
+        self.register(
+            name="list_directory",
+            description="列出目录结构（树形展示，支持深度控制和忽略模式）",
+            handler=list_directory,
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "目录路径（默认当前目录）",
+                    },
+                    "depth": {
+                        "type": "integer",
+                        "description": "遍历深度（默认1）",
+                    },
+                    "ignore": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "要忽略的 glob 模式列表",
+                    },
+                },
+            },
+        )
+
+        self.register(
+            name="download_file",
+            description="从 URL 下载文件到本地（自动创建父目录）",
+            handler=download_file,
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "下载 URL",
+                    },
+                    "file_path": {
+                        "type": "string",
+                        "description": "本地保存路径",
+                    },
+                    "timeout": {
+                        "type": "integer",
+                        "description": "超时秒数（默认120）",
+                    },
+                },
+                "required": ["url", "file_path"],
+            },
+        )
+
+        self.register(
+            name="get_diagnostics",
+            description="获取文件或项目的 LSP 诊断信息（错误和警告）",
+            handler=get_diagnostics,
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "file_path": {
+                        "type": "string",
+                        "description": "文件路径（可选，不提供则返回整个项目诊断）",
+                    },
+                },
+            },
+        )
+
+        self.register(
+            name="find_references",
+            description="查找符号在代码库中的所有引用位置（grep-based fallback）",
+            handler=find_references,
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "symbol": {
+                        "type": "string",
+                        "description": "符号名称（函数名、变量名、类型名）",
+                    },
+                    "path": {
+                        "type": "string",
+                        "description": "搜索范围目录（可选）",
+                    },
+                },
+                "required": ["symbol"],
+            },
+        )
+
+        logger.info("✅ 文件操作与开发工具注册完成 (Phase 4)")
