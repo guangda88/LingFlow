@@ -109,13 +109,48 @@ class SkillSandbox:
     }
 
     # 允许的模块白名单
-    ALLOWED_MODULES = {
+    # 基础层：类型与数据
+    _SAFE_CORE = {
         "typing",
         "dataclasses",
         "datetime",
         "math",
         "time",
+        "enum",
+        "collections",
+        "functools",
+        "itertools",
+        "operator",
+        "copy",
+        "abc",
+        "numbers",
+        "decimal",
+        "fractions",
+        "statistics",
+        "hashlib",
+        "re",
+        "string",
+        "textwrap",
+        "unicodedata",
+        "difflib",
+        "csv",
     }
+    # I/O 层：文件与路径（只读安全）
+    _SAFE_IO = {
+        "pathlib",
+        "os.path",
+        "json",
+        "yaml",
+        "importlib",
+    }
+    # 运行时层：日志与并发
+    _SAFE_RUNTIME = {
+        "logging",
+        "asyncio",
+        "threading",
+        "queue",
+    }
+    ALLOWED_MODULES = _SAFE_CORE | _SAFE_IO | _SAFE_RUNTIME
 
     def __init__(
         self,
