@@ -13,13 +13,23 @@ __version__ = "1.3.0"
 from lingflow_mcp.server import LingFlowMCPServer, MCPServerConfig
 from lingflow_mcp.tools import ToolRegistry
 from lingflow_mcp.config import ServerConfig
+from lingflow_mcp.external_router import (
+    ExternalMCPRouter,
+    ExternalServerConfig,
+    load_external_servers_from_config,
+    create_default_config,
+)
 
 __all__ = [
     "LingFlowMCPServer",
     "MCPServerConfig",
     "ToolRegistry",
     "ServerConfig",
+    "ExternalMCPRouter",
+    "ExternalServerConfig",
     "create_server",
+    "create_default_config",
+    "load_external_servers_from_config",
     "__version__",
 ]
 
@@ -38,4 +48,3 @@ def create_server(
         LingFlowMCPServer 实例
     """
     return LingFlowMCPServer(config, server_config)
-

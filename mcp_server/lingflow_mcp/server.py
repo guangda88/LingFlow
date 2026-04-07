@@ -22,6 +22,10 @@ except ImportError:
 
 from lingflow_mcp.tools import ToolRegistry
 from lingflow_mcp.config import ServerConfig
+from lingflow_mcp.external_router import (
+    ExternalMCPRouter,
+    load_external_servers_from_config,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +38,8 @@ class MCPServerConfig:
     lingflow_path: Optional[Path] = None
     max_workers: int = 3
     enable_async_tasks: bool = True
+    external_servers_path: Optional[str] = None
+    enable_external_servers: bool = True
 
 
 class LingFlowMCPServer:
@@ -73,6 +79,9 @@ class LingFlowMCPServer:
         # 注册 Phase 3 工具
         self._register_phase3_tools()
 
+        # 外部 MCP 服务器路由
+        self.external_router: Optional[ExternalMCPRouter] = None
+
         # 注册处理器
         self._register_handlers()
 
@@ -88,7 +97,7 @@ class LingFlowMCPServer:
             from lingflow import LingFlow
             from lingflow.workflow.multi_workflow import (
                 MultiWorkflowCoordinator,
-                WorkflowType,
+                WorkflowType,  # noqa: F401
             )
             from lingflow.core.skill import SkillRegistry
 
@@ -117,6 +126,9 @@ class LingFlowMCPServer:
         # Phase 2: 中优先级工具
         self.tool_registry.register_workflow_tools(self.workflow_coordinator)
         self.tool_registry.register_requirement_tools()
+
+        # Phase 4: 文件操作与开发工具
+        self.tool_registry.register_filesystem_and_dev_tools()
 
         logger.info(
             f"工具注册完成，共 {len(self.tool_registry.tools)} 个工具"
@@ -314,6 +326,63 @@ class LingFlowMCPServer:
         self.tool_registry.register_monitoring_tools()
 
         logger.info("✅ Phase 3 工具注册完成")
+
+    async def initialize_external_servers(self) -> int:
+        """初始化外部 MCP 服务器连接并注册代理工具
+
+        Returns:
+            注册的外部工具数量
+        """
+        if not self.config.enable_external_servers:
+            logger.info("外部 MCP 服务器已禁用")
+            return 0
+
+        self.external_router = ExternalMCPRouter()
+
+        server_configs = load_external_servers_from_config(
+            self.config.external_servers_path
+        )
+
+        for cfg in server_configs:
+            self.external_router.add_server(cfg)
+
+        if not self.external_router.get_servers():
+            logger.info("未配置外部 MCP 服务器")
+            return 0
+
+        discovered = await self.external_router.discover_tools()
+
+        for prefixed_name, tool_meta in discovered.items():
+            self._register_proxy_tool(prefixed_name, tool_meta)
+
+        count = len(discovered)
+        if count > 0:
+            logger.info(f"✅ 注册 {count} 个外部 MCP 工具")
+        return count
+
+    def _register_proxy_tool(
+        self, prefixed_name: str, tool_meta: Dict[str, Any]
+    ):
+        """注册一个外部工具的代理 handler"""
+        router = self.external_router
+
+        async def proxy_handler(**kwargs) -> Dict[str, Any]:
+            return await router.call_tool(prefixed_name, kwargs)
+
+        proxy_handler.__name__ = f"proxy_{prefixed_name}"
+        proxy_handler.__doc__ = (
+            f"[External: {tool_meta.get('server_name', '?')}] "
+            f"{tool_meta.get('description', '')}"
+        )
+
+        self.tool_registry.register(
+            name=prefixed_name,
+            description=proxy_handler.__doc__,
+            handler=proxy_handler,
+            input_schema=tool_meta.get(
+                "input_schema", {"type": "object", "properties": {}}
+            ),
+        )
 
     def tool_register_task_status_tools(self):
         """注册异步任务状态查询工具"""
