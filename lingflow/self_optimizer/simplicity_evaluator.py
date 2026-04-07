@@ -132,7 +132,7 @@ class SimplicityEvaluator:
 
     def _calculate_duplication_rate(self) -> float:
         """计算代码重复率（简化版：基于行重复）"""
-        line_counts = {}
+        line_counts: dict[str, int] = {}
 
         # 统计每行出现次数
         for py_file in self.target_path.rglob("*.py"):
@@ -218,7 +218,7 @@ class SimplicityEvaluator:
         duplicates = []
 
         # 收集所有代码块
-        blocks = {}  # (file, start_line) -> block_lines
+        blocks: dict[tuple[str, ...], list[tuple[str, int]]] = {}  # (file, start_line) -> block_lines
 
         for py_file in self.target_path.rglob("*.py"):
             try:

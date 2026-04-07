@@ -250,7 +250,7 @@ class KnowledgeSync:
         """Parse memory file into sections"""
         sections = {}
         current_section = "General"
-        current_content = []
+        current_content: list[str] = []
 
         for line in content.split("\n"):
             if line.startswith("## "):

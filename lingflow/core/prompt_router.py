@@ -276,7 +276,7 @@ class PromptRouter:
         avg_confidence = sum(r.confidence for r in self._history) / total_routes
 
         # 统计最常用的目标
-        target_counts = {}
+        target_counts: dict[str, int] = {}
         for result in self._history:
             if result.selected_target:
                 target_name = result.selected_target.name
@@ -285,7 +285,7 @@ class PromptRouter:
         most_used_targets = sorted(target_counts.items(), key=lambda x: x[1], reverse=True)[:5]
 
         # 统计最常匹配的规则
-        rule_counts = {}
+        rule_counts: dict[str, int] = {}
         for result in self._history:
             for rule_name, _ in result.matched_rules:
                 rule_counts[rule_name] = rule_counts.get(rule_name, 0) + 1

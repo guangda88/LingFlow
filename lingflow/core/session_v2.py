@@ -34,7 +34,7 @@ class SessionManager:
         """
         self.session_dir = session_dir
         self.session_dir.mkdir(parents=True, exist_ok=True)
-        self._current_messages = []
+        self._current_messages: list[str] = []
         self._current_input_tokens = 0
         self._current_output_tokens = 0
 

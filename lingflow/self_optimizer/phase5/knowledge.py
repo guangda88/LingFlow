@@ -514,8 +514,8 @@ class InMemoryKnowledgeBase(KnowledgeBase):
         """获取统计信息"""
         total = len(self._rules)
 
-        by_category = {}
-        by_status = {}
+        by_category: dict[str, int] = {}
+        by_status: dict[str, int] = {}
 
         total_quality = 0.0
 

@@ -116,7 +116,7 @@ class RuleApplier:
         Returns:
             检测到的问题列表
         """
-        issues = []
+        issues: list[dict[str, Any]] = []
 
         # 检查文件模式
         if not self._matches_file_pattern(rule, file_path):
@@ -171,7 +171,7 @@ class RuleApplier:
 
     def _find_pattern_matches(self, pattern: str, source_code: str) -> List[Any]:
         """在源代码中查找模式匹配"""
-        matches = []
+        matches: list[Any] = []
 
         try:
             # 尝试作为正则表达式

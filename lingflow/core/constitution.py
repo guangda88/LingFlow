@@ -208,7 +208,7 @@ class Constitution:
 
         # Build lookup indexes
         self._principle_by_id = {p.id: p for p in self.principles}
-        self._principles_by_cwe = {}
+        self._principles_by_cwe: dict[int, list[Any]] = {}
         for p in self.principles:
             if p.cwe not in self._principles_by_cwe:
                 self._principles_by_cwe[p.cwe] = []

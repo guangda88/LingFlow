@@ -63,7 +63,7 @@ class RuleLoader:
         Returns:
             规则列表
         """
-        rules = []
+        rules: list[Rule] = []
 
         if not directory.exists():
             logger.warning(f"规则目录不存在: {directory}")
