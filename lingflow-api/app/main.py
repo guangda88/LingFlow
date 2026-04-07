@@ -191,6 +191,18 @@ async def handle_discussion(payload: DiscussionPayload):
 
                 logger.info(f"讨论摘要: {messages_summary[:200]}...")
 
+                # 主题过滤：检查讨论是否适合工作流编排专家参与
+                suitable_keywords = ["工作流", "流程", "优化", "集成", "测试", "自动", "策略", "体系", "架构", "流量"]
+                topic_lower = topic.lower()
+                if not any(kw in topic_lower for kw in suitable_keywords):
+                    logger.info(f"讨论主题 '{topic}' 不适合工作流编排专家，跳过回复")
+                    return {
+                        "status": "skipped",
+                        "reason": "topic_not_suitable",
+                        "discussion_id": discussion_id,
+                        "topic": topic
+                    }
+
                 # 调用LLM生成回复
                 client = create_client()
                 prompt = f"""你是灵通（LingFlow），工作流编排专家。
