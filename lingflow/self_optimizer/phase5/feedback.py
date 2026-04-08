@@ -305,7 +305,12 @@ class FeedbackLoop:
         # 1. 记录应用统计
         total_files = len(scan_results)
         total_issues = sum(len(issues) for issues in scan_results.values())
-        fixed_issues = 0  # TODO: 从实际修复结果中获取
+        fixed_issues = sum(
+            1
+            for issues in scan_results.values()
+            for issue in issues
+            if isinstance(issue, dict) and issue.get("fixed", False)
+        )
 
         self.collector.record_application_stats(
             scan_id=scan_id,

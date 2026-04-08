@@ -165,6 +165,8 @@ class TransportAdapter(ABC):
 |----------|------|----------|
 | 内存队列 | `InMemoryTransport` | 同进程通信 |
 | 文件传输 | `FileTransport` | 离线场景、持久化 |
+| HTTP 传输 | `HttpTransport` | 跨进程、跨主机通信 |
+| WebSocket 传输 | `WebSocketTransport` | 双向实时通信 |
 
 ## 运行测试
 
