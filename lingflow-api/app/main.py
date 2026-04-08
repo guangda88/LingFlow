@@ -2,14 +2,12 @@
 LingFlow REST API 服务
 快速启动模板
 """
-from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Body
+from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, Field
 from typing import Dict, Any, List, Optional
-from enum import Enum
 import asyncio
-import os
 from datetime import datetime
 
 from app.core.config import settings
@@ -156,7 +154,12 @@ async def handle_discussion(payload: DiscussionPayload):
     """接收LingYi council讨论请求 - 灵通自动回复"""
     import sys
     import traceback
-    sys.path.insert(0, "/home/ai/LingYi/src")
+    import os
+    lingyi_src = os.environ.get(
+        "LINGYI_SRC_PATH",
+        "/home/ai/LingYi/src",
+    )
+    sys.path.insert(0, lingyi_src)
 
     try:
         event = payload.event
@@ -220,7 +223,7 @@ async def handle_discussion(payload: DiscussionPayload):
 """
 
                 llm_messages = [{"role": "user", "content": prompt}]
-                logger.info(f"准备调用LLM...")
+                logger.info("准备调用LLM...")
                 llm_response_tuple = call_llm_with_fallback(client, llm_messages)
                 llm_response = llm_response_tuple[0] if isinstance(llm_response_tuple, tuple) else llm_response_tuple
                 logger.info(f"LLM调用完成: {type(llm_response)}")

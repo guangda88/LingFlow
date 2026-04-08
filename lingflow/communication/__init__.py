@@ -7,6 +7,8 @@ LingMessage v1.0 - 灵字辈统一通信协议
 - TransportAdapter: 传输适配器抽象接口
 - InMemoryTransport: 内存队列传输实现
 - FileTransport: 文件传输实现
+- HttpTransport: HTTP 传输实现
+- WebSocketTransport: WebSocket 传输实现
 
 使用示例:
     from lingflow.communication import MessageEnvelope, InMemoryTransport, MessageTypeRegistry
@@ -34,6 +36,8 @@ from .registry import MessageTypeRegistry
 from .transport import TransportAdapter
 from .transports.memory import InMemoryTransport
 from .transports.file import FileTransport
+from .transports.http import HttpTransport
+from .transports.websocket import WebSocketTransport
 
 __all__ = [
     "MessageEnvelope",
@@ -42,4 +46,6 @@ __all__ = [
     "TransportAdapter",
     "InMemoryTransport",
     "FileTransport",
+    "HttpTransport",
+    "WebSocketTransport",
 ]
