@@ -36,12 +36,14 @@ class TestToolAdapters:
 
     def test_ruff_adapter(self, temp_project):
         """测试Ruff适配器"""
+        from lingflow.self_optimizer.phase5.models import AIFeedback
+
         adapter = RuffAdapter()
 
         results = adapter.run_scan(temp_project)
 
         assert isinstance(results, list)
-        assert all(isinstance(r, dict) for r in results)
+        assert all(isinstance(r, AIFeedback) for r in results)
 
     def test_adapter_result_normalization(self, mock_feedback_data):
         """测试结果标准化"""
