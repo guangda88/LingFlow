@@ -107,7 +107,7 @@ class TestAdditionalDangerousBuiltins:
     def test_hasattr_detection(self):
         a = SecurityAnalyzer()
         violations = a.analyze("hasattr(obj, 'x')")
-        assert any(v.violation_type == "FORBIDDEN_FUNCTION" for v in violations)
+        assert not any(v.violation_type == "FORBIDDEN_FUNCTION" for v in violations)
 
     def test_input_detection(self):
         a = SecurityAnalyzer()

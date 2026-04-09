@@ -29,7 +29,7 @@ class AgentCoordinator(BaseCoordinator):
         self.failed_tasks: Dict[str, TaskResult] = {}
         # 启用高级上下文压缩功能
         self.compressor = ContextCompressor(target_tokens=4000, level=CompressionLevel.ADVANCED)
-        self.sandbox = SkillSandbox(timeout=30.0, memory_limit=100 * 1024 * 1024)  # 100MB
+        self.sandbox = SkillSandbox(timeout=30.0, memory_limit=256 * 1024 * 1024)  # 256MB
 
         # 上下文预算管理（基于 40% 安全线防止长上下文退化）
         from lingflow.context.budget import ContextBudgetManager

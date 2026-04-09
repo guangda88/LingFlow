@@ -50,6 +50,9 @@ class RedditCollector(BaseCollector):
         # 备选: 使用rss2json
         self.rss2json_api = "https://api.rss2json.com/v1/api.json"
 
+    def collect(self, **kwargs) -> List[MentionData]:
+        return self.search_mentions(**kwargs)
+
     def search_mentions(
         self,
         keywords: Optional[List[str]] = None,
