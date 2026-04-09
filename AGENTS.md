@@ -19,6 +19,8 @@ LingFlow (灵通 工程流系统) is an intelligent software development workflo
 - **Type-Safe**: `Result[T]` generic type for success/failure handling; strict mypy mode enabled
 - **Root Cause Beyond Root Cause**: 发现问题时不仅要修 bug，还要追问「为什么这个 bug 没有被更早发现」——是测试缺失、流程漏洞、还是设计缺陷？补上防御缺口才算真正关闭问题。
 - **自觉·自决·进化**：灵通宪章（[docs/CHARTER.md](docs/CHARTER.md)）——自觉（知道真实状态）、自决（发现问题就行动）、进化（未被发现的原因就是进化方向）。
+- **数据真实性原则 (Data Truth Principle)**: 任何 UI 字段必须回答 (1) 数据来源？(2) 谁更新它？**反模式**: "数据幻觉" - 字段被定义、存储、显示，但从未被更新（如 LingYi 中的 `energy_pct`）。详见 `lingflow/trust/` 模块和 `trust-guardrail` skill。
+- **元认知原则 (Metacognition Principle)**: AI 必须知道自己的知识边界——"我知道什么"（已掌握）、"我需要什么"（知识缺口）、"如何进化"（学习路径）。**事前检查**而非事后验证：在开始任务前必须明确声明能力要求、识别知识缺口、提出进化方向。详见 `lingflow/trust/metacognition.py` 和 `metacognition-guard` skill。
 
 ### Primary API Entry Point
 
@@ -186,10 +188,12 @@ LingFlow/
 │   │   └── sampling.py              # Sampling utilities
 │   ├── requirements/                # Requirements traceability
 │   │   └── traceability.py          # RequirementsTraceability
+│   ├── trust/                       # Trust verification framework
+│   │   └── verifier.py              # VerificationPipeline, Skeptic, 4 verifier types
 │   ├── guardrail/                   # Guardrails (placeholder)
 │   └── hooks/                       # Hook system
 │       └── auto_optimize_hook.py    # Auto-optimization hook
-├── skills/                          # Skill definitions (32 skills)
+├── skills/                          # Skill definitions (33 skills)
 │   ├── skills.json                  # Flat skill registry
 │   ├── skills-layer-configuration.yaml  # L1/L2/L3 layer config
 │   ├── brainstorming/
@@ -223,6 +227,7 @@ LingFlow/
 │   ├── skill-integration/
 │   ├── skill-templates/
 │   ├── skill-testing/
+│   ├── trust-guardrail/
 │   └── skill-versioning/
 ├── agents/                          # Agent configurations
 │   ├── agents.json                  # V1 format (6 agents)
@@ -427,7 +432,8 @@ Priority-based routing from `skills-layer-configuration.yaml`:
    - Depends on: writing-plans
 
 6. **verification-before-completion** — Ensures problems are actually fixed
-   - Triggers: verify, check, confirm fix
+   - Triggers: verify, check, confirm fix, audit, 交叉审计
+   - Three-layer audit: single-file → cross-file verification → peer review by another AI
 
 7. **using-git-worktrees** — Isolated workspace creation
    - Triggers: new branch, start work, begin development
@@ -609,6 +615,191 @@ Modular code review system in `lingflow/code_review/`:
 - **QualityScorer** — Quantitative quality scoring
 - **Severity** — Issue severity levels
 - **ReportGenerator** — Review report generation
+
+---
+
+## Metacognition System
+
+### Overview (概述)
+
+元认知系统是 LingFlow 的核心创新之一，它要求 AI 在开始任务前必须明确自己的知识边界。这不是事后验证，而是事前预防。
+
+**核心哲学**：
+- **知知与知不知** (Know what you know and don't know): AI 必须明确知道自己知道什么、不知道什么
+- **进化方向** (Evolution direction): 从"不知道"到"知道"的学习路径
+- **诚实优于自信** (Honesty over confidence): "我不知道"比"我也许可以"更有价值
+
+### Capability Levels (能力等级)
+
+| Level | Value | Can Handle | Description |
+|-------|-------|------------|-------------|
+| **UNKNOWN** | 0 | simple | 完全未知，需要从头学习 |
+| **FAMILIAR** | 1 | simple | 熟悉概念，但缺乏实践经验 |
+| **PARTIAL** | 2 | simple, medium | 部分掌握，需要查阅文档 |
+| **MASTERED** | 3 | simple, medium, complex | 完全掌握，可以独立完成 |
+
+### Usage Examples (使用示例)
+
+#### Example 1: PostgreSQL Migration (PostgreSQL 迁移)
+
+**任务要求**：将 SQLite 数据库迁移到 PostgreSQL
+
+```python
+from lingflow import LingFlow
+from lingflow.trust import get_metacognitive_agent
+
+lf = LingFlow()
+agent = get_metacognitive_agent()
+
+# 1. 声明当前能力
+agent.register_capability(
+    name="PostgreSQL",
+    level=CapabilityLevel.UNKNOWN,
+    last_practiced=None
+)
+agent.register_capability(
+    name="SQL",
+    level=CapabilityLevel.FAMILIAR,
+    last_practiced="2026-03-01"
+)
+
+# 2. 分析任务要求
+requirements = agent.analyze_task_requirements(
+    task_id="postgres-migration-001",
+    task_description="Migrate SQLite database to PostgreSQL",
+    required_capabilities=["PostgreSQL", "SQL"],
+    complexity="complex"
+)
+
+# 3. 检查结果
+print(f"Can start: {requirements['can_start']}")
+# Output: Can start: False
+print(f"Reason: {requirements['reason']}")
+# Output: Reason: PostgreSQL skill level UNKNOWN insufficient for complex tasks
+print(f"Gaps: {requirements['gaps']}")
+# Output: Gaps: ['PostgreSQL: UNKNOWN < required PARTIAL']
+
+# 4. 获取进化路径
+evolution = agent.propose_evolution(
+    capability_name="PostgreSQL",
+    target_level=CapabilityLevel.PARTIAL
+)
+print(evolution['steps'])
+# Output: [
+#   'Read PostgreSQL official documentation (1-2 days)',
+#   'Practice basic CRUD operations (3-5 days)',
+#   'Build small PostgreSQL project (1-2 weeks)'
+# ]
+```
+
+#### Example 2: Pre-Task Check (任务前检查)
+
+```python
+# 在 AgentCoordinator 中自动执行
+result = lf.run_skill("metacognition-guard", {
+    "task_id": "energy-pct-fix",
+    "task_description": "Fix energy_pct data flow issue",
+    "required_capabilities": ["Python", "LingYi architecture"],
+    "complexity": "medium",
+    "current_capabilities": {
+        "Python": "MASTERED",
+        "LingYi architecture": "UNKNOWN"
+    }
+})
+
+if not result["can_start"]:
+    print(f"Cannot start: {result['reason']}")
+    # Output: Cannot start: Missing capability: LingYi architecture (UNKNOWN)
+
+    # 遵循进化建议
+    for step in result["evolution_paths"][0]["steps"]:
+        print(f"Step: {step}")
+    # Output:
+    # Step: Study LingYi data flow architecture
+    # Step: Review existing LingYi codebase
+    # Step: Practice with small LingYi module
+```
+
+#### Example 3: Completion Declaration (完成声明)
+
+```python
+# 任务完成后，检查是否可以声明完成
+can_declare, reason = agent.can_declare_completion(
+    task_id="postgres-migration-001",
+    declared_capabilities=["Python", "SQL", "PostgreSQL"],
+    complexity="complex"
+)
+
+if not can_declare:
+    print(f"Cannot declare completion: {reason}")
+    # Output: Cannot declare completion: PostgreSQL skill level UNKNOWN insufficient for complex tasks
+    # AI 不能声称任务完成，必须先学习 PostgreSQL
+```
+
+### Integration with Trust Framework (与信任框架集成)
+
+元认知系统与信任验证框架形成**双重防护**：
+
+```
+┌─────────────────────────────────────────────────┐
+│  PREVENTION LAYER (事前预防)                      │
+├─────────────────────────────────────────────────┤
+│  1. Metacognition Guard                          │
+│     • Check capabilities BEFORE starting         │
+│     • Identify knowledge gaps                    │
+│     • Block insufficient capabilities            │
+└─────────────────────────────────────────────────┘
+                      ↓ can_start?
+                 [YES]    [NO]
+                   |         ↓
+                   │    Learn first
+                   ↓
+┌─────────────────────────────────────────────────┐
+│  EXECUTION LAYER (执行层)                         │
+├─────────────────────────────────────────────────┤
+│  Execute task with declared capabilities        │
+└─────────────────────────────────────────────────┘
+                      ↓
+┌─────────────────────────────────────────────────┐
+│  VALIDATION LAYER (事后验证)                      │
+├─────────────────────────────────────────────────┤
+│  2. Trust Guardrail                              │
+│     • Verify file changes AFTER completion       │
+│     • Check against verification contract       │
+│     • Generate confidence score                 │
+└─────────────────────────────────────────────────┘
+```
+
+### Key Features (关键特性)
+
+1. **Dunning-Kruger Prevention** (达克效应预防)
+   - 防止低能力 AI 高估自己的能力
+   - 强制显式的能力声明，不允许"模糊自信"
+
+2. **Evolution-Oriented** (进化导向)
+   - 知识缺口不是失败，而是学习机会
+   - 提供清晰的学习路径和时间估算
+
+3. **Truth in Declaration** (声明真实性)
+   - "我不知道" 和 "我知道" 同样有效
+   - 诚实优于盲目自信
+
+### Files (相关文件)
+
+- `lingflow/trust/metacognition.py` — 核心元认知系统
+- `skills/metacognition-guard/` — 元认知守卫技能
+- `tests/test_metacognition.py` — 元认知测试套件（22个测试）
+
+### Configuration (配置)
+
+```python
+# lingflow/common/config.py
+"metacognition": {
+    "enabled": True,              # 启用元认知检查
+    "strict_mode": True,          # 严格模式：拒绝有缺口的任务
+    "evolution_mode": "suggest", # suggest/require/disabled
+}
+```
 
 ---
 

@@ -58,6 +58,18 @@ DEFAULT_CONFIG = {
     },
     # 压缩配置
     "compression": {"enabled": True, "max_length": 10000},
+    # 信任验证配置
+    "trust": {
+        "enabled": False,
+        "auto_verify": False,
+        "confidence_threshold": 0.8,
+    },
+    # 元认知配置
+    "metacognition": {
+        "enabled": True,
+        "strict_mode": True,
+        "evolution_mode": "suggest",
+    },
     # 日志配置
     "logging": {
         "level": "INFO",
@@ -84,6 +96,12 @@ class ConfigManager:
         "LINGFLOW_SKILL_TIMEOUT": "skills.default_timeout",
         "LINGFLOW_COMPRESSION_ENABLED": "compression.enabled",
         "LINGFLOW_AGENT_TIMEOUT": "agents.timeout",
+        "LINGFLOW_TRUST_ENABLED": "trust.enabled",
+        "LINGFLOW_TRUST_AUTO_VERIFY": "trust.auto_verify",
+        "LINGFLOW_TRUST_CONFIDENCE_THRESHOLD": "trust.confidence_threshold",
+        "LINGFLOW_METACOGNITION_ENABLED": "metacognition.enabled",
+        "LINGFLOW_METACOGNITION_STRICT_MODE": "metacognition.strict_mode",
+        "LINGFLOW_METACOGNITION_EVOLUTION_MODE": "metacognition.evolution_mode",
     }
 
     def _load_config(self) -> dict:

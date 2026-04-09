@@ -1,0 +1,12 @@
+---
+name: trust-guardrail
+description_en: Trust guardrail - verifies AI outputs before completion
+description_zh: 信任护栏 - 在完成任务前验证 AI 输出
+triggers:
+  - verify
+  - verify output
+  - check completion
+  - verification
+path: SKILL.md
+version: "1.0.0"
+layer: L2

@@ -150,7 +150,11 @@ class SkillSandbox:
         "threading",
         "queue",
     }
-    ALLOWED_MODULES = _SAFE_CORE | _SAFE_IO | _SAFE_RUNTIME
+    # LingFlow 层：LingFlow 自有模块
+    _SAFE_LINGFLOW = {
+        "lingflow.trust",
+    }
+    ALLOWED_MODULES = _SAFE_CORE | _SAFE_IO | _SAFE_RUNTIME | _SAFE_LINGFLOW
 
     def __init__(
         self,

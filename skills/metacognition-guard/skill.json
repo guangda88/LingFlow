@@ -1,0 +1,14 @@
+{
+  "name": "metacognition-guard",
+  "description": "元认知守护技能：在开始任务前检查知识边界和准备情况 / Metacognition Guard Skill: Check knowledge boundaries and readiness before starting tasks",
+  "triggers": [
+    "pre-task check",
+    "capability check",
+    "knowledge boundary",
+    "ready to start",
+    "元认知",
+    "能力检查"
+  ],
+  "path": "skills/metacognition-guard/SKILL.md",
+  "depends_on": []
+}
