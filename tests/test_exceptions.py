@@ -1,21 +1,22 @@
 """Exception hierarchy tests"""
 
 import pytest
+
 from lingflow.common.exceptions import (
-    LingFlowError,
-    SkillError,
-    SkillNotFoundError,
-    SkillLoadError,
-    SkillExecutionError,
-    WorkflowError,
-    WorkflowValidationError,
-    WorkflowExecutionError,
     AgentError,
-    AgentNotFoundError,
     AgentExecutionError,
+    AgentNotFoundError,
     CompressionError,
     ConfigurationError,
+    LingFlowError,
+    SkillError,
+    SkillExecutionError,
+    SkillLoadError,
+    SkillNotFoundError,
     ValidationError,
+    WorkflowError,
+    WorkflowExecutionError,
+    WorkflowValidationError,
 )
 
 

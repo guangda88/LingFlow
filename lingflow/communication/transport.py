@@ -8,9 +8,9 @@
 - HTTPTransport: HTTP传输 (未来)
 """
 
+import asyncio
 from abc import ABC, abstractmethod
 from typing import AsyncIterator, Callable, Dict, List, Optional
-import asyncio
 
 from .envelope import MessageEnvelope
 
@@ -136,6 +136,7 @@ class TransportAdapter(ABC):
             int: 成功发送的数量
         """
         from dataclasses import replace
+
         success_count = 0
         for service in services:
             targeted = replace(envelope, to_service=service)

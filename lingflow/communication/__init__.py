@@ -34,9 +34,9 @@ __author__ = "灵信 (LingXin)"
 from .envelope import MessageEnvelope, create_envelope
 from .registry import MessageTypeRegistry
 from .transport import TransportAdapter
-from .transports.memory import InMemoryTransport
 from .transports.file import FileTransport
 from .transports.http import HttpTransport
+from .transports.memory import InMemoryTransport
 from .transports.websocket import WebSocketTransport
 
 __all__ = [

@@ -1,4 +1,5 @@
 import numpy as np
+
 from lingflow.self_optimizer.phase4.search_space import Parameter, ParameterType, SearchSpace
 
 

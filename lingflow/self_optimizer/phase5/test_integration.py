@@ -11,20 +11,19 @@ from datetime import datetime
 import pytest
 
 from lingflow.self_optimizer.phase5 import (
-    KnowledgeBase,
-    RuleExtractor,
-    RuleApplier,
-    FeedbackLoop,
+    FeedbackCategory,
     FeedbackCollector,
+    FeedbackItem,
+    FeedbackLoop,
+    FeedbackSeverity,
+    KnowledgeBase,
     LearnedRule,
     Pattern,
-    FeedbackCategory,
-    FeedbackItem,
-    FeedbackSeverity,
-    ToolType,
     PreCommitHookGenerator,
+    RuleApplier,
+    RuleExtractor,
+    ToolType,
 )
-
 
 # ============================================================================
 # Fixtures
@@ -142,14 +141,14 @@ class TestRuleApplier:
         """测试使用规则检查代码"""
         applier = RuleApplier(temp_kb)
 
-        code = '''
+        code = """
 import os
 import sys
 import json  # unused
 
 def test():
     return 1
-'''
+"""
 
         issues = applier.check_code(code, "test.py")
 
@@ -185,10 +184,7 @@ def test():
         code = "import os\nprint('hello')\n"
 
         # 只检查CODE_QUALITY类别
-        issues = applier.check_code(
-            code, "test.py",
-            category=FeedbackCategory.CODE_QUALITY
-        )
+        issues = applier.check_code(code, "test.py", category=FeedbackCategory.CODE_QUALITY)
 
         assert isinstance(issues, list)
 
@@ -218,11 +214,7 @@ class TestFeedbackCollector:
     def test_record_rule_application(self, collector):
         """测试记录规则应用反馈"""
         collector.record_rule_application(
-            rule_id="rule-001",
-            file_path="test.py",
-            line=10,
-            accepted=True,
-            user_feedback="Good suggestion"
+            rule_id="rule-001", file_path="test.py", line=10, accepted=True, user_feedback="Good suggestion"
         )
 
         # 获取规则效果
@@ -235,11 +227,7 @@ class TestFeedbackCollector:
     def test_record_application_stats(self, collector):
         """测试记录应用统计"""
         collector.record_application_stats(
-            scan_id="scan-001",
-            total_files=10,
-            total_issues=50,
-            fixed_issues=25,
-            duration_seconds=5.5
+            scan_id="scan-001", total_files=10, total_issues=50, fixed_issues=25, duration_seconds=5.5
         )
 
         feedback = collector.get_all_feedback()
@@ -250,12 +238,7 @@ class TestFeedbackCollector:
         """测试获取所有反馈"""
         # 添加一些反馈数据
         for i in range(5):
-            collector.record_rule_application(
-                f"rule-{i}",
-                "test.py",
-                i,
-                i % 2 == 0  # 交替接受/拒绝
-            )
+            collector.record_rule_application(f"rule-{i}", "test.py", i, i % 2 == 0)  # 交替接受/拒绝
 
         feedback = collector.get_all_feedback(days=30)
 
@@ -281,17 +264,9 @@ class TestFeedbackLoop:
     def test_run_cycle(self, feedback_loop, sample_rules):
         """测试运行完整循环"""
         # 模拟扫描结果
-        scan_results = {
-            "test.py": [
-                {"rule_id": "rule-001", "line": 10, "message": "Issue here"}
-            ]
-        }
+        scan_results = {"test.py": [{"rule_id": "rule-001", "line": 10, "message": "Issue here"}]}
 
-        result = feedback_loop.run_cycle(
-            scan_id="test-scan",
-            scan_results=scan_results,
-            duration_seconds=1.5
-        )
+        result = feedback_loop.run_cycle(scan_id="test-scan", scan_results=scan_results, duration_seconds=1.5)
 
         assert result["scan_id"] == "test-scan"
         assert "application_stats" in result
@@ -364,10 +339,7 @@ class TestSelfLearningE2E:
             # 记录反馈
             for issue in issues:
                 collector.record_rule_application(
-                    rule_id=issue["rule_id"],
-                    file_path=issue["file_path"],
-                    line=issue["line"],
-                    accepted=True
+                    rule_id=issue["rule_id"], file_path=issue["file_path"], line=issue["line"], accepted=True
                 )
 
             # 验证完整流程
@@ -428,10 +400,7 @@ class TestPreCommitHookGenerator:
         """测试生成pre-commit钩子"""
         output_path = tmp_path / "pre-commit-hook"
 
-        PreCommitHookGenerator.generate_hook(
-            temp_kb,
-            output_path=str(output_path)
-        )
+        PreCommitHookGenerator.generate_hook(temp_kb, output_path=str(output_path))
 
         assert output_path.exists()
         content = output_path.read_text()
@@ -442,9 +411,6 @@ class TestPreCommitHookGenerator:
         """测试生成配置文件"""
         output_path = tmp_path / "config.yaml"
 
-        PreCommitHookGenerator.generate_config(
-            temp_kb,
-            output_path=str(output_path)
-        )
+        PreCommitHookGenerator.generate_config(temp_kb, output_path=str(output_path))
 
         assert output_path.exists()

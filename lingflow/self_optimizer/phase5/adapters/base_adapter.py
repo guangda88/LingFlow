@@ -4,15 +4,15 @@ LingFlow Phase 5: AI工具适配器基类
 定义所有适配器的通用接口和基础功能。
 """
 
-import subprocess
-from typing import List, Dict, Any, Optional, Union
-from datetime import datetime
 import logging
+import subprocess
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Union
 
 from lingflow.self_optimizer.phase5.models import (
     AIFeedback,
-    FeedbackSeverity,
     FeedbackCategory,
+    FeedbackSeverity,
 )
 
 logger = logging.getLogger(__name__)

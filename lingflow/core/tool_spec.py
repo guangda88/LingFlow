@@ -134,7 +134,9 @@ class ToolRegistry:
         self._specs[spec.name] = spec
 
     def register_simple(
-        self, name: str, description: str,
+        self,
+        name: str,
+        description: str,
         parameters: Optional[Dict[str, Any]] = None,
         required: Optional[List[str]] = None,
         callback_name: str = "",

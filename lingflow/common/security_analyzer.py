@@ -16,7 +16,7 @@ LingFlow 增强的沙箱安全验证模块
 """
 
 import ast
-from typing import List, Dict, Any, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 
 class SecurityViolation:
@@ -191,11 +191,32 @@ class SecurityAnalyzer(ast.NodeVisitor):
                 # importlib 危险子模块（但允许 util）
                 _importlib_dangerous = {"__import__", "reload", "invalidate_caches"}
                 # os 的危险子模块调用（但允许 os.path）
-                _os_dangerous = {"system", "popen", "execv", "execve", "spawnl",
-                                 "spawnv", "fork", "kill", "remove", "unlink",
-                                 "rename", "mkdir", "makedirs", "rmdir", "listdir",
-                                 "walk", "chmod", "chown", "environ", "putenv",
-                                 "getenv", "fdopen", "pipe", "dup2"}
+                _os_dangerous = {
+                    "system",
+                    "popen",
+                    "execv",
+                    "execve",
+                    "spawnl",
+                    "spawnv",
+                    "fork",
+                    "kill",
+                    "remove",
+                    "unlink",
+                    "rename",
+                    "mkdir",
+                    "makedirs",
+                    "rmdir",
+                    "listdir",
+                    "walk",
+                    "chmod",
+                    "chown",
+                    "environ",
+                    "putenv",
+                    "getenv",
+                    "fdopen",
+                    "pipe",
+                    "dup2",
+                }
 
                 if module_name == "os" and func_name in _os_dangerous:
                     self.violations.append(

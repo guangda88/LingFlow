@@ -12,13 +12,7 @@ from lingflow.common.security_analyzer import (
 
 class TestSecurityViolationInit:
     def test_all_fields(self):
-        v = SecurityViolation(
-            severity="CRITICAL",
-            violation_type="TEST",
-            message="test msg",
-            line=10,
-            col_offset=5
-        )
+        v = SecurityViolation(severity="CRITICAL", violation_type="TEST", message="test msg", line=10, col_offset=5)
         assert v.severity == "CRITICAL"
         assert v.violation_type == "TEST"
         assert v.message == "test msg"
@@ -221,7 +215,7 @@ class TestFStringInjection:
 
     def test_fstring_with_eval_injection(self):
         a = SecurityAnalyzer()
-        code = 'result = f"{eval(\'1+1\')}"'
+        code = "result = f\"{eval('1+1')}\""
         violations = a.analyze(code)
         assert any(v.violation_type == "CODE_INJECTION" for v in violations)
 

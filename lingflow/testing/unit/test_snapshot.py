@@ -4,11 +4,12 @@
 单元测试 - 快照测试系统
 """
 
-import pytest
 import tempfile
 from pathlib import Path
 
-from lingflow.testing import SnapshotTest, SnapshotMetadata
+import pytest
+
+from lingflow.testing import SnapshotMetadata, SnapshotTest
 
 
 class TestSnapshotTest:

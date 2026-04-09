@@ -1,10 +1,11 @@
-import pytest
-import tempfile
 import os
-
+import tempfile
 from unittest.mock import MagicMock
+
+import pytest
+
+from lingflow.common.models import Task, TaskPriority, TaskResult
 from lingflow.workflow.orchestrator import WorkflowOrchestrator
-from lingflow.common.models import Task, TaskResult, TaskPriority
 
 
 class TestLoadWorkflowFromYaml:
@@ -107,8 +108,17 @@ class TestGetReadyTasks:
         orch = WorkflowOrchestrator(coordinator)
 
         tasks = [
-            Task(task_id="t1", name="done", description="", agent_type="general", priority=TaskPriority.NORMAL, dependencies=[]),
-            Task(task_id="t2", name="pending", description="", agent_type="general", priority=TaskPriority.NORMAL, dependencies=[]),
+            Task(
+                task_id="t1", name="done", description="", agent_type="general", priority=TaskPriority.NORMAL, dependencies=[]
+            ),
+            Task(
+                task_id="t2",
+                name="pending",
+                description="",
+                agent_type="general",
+                priority=TaskPriority.NORMAL,
+                dependencies=[],
+            ),
         ]
         ready = orch._get_ready_tasks(tasks)
         assert len(ready) == 1
@@ -121,8 +131,17 @@ class TestGetReadyTasks:
         orch = WorkflowOrchestrator(coordinator)
 
         tasks = [
-            Task(task_id="t1", name="first", description="", agent_type="general", priority=TaskPriority.NORMAL, dependencies=[]),
-            Task(task_id="t2", name="second", description="", agent_type="general", priority=TaskPriority.NORMAL, dependencies=["t1"]),
+            Task(
+                task_id="t1", name="first", description="", agent_type="general", priority=TaskPriority.NORMAL, dependencies=[]
+            ),
+            Task(
+                task_id="t2",
+                name="second",
+                description="",
+                agent_type="general",
+                priority=TaskPriority.NORMAL,
+                dependencies=["t1"],
+            ),
         ]
         ready = orch._get_ready_tasks(tasks)
         assert len(ready) == 1

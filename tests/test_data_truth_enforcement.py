@@ -4,17 +4,18 @@ This test demonstrates how the trust framework prevents data hallucination
 issues like the energy_pct incident in LingYi.
 """
 
-import pytest
+import json
 import tempfile
 from pathlib import Path
-import json
+
+import pytest
 
 from lingflow.trust import (
+    DirectoryStructureVerifier,
+    FileContentVerifier,
+    Skeptic,
     TaskClaim,
     VerificationPipeline,
-    FileContentVerifier,
-    DirectoryStructureVerifier,
-    Skeptic,
 )
 
 
@@ -52,11 +53,7 @@ CREATE TABLE projects (
 """)
 
         # Step 3: Developer CLAIMS task is complete
-        claim = TaskClaim(
-            action="添加 energy_pct 字段显示",
-            target=str(tmpdir_path),
-            expected="energy_pct"
-        )
+        claim = TaskClaim(action="添加 energy_pct 字段显示", target=str(tmpdir_path), expected="energy_pct")
 
         # Step 4: Verification framework checks
         pipeline = VerificationPipeline()
@@ -150,11 +147,7 @@ def update_energy(project_id, energy_pct):
 """)
 
         # Verify schema contains energy_pct
-        claim = TaskClaim(
-            action="实现 energy_pct 功能（含更新逻辑）",
-            target=str(schema_file),
-            expected="energy_pct"
-        )
+        claim = TaskClaim(action="实现 energy_pct 功能（含更新逻辑）", target=str(schema_file), expected="energy_pct")
 
         pipeline = VerificationPipeline()
         pipeline.add_verifier(FileContentVerifier())
@@ -190,16 +183,12 @@ def test_trust_framework_workflow_integration():
         config_data = {
             "project_name": "Test Project",
             "energy_pct": 50.0,  # Field exists
-            "energy_update": "auto"  # AND we know who updates it
+            "energy_update": "auto",  # AND we know who updates it
         }
         test_file.write_text(json.dumps(config_data))
 
         # Simulate skill execution and verification
-        claim = TaskClaim(
-            action="创建项目配置",
-            target=str(test_file),
-            expected="energy_pct"
-        )
+        claim = TaskClaim(action="创建项目配置", target=str(test_file), expected="energy_pct")
 
         # Execute verification
         pipeline = VerificationPipeline()
@@ -235,11 +224,7 @@ def test_comparison_with_and_without_update_logic():
         schema_a = tmpdir_path / "schema_a.sql"
         schema_a.write_text("CREATE TABLE test (id INT, energy_pct REAL);")
 
-        claim_a = TaskClaim(
-            action="添加字段（无更新逻辑）",
-            target=str(schema_a),
-            expected="energy_pct"
-        )
+        claim_a = TaskClaim(action="添加字段（无更新逻辑）", target=str(schema_a), expected="energy_pct")
 
         pipeline_a = VerificationPipeline()
         pipeline_a.add_verifier(FileContentVerifier())
@@ -255,11 +240,7 @@ def update_energy_pct(id, pct):
     db.execute('UPDATE test SET energy_pct=? WHERE id=?', (pct, id))
 """)
 
-        claim_b = TaskClaim(
-            action="添加字段（含更新逻辑）",
-            target=str(schema_b),
-            expected="energy_pct"
-        )
+        claim_b = TaskClaim(action="添加字段（含更新逻辑）", target=str(schema_b), expected="energy_pct")
 
         pipeline_b = VerificationPipeline()
         pipeline_b.add_verifier(FileContentVerifier())

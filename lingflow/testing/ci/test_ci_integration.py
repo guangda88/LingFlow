@@ -5,10 +5,11 @@ CI/CD 集成测试
 测试 GitHub Actions 工作流配置和集成
 """
 
+import sys
+from pathlib import Path
+
 import pytest
 import yaml
-from pathlib import Path
-import sys
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -131,9 +132,7 @@ class TestCIWorkflowConfiguration:
         workflow = self._load_workflow()
 
         # 检查是否有使用 codecov-action
-        codecov_used = CIWorkflowTestHelper.any_job_has_step_using(
-            workflow, "uses", "codecov/codecov-action"
-        )
+        codecov_used = CIWorkflowTestHelper.any_job_has_step_using(workflow, "uses", "codecov/codecov-action")
         assert codecov_used, "工作流应该集成 Codecov"
 
     def test_parallel_execution(self):
@@ -196,9 +195,7 @@ class TestCIWorkflowConfiguration:
         workflow = self._load_workflow()
 
         # 检查是否有上传工件的操作
-        artifact_upload_found = CIWorkflowTestHelper.any_job_has_step_using(
-            workflow, "uses", "upload-artifact"
-        )
+        artifact_upload_found = CIWorkflowTestHelper.any_job_has_step_using(workflow, "uses", "upload-artifact")
         assert artifact_upload_found, "工作流应该包含工件上传"
 
 

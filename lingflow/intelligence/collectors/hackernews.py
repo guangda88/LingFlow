@@ -4,12 +4,12 @@
 """
 
 from datetime import datetime, timedelta
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 import requests
 
-from .base import BaseCollector, CollectorConfig
 from ..models.common import MentionData, Platform, SourceType
+from .base import BaseCollector, CollectorConfig
 
 
 class HNCollector(BaseCollector):
@@ -35,11 +35,7 @@ class HNCollector(BaseCollector):
         self.keywords = self.SEARCH_KEYWORDS
 
     def search_mentions(
-        self,
-        keywords: Optional[List[str]] = None,
-        limit: int = 100,
-        days: int = 7,
-        use_cache: bool = True
+        self, keywords: Optional[List[str]] = None, limit: int = 100, days: int = 7, use_cache: bool = True
     ) -> List[MentionData]:
         """搜索提及
 
@@ -58,10 +54,7 @@ class HNCollector(BaseCollector):
         print(f"    关键词: {', '.join(keywords)}")
 
         # 检查缓存
-        cache_key = self.get_cache_key(
-            keywords=','.join(keywords),
-            limit=limit
-        )
+        cache_key = self.get_cache_key(keywords=",".join(keywords), limit=limit)
         if use_cache:
             cached = self.load_cache(cache_key)
             if cached:
@@ -69,8 +62,7 @@ class HNCollector(BaseCollector):
                 return cached
 
         all_mentions = []
-        cutoff_timestamp = int(
-            (datetime.now() - timedelta(days=days)).timestamp())
+        cutoff_timestamp = int((datetime.now() - timedelta(days=days)).timestamp())
 
         for keyword in keywords:
             mentions = self._search_keyword(keyword, cutoff_timestamp, limit)
@@ -92,12 +84,7 @@ class HNCollector(BaseCollector):
 
         return unique_mentions[:limit]
 
-    def _search_keyword(
-        self,
-        keyword: str,
-        cutoff_timestamp: int,
-        limit: int
-    ) -> List[MentionData]:
+    def _search_keyword(self, keyword: str, cutoff_timestamp: int, limit: int) -> List[MentionData]:
         """搜索单个关键词
 
         Args:
@@ -113,10 +100,10 @@ class HNCollector(BaseCollector):
         try:
             # 搜索参数
             params = {
-                'query': keyword,
-                'tags': 'story,comment',  # 搜索故事和评论
-                'numericFilters': f'created_at_i>{cutoff_timestamp}',
-                'hitsPerPage': min(200, limit),
+                "query": keyword,
+                "tags": "story,comment",  # 搜索故事和评论
+                "numericFilters": f"created_at_i>{cutoff_timestamp}",
+                "hitsPerPage": min(200, limit),
             }
 
             url = f"{self.API_BASE}/search"
@@ -124,7 +111,7 @@ class HNCollector(BaseCollector):
 
             if response.status_code == 200:
                 data = response.json()
-                hits = data.get('hits', [])
+                hits = data.get("hits", [])
 
                 for hit in hits:
                     mention = self._parse_hit(hit)
@@ -147,51 +134,51 @@ class HNCollector(BaseCollector):
         """
         try:
             # 确定类型
-            hit_type = hit.get('type', 'story')
-            if hit_type == 'story':
+            hit_type = hit.get("type", "story")
+            if hit_type == "story":
                 source_type = SourceType.POST
-            elif hit_type == 'comment':
+            elif hit_type == "comment":
                 source_type = SourceType.COMMENT
             else:
                 source_type = SourceType.POST
 
             # 解析时间
-            created_at = hit.get('created_at', '')
+            created_at = hit.get("created_at", "")
             try:
-                dt = datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%fZ')
+                dt = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%S.%fZ")
             except ValueError:
-                dt = datetime.fromtimestamp(hit.get('created_at_i', 0))
+                dt = datetime.fromtimestamp(hit.get("created_at_i", 0))
 
             # 获取作者
-            author = hit.get('author', '') or hit.get('username', '')
+            author = hit.get("author", "") or hit.get("username", "")
 
             # 获取内容
-            text = hit.get('text', '') or hit.get('title', '') or ''
+            text = hit.get("text", "") or hit.get("title", "") or ""
 
             # 获取URL
-            url = hit.get('url', '')
+            url = hit.get("url", "")
             if not url:
-                object_id = hit.get('objectID', '')
+                object_id = hit.get("objectID", "")
                 url = f"https://news.ycombinator.com/item?id={object_id}"
 
             return MentionData(
                 platform=Platform.HACKERNEWS,
                 source_type=source_type,
-                source_id=str(hit.get('objectID', '')),
+                source_id=str(hit.get("objectID", "")),
                 author=author,
                 content=text[:2000],
                 url=url,
                 published_at=dt.isoformat(),
-                title=hit.get('title', ''),
-                points=hit.get('points', 0),
-                comments=hit.get('children', 0) or hit.get('num_comments', 0),
-                rank=hit.get('rank', 0),
+                title=hit.get("title", ""),
+                points=hit.get("points", 0),
+                comments=hit.get("children", 0) or hit.get("num_comments", 0),
+                rank=hit.get("rank", 0),
                 metrics={
-                    'points': hit.get('points', 0),
-                    'num_comments': hit.get('children', 0) or hit.get('num_comments', 0),
-                    'rank': hit.get('rank', 0),
-                    'object_id': hit.get('objectID', ''),
-                }
+                    "points": hit.get("points", 0),
+                    "num_comments": hit.get("children", 0) or hit.get("num_comments", 0),
+                    "rank": hit.get("rank", 0),
+                    "object_id": hit.get("objectID", ""),
+                },
             )
         except Exception as e:
             print(f"      解析失败: {e}")
@@ -214,15 +201,15 @@ class HNCollector(BaseCollector):
             # 获取首页故事
             url = f"{self.API_BASE}/search"
             params = {
-                'tags': 'front_page',
-                'hitsPerPage': limit,
+                "tags": "front_page",
+                "hitsPerPage": limit,
             }
 
             response = requests.get(url, params=params, timeout=30)
 
             if response.status_code == 200:
                 data = response.json()
-                hits = data.get('hits', [])
+                hits = data.get("hits", [])
 
                 for hit in hits:
                     mention = self._parse_hit(hit)
@@ -252,16 +239,16 @@ class HNCollector(BaseCollector):
             # 获取最近24小时的热门
             url = f"{self.API_BASE}/search_by_date"
             params = {
-                'tags': 'story',
-                'numericFilters': 'created_at_i>86400',
-                'hitsPerPage': limit,
+                "tags": "story",
+                "numericFilters": "created_at_i>86400",
+                "hitsPerPage": limit,
             }
 
             response = requests.get(url, params=params, timeout=30)
 
             if response.status_code == 200:
                 data = response.json()
-                hits = data.get('hits', [])
+                hits = data.get("hits", [])
 
                 for hit in hits:
                     mention = self._parse_hit(hit)
@@ -285,11 +272,7 @@ def main():
     collector = HNCollector()
 
     # 搜索提及
-    mentions = collector.search_mentions(
-        keywords=["LingFlow", "Claude Code"],
-        limit=50,
-        days=30
-    )
+    mentions = collector.search_mentions(keywords=["LingFlow", "Claude Code"], limit=50, days=30)
 
     print()
     print("📊 采集结果:")
@@ -305,11 +288,7 @@ def main():
         # 显示前几条
         print()
         print("🔝 热门讨论:")
-        sorted_mentions = sorted(
-            mentions,
-            key=lambda m: m.points,
-            reverse=True
-        )[:5]
+        sorted_mentions = sorted(mentions, key=lambda m: m.points, reverse=True)[:5]
 
         for i, m in enumerate(sorted_mentions, 1):
             print(f"  [{i}] {m.title[:50]}... ({m.points}👍)")

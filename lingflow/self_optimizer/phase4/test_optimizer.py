@@ -7,10 +7,10 @@ LingFlow Phase 4: 优化器测试
 from lingflow.self_optimizer.phase4.bayesian_optimizer import (
     BayesianOptimizer,
     GridSearchOptimizer,
+    OptimizationState,
+    OptimizationTrial,
     create_optimizer,
     get_default_search_space,
-    OptimizationTrial,
-    OptimizationState,
 )
 
 

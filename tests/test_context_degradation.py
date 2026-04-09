@@ -225,12 +225,14 @@ class TestHealthScore:
 
     def test_report_to_dict(self):
         dd = DegradationDetector()
-        report = dd.get_health_score([
-            {"role": "user", "content": "hello"},
-            {"role": "assistant", "content": "hi"},
-            {"role": "user", "content": "bye"},
-            {"role": "assistant", "content": "goodbye"},
-        ])
+        report = dd.get_health_score(
+            [
+                {"role": "user", "content": "hello"},
+                {"role": "assistant", "content": "hi"},
+                {"role": "user", "content": "bye"},
+                {"role": "assistant", "content": "goodbye"},
+            ]
+        )
         d = report.to_dict()
         assert "health" in d
         assert "score" in d

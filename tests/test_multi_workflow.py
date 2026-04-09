@@ -4,22 +4,22 @@ import pytest
 
 from lingflow.common.models import Task, TaskPriority
 from lingflow.workflow.multi_workflow import (
-    WorkflowType,
-    WorkflowPriority,
-    WorkflowStatus,
-    WorkflowResult,
-    WorkflowConfig,
     BaseWorkflow,
-    FastTrackWorkflow,
-    StableTrackWorkflow,
+    DeployWorkflow,
     DevWorkflow,
-    TestWorkflow,
     DocWorkflow,
+    ExecutionStrategy,
+    FastTrackWorkflow,
+    MultiWorkflowCoordinator,
     OptimizeWorkflow,
     ReviewWorkflow,
-    DeployWorkflow,
-    ExecutionStrategy,
-    MultiWorkflowCoordinator,
+    StableTrackWorkflow,
+    TestWorkflow,
+    WorkflowConfig,
+    WorkflowPriority,
+    WorkflowResult,
+    WorkflowStatus,
+    WorkflowType,
 )
 
 

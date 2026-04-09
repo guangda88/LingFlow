@@ -5,10 +5,10 @@ LingFlow 代码审查框架 - 改进版架构
 """
 
 from .core.base_reviewer import BaseCodeReviewer
-from .core.rule_engine import RuleEngine, Rule
-from .core.severity import Severity
-from .core.scorer import QualityScorer
 from .core.reporter import ReportGenerator
+from .core.rule_engine import Rule, RuleEngine
+from .core.scorer import QualityScorer
+from .core.severity import Severity
 
 __all__ = [
     "BaseCodeReviewer",

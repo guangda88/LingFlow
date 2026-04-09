@@ -3,9 +3,9 @@
 import pytest
 
 from lingflow.utils.performance import (
+    ContextTimer,
     PerformanceMetric,
     PerformanceMonitor,
-    ContextTimer,
     cached_with_monitor,
     get_cache_stats,
     track_performance,
@@ -208,6 +208,7 @@ class TestCachedWithMonitor:
     def test_get_cache_stats_non_cached(self):
         def plain():
             pass
+
         assert get_cache_stats(plain) == {}
 
 

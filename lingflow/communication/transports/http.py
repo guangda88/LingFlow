@@ -17,8 +17,8 @@ from collections import defaultdict
 from typing import AsyncIterator, Callable, Dict, Optional, Set
 from uuid import uuid4
 
-from ..transport import TransportAdapter
 from ..envelope import MessageEnvelope
+from ..transport import TransportAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -83,14 +83,10 @@ class HttpTransport(TransportAdapter):
         if self._session is None or self._session.closed:
             try:
                 import aiohttp
-                self._session = aiohttp.ClientSession(
-                    timeout=aiohttp.ClientTimeout(total=self._timeout)
-                )
+
+                self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=self._timeout))
             except ImportError:
-                raise ImportError(
-                    "aiohttp is required for HttpTransport. "
-                    "Install it with: pip install aiohttp"
-                )
+                raise ImportError("aiohttp is required for HttpTransport. " "Install it with: pip install aiohttp")
         return self._session
 
     async def send(self, envelope: MessageEnvelope) -> bool:
@@ -120,9 +116,7 @@ class HttpTransport(TransportAdapter):
 
         return await self._send_to_endpoint(envelope, target)
 
-    async def _send_to_endpoint(
-        self, envelope: MessageEnvelope, service: str
-    ) -> bool:
+    async def _send_to_endpoint(self, envelope: MessageEnvelope, service: str) -> bool:
         """发送消息到指定服务端点"""
         endpoint = self._get_endpoint(service)
         session = await self._get_session()
@@ -172,26 +166,18 @@ class HttpTransport(TransportAdapter):
 
         return False
 
-    async def receive(
-        self, service: str, timeout: Optional[float] = None
-    ) -> Optional[MessageEnvelope]:
+    async def receive(self, service: str, timeout: Optional[float] = None) -> Optional[MessageEnvelope]:
         """
         接收消息（HTTP 模式下不直接支持，建议使用订阅模式）
         """
-        logger.warning(
-            "HttpTransport.receive() is not directly supported. "
-            "Use subscribe() or webhook endpoint instead."
-        )
+        logger.warning("HttpTransport.receive() is not directly supported. " "Use subscribe() or webhook endpoint instead.")
         return None
 
     async def receive_stream(self, service: str) -> AsyncIterator[MessageEnvelope]:
         """
         接收消息流（HTTP 模式下不直接支持）
         """
-        logger.warning(
-            "HttpTransport.receive_stream() is not directly supported. "
-            "Use WebSocket transport for streaming."
-        )
+        logger.warning("HttpTransport.receive_stream() is not directly supported. " "Use WebSocket transport for streaming.")
         return
         yield  # make it an async generator
 
@@ -214,9 +200,7 @@ class HttpTransport(TransportAdapter):
                 if not future.done():
                     future.set_result(envelope)
 
-            for sub_id, (msg_type, handler) in self._subscriptions.get(
-                self.service_name, {}
-            ).items():
+            for sub_id, (msg_type, handler) in self._subscriptions.get(self.service_name, {}).items():
                 if msg_type == "*" or envelope.msg_type == msg_type:
                     try:
                         if asyncio.iscoroutinefunction(handler):

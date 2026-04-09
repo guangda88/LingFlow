@@ -1,7 +1,7 @@
 """Tests for lingflow/utils/rate_limiter.py"""
 
-import time
 import threading
+import time
 
 import pytest
 
@@ -83,12 +83,14 @@ class TestSmartRetry:
                 raise Exception("429 Rate Limit")
             return "ok"
 
-        retry = SmartRetry(RateLimitConfig(
-            max_retries=4,
-            base_delay=0.01,
-            exponential_backoff=False,
-            jitter=False,
-        ))
+        retry = SmartRetry(
+            RateLimitConfig(
+                max_retries=4,
+                base_delay=0.01,
+                exponential_backoff=False,
+                jitter=False,
+            )
+        )
         result = retry.execute(flaky)
         assert result == "ok"
         assert retry.success_count == 1
@@ -98,12 +100,14 @@ class TestSmartRetry:
         def always_fail():
             raise Exception("500 Internal Server Error")
 
-        retry = SmartRetry(RateLimitConfig(
-            max_retries=2,
-            base_delay=0.01,
-            exponential_backoff=False,
-            jitter=False,
-        ))
+        retry = SmartRetry(
+            RateLimitConfig(
+                max_retries=2,
+                base_delay=0.01,
+                exponential_backoff=False,
+                jitter=False,
+            )
+        )
         with pytest.raises(Exception, match="500"):
             retry.execute(always_fail)
         assert retry.error_count == 2
@@ -129,51 +133,61 @@ class TestSmartRetry:
         def cb(attempt, error, delay):
             callbacks.append((attempt, str(error)))
 
-        retry = SmartRetry(RateLimitConfig(
-            max_retries=3,
-            base_delay=0.01,
-            exponential_backoff=False,
-            jitter=False,
-        ))
+        retry = SmartRetry(
+            RateLimitConfig(
+                max_retries=3,
+                base_delay=0.01,
+                exponential_backoff=False,
+                jitter=False,
+            )
+        )
         retry.execute(flaky, on_retry=cb)
         assert len(callbacks) == 1
         assert callbacks[0][0] == 0
 
     def test_exponential_backoff_delay(self):
-        retry = SmartRetry(RateLimitConfig(
-            base_delay=1.0,
-            max_delay=100.0,
-            exponential_backoff=True,
-            jitter=False,
-        ))
+        retry = SmartRetry(
+            RateLimitConfig(
+                base_delay=1.0,
+                max_delay=100.0,
+                exponential_backoff=True,
+                jitter=False,
+            )
+        )
         assert retry._calculate_delay(0) == 1.0
         assert retry._calculate_delay(1) == 2.0
         assert retry._calculate_delay(3) == 8.0
 
     def test_fixed_delay(self):
-        retry = SmartRetry(RateLimitConfig(
-            base_delay=0.5,
-            exponential_backoff=False,
-            jitter=False,
-        ))
+        retry = SmartRetry(
+            RateLimitConfig(
+                base_delay=0.5,
+                exponential_backoff=False,
+                jitter=False,
+            )
+        )
         assert retry._calculate_delay(0) == 0.5
         assert retry._calculate_delay(5) == 0.5
 
     def test_max_delay_cap(self):
-        retry = SmartRetry(RateLimitConfig(
-            base_delay=10.0,
-            max_delay=30.0,
-            exponential_backoff=True,
-            jitter=False,
-        ))
+        retry = SmartRetry(
+            RateLimitConfig(
+                base_delay=10.0,
+                max_delay=30.0,
+                exponential_backoff=True,
+                jitter=False,
+            )
+        )
         assert retry._calculate_delay(5) == 30.0
 
     def test_jitter_adds_randomness(self):
-        retry = SmartRetry(RateLimitConfig(
-            base_delay=1.0,
-            jitter=True,
-            exponential_backoff=False,
-        ))
+        retry = SmartRetry(
+            RateLimitConfig(
+                base_delay=1.0,
+                jitter=True,
+                exponential_backoff=False,
+            )
+        )
         delays = [retry._calculate_delay(0) for _ in range(50)]
         assert min(delays) < 1.0
         assert max(delays) > 1.0
@@ -228,12 +242,14 @@ class TestSmartRetry:
                 raise Exception("429 rate limit")
             return "async_ok"
 
-        retry = SmartRetry(RateLimitConfig(
-            max_retries=3,
-            base_delay=0.01,
-            exponential_backoff=False,
-            jitter=False,
-        ))
+        retry = SmartRetry(
+            RateLimitConfig(
+                max_retries=3,
+                base_delay=0.01,
+                exponential_backoff=False,
+                jitter=False,
+            )
+        )
         result = await retry.execute_async(flaky)
         assert result == "async_ok"
 

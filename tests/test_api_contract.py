@@ -4,12 +4,14 @@
 """
 
 from pathlib import Path
+
 import pytest
 
 
 @pytest.fixture
 def lf():
     from lingflow import LingFlow
+
     return LingFlow()
 
 
@@ -18,32 +20,26 @@ class TestPublicAPIContract:
 
     def test_run_workflow_accepts_dict_tasks(self, lf):
         """run_workflow 接受 dict 格式的 task 列表"""
-        result = lf.run_workflow({
-            "tasks": [
-                {"id": "t1", "name": "hello", "description": "test task"}
-            ]
-        })
+        result = lf.run_workflow({"tasks": [{"id": "t1", "name": "hello", "description": "test task"}]})
         assert "t1" in result
         assert result["t1"].success is True
 
     def test_run_workflow_dict_with_priority(self, lf):
         """run_workflow 支持通过 dict 指定 priority"""
-        result = lf.run_workflow({
-            "tasks": [
-                {"id": "t1", "name": "high", "priority": "high"}
-            ]
-        })
+        result = lf.run_workflow({"tasks": [{"id": "t1", "name": "high", "priority": "high"}]})
         assert "t1" in result
         assert result["t1"].success is True
 
     def test_run_workflow_dict_with_dependencies(self, lf):
         """run_workflow 支持通过 dict 指定依赖"""
-        result = lf.run_workflow({
-            "tasks": [
-                {"id": "t1", "name": "first"},
-                {"id": "t2", "name": "second", "depends_on": ["t1"]},
-            ]
-        })
+        result = lf.run_workflow(
+            {
+                "tasks": [
+                    {"id": "t1", "name": "first"},
+                    {"id": "t2", "name": "second", "depends_on": ["t1"]},
+                ]
+            }
+        )
         assert "t1" in result
         assert "t2" in result
         assert result["t1"].success is True
@@ -51,21 +47,13 @@ class TestPublicAPIContract:
 
     def test_run_workflow_dict_with_skill_field(self, lf):
         """run_workflow 支持 skill 字段作为 agent_type"""
-        result = lf.run_workflow({
-            "tasks": [
-                {"id": "t1", "skill": "review", "description": "code review"}
-            ]
-        })
+        result = lf.run_workflow({"tasks": [{"id": "t1", "skill": "review", "description": "code review"}]})
         assert "t1" in result
         assert result["t1"].success is True
 
     def test_run_workflow_dict_with_params(self, lf):
         """run_workflow 支持 params 字段传递给 task"""
-        result = lf.run_workflow({
-            "tasks": [
-                {"id": "t1", "name": "test", "params": {"key": "value"}}
-            ]
-        })
+        result = lf.run_workflow({"tasks": [{"id": "t1", "name": "test", "params": {"key": "value"}}]})
         assert "t1" in result
         assert result["t1"].success is True
 
@@ -82,6 +70,7 @@ class TestPublicAPIContract:
     def test_run_workflow_mixed_task_and_dict(self, lf):
         """run_workflow 支持 Task dataclass 和 dict 混合"""
         from lingflow.common.models import Task, TaskPriority
+
         task = Task(task_id="t1", name="dataclass task", description="test", priority=TaskPriority.NORMAL)
         result = lf.run_workflow({"tasks": [task, {"id": "t2", "name": "dict task"}]})
         assert "t1" in result
@@ -134,25 +123,29 @@ class TestCrossLayerIntegration:
 
     def test_workflow_with_multiple_tasks(self, lf):
         """多任务工作流能完整执行"""
-        result = lf.run_workflow({
-            "tasks": [
-                {"id": "t1", "name": "task one", "description": "first"},
-                {"id": "t2", "name": "task two", "description": "second"},
-                {"id": "t3", "name": "task three", "description": "third"},
-            ]
-        })
+        result = lf.run_workflow(
+            {
+                "tasks": [
+                    {"id": "t1", "name": "task one", "description": "first"},
+                    {"id": "t2", "name": "task two", "description": "second"},
+                    {"id": "t3", "name": "task three", "description": "third"},
+                ]
+            }
+        )
         assert len(result) == 3
         assert all(r.success for r in result.values())
 
     def test_workflow_with_chain_dependencies(self, lf):
         """链式依赖工作流按顺序执行"""
-        result = lf.run_workflow({
-            "tasks": [
-                {"id": "t1", "name": "step 1"},
-                {"id": "t2", "name": "step 2", "depends_on": ["t1"]},
-                {"id": "t3", "name": "step 3", "depends_on": ["t2"]},
-            ]
-        })
+        result = lf.run_workflow(
+            {
+                "tasks": [
+                    {"id": "t1", "name": "step 1"},
+                    {"id": "t2", "name": "step 2", "depends_on": ["t1"]},
+                    {"id": "t3", "name": "step 3", "depends_on": ["t2"]},
+                ]
+            }
+        )
         assert all(result[tid].success for tid in ["t1", "t2", "t3"])
 
     def test_init_creates_coordinator_and_orchestrator(self, lf):

@@ -8,14 +8,15 @@ import logging
 import os
 import secrets
 import threading
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
-from .auto_resume import save_resume_markdown
 from lingflow.compression.token_estimator import TokenEstimator
-from .session_lifecycle import SessionLifecycleManager, LifecyclePhase, SessionSummary  # noqa: F401
+
+from .auto_resume import save_resume_markdown
+from .session_lifecycle import LifecyclePhase, SessionLifecycleManager, SessionSummary  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
@@ -177,9 +178,7 @@ class ContextManager:
                 for d in summary.key_decisions:
                     if d not in self.snapshot.key_decisions:
                         self.snapshot.key_decisions.append(d)
-            self.snapshot.context_summary = (
-                f"[从会话 {summary.session_id} 接续] " + summary.context_summary
-            )
+            self.snapshot.context_summary = f"[从会话 {summary.session_id} 接续] " + summary.context_summary
         return summary
 
     def record_message(self, role: str, content: str, is_important: bool = False) -> None:
@@ -427,9 +426,9 @@ class ContextManager:
     def _get_smart_compressor(self):
         """懒加载 SmartContextCompressor"""
         if self._smart_compressor is None:
+            from lingflow.compression.smart_compressor import CompressionConfig as SmartCompressionConfig
             from lingflow.compression.smart_compressor import (
                 SmartContextCompressor,
-                CompressionConfig as SmartCompressionConfig,
             )
 
             config = SmartCompressionConfig(

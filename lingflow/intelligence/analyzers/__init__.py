@@ -1,14 +1,14 @@
 """情报分析器"""
 
 from .base import (
-    BaseAnalyzer,
-    AnalyzerPipeline,
     AnalyzerConfig,
+    AnalyzerPipeline,
+    BaseAnalyzer,
 )
 from .influence import InfluenceAnalyzer, InfluenceConfig
 from .sentiment import SentimentAnalyzer
-from .trend import TrendAnalyzer, TrendConfig
 from .topic import TopicAnalyzer
+from .trend import TrendAnalyzer, TrendConfig
 
 __all__ = [
     "BaseAnalyzer",

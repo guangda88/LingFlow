@@ -79,11 +79,13 @@ class ExternalIntelligenceSource(KnowledgeSource):
             try:
                 content = report_file.read_text(encoding="utf-8")
                 data = json.loads(content)
-                self._cache["github"].append({
-                    "file": report_file.name,
-                    "data": data,
-                    "loaded_at": datetime.now().isoformat(),
-                })
+                self._cache["github"].append(
+                    {
+                        "file": report_file.name,
+                        "data": data,
+                        "loaded_at": datetime.now().isoformat(),
+                    }
+                )
             except (json.JSONDecodeError, Exception):
                 pass
 
@@ -98,11 +100,13 @@ class ExternalIntelligenceSource(KnowledgeSource):
             try:
                 content = report_file.read_text(encoding="utf-8")
                 data = json.loads(content)
-                self._cache["npm"].append({
-                    "file": report_file.name,
-                    "data": data,
-                    "loaded_at": datetime.now().isoformat(),
-                })
+                self._cache["npm"].append(
+                    {
+                        "file": report_file.name,
+                        "data": data,
+                        "loaded_at": datetime.now().isoformat(),
+                    }
+                )
             except (json.JSONDecodeError, Exception):
                 pass
 
@@ -116,19 +120,17 @@ class ExternalIntelligenceSource(KnowledgeSource):
         for report_file in sorted(self._research_dir.glob("*.md"), reverse=True)[:20]:
             try:
                 content = report_file.read_text(encoding="utf-8")
-                self._cache["research"].append({
-                    "file": report_file.name,
-                    "content": content,
-                    "loaded_at": datetime.now().isoformat(),
-                })
+                self._cache["research"].append(
+                    {
+                        "file": report_file.name,
+                        "content": content,
+                        "loaded_at": datetime.now().isoformat(),
+                    }
+                )
             except Exception:
                 pass
 
-    async def search(
-        self,
-        query: KnowledgeQuery,
-        context: Optional[SearchContext] = None
-    ) -> KnowledgeResult:
+    async def search(self, query: KnowledgeQuery, context: Optional[SearchContext] = None) -> KnowledgeResult:
         """Search external intelligence"""
         items = []
 
@@ -295,10 +297,7 @@ class ExternalIntelligenceSource(KnowledgeSource):
 
     def _score_item(self, item: KnowledgeItem, query: KnowledgeQuery) -> KnowledgeItem:
         """Score an item's relevance"""
-        score = self._calculate_relevance(
-            f"{item.title} {item.content}",
-            query.keywords
-        )
+        score = self._calculate_relevance(f"{item.title} {item.content}", query.keywords)
         return replace(item, relevance_score=score)
 
     def _calculate_relevance(self, text: str, keywords: List[str]) -> float:
@@ -314,14 +313,16 @@ class ExternalIntelligenceSource(KnowledgeSource):
         """Get statistics"""
         stats = await super().get_stats()
 
-        stats.update({
-            "github_reports": len(self._cache.get("github", [])),
-            "npm_reports": len(self._cache.get("npm", [])),
-            "research_reports": len(self._cache.get("research", [])),
-            "github_dir_exists": self._github_dir.exists(),
-            "npm_dir_exists": self._npm_dir.exists(),
-            "research_dir_exists": self._research_dir.exists(),
-        })
+        stats.update(
+            {
+                "github_reports": len(self._cache.get("github", [])),
+                "npm_reports": len(self._cache.get("npm", [])),
+                "research_reports": len(self._cache.get("research", [])),
+                "github_dir_exists": self._github_dir.exists(),
+                "npm_dir_exists": self._npm_dir.exists(),
+                "research_dir_exists": self._research_dir.exists(),
+            }
+        )
 
         return stats
 

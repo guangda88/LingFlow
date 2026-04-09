@@ -1,14 +1,16 @@
 """Extended optimizer module tests for additional coverage."""
 
-import pytest
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
+
 from lingflow.self_optimizer.optimizer import (
     OptimizationRequest,
     OptimizationResult,
-    SimpleSearchSpace,
     ProcessIsolatedOptimizer,
+    SimpleSearchSpace,
     SynchronousOptimizer,
     _create_search_space,
     _grid_search,
@@ -40,8 +42,7 @@ class TestOptimizationResult:
 
     def test_with_error(self):
         r = OptimizationResult(
-            success=False, best_params={}, best_score=0, experiments=0, duration=0,
-            error="something failed"
+            success=False, best_params={}, best_score=0, experiments=0, duration=0, error="something failed"
         )
         assert r.success is False
 
@@ -66,7 +67,6 @@ class TestSimpleSearchSpace:
         sample = space.sample()
         assert sample["x"] in [10, 20]
         assert 0.0 <= sample["y"] <= 5.0
-
 
 
 class TestCreateSearchSpace:
@@ -119,9 +119,7 @@ class TestProcessIsolatedOptimizer:
         with tempfile.TemporaryDirectory() as tmpdir:
             (Path(tmpdir) / "sample.py").write_text("x = 1\n")
             opt = ProcessIsolatedOptimizer()
-            request = OptimizationRequest(
-                target=tmpdir, goal="structure", params={}, config={"max_experiments": 2}
-            )
+            request = OptimizationRequest(target=tmpdir, goal="structure", params={}, config={"max_experiments": 2})
             opt.start_optimization(request)
             assert opt.start_optimization(request) is False
             opt.wait_for_completion(timeout=120)
@@ -131,9 +129,7 @@ class TestProcessIsolatedOptimizer:
             (Path(tmpdir) / "sample.py").write_text("x = 1\n")
             opt = ProcessIsolatedOptimizer()
             assert opt.is_running() is False
-            request = OptimizationRequest(
-                target=tmpdir, goal="structure", params={}, config={"max_experiments": 2}
-            )
+            request = OptimizationRequest(target=tmpdir, goal="structure", params={}, config={"max_experiments": 2})
             opt.start_optimization(request)
             assert opt.is_running() is True
             opt.wait_for_completion(timeout=120)
@@ -144,9 +140,7 @@ class TestProcessIsolatedOptimizer:
             (Path(tmpdir) / "sample.py").write_text("x = 1\n")
             opt = ProcessIsolatedOptimizer()
             assert opt.get_progress() is None
-            request = OptimizationRequest(
-                target=tmpdir, goal="structure", params={}, config={"max_experiments": 2}
-            )
+            request = OptimizationRequest(target=tmpdir, goal="structure", params={}, config={"max_experiments": 2})
             opt.start_optimization(request)
             progress = opt.get_progress()
             assert progress is not None
@@ -161,9 +155,7 @@ class TestProcessIsolatedOptimizer:
         with tempfile.TemporaryDirectory() as tmpdir:
             (Path(tmpdir) / "sample.py").write_text("x = 1\n")
             opt = ProcessIsolatedOptimizer()
-            request = OptimizationRequest(
-                target=tmpdir, goal="structure", params={}, config={"max_experiments": 2}
-            )
+            request = OptimizationRequest(target=tmpdir, goal="structure", params={}, config={"max_experiments": 2})
             opt.start_optimization(request)
             opt.cancel()
             assert opt.is_running() is False
@@ -174,9 +166,7 @@ class TestSynchronousOptimizer:
         with tempfile.TemporaryDirectory() as tmpdir:
             (Path(tmpdir) / "sample.py").write_text("x = 1\n")
             opt = SynchronousOptimizer()
-            request = OptimizationRequest(
-                target=tmpdir, goal="structure", params={}, config={"max_experiments": 2}
-            )
+            request = OptimizationRequest(target=tmpdir, goal="structure", params={}, config={"max_experiments": 2})
             result = opt.optimize(request)
             assert result.success is True
             assert result.experiments == 2
@@ -185,9 +175,7 @@ class TestSynchronousOptimizer:
         with tempfile.TemporaryDirectory() as tmpdir:
             (Path(tmpdir) / "sample.py").write_text("x = 1\n")
             opt = SynchronousOptimizer()
-            request = OptimizationRequest(
-                target=tmpdir, goal="simplicity", params={}, config={"max_experiments": 2}
-            )
+            request = OptimizationRequest(target=tmpdir, goal="simplicity", params={}, config={"max_experiments": 2})
             result = opt.optimize(request)
             assert result.success is True
 
@@ -195,8 +183,6 @@ class TestSynchronousOptimizer:
         with tempfile.TemporaryDirectory() as tmpdir:
             (Path(tmpdir) / "sample.py").write_text("x = 1\n")
             opt = SynchronousOptimizer()
-            request = OptimizationRequest(
-                target=tmpdir, goal="unknown_goal", params={}, config={"max_experiments": 2}
-            )
+            request = OptimizationRequest(target=tmpdir, goal="unknown_goal", params={}, config={"max_experiments": 2})
             result = opt.optimize(request)
             assert result.success is True

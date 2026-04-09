@@ -1,9 +1,11 @@
 """Extended snapshot tests for additional coverage."""
 
 import json
-import pytest
 from pathlib import Path
-from lingflow.testing.snapshot import SnapshotTest, SnapshotMetadata
+
+import pytest
+
+from lingflow.testing.snapshot import SnapshotMetadata, SnapshotTest
 
 
 class TestSnapshotTest:
@@ -69,6 +71,7 @@ class TestSnapshotTest:
         class Custom:
             def __str__(self):
                 return "custom"
+
         assert snapshot._normalize_value(Custom()) == "custom"
 
     def test_compute_diff_missing_keys(self, snapshot):

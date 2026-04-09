@@ -9,9 +9,6 @@
     # 无需 Python 代码
 """
 
-# 简单的 MCP 客户端包装（可选）
-from lingflow.testing.e2e.devtools_client import DevToolsClient, MCPResult, quick_test
-
 # Carbonyl 已弃用 - 仅保留作为参考
 from lingflow.testing.e2e.carbonyl_runner import (
     CarbonylRunner,
@@ -20,6 +17,9 @@ from lingflow.testing.e2e.carbonyl_runner import (
     get_carbonyl_runner,
     run_carbonyl_test,
 )
+
+# 简单的 MCP 客户端包装（可选）
+from lingflow.testing.e2e.devtools_client import DevToolsClient, MCPResult, quick_test
 
 __all__ = [
     "DevToolsClient",

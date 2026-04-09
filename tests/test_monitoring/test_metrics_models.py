@@ -1,14 +1,15 @@
 """Tests for lingflow.monitoring.metrics.models module"""
 
-import pytest
 from datetime import datetime, timedelta
 
+import pytest
+
 from lingflow.monitoring.metrics.models import (
-    MetricType,
-    AlertSeverity,
-    Metric,
     Alert,
+    AlertSeverity,
     HealthCheckResult,
+    Metric,
+    MetricType,
     SystemMetrics,
 )
 
@@ -347,7 +348,9 @@ class TestSystemMetrics:
         assert metrics.is_healthy(thresholds={"cpu_percent": 90.0, "memory_percent": 90.0, "disk_usage_percent": 90.0}) is True
 
         # Should be unhealthy with strict thresholds
-        assert metrics.is_healthy(thresholds={"cpu_percent": 80.0, "memory_percent": 80.0, "disk_usage_percent": 80.0}) is False
+        assert (
+            metrics.is_healthy(thresholds={"cpu_percent": 80.0, "memory_percent": 80.0, "disk_usage_percent": 80.0}) is False
+        )
 
     def test_metrics_is_healthy_unhealthy_cpu(self):
         """Test is_healthy with unhealthy CPU"""

@@ -1,10 +1,11 @@
-import pytest
 import tempfile
 from pathlib import Path
 
+import pytest
+
 from lingflow.self_optimizer.config import (
-    OptimizationConfig,
     DEFAULT_CONFIG,
+    OptimizationConfig,
     get_global_config,
     set_global_config,
 )

@@ -9,21 +9,22 @@ Phase 4 端到端集成测试
 - 敏感性分析
 """
 
-import pytest
 import time
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
+
+import pytest
 
 from lingflow.self_optimizer.phase4.bayesian_optimizer import (
     BayesianOptimizer,
     GridSearchOptimizer,
-    create_optimizer,
+    OptimizationState,
     OptimizationTrial,
-    OptimizationState
+    create_optimizer,
 )
+from lingflow.self_optimizer.phase4.cache import ParameterCache
 from lingflow.self_optimizer.phase4.engine import OptimizationEngine
 from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore
-from lingflow.self_optimizer.phase4.cache import ParameterCache
 
 
 @pytest.mark.phase4
@@ -32,11 +33,7 @@ class TestBayesianOptimizer:
 
     def test_initialization(self, sample_search_space, sample_objective):
         """测试优化器初始化"""
-        optimizer = BayesianOptimizer(
-            sample_search_space,
-            sample_objective,
-            config={"n_trials": 5, "timeout": 10}
-        )
+        optimizer = BayesianOptimizer(sample_search_space, sample_objective, config={"n_trials": 5, "timeout": 10})
 
         assert optimizer.search_space == sample_search_space
         assert optimizer.objective == sample_objective
@@ -45,10 +42,7 @@ class TestBayesianOptimizer:
 
     def test_suggest_parameters(self, sample_search_space, sample_objective):
         """测试参数建议"""
-        optimizer = BayesianOptimizer(
-            sample_search_space,
-            sample_objective
-        )
+        optimizer = BayesianOptimizer(sample_search_space, sample_objective)
 
         params = optimizer.suggest()
 
@@ -64,10 +58,7 @@ class TestBayesianOptimizer:
 
     def test_observe_results(self, sample_search_space, sample_objective):
         """测试结果观察"""
-        optimizer = BayesianOptimizer(
-            sample_search_space,
-            sample_objective
-        )
+        optimizer = BayesianOptimizer(sample_search_space, sample_objective)
 
         params = {"max_class_size": 300, "max_method_count": 15, "max_complexity": 10}
         score = 0.5
@@ -81,11 +72,7 @@ class TestBayesianOptimizer:
 
     def test_optimization_convergence(self, sample_search_space, sample_objective):
         """测试优化收敛"""
-        optimizer = BayesianOptimizer(
-            sample_search_space,
-            sample_objective,
-            config={"n_trials": 20, "timeout": 30}
-        )
+        optimizer = BayesianOptimizer(sample_search_space, sample_objective, config={"n_trials": 20, "timeout": 30})
 
         state = optimizer.optimize()
 
@@ -97,11 +84,7 @@ class TestBayesianOptimizer:
 
     def test_should_stop_conditions(self, sample_search_space, sample_objective):
         """测试停止条件"""
-        optimizer = BayesianOptimizer(
-            sample_search_space,
-            sample_objective,
-            config={"n_trials": 3, "timeout": 60}
-        )
+        optimizer = BayesianOptimizer(sample_search_space, sample_objective, config={"n_trials": 3, "timeout": 60})
 
         # 初始不应该停止
         assert not optimizer.should_stop()
@@ -125,9 +108,7 @@ class TestBayesianOptimizer:
             return ((x - 300) ** 2 + (y - 15) ** 2) / 10000
 
         optimizer = BayesianOptimizer(
-            sample_search_space,
-            slow_objective,
-            config={"n_trials": 100, "timeout": 0.5}  # 0.5秒超时
+            sample_search_space, slow_objective, config={"n_trials": 100, "timeout": 0.5}  # 0.5秒超时
         )
 
         start = time.time()
@@ -138,7 +119,7 @@ class TestBayesianOptimizer:
         assert state.should_stop is True
         # 由于每次评估需要0.2秒，最多执行2次就超时
         assert elapsed >= 0.4  # 至少执行了两次
-        assert elapsed < 1.0   # 但不应该太久
+        assert elapsed < 1.0  # 但不应该太久
 
 
 @pytest.mark.phase4
@@ -147,11 +128,7 @@ class TestGridSearchOptimizer:
 
     def test_grid_search_fallback(self, sample_search_space, sample_objective):
         """测试网格搜索降级"""
-        optimizer = GridSearchOptimizer(
-            sample_search_space,
-            sample_objective,
-            config={"max_experiments": 10, "timeout": 30}
-        )
+        optimizer = GridSearchOptimizer(sample_search_space, sample_objective, config={"max_experiments": 10, "timeout": 30})
 
         state = optimizer.optimize()
 
@@ -161,11 +138,7 @@ class TestGridSearchOptimizer:
 
     def test_grid_search_parameter_generation(self, sample_search_space, sample_objective):
         """测试网格搜索参数生成"""
-        optimizer = GridSearchOptimizer(
-            sample_search_space,
-            sample_objective,
-            config={"max_experiments": 5}
-        )
+        optimizer = GridSearchOptimizer(sample_search_space, sample_objective, config={"max_experiments": 5})
 
         points = optimizer._generate_grid_points()
 
@@ -284,16 +257,9 @@ class TestOptimizationEngine:
 
     def test_single_objective_optimization(self, temp_project):
         """测试单目标优化"""
-        engine = OptimizationEngine(config={
-            "n_trials": 5,
-            "timeout": 30,
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"n_trials": 5, "timeout": 30, "generate_reports": False})
 
-        result = engine.optimize_single_objective(
-            target_path=temp_project,
-            goal="structure"
-        )
+        result = engine.optimize_single_objective(target_path=temp_project, goal="structure")
 
         assert "goal" in result
         assert "best_params" in result
@@ -303,15 +269,10 @@ class TestOptimizationEngine:
 
     def test_multi_objective_optimization(self, temp_project):
         """测试多目标优化"""
-        engine = OptimizationEngine(config={
-            "generate_reports": False,
-            "max_evaluations": 20
-        })
+        engine = OptimizationEngine(config={"generate_reports": False, "max_evaluations": 20})
 
         result = engine.optimize_multi_objective(
-            target_path=temp_project,
-            goals=["structure", "simplicity"],
-            weights={"structure": 0.6, "simplicity": 0.4}
+            target_path=temp_project, goals=["structure", "simplicity"], weights={"structure": 0.6, "simplicity": 0.4}
         )
 
         assert result["type"] == "multi_objective"
@@ -321,16 +282,9 @@ class TestOptimizationEngine:
 
     def test_sensitivity_analysis(self, temp_project):
         """测试敏感性分析"""
-        engine = OptimizationEngine(config={
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"generate_reports": False})
 
-        result = engine.analyze_sensitivity(
-            target_path=temp_project,
-            goal="structure",
-            method="local",
-            n_samples=10
-        )
+        result = engine.analyze_sensitivity(target_path=temp_project, goal="structure", method="local", n_samples=10)
 
         assert "method" in result
         assert "parameters" in result
@@ -367,12 +321,7 @@ class TestOptimizerFactory:
 
     def test_create_bayesian_optimizer(self, sample_search_space, sample_objective):
         """测试创建贝叶斯优化器"""
-        optimizer = create_optimizer(
-            sample_search_space,
-            sample_objective,
-            config={"n_trials": 5},
-            prefer_bayesian=True
-        )
+        optimizer = create_optimizer(sample_search_space, sample_objective, config={"n_trials": 5}, prefer_bayesian=True)
 
         # 可能返回贝叶斯或网格搜索（取决于Optuna是否可用）
         assert isinstance(optimizer, (BayesianOptimizer, GridSearchOptimizer))
@@ -380,10 +329,7 @@ class TestOptimizerFactory:
     def test_create_grid_search_optimizer(self, sample_search_space, sample_objective):
         """测试创建网格搜索优化器"""
         optimizer = create_optimizer(
-            sample_search_space,
-            sample_objective,
-            config={"max_experiments": 5},
-            prefer_bayesian=False
+            sample_search_space, sample_objective, config={"max_experiments": 5}, prefer_bayesian=False
         )
 
         assert isinstance(optimizer, GridSearchOptimizer)
@@ -402,16 +348,9 @@ class TestOptimizationWorkflows:
         cache = ParameterCache()
 
         # 2. 运行优化
-        engine = OptimizationEngine(config={
-            "n_trials": 5,
-            "timeout": 30,
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"n_trials": 5, "timeout": 30, "generate_reports": False})
 
-        result = engine.optimize_single_objective(
-            target_path=temp_project,
-            goal="structure"
-        )
+        result = engine.optimize_single_objective(target_path=temp_project, goal="structure")
 
         # 3. 存储结果
         version = store.save(result["best_params"], metadata=result)
@@ -442,11 +381,7 @@ class TestOptimizationWorkflows:
 
     def test_concurrent_optimizations(self, temp_project):
         """测试并发优化（模拟）"""
-        engine = OptimizationEngine(config={
-            "n_trials": 3,
-            "timeout": 15,
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"n_trials": 3, "timeout": 15, "generate_reports": False})
 
         # 顺序运行多个优化
         results = []

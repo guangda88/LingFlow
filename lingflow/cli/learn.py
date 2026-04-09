@@ -25,8 +25,8 @@ def run_learn(tools, target, output, apply, rules_only, verbose):
     # 导入辅助函数
     from lingflow.cli_helpers import (
         detect_available_tools,
-        run_tool_scans,
         extract_and_save_rules,
+        run_tool_scans,
     )
 
     click.echo("\n🧠 启动 AI 工具学习...")

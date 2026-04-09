@@ -2,8 +2,10 @@
 测试结构评估器
 """
 
-import pytest
 from pathlib import Path
+
+import pytest
+
 from lingflow.self_optimizer.evaluator import StructureEvaluator
 
 

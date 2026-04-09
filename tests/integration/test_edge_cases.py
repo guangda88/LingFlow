@@ -10,26 +10,20 @@
 - 错误恢复
 """
 
-import pytest
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
+from typing import Any, Dict
 from unittest.mock import Mock, patch
-from typing import Dict, Any
+
+import pytest
 
 from lingflow.self_optimizer.phase4.bayesian_optimizer import BayesianOptimizer
-from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore
 from lingflow.self_optimizer.phase4.engine import OptimizationEngine
-from lingflow.self_optimizer.phase5.learning import RuleExtractor
+from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore
 from lingflow.self_optimizer.phase5.knowledge import InMemoryKnowledgeBase
-from lingflow.self_optimizer.phase5.models import (
-    FeedbackItem,
-    LearnedRule,
-    Pattern,
-    FeedbackCategory,
-    SeverityLevel,
-    ToolType
-)
+from lingflow.self_optimizer.phase5.learning import RuleExtractor
+from lingflow.self_optimizer.phase5.models import FeedbackCategory, FeedbackItem, LearnedRule, Pattern, SeverityLevel, ToolType
 
 
 @pytest.mark.integration
@@ -48,19 +42,15 @@ class TestEmptyInputs:
         engine = OptimizationEngine(config={"generate_reports": False})
 
         # 空搜索空间应该优雅处理，返回空结果或默认值
-        result = engine.optimize_single_objective(
-            target_path=temp_project,
-            goal="structure",
-            search_space={}
-        )
+        result = engine.optimize_single_objective(target_path=temp_project, goal="structure", search_space={})
 
         # 应该返回一个结果，即使搜索空间为空
         assert result is not None
         # 结果应该是字典形式，包含基本字段
         if isinstance(result, dict):
-            assert 'best_params' in result or 'params' in result
+            assert "best_params" in result or "params" in result
         else:
-            assert hasattr(result, 'best_params') or hasattr(result, 'params')
+            assert hasattr(result, "best_params") or hasattr(result, "params")
 
     def test_empty_knowledge_base_search(self):
         """测试空知识库搜索"""
@@ -92,7 +82,7 @@ class TestEmptyInputs:
             pattern=pattern,
             tools=["Ruff"],
             frequency=1,
-            confidence=0.8
+            confidence=0.8,
         )
 
         # 空模式应该被创建
@@ -120,7 +110,7 @@ class TestLargeInputs:
                 line=i % 1000,
                 snippet=f"code{i}",
                 suggestion=f"fix{i}",
-                confidence=0.5 + (i % 50) / 100
+                confidence=0.5 + (i % 50) / 100,
             )
             for i in range(1000)
         ]
@@ -148,13 +138,13 @@ class TestLargeInputs:
                 pattern=pattern,
                 tools=[f"Tool{i % 5}"],
                 frequency=i + 1,
-                confidence=0.5 + (i % 50) / 100
+                confidence=0.5 + (i % 50) / 100,
             )
             kb.add_rule(rule)
 
         # 验证能够处理
         stats = kb.get_statistics()
-        assert stats['total_rules'] == 1000
+        assert stats["total_rules"] == 1000
 
         # 测试搜索性能
         results = kb.search_rules("Rule")
@@ -162,19 +152,12 @@ class TestLargeInputs:
 
     def test_large_search_space(self):
         """测试大型搜索空间"""
-        large_search_space = {
-            f"param_{i}": {"type": "int", "min": 0, "max": 100}
-            for i in range(50)
-        }
+        large_search_space = {f"param_{i}": {"type": "int", "min": 0, "max": 100} for i in range(50)}
 
         def objective(params):
             return sum(params.values()) / len(params)
 
-        optimizer = BayesianOptimizer(
-            large_search_space,
-            objective,
-            config={"n_trials": 2}  # 减少试验次数以加速测试
-        )
+        optimizer = BayesianOptimizer(large_search_space, objective, config={"n_trials": 2})  # 减少试验次数以加速测试
 
         # 应该能够处理大型搜索空间
         params = optimizer.suggest()
@@ -182,18 +165,12 @@ class TestLargeInputs:
 
     def test_many_optimization_trials(self):
         """测试多次优化试验"""
-        search_space = {
-            "x": {"type": "int", "min": 0, "max": 100}
-        }
+        search_space = {"x": {"type": "int", "min": 0, "max": 100}}
 
         def objective(params):
             return abs(params["x"] - 50)
 
-        optimizer = BayesianOptimizer(
-            search_space,
-            objective,
-            config={"n_trials": 100}
-        )
+        optimizer = BayesianOptimizer(search_space, objective, config={"n_trials": 100})
 
         state = optimizer.optimize()
 
@@ -210,17 +187,13 @@ class TestExtremeParameters:
         extreme_search_space = {
             "very_large": {"type": "int", "min": 1, "max": 1000000},
             "very_small": {"type": "float", "min": 0.000001, "max": 0.00001},
-            "many_choices": {"type": "categorical", "choices": list(range(1000))}
+            "many_choices": {"type": "categorical", "choices": list(range(1000))},
         }
 
         def objective(params):
             return 1.0
 
-        optimizer = BayesianOptimizer(
-            extreme_search_space,
-            objective,
-            config={"n_trials": 3}
-        )
+        optimizer = BayesianOptimizer(extreme_search_space, objective, config={"n_trials": 3})
 
         # 应该能够处理极端值
         params = optimizer.suggest()
@@ -235,11 +208,7 @@ class TestExtremeParameters:
         def objective(params):
             return params["x"]
 
-        optimizer = BayesianOptimizer(
-            search_space,
-            objective,
-            config={"n_trials": 0}
-        )
+        optimizer = BayesianOptimizer(search_space, objective, config={"n_trials": 0})
 
         state = optimizer.optimize()
 
@@ -252,14 +221,11 @@ class TestExtremeParameters:
 
         def slow_objective(params):
             import time
+
             time.sleep(0.1)
             return params["x"]
 
-        optimizer = BayesianOptimizer(
-            search_space,
-            slow_objective,
-            config={"timeout": 0.1}  # 0.1秒超时
-        )
+        optimizer = BayesianOptimizer(search_space, slow_objective, config={"timeout": 0.1})  # 0.1秒超时
 
         state = optimizer.optimize()
 
@@ -277,7 +243,7 @@ class TestExtremeParameters:
             pattern=pattern,
             tools=["Ruff"],
             frequency=1,
-            confidence=0.8
+            confidence=0.8,
         )
         rule.quality_score = -0.5  # 无效值
 
@@ -309,17 +275,14 @@ class TestConcurrentAccess:
                         pattern=pattern,
                         tools=["Ruff"],
                         frequency=1,
-                        confidence=0.8
+                        confidence=0.8,
                     )
                     kb.add_rule(rule)
             except Exception as e:
                 errors.append(e)
 
         # 创建多个线程
-        threads = [
-            threading.Thread(target=add_rules, args=(i,))
-            for i in range(5)
-        ]
+        threads = [threading.Thread(target=add_rules, args=(i,)) for i in range(5)]
 
         # 启动所有线程
         for t in threads:
@@ -334,27 +297,20 @@ class TestConcurrentAccess:
 
         # 验证规则数量
         stats = kb.get_statistics()
-        assert stats['total_rules'] == 50  # 5线程 * 10规则
+        assert stats["total_rules"] == 50  # 5线程 * 10规则
 
     def test_concurrent_optimization(self, temp_project):
         """测试并发优化"""
         import threading
 
-        engine = OptimizationEngine(config={
-            "n_trials": 2,
-            "timeout": 15,
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"n_trials": 2, "timeout": 15, "generate_reports": False})
 
         results = []
         errors = []
 
         def run_optimization(goal):
             try:
-                result = engine.optimize_single_objective(
-                    target_path=temp_project,
-                    goal=goal
-                )
+                result = engine.optimize_single_objective(target_path=temp_project, goal=goal)
                 results.append(result)
             except Exception as e:
                 errors.append(e)
@@ -362,7 +318,7 @@ class TestConcurrentAccess:
         # 运行多个并发优化
         threads = [
             threading.Thread(target=run_optimization, args=("structure",)),
-            threading.Thread(target=run_optimization, args=("simplicity",))
+            threading.Thread(target=run_optimization, args=("simplicity",)),
         ]
 
         for t in threads:
@@ -396,7 +352,7 @@ class TestResourceLimits:
                 line=1,
                 snippet="code",
                 suggestion="fix",
-                confidence=0.8
+                confidence=0.8,
             )
             for i in range(10000)
         ]
@@ -432,6 +388,7 @@ class TestErrorRecovery:
     def test_corrupted_storage_recovery(self, tmp_path):
         """测试损坏存储的恢复"""
         import json
+
         storage_path = tmp_path / "corrupted" / "index" / "index.json"
         storage_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -463,7 +420,7 @@ class TestErrorRecovery:
                 line=-1,  # 无效行号
                 snippet="",  # 空片段
                 suggestion="",
-                confidence=-1.0  # 无效置信度
+                confidence=-1.0,  # 无效置信度
             )
         ]
 
@@ -475,26 +432,16 @@ class TestErrorRecovery:
 
     def test_optimization_failure_recovery(self, temp_project):
         """测试优化失败的恢复"""
-        engine = OptimizationEngine(config={
-            "n_trials": 2,
-            "timeout": 10,
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"n_trials": 2, "timeout": 10, "generate_reports": False})
 
         # 第一次优化可能失败
         try:
-            result1 = engine.optimize_single_objective(
-                target_path=temp_project,
-                goal="structure"
-            )
+            result1 = engine.optimize_single_objective(target_path=temp_project, goal="structure")
         except Exception as e:
             result1 = None
 
         # 第二次优化应该能够成功
-        result2 = engine.optimize_single_objective(
-            target_path=temp_project,
-            goal="structure"
-        )
+        result2 = engine.optimize_single_objective(target_path=temp_project, goal="structure")
 
         # 至少第二次应该成功
         assert result2 is not None
@@ -507,7 +454,7 @@ class TestErrorRecovery:
         adapter = SemgrepAdapter()
 
         # Mock网络故障
-        with patch('subprocess.run') as mock_run:
+        with patch("subprocess.run") as mock_run:
             mock_run.side_effect = Exception("Network error")
 
             # 应该优雅处理网络故障
@@ -539,7 +486,7 @@ class TestBoundaryConditions:
                 line=1,
                 snippet="code",
                 suggestion="fix",
-                confidence=0.8
+                confidence=0.8,
             )
         ]
 
@@ -564,7 +511,7 @@ class TestBoundaryConditions:
                 line=1,
                 snippet="code",
                 suggestion="fix",
-                confidence=0.8
+                confidence=0.8,
             )
             for _ in range(3)  # 恰好3次
         ]
@@ -591,7 +538,7 @@ class TestBoundaryConditions:
                 line=1,
                 snippet="code",
                 suggestion="fix",
-                confidence=0.8
+                confidence=0.8,
             )
             for i in range(20)  # 20个不同的规则
         ]

@@ -19,7 +19,7 @@ def optimize():
 @click.option("--report", "-r", help="保存报告到文件")
 def run(goal, target, async_mode, experiments, report):
     """运行自优化"""
-    from lingflow.self_optimizer import quick_optimize, StructureEvaluator, OptimizationAdvisor
+    from lingflow.self_optimizer import OptimizationAdvisor, StructureEvaluator, quick_optimize
     from lingflow.self_optimizer.config import get_global_config
 
     click.echo(f"\n🔍 启动 {goal} 优化...")

@@ -3,7 +3,7 @@
 提供监控系统的核心数据模型。
 """
 
-from .models import Metric, MetricType, Alert, AlertSeverity, HealthCheckResult, SystemMetrics
+from .models import Alert, AlertSeverity, HealthCheckResult, Metric, MetricType, SystemMetrics
 
 __all__ = [
     "Metric",

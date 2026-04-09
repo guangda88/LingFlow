@@ -3,9 +3,10 @@ LingMinOpt 搜索空间定义
 支持离散、连续、分类参数
 """
 
-from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 

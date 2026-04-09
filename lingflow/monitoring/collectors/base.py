@@ -202,8 +202,9 @@ class HealthCheckCollector:
         Returns:
             检查结果
         """
-        from ..metrics.models import HealthCheckResult
         import time
+
+        from ..metrics.models import HealthCheckResult
 
         start = time.time()
         usage = shutil.disk_usage(path)
@@ -235,8 +236,9 @@ class HealthCheckCollector:
         Returns:
             检查结果
         """
-        from ..metrics.models import HealthCheckResult
         import time
+
+        from ..metrics.models import HealthCheckResult
 
         start = time.time()
 

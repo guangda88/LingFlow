@@ -11,7 +11,7 @@ class TestColorThemesStructure:
 
     def test_all_themes_have_required_keys(self):
         """Test all themes have required color keys"""
-        required_keys = {'primary', 'secondary', 'success', 'danger', 'background', 'text'}
+        required_keys = {"primary", "secondary", "success", "danger", "background", "text"}
         for theme_name, theme_colors in COLOR_THEMES.items():
             missing_keys = required_keys - set(theme_colors.keys())
             assert not missing_keys, f"Theme '{theme_name}' missing keys: {missing_keys}"
@@ -20,15 +20,13 @@ class TestColorThemesStructure:
         """Test all theme colors are valid hex colors"""
         for theme_name, theme_colors in COLOR_THEMES.items():
             for color_key, color_value in theme_colors.items():
-                assert color_value.startswith('#'), \
-                    f"Theme '{theme_name}' color '{color_key}' is not hex: {color_value}"
+                assert color_value.startswith("#"), f"Theme '{theme_name}' color '{color_key}' is not hex: {color_value}"
                 # Check hex length (7 chars including # for standard hex)
-                assert len(color_value) == 7, \
-                    f"Theme '{theme_name}' color '{color_key}' has invalid length: {color_value}"
+                assert len(color_value) == 7, f"Theme '{theme_name}' color '{color_key}' has invalid length: {color_value}"
 
     def test_default_theme_exists(self):
         """Test default theme exists"""
-        assert 'default' in COLOR_THEMES
+        assert "default" in COLOR_THEMES
 
     def test_theme_names(self, all_theme_names):
         """Test expected theme names exist"""
@@ -41,27 +39,27 @@ class TestDefaultTheme:
 
     def test_default_primary_color(self):
         """Test default primary color"""
-        assert COLOR_THEMES['default']['primary'] == '#007bff'
+        assert COLOR_THEMES["default"]["primary"] == "#007bff"
 
     def test_default_secondary_color(self):
         """Test default secondary color"""
-        assert COLOR_THEMES['default']['secondary'] == '#6c757d'
+        assert COLOR_THEMES["default"]["secondary"] == "#6c757d"
 
     def test_default_success_color(self):
         """Test default success color"""
-        assert COLOR_THEMES['default']['success'] == '#28a745'
+        assert COLOR_THEMES["default"]["success"] == "#28a745"
 
     def test_default_danger_color(self):
         """Test default danger color"""
-        assert COLOR_THEMES['default']['danger'] == '#dc3545'
+        assert COLOR_THEMES["default"]["danger"] == "#dc3545"
 
     def test_default_background_color(self):
         """Test default background color"""
-        assert COLOR_THEMES['default']['background'] == '#ffffff'
+        assert COLOR_THEMES["default"]["background"] == "#ffffff"
 
     def test_default_text_color(self):
         """Test default text color"""
-        assert COLOR_THEMES['default']['text'] == '#333333'
+        assert COLOR_THEMES["default"]["text"] == "#333333"
 
 
 class TestDarkTheme:
@@ -69,18 +67,18 @@ class TestDarkTheme:
 
     def test_dark_primary_color(self):
         """Test dark theme primary color"""
-        assert COLOR_THEMES['dark']['primary'] == '#0d6efd'
+        assert COLOR_THEMES["dark"]["primary"] == "#0d6efd"
 
     def test_dark_background_is_dark(self):
         """Test dark theme background is actually dark"""
-        bg = COLOR_THEMES['dark']['background']
-        assert bg == '#1a1a1a' or bg == '#000000'
+        bg = COLOR_THEMES["dark"]["background"]
+        assert bg == "#1a1a1a" or bg == "#000000"
 
     def test_dark_text_is_light(self):
         """Test dark theme text is light colored"""
-        text = COLOR_THEMES['dark']['text']
+        text = COLOR_THEMES["dark"]["text"]
         # Light colors have higher values
-        assert text == '#f8f9fa' or text == '#ffffff'
+        assert text == "#f8f9fa" or text == "#ffffff"
 
 
 class TestNatureTheme:
@@ -88,13 +86,13 @@ class TestNatureTheme:
 
     def test_nature_primary_is_green(self):
         """Test nature theme primary is green"""
-        primary = COLOR_THEMES['nature']['primary']
-        assert '#2' in primary or '#3' in primary or '#4' in primary
+        primary = COLOR_THEMES["nature"]["primary"]
+        assert "#2" in primary or "#3" in primary or "#4" in primary
 
     def test_nature_secondary_is_green(self):
         """Test nature theme secondary is green"""
-        secondary = COLOR_THEMES['nature']['secondary']
-        assert '#5' in secondary or '#6' in secondary or '#7' in secondary
+        secondary = COLOR_THEMES["nature"]["secondary"]
+        assert "#5" in secondary or "#6" in secondary or "#7" in secondary
 
 
 class TestSunsetTheme:
@@ -102,15 +100,15 @@ class TestSunsetTheme:
 
     def test_sunset_primary_is_warm(self):
         """Test sunset theme primary is warm color"""
-        primary = COLOR_THEMES['sunset']['primary']
+        primary = COLOR_THEMES["sunset"]["primary"]
         # Orange/yellow/warm tones
-        assert primary in ['#f77f00', '#fcbf49', '#e76f51']
+        assert primary in ["#f77f00", "#fcbf49", "#e76f51"]
 
     def test_sunset_secondary_is_warm(self):
         """Test sunset theme secondary is warm color"""
-        secondary = COLOR_THEMES['sunset']['secondary']
+        secondary = COLOR_THEMES["sunset"]["secondary"]
         # Yellow/warm tones
-        assert '#f' in secondary
+        assert "#f" in secondary
 
 
 class TestThemeInCssGeneration:
@@ -119,38 +117,38 @@ class TestThemeInCssGeneration:
     def test_css_includes_theme_variables(self):
         """Test CSS includes theme variables"""
         result = generate_css([], "default", False)
-        assert ':root {' in result
-        assert '--color-primary:' in result
-        assert '--color-secondary:' in result
+        assert ":root {" in result
+        assert "--color-primary:" in result
+        assert "--color-secondary:" in result
 
     def test_default_theme_in_css(self):
         """Test default theme colors in CSS"""
         result = generate_css([], "default", False)
-        assert '--color-primary: #007bff' in result
-        assert '--color-secondary: #6c757d' in result
+        assert "--color-primary: #007bff" in result
+        assert "--color-secondary: #6c757d" in result
 
     def test_dark_theme_in_css(self):
         """Test dark theme colors in CSS"""
         result = generate_css([], "dark", False)
-        assert '--color-primary: #0d6efd' in result
-        assert '--color-background: #1a1a1a' in result
+        assert "--color-primary: #0d6efd" in result
+        assert "--color-background: #1a1a1a" in result
 
     def test_nature_theme_in_css(self):
         """Test nature theme colors in CSS"""
         result = generate_css([], "nature", False)
-        assert '--color-primary: #2d6a4f' in result
-        assert '--color-secondary: #52b788' in result
+        assert "--color-primary: #2d6a4f" in result
+        assert "--color-secondary: #52b788" in result
 
     def test_sunset_theme_in_css(self):
         """Test sunset theme colors in CSS"""
         result = generate_css([], "sunset", False)
-        assert '--color-primary: #f77f00' in result
-        assert '--color-secondary: #fcbf49' in result
+        assert "--color-primary: #f77f00" in result
+        assert "--color-secondary: #fcbf49" in result
 
     def test_unknown_theme_skips_variables(self):
         """Test unknown theme skips theme variables"""
         result = generate_css([], "nonexistent", False)
-        assert ':root {' not in result
+        assert ":root {" not in result
 
 
 class TestThemeInMockupGeneration:
@@ -158,37 +156,37 @@ class TestThemeInMockupGeneration:
 
     def test_mockup_with_default_theme(self):
         """Test mockup generation with default theme"""
-        result = generate_mockup({'requirement': 'create a navbar', 'theme': 'default'})
+        result = generate_mockup({"requirement": "create a navbar", "theme": "default"})
         assert result is not None
-        assert result['metadata']['theme'] == 'default'
-        assert '--color-primary: #007bff' in result['css']
+        assert result["metadata"]["theme"] == "default"
+        assert "--color-primary: #007bff" in result["css"]
 
     def test_mockup_with_dark_theme(self):
         """Test mockup generation with dark theme"""
-        result = generate_mockup({'requirement': 'create a navbar', 'theme': 'dark'})
+        result = generate_mockup({"requirement": "create a navbar", "theme": "dark"})
         assert result is not None
-        assert result['metadata']['theme'] == 'dark'
-        assert '--color-primary: #0d6efd' in result['css']
+        assert result["metadata"]["theme"] == "dark"
+        assert "--color-primary: #0d6efd" in result["css"]
 
     def test_mockup_with_nature_theme(self):
         """Test mockup generation with nature theme"""
-        result = generate_mockup({'requirement': 'create a navbar', 'theme': 'nature'})
+        result = generate_mockup({"requirement": "create a navbar", "theme": "nature"})
         assert result is not None
-        assert result['metadata']['theme'] == 'nature'
-        assert '--color-primary: #2d6a4f' in result['css']
+        assert result["metadata"]["theme"] == "nature"
+        assert "--color-primary: #2d6a4f" in result["css"]
 
     def test_mockup_with_sunset_theme(self):
         """Test mockup generation with sunset theme"""
-        result = generate_mockup({'requirement': 'create a navbar', 'theme': 'sunset'})
+        result = generate_mockup({"requirement": "create a navbar", "theme": "sunset"})
         assert result is not None
-        assert result['metadata']['theme'] == 'sunset'
-        assert '--color-primary: #f77f00' in result['css']
+        assert result["metadata"]["theme"] == "sunset"
+        assert "--color-primary: #f77f00" in result["css"]
 
     def test_mockup_default_theme_when_not_specified(self):
         """Test default theme is used when not specified"""
-        result = generate_mockup({'requirement': 'create a navbar'})
+        result = generate_mockup({"requirement": "create a navbar"})
         assert result is not None
-        assert result['metadata']['theme'] == 'default'
+        assert result["metadata"]["theme"] == "default"
 
 
 class TestThemeConsistency:
@@ -205,8 +203,8 @@ class TestThemeConsistency:
         result_default = generate_css([], "default", False)
         result_dark = generate_css([], "dark", False)
         assert result_default != result_dark
-        assert '#007bff' in result_default
-        assert '#0d6efd' in result_dark
+        assert "#007bff" in result_default
+        assert "#0d6efd" in result_dark
 
     def test_theme_affects_all_color_variables(self):
         """Test theme affects all color variables"""
@@ -214,9 +212,8 @@ class TestThemeConsistency:
             result = generate_css([], theme_name, False)
             theme = COLOR_THEMES[theme_name]
             for color_key, color_value in theme.items():
-                css_var = f'--color-{color_key}: {color_value}'
-                assert css_var in result, \
-                    f"Theme '{theme_name}' missing CSS variable: {css_var}"
+                css_var = f"--color-{color_key}: {color_value}"
+                assert css_var in result, f"Theme '{theme_name}' missing CSS variable: {css_var}"
 
 
 class TestThemeEdgeCases:
@@ -240,8 +237,8 @@ class TestThemeEdgeCases:
         result_upper = generate_css([], "DEFAULT", False)
         # Different case should produce different results
         # (uppercase won't match, so no theme variables)
-        assert '--color-primary:' in result_lower
-        assert '--color-primary:' not in result_upper
+        assert "--color-primary:" in result_lower
+        assert "--color-primary:" not in result_upper
 
     def test_theme_with_special_characters(self):
         """Test theme name with special characters"""
@@ -255,11 +252,10 @@ class TestThemeColorsValidity:
 
     def test_all_hex_colors_valid(self):
         """Test all hex colors are valid 6-digit hex codes"""
-        hex_pattern = re.compile(r'^#[0-9a-fA-F]{6}$')
+        hex_pattern = re.compile(r"^#[0-9a-fA-F]{6}$")
         for theme_name, theme_colors in COLOR_THEMES.items():
             for color_key, color_value in theme_colors.items():
-                assert hex_pattern.match(color_value), \
-                    f"Invalid hex color in theme '{theme_name}': {color_key}={color_value}"
+                assert hex_pattern.match(color_value), f"Invalid hex color in theme '{theme_name}': {color_key}={color_value}"
 
     def test_no_duplicate_theme_colors(self):
         """Test no duplicate color values within a theme (reasonable test)"""
@@ -267,8 +263,7 @@ class TestThemeColorsValidity:
         for theme_name, theme_colors in COLOR_THEMES.items():
             values = list(theme_colors.values())
             # Check that not ALL colors are the same
-            assert len(set(values)) > 1, \
-                f"Theme '{theme_name}' has all identical colors"
+            assert len(set(values)) > 1, f"Theme '{theme_name}' has all identical colors"
 
 
 # Import re for regex

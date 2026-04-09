@@ -12,19 +12,14 @@ LingFlow 安全分析器测试套件
 - 沙箱集成
 """
 
-import unittest
-import sys
 import os
+import sys
+import unittest
 
 # 添加项目根目录到路径
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from lingflow.common.security_analyzer import (
-    SecurityAnalyzer,
-    SecurityViolation,
-    analyze_code_security,
-    get_security_report
-)
+from lingflow.common.security_analyzer import SecurityAnalyzer, SecurityViolation, analyze_code_security, get_security_report
 
 
 class TestSecurityAnalyzer(unittest.TestCase):
@@ -33,13 +28,13 @@ class TestSecurityAnalyzer(unittest.TestCase):
     def setUp(self):
         """设置测试环境"""
         self.allowed_modules = {
-            'typing',
-            'dataclasses',
-            'datetime',
-            'math',
-            'time',
-            'json',
-            'random',
+            "typing",
+            "dataclasses",
+            "datetime",
+            "math",
+            "time",
+            "json",
+            "random",
         }
         self.analyzer = SecurityAnalyzer(self.allowed_modules)
 
@@ -59,8 +54,8 @@ print(f"Result: {result}")
         invalid_code = "def broken(:\n    return 1"
         violations = self.analyzer.analyze(invalid_code)
         self.assertGreater(len(violations), 0)
-        self.assertEqual(violations[0].severity, 'CRITICAL')
-        self.assertEqual(violations[0].violation_type, 'SYNTAX_ERROR')
+        self.assertEqual(violations[0].severity, "CRITICAL")
+        self.assertEqual(violations[0].violation_type, "SYNTAX_ERROR")
 
 
 class TestForbiddenImportDetection(unittest.TestCase):
@@ -68,7 +63,7 @@ class TestForbiddenImportDetection(unittest.TestCase):
 
     def setUp(self):
         """设置测试环境"""
-        self.allowed_modules = {'typing', 'dataclasses', 'datetime'}
+        self.allowed_modules = {"typing", "dataclasses", "datetime"}
         self.analyzer = SecurityAnalyzer(self.allowed_modules)
 
     def test_os_module_import(self):
@@ -76,29 +71,29 @@ class TestForbiddenImportDetection(unittest.TestCase):
         code = "import os"
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        self.assertEqual(violations[0].violation_type, 'FORBIDDEN_IMPORT')
-        self.assertIn('os', violations[0].message)
+        self.assertEqual(violations[0].violation_type, "FORBIDDEN_IMPORT")
+        self.assertIn("os", violations[0].message)
 
     def test_sys_module_import(self):
         """测试sys模块导入检测"""
         code = "import sys"
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        self.assertEqual(violations[0].violation_type, 'FORBIDDEN_IMPORT')
+        self.assertEqual(violations[0].violation_type, "FORBIDDEN_IMPORT")
 
     def test_subprocess_module_import(self):
         """测试subprocess模块导入检测"""
         code = "import subprocess"
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        self.assertEqual(violations[0].violation_type, 'FORBIDDEN_IMPORT')
+        self.assertEqual(violations[0].violation_type, "FORBIDDEN_IMPORT")
 
     def test_from_import_forbidden_module(self):
         """测试from导入禁止模块"""
         code = "from os import path"
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        self.assertEqual(violations[0].violation_type, 'FORBIDDEN_IMPORT')
+        self.assertEqual(violations[0].violation_type, "FORBIDDEN_IMPORT")
 
     def test_allowed_module_import(self):
         """测试允许的模块导入"""
@@ -131,40 +126,40 @@ class TestDangerousFunctionDetection(unittest.TestCase):
         code = "result = eval('1 + 1')"
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        eval_violation = next(v for v in violations if v.violation_type == 'FORBIDDEN_FUNCTION')
-        self.assertIn('eval', eval_violation.message)
+        eval_violation = next(v for v in violations if v.violation_type == "FORBIDDEN_FUNCTION")
+        self.assertIn("eval", eval_violation.message)
 
     def test_exec_detection(self):
         """测试exec函数检测"""
         code = "exec('print(\"hello\")')"
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        exec_violation = next(v for v in violations if v.violation_type == 'FORBIDDEN_FUNCTION')
-        self.assertIn('exec', exec_violation.message)
+        exec_violation = next(v for v in violations if v.violation_type == "FORBIDDEN_FUNCTION")
+        self.assertIn("exec", exec_violation.message)
 
     def test_compile_detection(self):
         """测试compile函数检测"""
         code = "code = compile('1+1', '<string>', 'eval')"
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        compile_violation = next(v for v in violations if v.violation_type == 'FORBIDDEN_FUNCTION')
-        self.assertIn('compile', compile_violation.message)
+        compile_violation = next(v for v in violations if v.violation_type == "FORBIDDEN_FUNCTION")
+        self.assertIn("compile", compile_violation.message)
 
     def test_open_detection(self):
         """测试open函数检测"""
         code = "f = open('file.txt', 'r')"
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        open_violation = next(v for v in violations if v.violation_type == 'FORBIDDEN_FUNCTION')
-        self.assertIn('open', open_violation.message)
+        open_violation = next(v for v in violations if v.violation_type == "FORBIDDEN_FUNCTION")
+        self.assertIn("open", open_violation.message)
 
     def test___import__detection(self):
         """测试__import__检测"""
         code = "module = __import__('os')"
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        import_violation = next(v for v in violations if v.violation_type == 'FORBIDDEN_FUNCTION')
-        self.assertIn('__import__', import_violation.message)
+        import_violation = next(v for v in violations if v.violation_type == "FORBIDDEN_FUNCTION")
+        self.assertIn("__import__", import_violation.message)
 
 
 class TestDangerousModuleAccess(unittest.TestCase):
@@ -182,8 +177,8 @@ os.system('ls -la')
 """
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        module_access = next(v for v in violations if v.violation_type == 'FORBIDDEN_MODULE_ACCESS')
-        self.assertIn('os', module_access.message)
+        module_access = next(v for v in violations if v.violation_type == "FORBIDDEN_MODULE_ACCESS")
+        self.assertIn("os", module_access.message)
 
     def test_subprocess_call(self):
         """测试subprocess调用检测"""
@@ -222,8 +217,8 @@ print(obj.__dict__)
 """
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        dict_violation = next(v for v in violations if v.violation_type == 'DANGEROUS_ATTRIBUTE')
-        self.assertIn('__dict__', dict_violation.message)
+        dict_violation = next(v for v in violations if v.violation_type == "DANGEROUS_ATTRIBUTE")
+        self.assertIn("__dict__", dict_violation.message)
 
     def test___class__access(self):
         """测试__class__属性访问检测"""
@@ -233,8 +228,8 @@ cls = x.__class__
 """
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        class_violation = next(v for v in violations if v.violation_type == 'DANGEROUS_ATTRIBUTE')
-        self.assertIn('__class__', class_violation.message)
+        class_violation = next(v for v in violations if v.violation_type == "DANGEROUS_ATTRIBUTE")
+        self.assertIn("__class__", class_violation.message)
 
 
 class TestRecursionDetection(unittest.TestCase):
@@ -254,8 +249,8 @@ def factorial(n):
 """
         violations = self.analyzer.analyze(code)
         self.assertGreater(len(violations), 0)
-        recursion_violation = next(v for v in violations if v.violation_type == 'RECURSION_DETECTED')
-        self.assertEqual(recursion_violation.severity, 'MEDIUM')
+        recursion_violation = next(v for v in violations if v.violation_type == "RECURSION_DETECTED")
+        self.assertEqual(recursion_violation.severity, "MEDIUM")
 
     def test_no_recursion(self):
         """测试非递归函数"""
@@ -264,7 +259,7 @@ def add(a, b):
     return a + b
 """
         violations = self.analyzer.analyze(code)
-        recursion_violations = [v for v in violations if v.violation_type == 'RECURSION_DETECTED']
+        recursion_violations = [v for v in violations if v.violation_type == "RECURSION_DETECTED"]
         self.assertEqual(len(recursion_violations), 0)
 
 
@@ -285,7 +280,7 @@ for i in range(10):
                 pass
 """
         violations = self.analyzer.analyze(code)
-        nesting_violations = [v for v in violations if v.violation_type == 'DEEP_NESTING']
+        nesting_violations = [v for v in violations if v.violation_type == "DEEP_NESTING"]
         self.assertGreater(len(nesting_violations), 0)
 
     def test_while_true_detection(self):
@@ -295,8 +290,8 @@ while True:
     pass
 """
         violations = self.analyzer.analyze(code)
-        infinite_loop = next(v for v in violations if v.violation_type == 'POTENTIAL_INFINITE_LOOP')
-        self.assertEqual(infinite_loop.severity, 'HIGH')
+        infinite_loop = next(v for v in violations if v.violation_type == "POTENTIAL_INFINITE_LOOP")
+        self.assertEqual(infinite_loop.severity, "HIGH")
 
     def test_safe_while_loop(self):
         """测试安全的while循环"""
@@ -306,7 +301,7 @@ while x > 0:
     x -= 1
 """
         violations = self.analyzer.analyze(code)
-        infinite_loop_violations = [v for v in violations if v.violation_type == 'POTENTIAL_INFINITE_LOOP']
+        infinite_loop_violations = [v for v in violations if v.violation_type == "POTENTIAL_INFINITE_LOOP"]
         self.assertEqual(len(infinite_loop_violations), 0)
 
 
@@ -324,7 +319,7 @@ user_input = "__import__('os')"
 result = f"{eval(user_input)}"
 """
         violations = self.analyzer.analyze(code)
-        injection_violations = [v for v in violations if v.violation_type == 'CODE_INJECTION']
+        injection_violations = [v for v in violations if v.violation_type == "CODE_INJECTION"]
         self.assertGreater(len(injection_violations), 0)
 
     def test_safe_f_string(self):
@@ -334,7 +329,7 @@ name = "World"
 result = f"Hello, {name}"
 """
         violations = self.analyzer.analyze(code)
-        injection_violations = [v for v in violations if v.violation_type == 'CODE_INJECTION']
+        injection_violations = [v for v in violations if v.violation_type == "CODE_INJECTION"]
         self.assertEqual(len(injection_violations), 0)
 
 
@@ -352,7 +347,7 @@ mod = "__imp"
 mod += "ort__('os')"
 """
         violations = self.analyzer.analyze(code)
-        bypass_violations = [v for v in violations if v.violation_type == 'STRING_CONCAT_BYPASS']
+        bypass_violations = [v for v in violations if v.violation_type == "STRING_CONCAT_BYPASS"]
         self.assertGreater(len(bypass_violations), 0)
 
     def test_safe_string_concat(self):
@@ -363,7 +358,7 @@ last_name = "Doe"
 full_name = first_name + " " + last_name
 """
         violations = self.analyzer.analyze(code)
-        bypass_violations = [v for v in violations if v.violation_type == 'STRING_CONCAT_BYPASS']
+        bypass_violations = [v for v in violations if v.violation_type == "STRING_CONCAT_BYPASS"]
         self.assertEqual(len(bypass_violations), 0)
 
 
@@ -383,8 +378,8 @@ except:
     pass
 """
         violations = self.analyzer.analyze(code)
-        bare_except = next(v for v in violations if v.violation_type == 'BROAD_EXCEPTION')
-        self.assertEqual(bare_except.severity, 'MEDIUM')
+        bare_except = next(v for v in violations if v.violation_type == "BROAD_EXCEPTION")
+        self.assertEqual(bare_except.severity, "MEDIUM")
 
     def test_specific_exception(self):
         """测试特定异常处理"""
@@ -395,7 +390,7 @@ except ValueError as e:
     print(f"Error: {e}")
 """
         violations = self.analyzer.analyze(code)
-        bare_except_violations = [v for v in violations if v.violation_type == 'BROAD_EXCEPTION']
+        bare_except_violations = [v for v in violations if v.violation_type == "BROAD_EXCEPTION"]
         self.assertEqual(len(bare_except_violations), 0)
 
 
@@ -410,14 +405,14 @@ class TestSeverityLevels(unittest.TestCase):
         """测试CRITICAL严重程度"""
         code = "import os"
         violations = self.analyzer.analyze(code)
-        critical_violations = [v for v in violations if v.severity == 'CRITICAL']
+        critical_violations = [v for v in violations if v.severity == "CRITICAL"]
         self.assertGreater(len(critical_violations), 0)
 
     def test_high_severity(self):
         """测试HIGH严重程度"""
         code = "while True: pass"
         violations = self.analyzer.analyze(code)
-        high_violations = [v for v in violations if v.severity == 'HIGH']
+        high_violations = [v for v in violations if v.severity == "HIGH"]
         self.assertGreater(len(high_violations), 0)
 
     def test_medium_severity(self):
@@ -427,7 +422,7 @@ def recurse(n):
     return recurse(n)
 """
         violations = self.analyzer.analyze(code)
-        medium_violations = [v for v in violations if v.severity == 'MEDIUM']
+        medium_violations = [v for v in violations if v.severity == "MEDIUM"]
         self.assertGreater(len(medium_violations), 0)
 
     def test_low_severity(self):
@@ -440,7 +435,7 @@ for i in range(10):
                 pass
 """
         violations = self.analyzer.analyze(code)
-        low_violations = [v for v in violations if v.severity == 'LOW']
+        low_violations = [v for v in violations if v.severity == "LOW"]
         self.assertGreater(len(low_violations), 0)
 
 
@@ -468,7 +463,7 @@ result = sum(y)
     def test_custom_allowed_modules(self):
         """测试自定义允许模块"""
         code = "import typing"
-        is_safe, violations = analyze_code_security(code, allowed_modules={'typing'})
+        is_safe, violations = analyze_code_security(code, allowed_modules={"typing"})
         self.assertTrue(is_safe)
 
     def test_critical_violation_makes_code_unsafe(self):
@@ -476,7 +471,7 @@ result = sum(y)
         code = "eval('1+1')"
         is_safe, violations = analyze_code_security(code)
         self.assertFalse(is_safe)
-        critical_violations = [v for v in violations if v.severity == 'CRITICAL']
+        critical_violations = [v for v in violations if v.severity == "CRITICAL"]
         self.assertGreater(len(critical_violations), 0)
 
     def test_high_violation_makes_code_unsafe(self):
@@ -484,7 +479,7 @@ result = sum(y)
         code = "while True: pass"
         is_safe, violations = analyze_code_security(code)
         self.assertFalse(is_safe)
-        high_violations = [v for v in violations if v.severity == 'HIGH']
+        high_violations = [v for v in violations if v.severity == "HIGH"]
         self.assertGreater(len(high_violations), 0)
 
 
@@ -496,28 +491,28 @@ class TestGetSecurityReport(unittest.TestCase):
         code = "import os"
         report = get_security_report(code)
 
-        self.assertIn('is_safe', report)
-        self.assertIn('total_violations', report)
-        self.assertIn('by_severity', report)
-        self.assertIn('by_type', report)
-        self.assertIn('has_recursion', report)
+        self.assertIn("is_safe", report)
+        self.assertIn("total_violations", report)
+        self.assertIn("by_severity", report)
+        self.assertIn("by_type", report)
+        self.assertIn("has_recursion", report)
 
     def test_report_by_severity(self):
         """测试按严重程度分组"""
         code = "import os"
         report = get_security_report(code)
 
-        self.assertIn('CRITICAL', report['by_severity'])
-        self.assertIn('HIGH', report['by_severity'])
-        self.assertIn('MEDIUM', report['by_severity'])
-        self.assertIn('LOW', report['by_severity'])
+        self.assertIn("CRITICAL", report["by_severity"])
+        self.assertIn("HIGH", report["by_severity"])
+        self.assertIn("MEDIUM", report["by_severity"])
+        self.assertIn("LOW", report["by_severity"])
 
     def test_report_by_type(self):
         """测试按类型分组"""
         code = "import os"
         report = get_security_report(code)
 
-        self.assertIn('FORBIDDEN_IMPORT', report['by_type'])
+        self.assertIn("FORBIDDEN_IMPORT", report["by_type"])
 
     def test_report_has_recursion(self):
         """测试递归检测标志"""
@@ -528,7 +523,7 @@ def factorial(n):
     return n * factorial(n - 1)
 """
         report = get_security_report(code)
-        self.assertTrue(report['has_recursion'])
+        self.assertTrue(report["has_recursion"])
 
 
 class TestComplexCodePatterns(unittest.TestCase):
@@ -547,7 +542,7 @@ def outer():
     return inner
 """
         violations = self.analyzer.analyze(code)
-        recursion_violations = [v for v in violations if v.violation_type == 'RECURSION_DETECTED']
+        recursion_violations = [v for v in violations if v.violation_type == "RECURSION_DETECTED"]
         self.assertGreater(len(recursion_violations), 0)
 
     def test_multiple_violations_same_code(self):
@@ -567,7 +562,7 @@ f = lambda x: x + 1
 """
         violations = self.analyzer.analyze(code)
         # lambda应该是安全的
-        forbidden = [v for v in violations if v.severity in ('CRITICAL', 'HIGH')]
+        forbidden = [v for v in violations if v.severity in ("CRITICAL", "HIGH")]
         self.assertEqual(len(forbidden), 0)
 
     def test_list_comprehension(self):
@@ -577,7 +572,7 @@ squares = [x**2 for x in range(10)]
 """
         violations = self.analyzer.analyze(code)
         # 列表推导式应该是安全的
-        forbidden = [v for v in violations if v.severity in ('CRITICAL', 'HIGH')]
+        forbidden = [v for v in violations if v.severity in ("CRITICAL", "HIGH")]
         self.assertEqual(len(forbidden), 0)
 
     def test_with_statement(self):
@@ -597,19 +592,19 @@ class TestSecurityViolation(unittest.TestCase):
     def test_violation_to_dict(self):
         """测试转换为字典"""
         violation = SecurityViolation(
-            severity='CRITICAL',
-            violation_type='FORBIDDEN_IMPORT',
+            severity="CRITICAL",
+            violation_type="FORBIDDEN_IMPORT",
             message='Import of module "os" is not allowed',
             line=10,
-            col_offset=5
+            col_offset=5,
         )
         result = violation.to_dict()
 
-        self.assertEqual(result['severity'], 'CRITICAL')
-        self.assertEqual(result['violation_type'], 'FORBIDDEN_IMPORT')
-        self.assertEqual(result['message'], 'Import of module "os" is not allowed')
-        self.assertEqual(result['line'], 10)
-        self.assertEqual(result['col_offset'], 5)
+        self.assertEqual(result["severity"], "CRITICAL")
+        self.assertEqual(result["violation_type"], "FORBIDDEN_IMPORT")
+        self.assertEqual(result["message"], 'Import of module "os" is not allowed')
+        self.assertEqual(result["line"], 10)
+        self.assertEqual(result["col_offset"], 5)
 
 
 class TestEdgeCases(unittest.TestCase):
@@ -707,6 +702,6 @@ def run_tests():
     return result.wasSuccessful()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     success = run_tests()
     sys.exit(0 if success else 1)

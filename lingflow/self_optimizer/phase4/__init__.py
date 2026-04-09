@@ -26,22 +26,22 @@ from lingflow.self_optimizer.phase4.engine import (
 
 # 搜索空间（新增）
 from lingflow.self_optimizer.phase4.search_space import (
-    SearchSpace,
     Parameter,
     ParameterType,
+    SearchSpace,
 )
 
 # 配置类（新增）
 try:
     from lingflow.self_optimizer.phase4.engine import (
-        OptimizationConfig,
         Experiment,
+        OptimizationConfig,
         OptimizationResult,
     )
 except ImportError:
     # 如果engine.py中没有这些类，我们定义它们
     from dataclasses import dataclass, field
-    from typing import Dict, Any, List
+    from typing import Any, Dict, List
 
     @dataclass
     class OptimizationConfig:
@@ -74,13 +74,22 @@ except ImportError:
 from lingflow.self_optimizer.phase4.bayesian_optimizer import (
     BayesianOptimizer,
     GridSearchOptimizer,
+    OptimizationState,
+    OptimizationTrial,
     create_optimizer,
     get_default_search_space,
 )
+from lingflow.self_optimizer.phase4.cache import (
+    CachedParameterStore,
+    ParameterCache,
+    get_default_cache,
+)
 
-from lingflow.self_optimizer.phase4.bayesian_optimizer import (
-    OptimizationTrial,
-    OptimizationState,
+# 便捷函数
+from lingflow.self_optimizer.phase4.engine import (
+    quick_multi_optimize,
+    quick_optimize,
+    quick_sensitivity_analysis,
 )
 
 # 多目标优化
@@ -99,34 +108,21 @@ from lingflow.self_optimizer.phase4.sensitivity import (
     analyze_sensitivity,
 )
 
-# 可视化
-from lingflow.self_optimizer.phase4.visualization import (
-    OptimizationVisualizer,
-    plot_optimization_progress,
-    plot_sensitivity_heatmap,
-    plot_pareto_front,
-)
-
 # 存储和缓存
 from lingflow.self_optimizer.phase4.storage import (
     FileSystemParameterStore,
     get_default_store,
-    save_params,
-    load_params,
     get_latest_params,
+    load_params,
+    save_params,
 )
 
-from lingflow.self_optimizer.phase4.cache import (
-    ParameterCache,
-    CachedParameterStore,
-    get_default_cache,
-)
-
-# 便捷函数
-from lingflow.self_optimizer.phase4.engine import (
-    quick_optimize,
-    quick_multi_optimize,
-    quick_sensitivity_analysis,
+# 可视化
+from lingflow.self_optimizer.phase4.visualization import (
+    OptimizationVisualizer,
+    plot_optimization_progress,
+    plot_pareto_front,
+    plot_sensitivity_heatmap,
 )
 
 __all__ = [

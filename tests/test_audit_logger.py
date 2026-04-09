@@ -6,15 +6,16 @@ import json
 import os
 import tempfile
 from pathlib import Path
+
 from lingflow.common.audit_logger import (
     AuditEvent,
     AuditEventType,
     AuditSeverity,
     SecurityAuditLogger,
     get_audit_logger,
-    log_skill_execution,
-    log_config_change,
     log_access_violation,
+    log_config_change,
+    log_skill_execution,
 )
 
 
@@ -375,6 +376,7 @@ class TestConvenienceFunctions:
         """测试便捷函数记录技能执行"""
         # 重置全局实例
         import lingflow.common.audit_logger as audit_module
+
         audit_module._audit_logger = None
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -390,6 +392,7 @@ class TestConvenienceFunctions:
         """测试便捷函数记录配置更改"""
         # 重置全局实例
         import lingflow.common.audit_logger as audit_module
+
         audit_module._audit_logger = None
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -408,6 +411,7 @@ class TestConvenienceFunctions:
         """测试便捷函数记录访问违规"""
         # 重置全局实例
         import lingflow.common.audit_logger as audit_module
+
         audit_module._audit_logger = None
 
         with tempfile.TemporaryDirectory() as tmpdir:

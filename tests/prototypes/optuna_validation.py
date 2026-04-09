@@ -14,8 +14,9 @@ f(x,y) = 20 + x² - 10cos(2πx) + y² - 10cos(2πy)
 
 import time
 import tracemalloc
+from typing import Callable, Dict, List, Tuple
+
 import numpy as np
-from typing import Dict, List, Tuple, Callable
 
 
 class GridSearchOptimizer:
@@ -33,7 +34,7 @@ class GridSearchOptimizer:
 
         param_names = list(self.bounds.keys())
         evaluations = 0
-        best_value = float('inf')
+        best_value = float("inf")
         best_params = {}
 
         # 生成网格点
@@ -54,11 +55,7 @@ class GridSearchOptimizer:
                     best_value = value
                     best_params = params.copy()
 
-                self.results.append({
-                    'params': params,
-                    'value': value,
-                    'iteration': evaluations
-                })
+                self.results.append({"params": params, "value": value, "iteration": evaluations})
                 evaluations += 1
 
         # 清理内存
@@ -68,12 +65,12 @@ class GridSearchOptimizer:
         elapsed = time.time() - start_time
 
         return {
-            'best_params': best_params,
-            'best_value': best_value,
-            'n_evaluations': evaluations,
-            'elapsed_time': elapsed,
-            'peak_memory_mb': peak / 1024 / 1024,
-            'history': self.results
+            "best_params": best_params,
+            "best_value": best_value,
+            "n_evaluations": evaluations,
+            "elapsed_time": elapsed,
+            "peak_memory_mb": peak / 1024 / 1024,
+            "history": self.results,
         }
 
 
@@ -85,8 +82,9 @@ class BayesianOptimizer:
         self.study = None
         self.results = []
 
-    def optimize(self, objective: Callable, max_evaluations: int = 500,
-                 timeout: int = None, early_stopping: bool = True) -> Dict:
+    def optimize(
+        self, objective: Callable, max_evaluations: int = 500, timeout: int = None, early_stopping: bool = True
+    ) -> Dict:
         """执行贝叶斯优化"""
         try:
             import optuna
@@ -97,10 +95,7 @@ class BayesianOptimizer:
         tracemalloc.start()
 
         # 创建研究对象
-        self.study = optuna.create_study(
-            direction='minimize',
-            sampler=optuna.samplers.TPESampler(seed=42)
-        )
+        self.study = optuna.create_study(direction="minimize", sampler=optuna.samplers.TPESampler(seed=42))
 
         # 早停回调
         def early_stopping_callback(study, trial):
@@ -108,10 +103,7 @@ class BayesianOptimizer:
                 # 检查最近10次试验的改进
                 recent_trials = study.trials[-10:]
                 if len(recent_trials) >= 10:
-                    improvements = [
-                        recent_trials[i].value - recent_trials[i-1].value
-                        for i in range(1, len(recent_trials))
-                    ]
+                    improvements = [recent_trials[i].value - recent_trials[i - 1].value for i in range(1, len(recent_trials))]
                     avg_improvement = sum(improvements) / len(improvements)
                     # 如果平均改进小于阈值，提前停止
                     if avg_improvement > -0.01:
@@ -125,11 +117,7 @@ class BayesianOptimizer:
                 params[name] = trial.suggest_float(name, low, high)
 
             value = objective(params)
-            self.results.append({
-                'params': params.copy(),
-                'value': value,
-                'iteration': len(self.results)
-            })
+            self.results.append({"params": params.copy(), "value": value, "iteration": len(self.results)})
             return value
 
         # 运行优化
@@ -138,7 +126,7 @@ class BayesianOptimizer:
             n_trials=max_evaluations,
             timeout=timeout,
             callbacks=[early_stopping_callback] if early_stopping else None,
-            show_progress_bar=False
+            show_progress_bar=False,
         )
 
         # 清理内存
@@ -148,39 +136,41 @@ class BayesianOptimizer:
         elapsed = time.time() - start_time
 
         return {
-            'best_params': self.study.best_params,
-            'best_value': self.study.best_value,
-            'n_evaluations': len(self.study.trials),
-            'elapsed_time': elapsed,
-            'peak_memory_mb': peak / 1024 / 1024,
-            'history': self.results,
-            'converged': len(self.study.trials) < max_evaluations
+            "best_params": self.study.best_params,
+            "best_value": self.study.best_value,
+            "n_evaluations": len(self.study.trials),
+            "elapsed_time": elapsed,
+            "peak_memory_mb": peak / 1024 / 1024,
+            "history": self.results,
+            "converged": len(self.study.trials) < max_evaluations,
         }
 
 
 def rastrigin_function(params: Dict[str, float]) -> float:
     """Rastrigin函数 - 多峰优化测试函数"""
-    x = params['x']
-    y = params['y']
+    x = params["x"]
+    y = params["y"]
     n = 2
     result = 10 * n + (x**2 - 10 * np.cos(2 * np.pi * x))
-    result += (y**2 - 10 * np.cos(2 * np.pi * y))
+    result += y**2 - 10 * np.cos(2 * np.pi * y)
     return result
 
 
 def sphere_function(params: Dict[str, float]) -> float:
     """Sphere函数 - 简单凸函数"""
-    x = params['x']
-    y = params['y']
+    x = params["x"]
+    y = params["y"]
     return x**2 + y**2
 
 
 def simulated_costly_objective(base_func: Callable) -> Callable:
     """模拟昂贵的目标函数（如模型训练）"""
+
     def wrapper(params):
         # 添加计算延迟，模拟真实场景
         time.sleep(0.01)  # 10ms延迟
         return base_func(params)
+
     return wrapper
 
 
@@ -191,7 +181,7 @@ def run_comparison_test(n_trials: int = 100) -> Dict:
     print(f"{'='*60}\n")
 
     # 定义搜索空间
-    bounds = {'x': (-5.12, 5.12), 'y': (-5.12, 5.12)}
+    bounds = {"x": (-5.12, 5.12), "y": (-5.12, 5.12)}
 
     # 测试1: Rastrigin函数（多峰）
     print("测试1: Rastrigin函数（多峰优化）")
@@ -202,11 +192,7 @@ def run_comparison_test(n_trials: int = 100) -> Dict:
     grid_result = grid_optimizer.optimize(costly_rastrigin, n_trials)
 
     bayesian_optimizer = BayesianOptimizer(bounds)
-    bayesian_result = bayesian_optimizer.optimize(
-        costly_rastrigin,
-        max_evaluations=n_trials,
-        early_stopping=True
-    )
+    bayesian_result = bayesian_optimizer.optimize(costly_rastrigin, max_evaluations=n_trials, early_stopping=True)
 
     # 测试2: Sphere函数（简单凸函数）
     print("\n测试2: Sphere函数（简单凸优化）")
@@ -217,21 +203,11 @@ def run_comparison_test(n_trials: int = 100) -> Dict:
     grid_result2 = grid_optimizer2.optimize(costly_sphere, n_trials)
 
     bayesian_optimizer2 = BayesianOptimizer(bounds)
-    bayesian_result2 = bayesian_optimizer2.optimize(
-        costly_sphere,
-        max_evaluations=n_trials,
-        early_stopping=True
-    )
+    bayesian_result2 = bayesian_optimizer2.optimize(costly_sphere, max_evaluations=n_trials, early_stopping=True)
 
     return {
-        'rastrigin': {
-            'grid': grid_result,
-            'bayesian': bayesian_result
-        },
-        'sphere': {
-            'grid': grid_result2,
-            'bayesian': bayesian_result2
-        }
+        "rastrigin": {"grid": grid_result, "bayesian": bayesian_result},
+        "sphere": {"grid": grid_result2, "bayesian": bayesian_result2},
     }
 
 
@@ -245,8 +221,8 @@ def print_results(results: Dict):
         print(f"\n{func_name.upper()}函数测试结果:")
         print("-" * 60)
 
-        grid = data['grid']
-        bayesian = data['bayesian']
+        grid = data["grid"]
+        bayesian = data["bayesian"]
 
         print(f"\n网格搜索:")
         print(f"  最优值: {grid['best_value']:.6f}")
@@ -264,10 +240,11 @@ def print_results(results: Dict):
         print(f"  提前收敛: {'是' if bayesian.get('converged', False) else '否'}")
 
         # 性能对比
-        time_reduction = (1 - bayesian['elapsed_time'] / grid['elapsed_time']) * 100
-        eval_reduction = (1 - bayesian['n_evaluations'] / grid['n_evaluations']) * 100
-        quality_diff = ((bayesian['best_value'] - grid['best_value']) /
-                       abs(grid['best_value']) * 100) if grid['best_value'] != 0 else 0
+        time_reduction = (1 - bayesian["elapsed_time"] / grid["elapsed_time"]) * 100
+        eval_reduction = (1 - bayesian["n_evaluations"] / grid["n_evaluations"]) * 100
+        quality_diff = (
+            ((bayesian["best_value"] - grid["best_value"]) / abs(grid["best_value"]) * 100) if grid["best_value"] != 0 else 0
+        )
 
         print(f"\n性能提升:")
         print(f"  时间减少: {time_reduction:.1f}%")
@@ -279,21 +256,20 @@ def print_results(results: Dict):
     print(f"验证结论")
     print(f"{'='*80}")
 
-    rastrigin_bayes = results['rastrigin']['bayesian']
-    sphere_bayes = results['sphere']['bayesian']
-    rastrigin_grid = results['rastrigin']['grid']
-    sphere_grid = results['sphere']['grid']
+    rastrigin_bayes = results["rastrigin"]["bayesian"]
+    sphere_bayes = results["sphere"]["bayesian"]
+    rastrigin_grid = results["rastrigin"]["grid"]
+    sphere_grid = results["sphere"]["grid"]
 
     checks = {
-        'Optuna正常运行': True,
-        f'优化时间减少>40%':
-            any((1 - results[k]['bayesian']['elapsed_time'] / results[k]['grid']['elapsed_time']) * 100 > 40
-                for k in ['rastrigin', 'sphere']),
-        f'内存占用<200MB':
-            all(r['bayesian']['peak_memory_mb'] < 200 for r in results.values()),
-        f'参数质量不降低（更好或相当）':
-            rastrigin_bayes['best_value'] <= rastrigin_grid['best_value'] * 1.1 and
-            sphere_bayes['best_value'] <= sphere_grid['best_value'] * 1.1
+        "Optuna正常运行": True,
+        f"优化时间减少>40%": any(
+            (1 - results[k]["bayesian"]["elapsed_time"] / results[k]["grid"]["elapsed_time"]) * 100 > 40
+            for k in ["rastrigin", "sphere"]
+        ),
+        f"内存占用<200MB": all(r["bayesian"]["peak_memory_mb"] < 200 for r in results.values()),
+        f"参数质量不降低（更好或相当）": rastrigin_bayes["best_value"] <= rastrigin_grid["best_value"] * 1.1
+        and sphere_bayes["best_value"] <= sphere_grid["best_value"] * 1.1,
     }
 
     for check, passed in checks.items():
@@ -304,7 +280,7 @@ def print_results(results: Dict):
     print(f"\n总体结论: {'✓ 验证通过 - Optuna可用于生产' if all_passed else '✗ 验证失败 - 需要进一步调查'}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # 运行验证测试
     results = run_comparison_test(n_trials=100)
     print_results(results)

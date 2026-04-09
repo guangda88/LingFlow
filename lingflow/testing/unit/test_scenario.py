@@ -7,11 +7,11 @@
 import pytest
 
 from lingflow.testing import (
-    CodeTestScenario,
-    TestInteractionType,
-    REFACTORING_SCENARIO,
     DETECT_SECURITY_ISSUE,
     OPTIMIZATION_SCENARIO,
+    REFACTORING_SCENARIO,
+    CodeTestScenario,
+    TestInteractionType,
     create_custom_scenario,
 )
 

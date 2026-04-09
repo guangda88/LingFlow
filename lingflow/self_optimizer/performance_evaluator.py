@@ -4,10 +4,11 @@ LingFlow 性能评估器
 """
 
 import time
-import psutil
-from pathlib import Path
-from typing import Dict, Any
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict
+
+import psutil
 
 
 @dataclass

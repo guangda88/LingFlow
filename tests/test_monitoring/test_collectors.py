@@ -1,10 +1,11 @@
 """Tests for lingflow.monitoring.collectors.base module"""
 
-import pytest
 import time
 from datetime import datetime
 
-from lingflow.monitoring.collectors.base import MetricCollector, HealthCheckCollector
+import pytest
+
+from lingflow.monitoring.collectors.base import HealthCheckCollector, MetricCollector
 from lingflow.monitoring.metrics.models import HealthCheckResult, SystemMetrics
 
 
@@ -54,6 +55,7 @@ class TestMetricCollector:
         """Test collecting metrics for specific PID"""
         collector = MetricCollector()
         import os
+
         current_pid = os.getpid()
 
         metrics = collector.collect_process_metrics(pid=current_pid)
@@ -162,12 +164,12 @@ class TestHealthCheckCollector:
         """Test running all registered checks"""
         collector = HealthCheckCollector()
 
-        collector.register_check("check1", lambda: HealthCheckResult(
-            component="c1", healthy=True, message="OK", timestamp=datetime.now()
-        ))
-        collector.register_check("check2", lambda: HealthCheckResult(
-            component="c2", healthy=False, message="Failed", timestamp=datetime.now()
-        ))
+        collector.register_check(
+            "check1", lambda: HealthCheckResult(component="c1", healthy=True, message="OK", timestamp=datetime.now())
+        )
+        collector.register_check(
+            "check2", lambda: HealthCheckResult(component="c2", healthy=False, message="Failed", timestamp=datetime.now())
+        )
 
         results = collector.run_all_checks()
 
@@ -181,9 +183,9 @@ class TestHealthCheckCollector:
         """Test running all checks when one raises exception"""
         collector = HealthCheckCollector()
 
-        collector.register_check("good", lambda: HealthCheckResult(
-            component="good", healthy=True, message="OK", timestamp=datetime.now()
-        ))
+        collector.register_check(
+            "good", lambda: HealthCheckResult(component="good", healthy=True, message="OK", timestamp=datetime.now())
+        )
         collector.register_check("bad", lambda: (_ for _ in ()).throw(ValueError("Error")))
 
         results = collector.run_all_checks()
@@ -246,9 +248,7 @@ class TestHealthCheckCollector:
 
         def slow_check():
             time.sleep(0.01)
-            return HealthCheckResult(
-                component="slow", healthy=True, message="OK", timestamp=datetime.now()
-            )
+            return HealthCheckResult(component="slow", healthy=True, message="OK", timestamp=datetime.now())
 
         collector.register_check("slow", slow_check)
         result = collector.run_check("slow")
@@ -285,12 +285,12 @@ class TestHealthCheckCollectorIntegration:
         """Test assessing overall health from checks"""
         collector = HealthCheckCollector()
 
-        collector.register_check("c1", lambda: HealthCheckResult(
-            component="c1", healthy=True, message="OK", timestamp=datetime.now()
-        ))
-        collector.register_check("c2", lambda: HealthCheckResult(
-            component="c2", healthy=True, message="OK", timestamp=datetime.now()
-        ))
+        collector.register_check(
+            "c1", lambda: HealthCheckResult(component="c1", healthy=True, message="OK", timestamp=datetime.now())
+        )
+        collector.register_check(
+            "c2", lambda: HealthCheckResult(component="c2", healthy=True, message="OK", timestamp=datetime.now())
+        )
 
         results = collector.run_all_checks()
         all_healthy = all(r.healthy for r in results.values())
@@ -301,12 +301,12 @@ class TestHealthCheckCollectorIntegration:
         """Test overall health when one check fails"""
         collector = HealthCheckCollector()
 
-        collector.register_check("good", lambda: HealthCheckResult(
-            component="good", healthy=True, message="OK", timestamp=datetime.now()
-        ))
-        collector.register_check("bad", lambda: HealthCheckResult(
-            component="bad", healthy=False, message="Failed", timestamp=datetime.now()
-        ))
+        collector.register_check(
+            "good", lambda: HealthCheckResult(component="good", healthy=True, message="OK", timestamp=datetime.now())
+        )
+        collector.register_check(
+            "bad", lambda: HealthCheckResult(component="bad", healthy=False, message="Failed", timestamp=datetime.now())
+        )
 
         results = collector.run_all_checks()
         all_healthy = all(r.healthy for r in results.values())

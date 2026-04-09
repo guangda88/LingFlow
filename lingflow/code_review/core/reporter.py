@@ -3,9 +3,9 @@
 """
 
 import json
-from typing import Dict, Any
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict
 
 
 class ReportGenerator:

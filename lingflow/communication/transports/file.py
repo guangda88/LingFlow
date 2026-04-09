@@ -12,14 +12,14 @@
 """
 
 import asyncio
+import threading
 import time
 from pathlib import Path
 from typing import AsyncIterator, Callable, Dict, List, Optional, Set
 from uuid import uuid4
-import threading
 
-from ..transport import TransportAdapter
 from ..envelope import MessageEnvelope
+from ..transport import TransportAdapter
 
 
 class FileTransport(TransportAdapter):
@@ -137,9 +137,7 @@ class FileTransport(TransportAdapter):
                 self._queues[service] = asyncio.Queue()
                 # 启动文件监控任务
                 if self._running:
-                    self._watcher_tasks[service] = asyncio.create_task(
-                        self._watch_service_dir(service)
-                    )
+                    self._watcher_tasks[service] = asyncio.create_task(self._watch_service_dir(service))
 
             # 等待消息ID
             if timeout is None:

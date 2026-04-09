@@ -5,15 +5,16 @@
 基于 CodeTestScenario 测试代码优化能力
 """
 
-import pytest
-from pathlib import Path
-from typing import List, Dict, Any
 import sys
+from pathlib import Path
+from typing import Any, Dict, List
+
+import pytest
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from lingflow.testing.scenario import CodeTestScenario, CapturedToolCall
+from lingflow.testing.scenario import CapturedToolCall, CodeTestScenario
 
 
 class MockOptimizer:

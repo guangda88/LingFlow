@@ -1,7 +1,8 @@
 """测试上下文管理器"""
-from lingflow.context.manager import ContextManager
+
 from lingflow.context.budget import ContextBudgetManager
 from lingflow.context.degradation import DegradationType
+from lingflow.context.manager import ContextManager
 
 
 class TestContextManager:

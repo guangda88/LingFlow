@@ -22,11 +22,7 @@ class TestImplementation:
 
     def test_initialization(self):
         """Test basic initialization"""
-        impl = Implementation(
-            file="test.py",
-            lines=[10, 11, 12],
-            technique="SQLAlchemy ORM"
-        )
+        impl = Implementation(file="test.py", lines=[10, 11, 12], technique="SQLAlchemy ORM")
         assert impl.file == "test.py"
         assert impl.lines == [10, 11, 12]
         assert impl.technique == "SQLAlchemy ORM"
@@ -36,11 +32,7 @@ class TestImplementation:
 
     def test_calculate_hash(self):
         """Test hash calculation"""
-        impl = Implementation(
-            file="test.py",
-            lines=[10],
-            technique="test"
-        )
+        impl = Implementation(file="test.py", lines=[10], technique="test")
         content = "some code"
         impl.calculate_hash(content)
         assert impl.hash is not None
@@ -48,12 +40,7 @@ class TestImplementation:
 
     def test_is_verified(self):
         """Test is_verified method"""
-        impl = Implementation(
-            file="test.py",
-            lines=[10],
-            technique="test",
-            status=VerificationStatus.VERIFIED
-        )
+        impl = Implementation(file="test.py", lines=[10], technique="test", status=VerificationStatus.VERIFIED)
         assert impl.is_verified() is True
 
         impl.status = VerificationStatus.PENDING
@@ -66,10 +53,7 @@ class TestComplianceEntry:
     def test_initialization(self):
         """Test basic initialization"""
         entry = ComplianceEntry(
-            principle_id="PRINC-001",
-            cwe="CWE-89",
-            principle_name="SQL Injection Prevention",
-            level="MUST"
+            principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
         )
         assert entry.principle_id == "PRINC-001"
         assert entry.cwe == "CWE-89"
@@ -81,16 +65,9 @@ class TestComplianceEntry:
     def test_add_implementation(self):
         """Test adding implementation"""
         entry = ComplianceEntry(
-            principle_id="PRINC-001",
-            cwe="CWE-89",
-            principle_name="SQL Injection Prevention",
-            level="MUST"
+            principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
         )
-        impl = Implementation(
-            file="test.py",
-            lines=[10],
-            technique="test"
-        )
+        impl = Implementation(file="test.py", lines=[10], technique="test")
         entry.add_implementation(impl)
         assert len(entry.implementations) == 1
         assert entry.implementations[0] == impl
@@ -98,10 +75,7 @@ class TestComplianceEntry:
     def test_update_coverage_empty(self):
         """Test coverage update with no implementations"""
         entry = ComplianceEntry(
-            principle_id="PRINC-001",
-            cwe="CWE-89",
-            principle_name="SQL Injection Prevention",
-            level="MUST"
+            principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
         )
         entry.update_coverage()
         assert entry.coverage == 0.0
@@ -109,18 +83,10 @@ class TestComplianceEntry:
     def test_update_coverage_all_verified(self):
         """Test coverage update with all verified"""
         entry = ComplianceEntry(
-            principle_id="PRINC-001",
-            cwe="CWE-89",
-            principle_name="SQL Injection Prevention",
-            level="MUST"
+            principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
         )
         for i in range(3):
-            impl = Implementation(
-                file=f"test{i}.py",
-                lines=[10],
-                technique="test",
-                status=VerificationStatus.VERIFIED
-            )
+            impl = Implementation(file=f"test{i}.py", lines=[10], technique="test", status=VerificationStatus.VERIFIED)
             entry.add_implementation(impl)
         entry.update_coverage()
         assert entry.coverage == 1.0
@@ -128,23 +94,10 @@ class TestComplianceEntry:
     def test_update_coverage_partial(self):
         """Test coverage update with partial verification"""
         entry = ComplianceEntry(
-            principle_id="PRINC-001",
-            cwe="CWE-89",
-            principle_name="SQL Injection Prevention",
-            level="MUST"
+            principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
         )
-        impl1 = Implementation(
-            file="test1.py",
-            lines=[10],
-            technique="test",
-            status=VerificationStatus.VERIFIED
-        )
-        impl2 = Implementation(
-            file="test2.py",
-            lines=[10],
-            technique="test",
-            status=VerificationStatus.PENDING
-        )
+        impl1 = Implementation(file="test1.py", lines=[10], technique="test", status=VerificationStatus.VERIFIED)
+        impl2 = Implementation(file="test2.py", lines=[10], technique="test", status=VerificationStatus.PENDING)
         entry.add_implementation(impl1)
         entry.add_implementation(impl2)
         entry.update_coverage()
@@ -157,14 +110,9 @@ class TestComplianceEntry:
             cwe="CWE-89",
             principle_name="SQL Injection Prevention",
             level="MUST",
-            last_verified="2024-01-01"
+            last_verified="2024-01-01",
         )
-        impl = Implementation(
-            file="test.py",
-            lines=[10],
-            technique="test",
-            status=VerificationStatus.VERIFIED
-        )
+        impl = Implementation(file="test.py", lines=[10], technique="test", status=VerificationStatus.VERIFIED)
         entry.add_implementation(impl)
 
         summary = entry.get_summary()
@@ -186,6 +134,7 @@ class TestComplianceMatrix:
             default_path = Path(tmpdir) / ".lingflow" / "compliance_matrix.json"
             # Change current directory to tmpdir
             import os
+
             old_cwd = os.getcwd()
             try:
                 os.chdir(tmpdir)
@@ -204,10 +153,7 @@ class TestComplianceMatrix:
         """Test get_or_create_entry for new entry"""
         matrix = ComplianceMatrix()
         entry = matrix.get_or_create_entry(
-            principle_id="PRINC-001",
-            cwe="CWE-89",
-            principle_name="SQL Injection Prevention",
-            level="MUST"
+            principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
         )
         assert entry.principle_id == "PRINC-001"
         assert "PRINC-001" in matrix.entries
@@ -218,16 +164,10 @@ class TestComplianceMatrix:
             matrix_path = Path(tmpdir) / "matrix.json"
             matrix = ComplianceMatrix(matrix_path=str(matrix_path))
             matrix.get_or_create_entry(
-                principle_id="PRINC-001",
-                cwe="CWE-89",
-                principle_name="SQL Injection Prevention",
-                level="MUST"
+                principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
             )
             entry2 = matrix.get_or_create_entry(
-                principle_id="PRINC-001",
-                cwe="CWE-89",
-                principle_name="Different Name",
-                level="SHOULD"
+                principle_id="PRINC-001", cwe="CWE-89", principle_name="Different Name", level="SHOULD"
             )
             assert entry2.principle_name == "SQL Injection Prevention"
             assert entry2.level == "MUST"
@@ -247,7 +187,7 @@ class TestComplianceMatrix:
                 file_path="test.py",
                 lines=[10, 11],
                 technique="SQLAlchemy ORM",
-                content="some code"
+                content="some code",
             )
 
             assert impl.file == "test.py"
@@ -270,7 +210,7 @@ class TestComplianceMatrix:
                 level="MUST",
                 file_path="test.py",
                 lines=[10],
-                technique="test"
+                technique="test",
             )
 
             assert impl.hash is None
@@ -288,7 +228,7 @@ class TestComplianceMatrix:
                 level="MUST",
                 file_path="test.py",
                 lines=[10, 11],
-                technique="test"
+                technique="test",
             )
 
             result = matrix.verify_implementation(
@@ -296,7 +236,7 @@ class TestComplianceMatrix:
                 file_path="test.py",
                 lines=[10, 11],
                 verified_by="user@example.com",
-                notes="Verified manually"
+                notes="Verified manually",
             )
 
             assert result is True
@@ -312,10 +252,7 @@ class TestComplianceMatrix:
             matrix_path = Path(tmpdir) / "matrix.json"
             matrix = ComplianceMatrix(matrix_path=str(matrix_path))
             result = matrix.verify_implementation(
-                principle_id="PRINC-001",
-                file_path="test.py",
-                lines=[10],
-                verified_by="user@example.com"
+                principle_id="PRINC-001", file_path="test.py", lines=[10], verified_by="user@example.com"
             )
             assert result is False
 
@@ -332,14 +269,11 @@ class TestComplianceMatrix:
                 level="MUST",
                 file_path="test.py",
                 lines=[10],
-                technique="test"
+                technique="test",
             )
 
             result = matrix.verify_implementation(
-                principle_id="PRINC-001",
-                file_path="other.py",
-                lines=[10],
-                verified_by="user@example.com"
+                principle_id="PRINC-001", file_path="other.py", lines=[10], verified_by="user@example.com"
             )
 
             assert result is False
@@ -350,10 +284,7 @@ class TestComplianceMatrix:
             matrix_path = Path(tmpdir) / "matrix.json"
             matrix = ComplianceMatrix(matrix_path=str(matrix_path))
             matrix.get_or_create_entry(
-                principle_id="PRINC-001",
-                cwe="CWE-89",
-                principle_name="SQL Injection Prevention",
-                level="MUST"
+                principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
             )
 
             status = matrix.get_compliance_status("PRINC-001")
@@ -388,33 +319,17 @@ class TestComplianceMatrix:
 
             # Add first principle with verified implementations
             entry1 = matrix.get_or_create_entry(
-                principle_id="PRINC-001",
-                cwe="CWE-89",
-                principle_name="SQL Injection Prevention",
-                level="MUST"
+                principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
             )
-            impl1 = Implementation(
-                file="test1.py",
-                lines=[10],
-                technique="test",
-                status=VerificationStatus.VERIFIED
-            )
+            impl1 = Implementation(file="test1.py", lines=[10], technique="test", status=VerificationStatus.VERIFIED)
             entry1.add_implementation(impl1)
             entry1.update_coverage()
 
             # Add second principle with unverified implementations
             entry2 = matrix.get_or_create_entry(
-                principle_id="PRINC-002",
-                cwe="CWE-90",
-                principle_name="XSS Prevention",
-                level="MUST"
+                principle_id="PRINC-002", cwe="CWE-90", principle_name="XSS Prevention", level="MUST"
             )
-            impl2 = Implementation(
-                file="test2.py",
-                lines=[10],
-                technique="test",
-                status=VerificationStatus.PENDING
-            )
+            impl2 = Implementation(file="test2.py", lines=[10], technique="test", status=VerificationStatus.PENDING)
             entry2.add_implementation(impl2)
             entry2.update_coverage()
 
@@ -433,33 +348,17 @@ class TestComplianceMatrix:
 
             # Add verified principle
             entry1 = matrix.get_or_create_entry(
-                principle_id="PRINC-001",
-                cwe="CWE-89",
-                principle_name="SQL Injection Prevention",
-                level="MUST"
+                principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
             )
-            impl1 = Implementation(
-                file="test1.py",
-                lines=[10],
-                technique="test",
-                status=VerificationStatus.VERIFIED
-            )
+            impl1 = Implementation(file="test1.py", lines=[10], technique="test", status=VerificationStatus.VERIFIED)
             entry1.add_implementation(impl1)
             entry1.update_coverage()
 
             # Add unverified principle
             entry2 = matrix.get_or_create_entry(
-                principle_id="PRINC-002",
-                cwe="CWE-90",
-                principle_name="XSS Prevention",
-                level="MUST"
+                principle_id="PRINC-002", cwe="CWE-90", principle_name="XSS Prevention", level="MUST"
             )
-            impl2 = Implementation(
-                file="test2.py",
-                lines=[10],
-                technique="test",
-                status=VerificationStatus.PENDING
-            )
+            impl2 = Implementation(file="test2.py", lines=[10], technique="test", status=VerificationStatus.PENDING)
             entry2.add_implementation(impl2)
             entry2.update_coverage()
 
@@ -475,25 +374,13 @@ class TestComplianceMatrix:
 
             # Add principle with implementations
             entry1 = matrix.get_or_create_entry(
-                principle_id="PRINC-001",
-                cwe="CWE-89",
-                principle_name="SQL Injection Prevention",
-                level="MUST"
+                principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
             )
-            impl1 = Implementation(
-                file="test1.py",
-                lines=[10],
-                technique="test"
-            )
+            impl1 = Implementation(file="test1.py", lines=[10], technique="test")
             entry1.add_implementation(impl1)
 
             # Add principle without implementations
-            matrix.get_or_create_entry(
-                principle_id="PRINC-002",
-                cwe="CWE-90",
-                principle_name="XSS Prevention",
-                level="MUST"
-            )
+            matrix.get_or_create_entry(principle_id="PRINC-002", cwe="CWE-90", principle_name="XSS Prevention", level="MUST")
 
             violated = matrix.get_violated_principles()
             assert len(violated) == 1
@@ -503,10 +390,7 @@ class TestComplianceMatrix:
         """Test generating compliance report"""
         matrix = ComplianceMatrix()
         matrix.get_or_create_entry(
-            principle_id="PRINC-001",
-            cwe="CWE-89",
-            principle_name="SQL Injection Prevention",
-            level="MUST"
+            principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
         )
 
         report = matrix.generate_report()
@@ -528,7 +412,7 @@ class TestComplianceMatrix:
                 level="MUST",
                 file_path="test.py",
                 lines=[10],
-                technique="test"
+                technique="test",
             )
 
             matrix.export_to_csv(str(csv_path))
@@ -553,14 +437,10 @@ class TestComplianceMatrix:
                 file_path="test.py",
                 lines=[10],
                 technique="test",
-                content="old content"
+                content="old content",
             )
 
-            affected = matrix.track_code_changes(
-                old_content="old content",
-                new_content="old content",
-                file_path="test.py"
-            )
+            affected = matrix.track_code_changes(old_content="old content", new_content="old content", file_path="test.py")
 
             assert len(affected) == 0
 
@@ -578,22 +458,15 @@ class TestComplianceMatrix:
                 file_path="test.py",
                 lines=[10],
                 technique="test",
-                content="old content"
+                content="old content",
             )
 
             # Verify it first
             matrix.verify_implementation(
-                principle_id="PRINC-001",
-                file_path="test.py",
-                lines=[10],
-                verified_by="user@example.com"
+                principle_id="PRINC-001", file_path="test.py", lines=[10], verified_by="user@example.com"
             )
 
-            affected = matrix.track_code_changes(
-                old_content="old content",
-                new_content="new content",
-                file_path="test.py"
-            )
+            affected = matrix.track_code_changes(old_content="old content", new_content="new content", file_path="test.py")
 
             assert len(affected) == 1
             assert "PRINC-001" in affected
@@ -612,7 +485,7 @@ class TestComplianceMatrix:
                 level="MUST",
                 file_path="test.py",
                 lines=[10],
-                technique="test"
+                technique="test",
             )
 
             matrix.add_implementation(
@@ -622,7 +495,7 @@ class TestComplianceMatrix:
                 level="MUST",
                 file_path="test.py",
                 lines=[20],
-                technique="test"
+                technique="test",
             )
 
             principles = matrix.get_principles_by_file("test.py")
@@ -644,7 +517,7 @@ class TestComplianceMatrix:
                 file_path="test.py",
                 lines=[10],
                 technique="test",
-                content="content"
+                content="content",
             )
 
             matrix1.save()
@@ -677,17 +550,10 @@ class TestComplianceMatrix:
             matrix_path = Path(tmpdir) / "matrix.json"
             matrix = ComplianceMatrix(matrix_path=str(matrix_path))
             entry = matrix.get_or_create_entry(
-                principle_id="PRINC-001",
-                cwe="CWE-89",
-                principle_name="SQL Injection Prevention",
-                level="MUST"
+                principle_id="PRINC-001", cwe="CWE-89", principle_name="SQL Injection Prevention", level="MUST"
             )
 
-            impl = Implementation(
-                file="test.py",
-                lines=[10],
-                technique="test"
-            )
+            impl = Implementation(file="test.py", lines=[10], technique="test")
             entry.add_implementation(impl)
 
             entry_dict = matrix._entry_to_dict(entry)

@@ -7,10 +7,10 @@
 import ast
 import logging
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List, Optional
 
 from .loaders.rule_loader import get_registry
-from .rules.models import Rule, RuleResult, RuleNotFoundError
+from .rules.models import Rule, RuleNotFoundError, RuleResult
 from .severity import Severity
 
 logger = logging.getLogger(__name__)

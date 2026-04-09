@@ -100,9 +100,7 @@ class TestLingFlowConfig:
         config = LingFlowConfig(log_level="INVALID")
         with pytest.raises(ValueError) as exc_info:
             config.validate()
-        assert "log_level must be one of DEBUG, INFO, WARNING, ERROR, CRITICAL" in str(
-            exc_info.value
-        )
+        assert "log_level must be one of DEBUG, INFO, WARNING, ERROR, CRITICAL" in str(exc_info.value)
 
     def test_config_validate_valid_log_levels(self):
         """Test validation passes with all valid log levels."""
@@ -209,9 +207,7 @@ class TestLingFlowConfig:
 
     def test_zero_timeouts_valid(self):
         """Test that zero timeouts are valid (except context limit)."""
-        config = LingFlowConfig(
-            workflow_timeout=0.0, skill_timeout=0.0, agent_timeout=0.0
-        )
+        config = LingFlowConfig(workflow_timeout=0.0, skill_timeout=0.0, agent_timeout=0.0)
         config.validate()  # Should not raise
 
     def test_deprecation_warning(self):

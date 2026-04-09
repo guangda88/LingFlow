@@ -11,9 +11,10 @@ from typing import Dict, List
 @dataclass
 class SentimentResult:
     """情感分析结果"""
+
     text: str
     score: float  # -1 到 1
-    label: str    # positive, neutral, negative
+    label: str  # positive, neutral, negative
     confidence: float  # 0 到 1
     key_words: List[str]  # 关键词
 
@@ -27,49 +28,119 @@ class SentimentAnalyzer:
     # 正面词汇 (LingFlow/工具相关)
     POSITIVE_WORDS = [
         # 强正面
-        "awesome", "amazing", "excellent", "fantastic", "incredible", "outstanding",
-        "useful", "helpful", "powerful", "great", "good", "nice", "cool",
-        "love", "favorite", "recommend", "impressive", "solid", "robust",
+        "awesome",
+        "amazing",
+        "excellent",
+        "fantastic",
+        "incredible",
+        "outstanding",
+        "useful",
+        "helpful",
+        "powerful",
+        "great",
+        "good",
+        "nice",
+        "cool",
+        "love",
+        "favorite",
+        "recommend",
+        "impressive",
+        "solid",
+        "robust",
         # 技术正面
-        "well-designed", "intuitive", "clean", "efficient", "fast", "performant",
-        "innovative", "cutting-edge", "state-of-the-art", "breakthrough",
+        "well-designed",
+        "intuitive",
+        "clean",
+        "efficient",
+        "fast",
+        "performant",
+        "innovative",
+        "cutting-edge",
+        "state-of-the-art",
+        "breakthrough",
         # 中文正面
-        "好用", "强大", "优秀", "太棒了", "赞", "推荐", "喜欢",
+        "好用",
+        "强大",
+        "优秀",
+        "太棒了",
+        "赞",
+        "推荐",
+        "喜欢",
     ]
 
     # 负面词汇
     NEGATIVE_WORDS = [
         # 强负面
-        "bad", "terrible", "awful", "horrible", "poor", "useless", "broken",
-        "slow", "buggy", "unreliable", "disappointing", "frustrating",
-        "confusing", "complex", "difficult", "complicated",
+        "bad",
+        "terrible",
+        "awful",
+        "horrible",
+        "poor",
+        "useless",
+        "broken",
+        "slow",
+        "buggy",
+        "unreliable",
+        "disappointing",
+        "frustrating",
+        "confusing",
+        "complex",
+        "difficult",
+        "complicated",
         # 技术负面
-        "crash", "error", "fail", "broken", "bug", "issue", "problem",
+        "crash",
+        "error",
+        "fail",
+        "broken",
+        "bug",
+        "issue",
+        "problem",
         # 中文负面
-        "难用", "复杂", "慢", "不行", "有问题", "坏了", "bug",
+        "难用",
+        "复杂",
+        "慢",
+        "不行",
+        "有问题",
+        "坏了",
+        "bug",
     ]
 
     # 技术特征词 (用于判断是否与技术相关)
     TECH_WORDS = [
-        "api", "cli", "tool", "framework", "library", "package",
-        "install", "setup", "configure", "run", "execute",
-        "code", "development", "workflow", "pipeline",
-        "mcp", "agent", "llm", "ai", "automation",
-        "文档", "测试", "部署", "集成",
+        "api",
+        "cli",
+        "tool",
+        "framework",
+        "library",
+        "package",
+        "install",
+        "setup",
+        "configure",
+        "run",
+        "execute",
+        "code",
+        "development",
+        "workflow",
+        "pipeline",
+        "mcp",
+        "agent",
+        "llm",
+        "ai",
+        "automation",
+        "文档",
+        "测试",
+        "部署",
+        "集成",
     ]
 
     def __init__(self):
         """初始化分析器"""
         # 编译正则表达式
         self.positive_pattern = re.compile(
-            r'\b(' + '|'.join(re.escape(w)
-                              for w in self.POSITIVE_WORDS) + r')\b',
-            re.IGNORECASE
+            r"\b(" + "|".join(re.escape(w) for w in self.POSITIVE_WORDS) + r")\b", re.IGNORECASE
         )
         self.negative_pattern = re.compile(
-            r'\b(' + '|'.join(re.escape(w)
-                              for w in self.NEGATIVE_WORDS) + r')\b',
-            re.IGNORECASE
+            r"\b(" + "|".join(re.escape(w) for w in self.NEGATIVE_WORDS) + r")\b", re.IGNORECASE
         )
 
     def analyze(self, text: str) -> SentimentResult:
@@ -82,13 +153,7 @@ class SentimentAnalyzer:
             SentimentResult
         """
         if not text:
-            return SentimentResult(
-                text=text,
-                score=0.0,
-                label="neutral",
-                confidence=0.0,
-                key_words=[]
-            )
+            return SentimentResult(text=text, score=0.0, label="neutral", confidence=0.0, key_words=[])
 
         # 清理文本
         clean_text = text.lower()
@@ -100,9 +165,7 @@ class SentimentAnalyzer:
 
         # 基础分数 (-1 到 1)
         if positive_matches or negative_matches:
-            raw_score = (len(positive_matches) - len(negative_matches)) / max(
-                len(positive_matches) + len(negative_matches), 1
-            )
+            raw_score = (len(positive_matches) - len(negative_matches)) / max(len(positive_matches) + len(negative_matches), 1)
         else:
             raw_score = 0
 
@@ -173,16 +236,13 @@ class SentimentAnalyzer:
         # 简单的关键词提取
         topic_keywords: dict[str, int] = {}
         for text in texts:
-            words = re.findall(r'\b[a-z]{3,}\b', text.lower())
+            words = re.findall(r"\b[a-z]{3,}\b", text.lower())
             for word in words:
                 if word in self.TECH_WORDS:
                     topic_keywords[word] = topic_keywords.get(word, 0) + 1
 
         # 排序并返回前10
-        sorted_topics = sorted(
-            topic_keywords.items(),
-            key=lambda x: x[1],
-            reverse=True)
+        sorted_topics = sorted(topic_keywords.items(), key=lambda x: x[1], reverse=True)
         return [word for word, count in sorted_topics[:10]]
 
 
@@ -213,8 +273,7 @@ def main():
     print("📊 分析结果:")
     for i, text in enumerate(test_texts, 1):
         result = analyzer.analyze(text)
-        print(
-            f"  [{i}] {result.label:8} | score: {result.score:+.2f} | {result.key_words}")
+        print(f"  [{i}] {result.label:8} | score: {result.score:+.2f} | {result.key_words}")
 
     print()
     summary = analyzer.analyze_batch(test_texts)

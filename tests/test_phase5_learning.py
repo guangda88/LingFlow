@@ -5,32 +5,14 @@ Phase 5 学习引擎测试
 YOLO模式：快速验证核心功能
 """
 
-import pytest
 from datetime import datetime
 
-from lingflow.self_optimizer.phase5.models import (
-    FeedbackItem,
-    LearnedRule,
-    Pattern,
-    FeedbackCategory,
-    SeverityLevel,
-    ToolType
-)
-from lingflow.self_optimizer.phase5.learning import (
-    RuleExtractor,
-    SecurityRuleExtractor,
-    RuleDeduplicator,
-    RuleValidator
-)
-from lingflow.self_optimizer.phase5.patterns import (
-    PatternRecognizer,
-    LongMethodDetector,
-    HardcodedSecretDetector
-)
-from lingflow.self_optimizer.phase5.knowledge import (
-    KnowledgeBase,
-    InMemoryKnowledgeBase
-)
+import pytest
+
+from lingflow.self_optimizer.phase5.knowledge import InMemoryKnowledgeBase, KnowledgeBase
+from lingflow.self_optimizer.phase5.learning import RuleDeduplicator, RuleExtractor, RuleValidator, SecurityRuleExtractor
+from lingflow.self_optimizer.phase5.models import FeedbackCategory, FeedbackItem, LearnedRule, Pattern, SeverityLevel, ToolType
+from lingflow.self_optimizer.phase5.patterns import HardcodedSecretDetector, LongMethodDetector, PatternRecognizer
 
 
 # 测试数据
@@ -49,7 +31,7 @@ def create_sample_feedback() -> list[FeedbackItem]:
             line=45,
             snippet="password = 'admin123'",
             suggestion="Use environment variables for credentials",
-            confidence=0.95
+            confidence=0.95,
         ),
         FeedbackItem(
             tool_name="Bandit",
@@ -63,7 +45,7 @@ def create_sample_feedback() -> list[FeedbackItem]:
             line=45,
             snippet="password = 'admin123'",
             suggestion="Use a secure credential manager",
-            confidence=0.90
+            confidence=0.90,
         ),
         FeedbackItem(
             tool_name="Semgrep",
@@ -77,7 +59,7 @@ def create_sample_feedback() -> list[FeedbackItem]:
             line=12,
             snippet="db_pass = 'secret456'",
             suggestion="Use environment variables",
-            confidence=0.92
+            confidence=0.92,
         ),
         FeedbackItem(
             tool_name="Ruff",
@@ -91,7 +73,7 @@ def create_sample_feedback() -> list[FeedbackItem]:
             line=3,
             snippet="import os",
             suggestion="Remove unused import",
-            confidence=0.85
+            confidence=0.85,
         ),
         FeedbackItem(
             tool_name="Ruff",
@@ -105,7 +87,7 @@ def create_sample_feedback() -> list[FeedbackItem]:
             line=5,
             snippet="import json",
             suggestion="Remove unused import",
-            confidence=0.85
+            confidence=0.85,
         ),
         FeedbackItem(
             tool_name="Ruff",
@@ -119,7 +101,7 @@ def create_sample_feedback() -> list[FeedbackItem]:
             line=2,
             snippet="import sys",
             suggestion="Remove unused import",
-            confidence=0.88
+            confidence=0.88,
         ),
     ]
 
@@ -143,10 +125,7 @@ class TestRuleExtractor:
         extractor = RuleExtractor(min_frequency=2, min_confidence=0.7)
 
         # 提取安全规则
-        security_rules = extractor.extract_rules(
-            feedback_items,
-            category=FeedbackCategory.SECURITY
-        )
+        security_rules = extractor.extract_rules(feedback_items, category=FeedbackCategory.SECURITY)
 
         assert all(rule.category == FeedbackCategory.SECURITY for rule in security_rules)
 
@@ -285,7 +264,7 @@ def very_long_function():
 
         # 应该检测到长方法
         assert len(patterns) > 0
-        assert patterns[0]['name'] == 'Long Method'
+        assert patterns[0]["name"] == "Long Method"
 
     def test_recognize_hardcoded_secret(self):
         """测试识别硬编码密钥"""
@@ -300,7 +279,7 @@ secret = 'my_secret_key_12345'
 
         # 应该检测到多个硬编码密钥
         assert len(patterns) >= 2
-        assert all(p['name'] == 'Hardcoded Secret' for p in patterns)
+        assert all(p["name"] == "Hardcoded Secret" for p in patterns)
 
     def test_pattern_recognizer_integration(self):
         """测试模式识别器集成"""
@@ -342,7 +321,7 @@ class TestInMemoryKnowledgeBase:
             frequency=5,
             confidence=0.85,
             status="draft",
-            created_at=datetime.now()
+            created_at=datetime.now(),
         )
 
         # 添加规则
@@ -371,7 +350,7 @@ class TestInMemoryKnowledgeBase:
                 frequency=i + 1,
                 confidence=0.8,
                 status="draft",
-                created_at=datetime.now()
+                created_at=datetime.now(),
             )
             kb.add_rule(rule)
 
@@ -394,7 +373,7 @@ class TestInMemoryKnowledgeBase:
             frequency=10,
             confidence=0.9,
             status="draft",
-            created_at=datetime.now()
+            created_at=datetime.now(),
         )
 
         kb.add_rule(rule)
@@ -419,7 +398,7 @@ class TestInMemoryKnowledgeBase:
             frequency=1,
             confidence=0.8,
             status="draft",
-            created_at=datetime.now()
+            created_at=datetime.now(),
         )
 
         kb.add_rule(rule)
@@ -446,7 +425,7 @@ class TestInMemoryKnowledgeBase:
             frequency=1,
             confidence=0.8,
             status="draft",
-            created_at=datetime.now()
+            created_at=datetime.now(),
         )
 
         kb.add_rule(rule)
@@ -474,15 +453,15 @@ class TestInMemoryKnowledgeBase:
                 frequency=1,
                 confidence=0.8,
                 status="draft",
-                created_at=datetime.now()
+                created_at=datetime.now(),
             )
             kb.add_rule(rule)
 
         # 获取统计
         stats = kb.get_statistics()
-        assert stats['total_rules'] == 5
-        assert 'by_category' in stats
-        assert 'by_status' in stats
+        assert stats["total_rules"] == 5
+        assert "by_category" in stats
+        assert "by_status" in stats
 
 
 def test_end_to_end_workflow():
@@ -511,7 +490,7 @@ def test_end_to_end_workflow():
 
     # 6. 检索
     stats = kb.get_statistics()
-    assert stats['total_rules'] > 0
+    assert stats["total_rules"] > 0
 
     # 7. 搜索
     if valid_rules:

@@ -6,9 +6,9 @@
 
 import re
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List, Optional
 
-from .models import LearnedRule, FeedbackCategory
+from .models import FeedbackCategory, LearnedRule
 
 
 class RuleApplier:
@@ -34,7 +34,7 @@ class RuleApplier:
             检测到的问题列表
         """
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 source_code = f.read()
         except Exception:
             return []
@@ -42,10 +42,7 @@ class RuleApplier:
         return self.check_code(source_code, file_path, category)
 
     def check_code(
-        self,
-        source_code: str,
-        file_path: str,
-        category: Optional[FeedbackCategory] = None
+        self, source_code: str, file_path: str, category: Optional[FeedbackCategory] = None
     ) -> List[Dict[str, Any]]:
         """检查代码
 
@@ -60,11 +57,7 @@ class RuleApplier:
         issues = []
 
         # 获取启用的规则
-        rules = self.knowledge_base.get_all_rules(
-            category=category,
-            status="approved",
-            limit=1000
-        )
+        rules = self.knowledge_base.get_all_rules(category=category, status="approved", limit=1000)
 
         for rule in rules:
             rule_issues = self._apply_rule(rule, source_code, file_path)
@@ -74,10 +67,7 @@ class RuleApplier:
         return issues
 
     def check_directory(
-        self,
-        directory: str,
-        pattern: str = "*.py",
-        category: Optional[FeedbackCategory] = None
+        self, directory: str, pattern: str = "*.py", category: Optional[FeedbackCategory] = None
     ) -> Dict[str, List[Dict[str, Any]]]:
         """检查目录中的所有文件
 
@@ -100,12 +90,7 @@ class RuleApplier:
 
         return results
 
-    def _apply_rule(
-        self,
-        rule: LearnedRule,
-        source_code: str,
-        file_path: str
-    ) -> List[Dict[str, Any]]:
+    def _apply_rule(self, rule: LearnedRule, source_code: str, file_path: str) -> List[Dict[str, Any]]:
         """应用单个规则到代码
 
         Args:
@@ -126,21 +111,23 @@ class RuleApplier:
         for code_pattern in rule.pattern.code_patterns:
             matches = self._find_pattern_matches(code_pattern, source_code)
             for match in matches:
-                line_num = source_code[:match.start()].count('\n') + 1
-                line_content = source_code.split('\n')[line_num - 1]
+                line_num = source_code[: match.start()].count("\n") + 1
+                line_content = source_code.split("\n")[line_num - 1]
 
-                issues.append({
-                    "rule_id": rule.id,
-                    "rule_name": rule.name,
-                    "category": rule.category.value,
-                    "severity": self._map_severity(rule),
-                    "message": rule.description,
-                    "file_path": file_path,
-                    "line": line_num,
-                    "snippet": line_content.strip(),
-                    "suggestion": rule.pattern.tool_support[0] if rule.pattern.tool_support else None,
-                    "confidence": rule.confidence,
-                })
+                issues.append(
+                    {
+                        "rule_id": rule.id,
+                        "rule_name": rule.name,
+                        "category": rule.category.value,
+                        "severity": self._map_severity(rule),
+                        "message": rule.description,
+                        "file_path": file_path,
+                        "line": line_num,
+                        "snippet": line_content.strip(),
+                        "suggestion": rule.pattern.tool_support[0] if rule.pattern.tool_support else None,
+                        "confidence": rule.confidence,
+                    }
+                )
 
         # 检查上下文关键词
         if rule.pattern.context_keywords:
@@ -184,17 +171,12 @@ class RuleApplier:
                 pos = source_code.find(pattern, start)
                 if pos == -1:
                     break
-                matches.append(type('Match', (), {'start': lambda self, p=pos: p})())
+                matches.append(type("Match", (), {"start": lambda self, p=pos: p})())
                 start = pos + 1
 
         return matches
 
-    def _check_keywords(
-        self,
-        rule: LearnedRule,
-        source_code: str,
-        file_path: str
-    ) -> List[Dict[str, Any]]:
+    def _check_keywords(self, rule: LearnedRule, source_code: str, file_path: str) -> List[Dict[str, Any]]:
         """检查上下文关键词"""
         issues = []
         code_lower = source_code.lower()
@@ -202,21 +184,23 @@ class RuleApplier:
         for keyword in rule.pattern.context_keywords:
             if keyword.lower() in code_lower:
                 # 找到包含关键词的行
-                lines = source_code.split('\n')
+                lines = source_code.split("\n")
                 for i, line in enumerate(lines, 1):
                     if keyword.lower() in line.lower():
-                        issues.append({
-                            "rule_id": rule.id,
-                            "rule_name": rule.name,
-                            "category": rule.category.value,
-                            "severity": self._map_severity(rule),
-                            "message": f"Potential issue: {rule.description}",
-                            "file_path": file_path,
-                            "line": i,
-                            "snippet": line.strip(),
-                            "suggestion": f"Review usage of '{keyword}'",
-                            "confidence": rule.confidence * 0.7,  # 关键词匹配置信度较低
-                        })
+                        issues.append(
+                            {
+                                "rule_id": rule.id,
+                                "rule_name": rule.name,
+                                "category": rule.category.value,
+                                "severity": self._map_severity(rule),
+                                "message": f"Potential issue: {rule.description}",
+                                "file_path": file_path,
+                                "line": i,
+                                "snippet": line.strip(),
+                                "suggestion": f"Review usage of '{keyword}'",
+                                "confidence": rule.confidence * 0.7,  # 关键词匹配置信度较低
+                            }
+                        )
                         break  # 每个关键词只报告一次
 
         return issues
@@ -250,12 +234,7 @@ class AutoFixer:
         self.applier = applier
         self._fixed_count = 0
 
-    def fix_file(
-        self,
-        file_path: str,
-        issues: List[Dict[str, Any]],
-        dry_run: bool = True
-    ) -> Dict[str, Any]:
+    def fix_file(self, file_path: str, issues: List[Dict[str, Any]], dry_run: bool = True) -> Dict[str, Any]:
         """修复文件中的问题
 
         Args:
@@ -275,12 +254,13 @@ class AutoFixer:
                 "dry_run": True,
             }
 
-        with open(file_path, 'r') as f:
+        with open(file_path, "r") as f:
             original_content = f.read()
 
         backup_path = file_path + ".bak"
         try:
             from pathlib import Path as _Path
+
             _Path(backup_path).write_text(original_content)
         except OSError:
             pass
@@ -299,7 +279,7 @@ class AutoFixer:
                 continue
 
         if modified_content != original_content:
-            with open(file_path, 'w') as f:
+            with open(file_path, "w") as f:
                 f.write(modified_content)
 
         self._fixed_count += fixed_count
@@ -323,12 +303,11 @@ class AutoFixer:
             "import",
             "blank-line",
         ]
-        return any(p in issue.get("rule_id", "").lower()
-                   for p in fixable_patterns)
+        return any(p in issue.get("rule_id", "").lower() for p in fixable_patterns)
 
     def _apply_fix(self, content: str, issue: Dict[str, Any]) -> str:
         """应用单个修复"""
-        lines = content.split('\n')
+        lines = content.split("\n")
         line_num = issue["line"] - 1
 
         if 0 <= line_num < len(lines):
@@ -340,7 +319,7 @@ class AutoFixer:
                 # 移除空行
                 lines.pop(line_num)
 
-        return '\n'.join(lines)
+        return "\n".join(lines)
 
 
 class PreCommitHookGenerator:
@@ -348,9 +327,7 @@ class PreCommitHookGenerator:
 
     @staticmethod
     def generate_hook(
-        knowledge_base,
-        output_path: str = ".git/hooks/pre-commit",
-        categories: Optional[List[str]] = None
+        knowledge_base, output_path: str = ".git/hooks/pre-commit", categories: Optional[List[str]] = None
     ) -> None:
         """生成pre-commit钩子脚本
 
@@ -359,7 +336,7 @@ class PreCommitHookGenerator:
             output_path: 输出路径
             categories: 要检查的类别列表
         """
-        script = '''#!/bin/bash
+        script = """#!/bin/bash
 # LingFlow Self-Learning Pre-commit Hook
 # Auto-generated by LingFlow v3.9.0
 
@@ -392,21 +369,19 @@ if [ $? -ne 0 ]; then
     echo "Run: python scripts/activate_self_learning.py --report"
     exit 1
 fi
-'''
+"""
 
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write(script)
 
         # 设置可执行权限
         import os
+
         os.chmod(output_path, 0o755)
 
     @staticmethod
-    def generate_config(
-        knowledge_base,
-        output_path: str = ".lingflow/pre-commit-config.yaml"
-    ) -> None:
+    def generate_config(knowledge_base, output_path: str = ".lingflow/pre-commit-config.yaml") -> None:
         """生成pre-commit配置文件
 
         Args:
@@ -436,11 +411,11 @@ fi
             "lingflow": {
                 "total_rules": stats["total_rules"],
                 "categories": stats["by_category"],
-            }
+            },
         }
 
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             yaml.dump(config, f, default_flow_style=False)
 
 

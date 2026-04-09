@@ -1,7 +1,9 @@
 """LingFlowConfig tests"""
 
 import warnings
+
 import pytest
+
 from lingflow.core.config import LingFlowConfig
 
 

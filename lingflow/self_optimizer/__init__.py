@@ -3,27 +3,22 @@ LingFlow 自优化系统
 基于 LingMinOpt 的自我优化能力
 """
 
-from lingflow.self_optimizer.config import OptimizationConfig, get_global_config, DEFAULT_CONFIG
+from lingflow.self_optimizer.config import DEFAULT_CONFIG, OptimizationConfig, get_global_config
 
 # 向后兼容：保留ConfigManager作为别名
 ConfigManager = OptimizationConfig
 
-from lingflow.self_optimizer.trigger import OptimizationTrigger, TriggerInfo
-
+from lingflow.self_optimizer.advisor import OptimizationAdvisor
+from lingflow.self_optimizer.evaluator import StructureEvaluator, fallback_evaluate
 from lingflow.self_optimizer.optimizer import (
-    ProcessIsolatedOptimizer,
-    SynchronousOptimizer,
     OptimizationRequest,
     OptimizationResult,
+    ProcessIsolatedOptimizer,
+    SynchronousOptimizer,
 )
-
-from lingflow.self_optimizer.evaluator import StructureEvaluator, fallback_evaluate
-
 from lingflow.self_optimizer.performance_evaluator import PerformanceEvaluator as PerfEvaluator
-
 from lingflow.self_optimizer.simplicity_evaluator import SimplicityEvaluator
-
-from lingflow.self_optimizer.advisor import OptimizationAdvisor
+from lingflow.self_optimizer.trigger import OptimizationTrigger, TriggerInfo
 
 __all__ = [
     # Config

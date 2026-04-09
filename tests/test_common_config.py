@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from lingflow.common.config import ConfigManager, get_config, set_config, save_config
+from lingflow.common.config import ConfigManager, get_config, save_config, set_config
 
 
 class TestConfigManagerInitialization:
@@ -141,13 +141,13 @@ class TestConfigManagerGet:
         value = manager.get("workflow.max_iterations")
         assert value is not None
         assert isinstance(value, int)
-        
+
         value = manager.get("workflow.max_parallel")
         assert value is not None
-        
+
         value = manager.get("skills.path")
         assert value is not None
-        
+
         value = manager.get("skills.default_timeout")
         assert value is not None
 
@@ -313,6 +313,7 @@ class TestModuleLevelFunctions:
         try:
             # Save the global config_manager to a temp file for testing
             import lingflow.common.config as config_module
+
             original_file = config_module.config_manager.config_file
             config_module.config_manager.config_file = temp_file
             config_module.config_manager.set("test_save", True)

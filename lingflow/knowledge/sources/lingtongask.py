@@ -91,11 +91,7 @@ class LingTongAskKnowledgeSource(KnowledgeSource):
             except Exception:
                 pass
 
-    async def search(
-        self,
-        query: KnowledgeQuery,
-        context: Optional[SearchContext] = None
-    ) -> KnowledgeResult:
+    async def search(self, query: KnowledgeQuery, context: Optional[SearchContext] = None) -> KnowledgeResult:
         """Search LingTongAsk knowledge"""
         items: list[KnowledgeItem] = []
 
@@ -285,10 +281,7 @@ class LingTongAskKnowledgeSource(KnowledgeSource):
 
     def _score_item(self, item: KnowledgeItem, query: KnowledgeQuery) -> KnowledgeItem:
         """Score an item's relevance"""
-        score = self._calculate_relevance(
-            f"{item.title} {item.content}",
-            query.keywords
-        )
+        score = self._calculate_relevance(f"{item.title} {item.content}", query.keywords)
         return replace(item, relevance_score=score)
 
     def _calculate_relevance(self, text: str, keywords: List[str]) -> float:
@@ -312,12 +305,14 @@ class LingTongAskKnowledgeSource(KnowledgeSource):
         if self._content_dir.exists():
             content_count = len(list(self._content_dir.glob("**/*.md")))
 
-        stats.update({
-            "doc_count": doc_count,
-            "content_count": content_count,
-            "charter_available": "charter" in self._cache,
-            "roadmap_available": "roadmap" in self._cache,
-        })
+        stats.update(
+            {
+                "doc_count": doc_count,
+                "content_count": content_count,
+                "charter_available": "charter" in self._cache,
+                "roadmap_available": "roadmap" in self._cache,
+            }
+        )
 
         return stats
 

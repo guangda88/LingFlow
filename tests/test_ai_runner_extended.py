@@ -1,12 +1,14 @@
 """Extended AI runner tests for additional coverage."""
 
-import pytest
 import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
 from lingflow.testing.ai_runner import (
     AIScenarioRunner,
-    ScenarioStatus,
     ScenarioResult,
+    ScenarioStatus,
 )
 
 

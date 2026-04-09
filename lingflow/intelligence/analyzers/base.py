@@ -6,16 +6,16 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 
+from ..logging_config import get_logger
 from ..models.common import (
+    InfluenceScore,
     MentionData,
     SentimentResult,
-    InfluenceScore,
-    TrendMetrics,
     TopicCluster,
+    TrendMetrics,
 )
-from ..logging_config import get_logger
 
 logger = get_logger(__name__)
 
@@ -23,6 +23,7 @@ logger = get_logger(__name__)
 @dataclass
 class AnalyzerConfig:
     """分析器配置"""
+
     enabled: bool = True
     cache_results: bool = True
     output_dir: Path = Path(".lingflow/intelligence/analyzed")
@@ -75,7 +76,7 @@ class AnalyzerPipeline:
         """
         self.analyzers = analyzers or []
 
-    def add(self, analyzer: BaseAnalyzer) -> 'AnalyzerPipeline':
+    def add(self, analyzer: BaseAnalyzer) -> "AnalyzerPipeline":
         """添加分析器
 
         Args:
@@ -151,8 +152,7 @@ def calculate_percentile(values: List[float], percentile: float) -> float:
     return sorted_values[index]
 
 
-def calculate_moving_average(
-        values: List[float], window: int = 7) -> List[float]:
+def calculate_moving_average(values: List[float], window: int = 7) -> List[float]:
     """计算移动平均
 
     Args:
@@ -167,7 +167,7 @@ def calculate_moving_average(
 
     result = []
     for i in range(len(values) - window + 1):
-        avg = sum(values[i:i + window]) / window
+        avg = sum(values[i : i + window]) / window
         result.append(avg)
 
     return result

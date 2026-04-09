@@ -5,7 +5,7 @@ LingFlow Phase 4: 图表生成器
 """
 
 import json
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
 
 class ChartGenerator:

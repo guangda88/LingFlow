@@ -49,7 +49,7 @@ def _initialize_services():
 
 def _show_session_resume():
     """显示会话恢复信息"""
-    from .context.auto_resume import auto_resume, SESSION_FILE
+    from .context.auto_resume import SESSION_FILE, auto_resume
 
     if SESSION_FILE.exists():
         text = auto_resume()

@@ -6,15 +6,15 @@
 import pytest  # noqa
 
 from lingflow.intelligence.constants import (
-    PlatformWeights,
     APILimits,
-    InfluenceThresholds,
-    SentimentThresholds,
+    AuthorTiers,
     DataRetention,
+    InfluenceThresholds,
+    PlatformWeights,
+    RecencyDecay,
     ReportLimits,
     ScoreWeights,
-    AuthorTiers,
-    RecencyDecay,
+    SentimentThresholds,
 )
 from lingflow.intelligence.models.common import Platform
 
@@ -145,12 +145,7 @@ class TestScoreWeights:
 
     def test_weights_sum_to_one(self):
         """测试权重和为1"""
-        total = (
-            ScoreWeights.ENGAGEMENT +
-            ScoreWeights.AUTHOR +
-            ScoreWeights.CONTENT +
-            ScoreWeights.RECENCY
-        )
+        total = ScoreWeights.ENGAGEMENT + ScoreWeights.AUTHOR + ScoreWeights.CONTENT + ScoreWeights.RECENCY
         assert abs(total - 1.0) < 0.01  # 允许浮点误差
 
 

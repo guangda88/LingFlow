@@ -2,14 +2,15 @@
 
 import os
 import tempfile
+
 import pytest
 
 from lingflow.requirements.traceability import (
-    RequirementStatus,
-    RequirementPriority,
     Requirement,
-    TraceEvent,
+    RequirementPriority,
+    RequirementStatus,
     RequirementsTraceability,
+    TraceEvent,
 )
 
 

@@ -6,9 +6,9 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
-from .base import BaseAnalyzer, AnalyzerConfig, calculate_moving_average, detect_outliers
-from ..models.common import MentionData, TrendMetrics, TrendDirection
 from ..logging_config import get_logger
+from ..models.common import MentionData, TrendDirection, TrendMetrics
+from .base import AnalyzerConfig, BaseAnalyzer, calculate_moving_average, detect_outliers
 
 logger = get_logger(__name__)
 
@@ -16,6 +16,7 @@ logger = get_logger(__name__)
 @dataclass
 class TrendConfig(AnalyzerConfig):
     """趋势分析器配置"""
+
     window_size: int = 7
     anomaly_threshold: float = 2.0
 
@@ -136,13 +137,15 @@ class TrendAnalyzer(BaseAnalyzer):
 
         trends = []
         for platform, count in sorted(platform_counts.items(), key=lambda x: x[1], reverse=True):
-            trends.append(TrendMetrics(
-                metric_name=f"platform_{platform}",
-                current_value=float(count),
-                previous_value=0.0,
-                change_percent=100.0,
-                trend_direction=TrendDirection.UP,
-            ))
+            trends.append(
+                TrendMetrics(
+                    metric_name=f"platform_{platform}",
+                    current_value=float(count),
+                    previous_value=0.0,
+                    change_percent=100.0,
+                    trend_direction=TrendDirection.UP,
+                )
+            )
 
         return trends[:5]
 

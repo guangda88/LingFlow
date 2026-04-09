@@ -7,33 +7,32 @@ __version__ = "2.0.0"
 __author__ = "LingFlow Team"
 
 from .collectors.base import BaseCollector, CollectorManager
-from .collectors.reddit import RedditCollector
 from .collectors.hackernews import HNCollector
-from .models.common import (
-    MentionData,
-    Platform,
-    SourceType,
-    SentimentLabel,
-    TrendDirection,
-    SentimentResult,
-    InfluenceScore,
-    TrendMetrics,
-    ReputationMetrics,
-    DailyReport,
-)
+from .collectors.reddit import RedditCollector
 from .constants import (
-    PlatformWeights,
     APILimits,
-    InfluenceThresholds,
-    SentimentThresholds,
+    AuthorTiers,
     DataRetention,
+    InfluenceThresholds,
+    PlatformWeights,
+    RecencyDecay,
     ReportLimits,
     ScoreWeights,
-    AuthorTiers,
-    RecencyDecay,
+    SentimentThresholds,
 )
 from .logging_config import get_logger
-
+from .models.common import (
+    DailyReport,
+    InfluenceScore,
+    MentionData,
+    Platform,
+    ReputationMetrics,
+    SentimentLabel,
+    SentimentResult,
+    SourceType,
+    TrendDirection,
+    TrendMetrics,
+)
 
 __all__ = [
     # 版本
@@ -73,7 +72,7 @@ def create_collector_manager(
     enable_github: bool = True,
     enable_reddit: bool = True,
     enable_hn: bool = True,
-    data_dir: str = ".lingflow/intelligence/raw"
+    data_dir: str = ".lingflow/intelligence/raw",
 ) -> CollectorManager:
     """创建采集器管理器
 
@@ -87,6 +86,7 @@ def create_collector_manager(
         CollectorManager实例
     """
     from pathlib import Path
+
     from .collectors.base import CollectorConfig
 
     manager = CollectorManager(data_dir=Path(data_dir))

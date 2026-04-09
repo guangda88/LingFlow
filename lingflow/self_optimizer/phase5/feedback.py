@@ -5,10 +5,10 @@
 """
 
 import json
+from collections import Counter
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Any, Optional
-from collections import Counter
+from typing import Any, Dict, List, Optional
 
 
 class FeedbackCollector:
@@ -33,7 +33,7 @@ class FeedbackCollector:
         """加载反馈数据"""
         if self.storage_path.exists():
             try:
-                with open(self.storage_path, 'r') as f:
+                with open(self.storage_path, "r") as f:
                     return json.load(f)
             except Exception:
                 pass
@@ -41,16 +41,11 @@ class FeedbackCollector:
 
     def _save_feedback(self) -> None:
         """保存反馈数据"""
-        with open(self.storage_path, 'w') as f:
+        with open(self.storage_path, "w") as f:
             json.dump(self._feedback_data, f, indent=2)
 
     def record_rule_application(
-        self,
-        rule_id: str,
-        file_path: str,
-        line: int,
-        accepted: bool,
-        user_feedback: Optional[str] = None
+        self, rule_id: str, file_path: str, line: int, accepted: bool, user_feedback: Optional[str] = None
     ) -> None:
         """记录规则应用反馈
 
@@ -74,12 +69,7 @@ class FeedbackCollector:
         self._save_feedback()
 
     def record_application_stats(
-        self,
-        scan_id: str,
-        total_files: int,
-        total_issues: int,
-        fixed_issues: int,
-        duration_seconds: float
+        self, scan_id: str, total_files: int, total_issues: int, fixed_issues: int, duration_seconds: float
     ) -> None:
         """记录应用统计
 
@@ -116,9 +106,9 @@ class FeedbackCollector:
         cutoff_time = datetime.now() - timedelta(days=days)
 
         rule_feedbacks = [
-            f for f in self._feedback_data["rule_feedback"]
-            if f["rule_id"] == rule_id
-            and datetime.fromisoformat(f["timestamp"]) > cutoff_time
+            f
+            for f in self._feedback_data["rule_feedback"]
+            if f["rule_id"] == rule_id and datetime.fromisoformat(f["timestamp"]) > cutoff_time
         ]
 
         if not rule_feedbacks:
@@ -140,10 +130,7 @@ class FeedbackCollector:
             "recent_feedback": rule_feedbacks[-10:],  # 最近10条
         }
 
-    def get_all_feedback(
-        self,
-        days: int = 30
-    ) -> Dict[str, Any]:
+    def get_all_feedback(self, days: int = 30) -> Dict[str, Any]:
         """获取所有反馈统计
 
         Args:
@@ -155,13 +142,11 @@ class FeedbackCollector:
         cutoff_time = datetime.now() - timedelta(days=days)
 
         recent_rule_feedback = [
-            f for f in self._feedback_data["rule_feedback"]
-            if datetime.fromisoformat(f["timestamp"]) > cutoff_time
+            f for f in self._feedback_data["rule_feedback"] if datetime.fromisoformat(f["timestamp"]) > cutoff_time
         ]
 
         recent_app_feedback = [
-            f for f in self._feedback_data["application_feedback"]
-            if datetime.fromisoformat(f["timestamp"]) > cutoff_time
+            f for f in self._feedback_data["application_feedback"] if datetime.fromisoformat(f["timestamp"]) > cutoff_time
         ]
 
         # 按规则ID统计
@@ -175,7 +160,7 @@ class FeedbackCollector:
             acceptance_by_rule[rule_id] = {
                 "total": len(rule_feedbacks),
                 "accepted": accepted,
-                "rate": accepted / len(rule_feedbacks)
+                "rate": accepted / len(rule_feedbacks),
             }
 
         return {
@@ -185,9 +170,7 @@ class FeedbackCollector:
             "top_rules": dict(rule_stats.most_common(10)),
             "acceptance_by_rule": acceptance_by_rule,
             "avg_fix_rate": (
-                sum(f.get("fix_rate", 0) for f in recent_app_feedback) / len(recent_app_feedback)
-                if recent_app_feedback
-                else 0
+                sum(f.get("fix_rate", 0) for f in recent_app_feedback) / len(recent_app_feedback) if recent_app_feedback else 0
             ),
         }
 
@@ -218,15 +201,10 @@ class RuleQualityAdjuster:
         adjustments = []
 
         for rule in all_rules:
-            effectiveness = self.feedback_collector.get_rule_effectiveness(
-                rule.id, days
-            )
+            effectiveness = self.feedback_collector.get_rule_effectiveness(rule.id, days)
 
             if effectiveness["total_applications"] >= 5:  # 至少5次应用
-                new_score = self._calculate_adjusted_score(
-                    rule.quality_score,
-                    effectiveness["acceptance_rate"]
-                )
+                new_score = self._calculate_adjusted_score(rule.quality_score, effectiveness["acceptance_rate"])
 
                 if new_score != rule.quality_score:
                     # 更新规则
@@ -239,24 +217,22 @@ class RuleQualityAdjuster:
                         rule.status = "draft"
 
                     self.knowledge_base.add_rule(rule)
-                    adjustments.append({
-                        "rule_id": rule.id,
-                        "old_score": rule.quality_score,
-                        "new_score": new_score,
-                        "applications": effectiveness["total_applications"],
-                        "acceptance_rate": effectiveness["acceptance_rate"],
-                    })
+                    adjustments.append(
+                        {
+                            "rule_id": rule.id,
+                            "old_score": rule.quality_score,
+                            "new_score": new_score,
+                            "applications": effectiveness["total_applications"],
+                            "acceptance_rate": effectiveness["acceptance_rate"],
+                        }
+                    )
 
         return {
             "total_adjustments": len(adjustments),
             "adjustments": adjustments,
         }
 
-    def _calculate_adjusted_score(
-        self,
-        current_score: float,
-        acceptance_rate: float
-    ) -> float:
+    def _calculate_adjusted_score(self, current_score: float, acceptance_rate: float) -> float:
         """计算调整后的质量分数
 
         Args:
@@ -286,12 +262,7 @@ class FeedbackLoop:
         self.collector = FeedbackCollector()
         self.adjuster = RuleQualityAdjuster(knowledge_base, self.collector)
 
-    def run_cycle(
-        self,
-        scan_id: str,
-        scan_results: Dict[str, List[Dict]],
-        duration_seconds: float
-    ) -> Dict[str, Any]:
+    def run_cycle(self, scan_id: str, scan_results: Dict[str, List[Dict]], duration_seconds: float) -> Dict[str, Any]:
         """运行完整的反馈循环
 
         Args:
@@ -306,10 +277,7 @@ class FeedbackLoop:
         total_files = len(scan_results)
         total_issues = sum(len(issues) for issues in scan_results.values())
         fixed_issues = sum(
-            1
-            for issues in scan_results.values()
-            for issue in issues
-            if isinstance(issue, dict) and issue.get("fixed", False)
+            1 for issues in scan_results.values() for issue in issues if isinstance(issue, dict) and issue.get("fixed", False)
         )
 
         self.collector.record_application_stats(
@@ -317,7 +285,7 @@ class FeedbackLoop:
             total_files=total_files,
             total_issues=total_issues,
             fixed_issues=fixed_issues,
-            duration_seconds=duration_seconds
+            duration_seconds=duration_seconds,
         )
 
         # 2. 调整规则质量分数
@@ -356,23 +324,27 @@ class FeedbackLoop:
             effectiveness = self.collector.get_rule_effectiveness(rule.id)
             if effectiveness["total_applications"] >= 5:
                 if effectiveness["acceptance_rate"] < 0.5:
-                    suggestions.append({
-                        "type": "low_acceptance",
-                        "rule_id": rule.id,
-                        "acceptance_rate": effectiveness["acceptance_rate"],
-                        "suggestion": f"Consider reviewing or disabling rule '{rule.name}' due to low acceptance rate",
-                    })
+                    suggestions.append(
+                        {
+                            "type": "low_acceptance",
+                            "rule_id": rule.id,
+                            "acceptance_rate": effectiveness["acceptance_rate"],
+                            "suggestion": f"Consider reviewing or disabling rule '{rule.name}' due to low acceptance rate",
+                        }
+                    )
 
         # 2. 高误报规则
         feedback_summary = self.collector.get_all_feedback()
         for rule_id, stats in feedback_summary.get("acceptance_by_rule", {}).items():
             if stats["total"] >= 10 and stats["rate"] < 0.3:
-                suggestions.append({
-                    "type": "high_false_positive",
-                    "rule_id": rule_id,
-                    "acceptance_rate": stats["rate"],
-                    "suggestion": f"Rule '{rule_id}' may have high false positive rate. Consider refining the pattern.",
-                })
+                suggestions.append(
+                    {
+                        "type": "high_false_positive",
+                        "rule_id": rule_id,
+                        "acceptance_rate": stats["rate"],
+                        "suggestion": f"Rule '{rule_id}' may have high false positive rate. Consider refining the pattern.",
+                    }
+                )
 
         return suggestions
 

@@ -1,6 +1,7 @@
 import pytest
+
 from lingflow.code_review.core.scorer import QualityScorer, ScorerError
-from lingflow.code_review.core.severity import Severity, SeverityWeight, DIMENSION_WEIGHTS
+from lingflow.code_review.core.severity import DIMENSION_WEIGHTS, Severity, SeverityWeight
 
 
 class TestScorerError:
@@ -55,55 +56,46 @@ class TestCalculateScore:
 
     def test_with_multiple_issues(self):
         s = QualityScorer(dimension_weights={"quality": 1.0})
-        result = {"dimensions": {"quality": {
-            "issues": [{"severity": "high"}, {"severity": "medium"}, {"severity": "low"}],
-            "suggestions": []
-        }}}
+        result = {
+            "dimensions": {
+                "quality": {"issues": [{"severity": "high"}, {"severity": "medium"}, {"severity": "low"}], "suggestions": []}
+            }
+        }
         score = s.calculate_score(result)
         assert score < 5.0
 
     def test_with_suggestions(self):
         s = QualityScorer(dimension_weights={"quality": 1.0})
-        result = {"dimensions": {"quality": {
-            "issues": [],
-            "suggestions": [{"priority": "medium"}]
-        }}}
+        result = {"dimensions": {"quality": {"issues": [], "suggestions": [{"priority": "medium"}]}}}
         score = s.calculate_score(result)
         assert score < 5.0
 
     def test_unknown_severity(self):
         s = QualityScorer(dimension_weights={"quality": 1.0})
-        result = {"dimensions": {"quality": {
-            "issues": [{"severity": "unknown_severity"}],
-            "suggestions": []
-        }}}
+        result = {"dimensions": {"quality": {"issues": [{"severity": "unknown_severity"}], "suggestions": []}}}
         score = s.calculate_score(result)
         assert isinstance(score, float)
 
     def test_unknown_priority(self):
         s = QualityScorer(dimension_weights={"quality": 1.0})
-        result = {"dimensions": {"quality": {
-            "issues": [],
-            "suggestions": [{"priority": "unknown_priority"}]
-        }}}
+        result = {"dimensions": {"quality": {"issues": [], "suggestions": [{"priority": "unknown_priority"}]}}}
         score = s.calculate_score(result)
         assert isinstance(score, float)
 
     def test_multiple_dimensions(self):
         s = QualityScorer(dimension_weights={"quality": 0.5, "security": 0.5})
-        result = {"dimensions": {
-            "quality": {"issues": [], "suggestions": []},
-            "security": {"issues": [], "suggestions": []},
-        }}
+        result = {
+            "dimensions": {
+                "quality": {"issues": [], "suggestions": []},
+                "security": {"issues": [], "suggestions": []},
+            }
+        }
         score = s.calculate_score(result)
         assert score == 5.0
 
     def test_score_floor_zero(self):
         s = QualityScorer(dimension_weights={"quality": 1.0})
-        result = {"dimensions": {"quality": {
-            "issues": [{"severity": "critical"}] * 20,
-            "suggestions": []
-        }}}
+        result = {"dimensions": {"quality": {"issues": [{"severity": "critical"}] * 20, "suggestions": []}}}
         score = s.calculate_score(result)
         assert score >= 0.0
 

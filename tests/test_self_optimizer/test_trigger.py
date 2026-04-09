@@ -3,8 +3,9 @@
 """
 
 import pytest
-from lingflow.self_optimizer.trigger import OptimizationTrigger
+
 from lingflow.self_optimizer.config import OptimizationConfig
+from lingflow.self_optimizer.trigger import OptimizationTrigger
 
 
 class TestOptimizationTrigger:

@@ -133,11 +133,7 @@ class KnowledgeSource(ABC):
         return True
 
     @abstractmethod
-    async def search(
-        self,
-        query: KnowledgeQuery,
-        context: Optional[SearchContext] = None
-    ) -> KnowledgeResult:
+    async def search(self, query: KnowledgeQuery, context: Optional[SearchContext] = None) -> KnowledgeResult:
         """
         Search the knowledge source for relevant items.
 
@@ -195,12 +191,7 @@ class KnowledgeSource(ABC):
 
         return True
 
-    def _build_result(
-        self,
-        query: KnowledgeQuery,
-        items: List,
-        context: Optional[SearchContext] = None
-    ) -> KnowledgeResult:
+    def _build_result(self, query: KnowledgeQuery, items: List, context: Optional[SearchContext] = None) -> KnowledgeResult:
         """Build a KnowledgeResult from items"""
         result = KnowledgeResult(
             sources_queried=[self.name],

@@ -1,16 +1,11 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from lingflow.hooks.auto_optimize_hook import AutoOptimizeHook, get_global_hook
-
-
-from lingflow.self_optimizer.trigger import TriggerInfo
-
-
 from lingflow.self_optimizer.config import OptimizationConfig
-
-
 from lingflow.self_optimizer.optimizer import OptimizationResult
+from lingflow.self_optimizer.trigger import TriggerInfo
 
 
 class TestAutoOptimizeHookInit:
@@ -30,13 +25,20 @@ class TestOnCodeReviewComplete:
 
     def test_low_score_triggers(self):
         hook = AutoOptimizeHook()
-        with patch.object(hook, 'trigger') as mock_trigger:
-            mock_trigger.check_all_conditions.return_value = (True, TriggerInfo(
-                type="quality", reason="low score", priority="high",
-                current_value=30, threshold=70.0, metrics={},
-            ))
+        with patch.object(hook, "trigger") as mock_trigger:
+            mock_trigger.check_all_conditions.return_value = (
+                True,
+                TriggerInfo(
+                    type="quality",
+                    reason="low score",
+                    priority="high",
+                    current_value=30,
+                    threshold=70.0,
+                    metrics={},
+                ),
+            )
             mock_trigger.requires_confirmation.return_value = False
-            with patch.object(hook, '_start_optimization') as mock_start:
+            with patch.object(hook, "_start_optimization") as mock_start:
                 mock_start.return_value = None
                 hook.on_code_review_complete({"overall_score": 30})
 
@@ -57,7 +59,7 @@ class TestOnTestComplete:
     def test_with_failures(self):
         hook = AutoOptimizeHook()
         hook.last_check = {"coverage": 80}
-        with patch.object(hook, 'trigger') as mock_trigger:
+        with patch.object(hook, "trigger") as mock_trigger:
             mock_trigger.check_all_conditions.return_value = (False, None)
             hook.on_test_complete({"coverage": 50, "duration": 5.0, "total": 100, "failed": 30})
             assert hook.last_check_time is not None
@@ -72,7 +74,7 @@ class TestOnTestComplete:
     def test_coverage_drop(self):
         hook = AutoOptimizeHook()
         hook.last_check = {"coverage": 90}
-        with patch.object(hook, 'trigger') as mock_trigger:
+        with patch.object(hook, "trigger") as mock_trigger:
             mock_trigger.check_all_conditions.return_value = (False, None)
             hook.on_test_complete({"coverage": 50, "duration": 5.0, "total": 20, "failed": 5})
             assert hook.last_check["coverage"] == 50
@@ -86,7 +88,7 @@ class TestOnGitCommit:
 
     def test_large_commit(self):
         hook = AutoOptimizeHook()
-        with patch.object(hook, 'trigger') as mock_trigger:
+        with patch.object(hook, "trigger") as mock_trigger:
             mock_trigger.check_all_conditions.return_value = (False, None)
             hook.on_git_commit({"new_lines": 1000, "deleted_lines": 100, "new_files": 20})
             assert hook.last_check_time is not None
@@ -100,7 +102,7 @@ class TestOnPerformanceMeasure:
 
     def test_poor_performance(self):
         hook = AutoOptimizeHook()
-        with patch.object(hook, 'trigger') as mock_trigger:
+        with patch.object(hook, "trigger") as mock_trigger:
             mock_trigger.check_all_conditions.return_value = (False, None)
             hook.on_performance_measure({"execution_time": 5.0, "memory_usage_mb": 600, "response_time_ms": 200})
             assert hook.last_check_time is not None
@@ -139,30 +141,44 @@ class TestCheckAndPrompt:
 
     def test_no_trigger(self):
         hook = AutoOptimizeHook()
-        with patch.object(hook, 'trigger') as mock_trigger:
+        with patch.object(hook, "trigger") as mock_trigger:
             mock_trigger.check_all_conditions.return_value = (False, None)
             hook._check_and_prompt({}, {})
             assert hook.last_check_time is not None
 
     def test_trigger_no_confirmation(self):
         hook = AutoOptimizeHook()
-        with patch.object(hook, 'trigger') as mock_trigger:
-            mock_trigger.check_all_conditions.return_value = (True, TriggerInfo(
-                type="quality", reason="test", priority="high",
-                current_value=30, threshold=70.0, metrics={},
-            ))
+        with patch.object(hook, "trigger") as mock_trigger:
+            mock_trigger.check_all_conditions.return_value = (
+                True,
+                TriggerInfo(
+                    type="quality",
+                    reason="test",
+                    priority="high",
+                    current_value=30,
+                    threshold=70.0,
+                    metrics={},
+                ),
+            )
             mock_trigger.requires_confirmation.return_value = False
-            with patch.object(hook, '_start_optimization') as mock_start:
+            with patch.object(hook, "_start_optimization") as mock_start:
                 hook._check_and_prompt({}, {})
                 mock_start.assert_called_once()
 
     def test_trigger_with_confirmation(self, capsys):
         hook = AutoOptimizeHook()
-        with patch.object(hook, 'trigger') as mock_trigger:
-            mock_trigger.check_all_conditions.return_value = (True, TriggerInfo(
-                type="quality", reason="test", priority="high",
-                current_value=30, threshold=70.0, metrics={},
-            ))
+        with patch.object(hook, "trigger") as mock_trigger:
+            mock_trigger.check_all_conditions.return_value = (
+                True,
+                TriggerInfo(
+                    type="quality",
+                    reason="test",
+                    priority="high",
+                    current_value=30,
+                    threshold=70.0,
+                    metrics={},
+                ),
+            )
             mock_trigger.requires_confirmation.return_value = True
             with patch("builtins.input", return_value="n"):
                 hook._check_and_prompt({}, {})
@@ -185,6 +201,7 @@ class TestDelegationMethods:
 class TestGetGlobalHook:
     def test_singleton(self):
         import lingflow.hooks.auto_optimize_hook as mod
+
         mod._global_hook = None
         h1 = get_global_hook()
         h2 = get_global_hook()

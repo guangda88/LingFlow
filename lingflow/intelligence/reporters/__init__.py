@@ -1,6 +1,6 @@
 """情报报告生成器"""
 
-from .daily import DailyReporter, DailyReportConfig
+from .daily import DailyReportConfig, DailyReporter
 
 __all__ = [
     "DailyReporter",

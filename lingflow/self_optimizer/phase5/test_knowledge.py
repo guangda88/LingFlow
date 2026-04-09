@@ -8,20 +8,19 @@ import os
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 import pytest
 
+from lingflow.self_optimizer.phase5.knowledge import (
+    InMemoryKnowledgeBase,
+    KnowledgeBase,
+)
 from lingflow.self_optimizer.phase5.models import (
+    FeedbackCategory,
     LearnedRule,
     Pattern,
-    FeedbackCategory,
 )
-from lingflow.self_optimizer.phase5.knowledge import (
-    KnowledgeBase,
-    InMemoryKnowledgeBase,
-)
-
 
 # ============================================================================
 # Fixtures
@@ -135,22 +134,19 @@ class TestKnowledgeBaseInitialization:
         cursor = conn.cursor()
 
         # 检查rules表是否存在
-        cursor.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='rules'"
-        )
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='rules'")
         result = cursor.fetchone()
         assert result is not None
 
         # 检查索引是否存在
-        cursor.execute(
-            "SELECT name FROM sqlite_master WHERE type='index' AND name='idx_rules_category'"
-        )
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='index' AND name='idx_rules_category'")
         assert cursor.fetchone() is not None
 
     def test_default_path_when_none_provided(self, tmp_path):
         """测试未提供路径时使用默认路径"""
         # 使用实际路径而不是mock
         import os
+
         original_dir = os.getcwd()
         try:
             os.chdir(tmp_path)
@@ -241,9 +237,7 @@ class TestKnowledgeBaseCRUD:
         for rule in sample_rules:
             knowledge_base.add_rule(rule)
 
-        code_quality_rules = knowledge_base.get_all_rules(
-            category=FeedbackCategory.CODE_QUALITY
-        )
+        code_quality_rules = knowledge_base.get_all_rules(category=FeedbackCategory.CODE_QUALITY)
         assert len(code_quality_rules) == 1
         assert code_quality_rules[0].category == FeedbackCategory.CODE_QUALITY
 
@@ -271,8 +265,7 @@ class TestKnowledgeBaseCRUD:
 
         results = knowledge_base.search_rules("quality")
         assert len(results) > 0
-        assert any("quality" in r.name.lower() or "quality" in r.description.lower()
-                   for r in results)
+        assert any("quality" in r.name.lower() or "quality" in r.description.lower() for r in results)
 
     def test_search_rules_case_insensitive(self, knowledge_base, sample_rule):
         """测试搜索不区分大小写"""
@@ -380,6 +373,7 @@ class TestKnowledgeBaseImportExport:
 
         # 验证JSON内容
         import json
+
         with open(output_path) as f:
             data = json.load(f)
 
@@ -392,14 +386,12 @@ class TestKnowledgeBaseImportExport:
             knowledge_base.add_rule(rule)
 
         output_path = tmp_path / "exported_quality.json"
-        result = knowledge_base.export_rules(
-            str(output_path),
-            category=FeedbackCategory.CODE_QUALITY
-        )
+        result = knowledge_base.export_rules(str(output_path), category=FeedbackCategory.CODE_QUALITY)
 
         assert result is True
 
         import json
+
         with open(output_path) as f:
             data = json.load(f)
 
@@ -495,9 +487,7 @@ class TestInMemoryKnowledgeBase:
             memory_kb.add_rule(rule)
 
         # 按类别过滤
-        quality_rules = memory_kb.get_all_rules(
-            category=FeedbackCategory.CODE_QUALITY
-        )
+        quality_rules = memory_kb.get_all_rules(category=FeedbackCategory.CODE_QUALITY)
         assert len(quality_rules) == 1
         assert quality_rules[0].category == FeedbackCategory.CODE_QUALITY
 
@@ -641,12 +631,12 @@ class TestKnowledgeBaseConcurrency:
 
     def test_concurrent_add_rules(self):
         """测试并发添加规则"""
+        import os
         import threading
         import time
-        import os
 
         # 直接在测试中创建临时文件
-        fd, db_path = tempfile.mkstemp(suffix='.db')
+        fd, db_path = tempfile.mkstemp(suffix=".db")
         os.close(fd)
 
         try:

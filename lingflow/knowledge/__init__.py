@@ -17,24 +17,9 @@ Example:
     >>> results = await federation.query(query)
 """
 
-from lingflow.knowledge.query import (
-    KnowledgeQuery,
-    KnowledgeResult,
-    KnowledgeItem,
-    QueryOptions,
-    ResultSource
-)
-
-from lingflow.knowledge.federation import (
-    KnowledgeFederation,
-    FederationConfig
-)
-
-from lingflow.knowledge.sync import (
-    KnowledgeSync,
-    SyncResult,
-    SyncStats
-)
+from lingflow.knowledge.federation import FederationConfig, KnowledgeFederation
+from lingflow.knowledge.query import KnowledgeItem, KnowledgeQuery, KnowledgeResult, QueryOptions, ResultSource
+from lingflow.knowledge.sync import KnowledgeSync, SyncResult, SyncStats
 
 __all__ = [
     # Query models

@@ -1,16 +1,26 @@
 import json
-import pytest
 from datetime import datetime
-from lingflow.self_optimizer.phase5.knowledge import KnowledgeBase, InMemoryKnowledgeBase
+
+import pytest
+
+from lingflow.self_optimizer.phase5.knowledge import InMemoryKnowledgeBase, KnowledgeBase
 from lingflow.self_optimizer.phase5.models import (
     FeedbackCategory,
-    Pattern,
     LearnedRule,
+    Pattern,
 )
 
 
-def _make_rule(rule_id="r1", name="Test Rule", description=None, category=FeedbackCategory.SECURITY,
-               quality_score=0.9, status="active", frequency=5, confidence=0.85):
+def _make_rule(
+    rule_id="r1",
+    name="Test Rule",
+    description=None,
+    category=FeedbackCategory.SECURITY,
+    quality_score=0.9,
+    status="active",
+    frequency=5,
+    confidence=0.85,
+):
     return LearnedRule(
         id=rule_id,
         name=name,
@@ -148,9 +158,7 @@ class TestKnowledgeBase:
 
     def test_import_rules(self, kb, tmp_path):
         import_file = tmp_path / "import.json"
-        import_file.write_text(json.dumps({
-            "rules": [{"id": "x1"}, {"id": "x2"}]
-        }))
+        import_file.write_text(json.dumps({"rules": [{"id": "x1"}, {"id": "x2"}]}))
         count = kb.import_rules(str(import_file))
         assert count == 2
 

@@ -12,6 +12,7 @@ class PlatformWeights:
     用于影响力分析中各平台的权重分配。
     权重范围: 0.0 - 1.0
     """
+
     HACKERNEWS = 1.0
     GITHUB = 0.9
     REDDIT = 0.6
@@ -45,6 +46,7 @@ class APILimits:
 
     各平台的API调用限制。
     """
+
     # 分页限制
     MAX_PAGES = 100
     DEFAULT_PAGE_SIZE = 30
@@ -65,6 +67,7 @@ class InfluenceThresholds:
 
     用于确定影响力等级。
     """
+
     HIGH = 70
     MEDIUM = 40
     LOW = 0
@@ -92,6 +95,7 @@ class SentimentThresholds:
 
     用于确定情感标签。
     """
+
     POSITIVE = 0.1
     NEGATIVE = -0.1
 
@@ -118,6 +122,7 @@ class DataRetention:
 
     定义各类数据的保留时间 (天)。
     """
+
     RAW_DATA = 30
     ANALYZED_DATA = 90
     REPORTS = 365
@@ -129,6 +134,7 @@ class ReportLimits:
 
     报告中各类内容的数量限制。
     """
+
     MAX_HIGHLIGHTS = 5
     MAX_CONCERNS = 3
     MAX_TOPICS = 10
@@ -141,6 +147,7 @@ class ScoreWeights:
 
     各维度在影响力计算中的权重。
     """
+
     ENGAGEMENT = 0.4
     AUTHOR = 0.3
     CONTENT = 0.2
@@ -155,6 +162,7 @@ class AuthorTiers:
 
     不同贡献等级的基础分数。
     """
+
     HIGH = 100
     MEDIUM = 50
     LOW = 10
@@ -166,6 +174,7 @@ class RecencyDecay:
 
     根据内容年龄计算时效分数。
     """
+
     FRESH_HOURS = 1
     FRESH_SCORE = 100
 

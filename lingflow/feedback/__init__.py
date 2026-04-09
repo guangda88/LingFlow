@@ -9,8 +9,8 @@ from lingflow.feedback.collector import (
     FeedbackCollector,
     FeedbackSeverity,
     get_feedback_collector,
-    submit_bug,
     list_feedbacks,
+    submit_bug,
 )
 
 __all__ = [

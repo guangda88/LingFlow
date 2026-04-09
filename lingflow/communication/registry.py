@@ -24,6 +24,7 @@ class MessageTypeRegistry:
     # === LingFlow 消息类型 ===
     class LingFlow:
         """LingFlow 工作流引擎消息类型"""
+
         TASK_SUBMIT = "lingflow.task.submit"
         TASK_RESULT = "lingflow.task.result"
         SKILL_EXECUTE = "lingflow.skill.execute"
@@ -37,6 +38,7 @@ class MessageTypeRegistry:
     # === LingTongAsk 消息类型 ===
     class LingTongAsk:
         """LingTongAsk 气功播客平台消息类型"""
+
         FAN_COMMENT = "lingtongask.comment.new"
         FAN_MESSAGE = "lingtongask.message.new"
         REPLY_DRAFT = "lingtongask.reply.draft"
@@ -48,6 +50,7 @@ class MessageTypeRegistry:
     # === LingYi 消息类型 ===
     class LingYi:
         """LingYi 私人助理消息类型"""
+
         INTELLIGENCE_SYNC = "lingyi.intelligence.sync"
         SCHEDULE_UPDATE = "lingyi.schedule.update"
         REMINDER_SET = "lingyi.reminder.set"
@@ -58,6 +61,7 @@ class MessageTypeRegistry:
     # === LingClaude 消息类型 ===
     class LingClaude:
         """LingClaude AI编程助手消息类型"""
+
         CODE_REQUEST = "lingclaude.code.request"
         CODE_RESULT = "lingclaude.code.result"
         REFACTOR_ANALYZE = "lingclaude.refactor.analyze"
@@ -68,6 +72,7 @@ class MessageTypeRegistry:
     # === LingMinOpt 消息类型 ===
     class LingMinOpt:
         """LingMinOpt 自优化框架消息类型"""
+
         OPTIMIZE_START = "lingminopt.optimize.start"
         OPTIMIZE_RESULT = "lingminopt.optimize.result"
         METRIC_COLLECT = "lingminopt.metric.collect"
@@ -78,6 +83,7 @@ class MessageTypeRegistry:
     # === Knowledge-System 消息类型 ===
     class KnowledgeSystem:
         """Knowledge-System 知识库消息类型"""
+
         KNOWLEDGE_QUERY = "knowledge.query"
         KNOWLEDGE_ADD = "knowledge.add"
         KNOWLEDGE_UPDATE = "knowledge.update"
@@ -88,6 +94,7 @@ class MessageTypeRegistry:
     # === 灵字辈通用消息类型 ===
     class Family:
         """灵字辈通用消息类型"""
+
         HEARTBEAT = "family.heartbeat"
         STATUS_UPDATE = "family.status.update"
         INTELLIGENCE_REPORT = "family.intelligence.report"
@@ -99,6 +106,7 @@ class MessageTypeRegistry:
     # === 协作消息类型 ===
     class Collaboration:
         """成员间协作消息类型"""
+
         HANDOFF_REQUEST = "family.handoff.request"
         HANDOFF_RESPONSE = "family.handoff.response"
         WORKFLOW_START = "family.workflow.start"
@@ -199,7 +207,6 @@ class MessageTypeRegistry:
             "lingflow.workflow.start": "启动工作流",
             "lingflow.workflow.complete": "工作流完成",
             "lingflow.workflow.error": "工作流错误",
-
             # LingTongAsk
             "lingtongask.comment.new": "新粉丝评论",
             "lingtongask.message.new": "新粉丝消息",
@@ -208,7 +215,6 @@ class MessageTypeRegistry:
             "lingtongask.content.generate": "生成内容",
             "lingtongask.content.publish": "发布内容",
             "lingtongask.feedback.collect": "收集反馈",
-
             # Family
             "family.heartbeat": "成员心跳",
             "family.status.update": "成员状态更新",
@@ -217,7 +223,6 @@ class MessageTypeRegistry:
             "family.shutdown": "关闭通知",
             "family.error": "错误通知",
             "family.notification": "通用通知",
-
             # Collaboration
             "family.handoff.request": "交接请求",
             "family.handoff.response": "交接响应",

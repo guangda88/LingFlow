@@ -1,12 +1,13 @@
 """Tests for lingflow.coordination.coordinator module"""
 
-import pytest
 import asyncio
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
+import pytest
+
+from lingflow.common.models import AgentConfig, Task, TaskPriority, TaskResult
 from lingflow.coordination.coordinator import AgentCoordinator
 from lingflow.coordination.registry import AgentRegistry
-from lingflow.common.models import Task, TaskResult, AgentConfig, TaskPriority
 
 
 class TestAgentCoordinator:
@@ -51,12 +52,7 @@ class TestAgentCoordinator:
     def test_submit_task(self):
         """Test submitting a task"""
         coordinator = AgentCoordinator()
-        task = Task(
-            task_id="test-task",
-            name="Test",
-            description="Test task",
-            priority=TaskPriority.NORMAL
-        )
+        task = Task(task_id="test-task", name="Test", description="Test task", priority=TaskPriority.NORMAL)
 
         coordinator.submit_task(task)
 
@@ -68,12 +64,7 @@ class TestAgentCoordinator:
         coordinator = AgentCoordinator()
 
         for i in range(5):
-            task = Task(
-                task_id=f"task-{i}",
-                name=f"Task{i}",
-                description=f"Task {i}",
-                priority=TaskPriority.NORMAL
-            )
+            task = Task(task_id=f"task-{i}", name=f"Task{i}", description=f"Task {i}", priority=TaskPriority.NORMAL)
             coordinator.submit_task(task)
 
         assert len(coordinator.task_queue) == 5
@@ -84,13 +75,7 @@ class TestAgentCoordinator:
         coordinator = AgentCoordinator()
 
         tasks = [
-            Task(
-                task_id=f"task-{i}",
-                name=f"Task{i}",
-                description=f"Task {i}",
-                priority=TaskPriority.NORMAL
-            )
-            for i in range(3)
+            Task(task_id=f"task-{i}", name=f"Task{i}", description=f"Task {i}", priority=TaskPriority.NORMAL) for i in range(3)
         ]
 
         results = await coordinator.execute_tasks_parallel(tasks, max_parallel=2)
@@ -106,13 +91,7 @@ class TestAgentCoordinator:
         coordinator = AgentCoordinator()
 
         tasks = [
-            Task(
-                task_id=f"task-{i}",
-                name=f"Task{i}",
-                description=f"Task {i}",
-                priority=TaskPriority.NORMAL
-            )
-            for i in range(3)
+            Task(task_id=f"task-{i}", name=f"Task{i}", description=f"Task {i}", priority=TaskPriority.NORMAL) for i in range(3)
         ]
 
         results = await coordinator.execute_tasks_parallel(tasks, max_parallel=1)
@@ -137,18 +116,8 @@ class TestAgentCoordinator:
         """Test status with tasks in queue"""
         coordinator = AgentCoordinator()
 
-        coordinator.submit_task(Task(
-            task_id="task-1",
-            name="T1",
-            description="Test",
-            priority=TaskPriority.NORMAL
-        ))
-        coordinator.submit_task(Task(
-            task_id="task-2",
-            name="T2",
-            description="Test",
-            priority=TaskPriority.NORMAL
-        ))
+        coordinator.submit_task(Task(task_id="task-1", name="T1", description="Test", priority=TaskPriority.NORMAL))
+        coordinator.submit_task(Task(task_id="task-2", name="T2", description="Test", priority=TaskPriority.NORMAL))
 
         status = coordinator.get_status()
         assert status["total_tasks"] >= 2
@@ -157,18 +126,9 @@ class TestAgentCoordinator:
         """Test resetting coordinator"""
         coordinator = AgentCoordinator()
 
-        coordinator.submit_task(Task(
-            task_id="task-1",
-            name="T1",
-            description="Test",
-            priority=TaskPriority.NORMAL
-        ))
-        coordinator.completed_tasks["task-1"] = TaskResult(
-            task_id="task-1", success=True, output="Done"
-        )
-        coordinator.failed_tasks["task-2"] = TaskResult(
-            task_id="task-2", success=False, error="Failed"
-        )
+        coordinator.submit_task(Task(task_id="task-1", name="T1", description="Test", priority=TaskPriority.NORMAL))
+        coordinator.completed_tasks["task-1"] = TaskResult(task_id="task-1", success=True, output="Done")
+        coordinator.failed_tasks["task-2"] = TaskResult(task_id="task-2", success=False, error="Failed")
 
         assert len(coordinator.task_queue) > 0
         assert len(coordinator.completed_tasks) > 0
@@ -237,12 +197,7 @@ class TestAgentCoordinatorAgentFinding:
         coordinator = AgentCoordinator()
         coordinator.registry = AgentRegistry()
 
-        task = Task(
-            task_id="test",
-            name="Test",
-            description="Test",
-            priority=TaskPriority.NORMAL
-        )
+        task = Task(task_id="test", name="Test", description="Test", priority=TaskPriority.NORMAL)
         agent = coordinator._find_agent_for_task(task)
 
         assert agent is None
@@ -255,21 +210,11 @@ class TestAgentCoordinatorAgentFinding:
         coordinator.registry = AgentRegistry()
 
         # Register a test agent
-        config = AgentConfig(
-            name="test_agent",
-            description="Test agent",
-            capabilities=["test"]
-        )
+        config = AgentConfig(name="test_agent", description="Test agent", capabilities=["test"])
         agent = Agent(config)
         coordinator.registry.register_agent(agent)
 
-        task = Task(
-            task_id="test",
-            name="Test",
-            description="Test",
-            priority=TaskPriority.NORMAL,
-            agent_type="test_agent"
-        )
+        task = Task(task_id="test", name="Test", description="Test", priority=TaskPriority.NORMAL, agent_type="test_agent")
         found_agent = coordinator._find_agent_for_task(task)
 
         assert found_agent is not None
@@ -279,13 +224,7 @@ class TestAgentCoordinatorAgentFinding:
         """Test finding agent without specific agent_type"""
         coordinator = AgentCoordinator()
 
-        task = Task(
-            task_id="test",
-            name="Test",
-            description="Test",
-            priority=TaskPriority.NORMAL,
-            agent_type=""
-        )
+        task = Task(task_id="test", name="Test", description="Test", priority=TaskPriority.NORMAL, agent_type="")
         agent = coordinator._find_agent_for_task(task)
 
         # Should find some default agent

@@ -9,20 +9,20 @@ Core Concepts:
 - Pre-Task Checks: Verify capability before starting work
 """
 
+import json
 from dataclasses import dataclass, field
+from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional, Set
-from datetime import datetime
-import json
 
 
 class CapabilityLevel(Enum):
     """Knowledge/capability proficiency level"""
 
     MASTERED = 3  # 完全掌握，可以独立完成
-    PARTIAL = 2   # 部分掌握，需要查阅文档或学习
+    PARTIAL = 2  # 部分掌握，需要查阅文档或学习
     FAMILIAR = 1  # 熟悉概念，但缺乏实践经验
-    UNKNOWN = 0   # 完全未知，需要从头学习
+    UNKNOWN = 0  # 完全未知，需要从头学习
 
     def __str__(self):
         return self.name
@@ -331,7 +331,9 @@ class MetacognitiveAgent:
         )
 
         # Remove from queue
-        self.evolution_queue = [p for p in self.evolution_queue if p not in capability.evolution_paths or p.status != "completed"]
+        self.evolution_queue = [
+            p for p in self.evolution_queue if p not in capability.evolution_paths or p.status != "completed"
+        ]
 
         return True
 

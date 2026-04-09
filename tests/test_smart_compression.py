@@ -9,17 +9,19 @@
 5. SmartContextCompressor - 集成测试
 """
 
-import pytest
 from datetime import datetime, timedelta
+
+import pytest
+
+from lingflow.compression.scoring import MessageRole, MessageScorer
 from lingflow.compression.smart_compressor import (
     SmartContextCompressor,
     compress_messages,
     get_default_compressor,
 )
-from lingflow.compression.token_estimator import TokenEstimator
-from lingflow.compression.scoring import MessageScorer, MessageRole
-from lingflow.compression.strategies.base import TieredCompressionStrategy, CompressionTier
+from lingflow.compression.strategies.base import CompressionTier, TieredCompressionStrategy
 from lingflow.compression.summarizer import ConversationSummarizer
+from lingflow.compression.token_estimator import TokenEstimator
 
 
 def estimate_tokens(text_or_messages) -> int:
@@ -169,6 +171,7 @@ class TestSmartContextCompressor:
 
     def test_init(self):
         from lingflow.compression.smart_compressor import CompressionConfig
+
         config = CompressionConfig(max_tokens=1000)
         compressor = SmartContextCompressor(config=config)
         assert compressor.config.max_tokens == 1000
@@ -181,6 +184,7 @@ class TestSmartContextCompressor:
 
     def test_compress_no_op(self):
         from lingflow.compression.smart_compressor import CompressionConfig
+
         config = CompressionConfig(max_tokens=100000)
         compressor = SmartContextCompressor(config=config)
         messages = [{"role": "user", "content": "Hi"}]
@@ -189,6 +193,7 @@ class TestSmartContextCompressor:
 
     def test_compress_reduces_tokens(self):
         from lingflow.compression.smart_compressor import CompressionConfig
+
         config = CompressionConfig(max_tokens=50)
         compressor = SmartContextCompressor(config=config)
         messages = [
@@ -200,6 +205,7 @@ class TestSmartContextCompressor:
 
     def test_compress_keeps_system_messages(self):
         from lingflow.compression.smart_compressor import CompressionConfig
+
         config = CompressionConfig(max_tokens=20)
         compressor = SmartContextCompressor(config=config)
         messages = [
@@ -212,6 +218,7 @@ class TestSmartContextCompressor:
 
     def test_compress_if_needed(self):
         from lingflow.compression.smart_compressor import CompressionConfig
+
         config = CompressionConfig(max_tokens=10)
         compressor = SmartContextCompressor(config=config)
         messages = [
@@ -250,6 +257,7 @@ class TestIntegration:
 
     def test_full_workflow(self):
         from lingflow.compression.smart_compressor import CompressionConfig
+
         config = CompressionConfig(max_tokens=50)
         compressor = SmartContextCompressor(config=config)
         messages = [

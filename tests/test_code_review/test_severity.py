@@ -5,7 +5,8 @@
 """
 
 import pytest
-from lingflow.code_review.core.severity import Severity, SeverityWeight, DIMENSION_WEIGHTS
+
+from lingflow.code_review.core.severity import DIMENSION_WEIGHTS, Severity, SeverityWeight
 
 
 class TestSeverity:
@@ -37,10 +38,10 @@ class TestSeverityWeight:
 
         # 检查返回的是 SeverityWeight 实例
         for config in all_weights:
-            assert hasattr(config, 'severity')
-            assert hasattr(config, 'weight')
-            assert hasattr(config, 'color')
-            assert hasattr(config, 'emoji')
+            assert hasattr(config, "severity")
+            assert hasattr(config, "weight")
+            assert hasattr(config, "color")
+            assert hasattr(config, "emoji")
 
     def test_get_weight(self):
         """测试获取严重程度权重"""
@@ -92,12 +93,12 @@ class TestDimensionWeights:
 
     def test_security_weight_highest(self):
         """测试安全维度权重最高"""
-        security_weight = DIMENSION_WEIGHTS.get('security', 0)
+        security_weight = DIMENSION_WEIGHTS.get("security", 0)
         assert security_weight > 0
 
         # 安全权重应该高于其他大多数维度
         for key, weight in DIMENSION_WEIGHTS.items():
-            if key not in ['security', 'bugs']:
+            if key not in ["security", "bugs"]:
                 assert security_weight > weight
 
     def test_all_dimension_weights_positive(self):
@@ -108,13 +109,13 @@ class TestDimensionWeights:
     def test_expected_dimensions_exist(self):
         """测试预期的维度存在"""
         expected_dimensions = [
-            'security',
-            'bugs',
-            'code_quality',
-            'architecture',
-            'performance',
-            'maintainability',
-            'best_practices',
+            "security",
+            "bugs",
+            "code_quality",
+            "architecture",
+            "performance",
+            "maintainability",
+            "best_practices",
         ]
 
         for dimension in expected_dimensions:
@@ -126,12 +127,7 @@ class TestSeverityDataclass:
 
     def test_severity_weight_creation(self):
         """测试创建 SeverityWeight 实例"""
-        config = SeverityWeight(
-            severity=Severity.CRITICAL,
-            weight=10.0,
-            color="red",
-            emoji="🔴"
-        )
+        config = SeverityWeight(severity=Severity.CRITICAL, weight=10.0, color="red", emoji="🔴")
 
         assert config.severity == Severity.CRITICAL
         assert config.weight == 10.0
@@ -140,12 +136,7 @@ class TestSeverityDataclass:
 
     def test_severity_weight_immutability(self):
         """测试 SeverityWeight 是不可变的（dataclass）"""
-        config = SeverityWeight(
-            severity=Severity.CRITICAL,
-            weight=10.0,
-            color="red",
-            emoji="🔴"
-        )
+        config = SeverityWeight(severity=Severity.CRITICAL, weight=10.0, color="red", emoji="🔴")
 
         # dataclass 默认是可变的，但我们可以测试属性访问
         assert config.severity.value == "critical"

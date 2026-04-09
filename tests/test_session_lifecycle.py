@@ -1,6 +1,7 @@
 """会话生命周期管理器单元测试"""
 
 import json
+
 import pytest
 
 from lingflow.context.session_lifecycle import (
@@ -167,8 +168,14 @@ class TestSessionSummary:
         assert restored.tasks_pending == summary.tasks_pending
 
     def test_from_dict_ignores_extra_keys(self):
-        d = {"session_id": "x", "extra_field": "ignore", "total_tokens": 0, "total_messages": 0,
-             "created_at": "", "ended_at": ""}
+        d = {
+            "session_id": "x",
+            "extra_field": "ignore",
+            "total_tokens": 0,
+            "total_messages": 0,
+            "created_at": "",
+            "ended_at": "",
+        }
         summary = SessionSummary.from_dict(d)
         assert summary.session_id == "x"
 
@@ -218,8 +225,11 @@ class TestSaveAndLoad:
     def test_save_without_storage_dir_raises(self):
         mgr = SessionLifecycleManager(storage_dir=None)
         summary = SessionSummary(
-            session_id="err", created_at="", ended_at="",
-            total_tokens=0, total_messages=0,
+            session_id="err",
+            created_at="",
+            ended_at="",
+            total_tokens=0,
+            total_messages=0,
         )
         with pytest.raises(ValueError, match="storage_dir"):
             mgr.save_session_summary(summary)

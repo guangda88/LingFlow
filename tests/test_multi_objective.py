@@ -1,9 +1,10 @@
 import pytest
+
 from lingflow.self_optimizer.phase4.multi_objective import (
-    ParetoPoint,
-    MultiObjectiveResult,
     MultiObjectiveOptimizer,
+    MultiObjectiveResult,
     NSGA2Optimizer,
+    ParetoPoint,
 )
 
 
@@ -126,7 +127,7 @@ class TestMultiObjectiveOptimizer:
             objectives={"q": failing_fn},
         )
         results = opt.evaluate_all_objectives({"x": 1})
-        assert results["q"] == float('inf')
+        assert results["q"] == float("inf")
 
     def test_calculate_aggregated_score(self):
         opt = MultiObjectiveOptimizer(
@@ -187,8 +188,8 @@ class TestNSGA2Optimizer:
             _make_point(objectives={"q": 0.9}),
         ]
         opt._calculate_crowding_distance(points)
-        assert points[0].crowding_distance == float('inf')
-        assert points[-1].crowding_distance == float('inf')
+        assert points[0].crowding_distance == float("inf")
+        assert points[-1].crowding_distance == float("inf")
         assert points[1].crowding_distance > 0
 
     def test_calculate_crowding_distance_empty(self):

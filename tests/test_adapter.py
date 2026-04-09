@@ -1,16 +1,17 @@
 """Tests for Agent/Skill Configuration Adapter"""
 
 import json
-import pytest
 from pathlib import Path
+
+import pytest
 
 from lingflow.coordination.adapter import (
     AgentAdapter,
-    SkillAdapter,
     CapabilityMatcher,
+    SkillAdapter,
+    create_matcher,
     load_agents,
     load_skills,
-    create_matcher
 )
 
 
@@ -19,29 +20,14 @@ class TestAgentAdapter:
 
     def test_detect_v1_format(self):
         """测试识别 v1 格式"""
-        v1_config = {
-            "agents": [
-                {
-                    "name": "review",
-                    "capabilities": ["code_review", "design_review"],
-                    "max_tasks": 2
-                }
-            ]
-        }
+        v1_config = {"agents": [{"name": "review", "capabilities": ["code_review", "design_review"], "max_tasks": 2}]}
         assert AgentAdapter.detect_version(v1_config) == "v1"
 
     def test_detect_v2_format(self):
         """测试识别 v2 格式"""
         v2_config = {
             "version": "2.0",
-            "agents": [
-                {
-                    "name": "reviewer",
-                    "capabilities": {
-                        "code_review": {"context_limit": 12000}
-                    }
-                }
-            ]
+            "agents": [{"name": "reviewer", "capabilities": {"code_review": {"context_limit": 12000}}}],
         }
         assert AgentAdapter.detect_version(v2_config) == "v2"
 
@@ -56,13 +42,10 @@ class TestAgentAdapter:
                     "max_tasks": 2,
                     "context_limit": 12000,
                     "timeout": 180,
-                    "parallel_safe": True
+                    "parallel_safe": True,
                 }
             ],
-            "settings": {
-                "default_max_parallel": 3,
-                "compression_enabled": True
-            }
+            "settings": {"default_max_parallel": 3, "compression_enabled": True},
         }
 
         v2_config = AgentAdapter.v1_to_v2(v1_config)
@@ -89,27 +72,12 @@ class TestSkillAdapter:
 
     def test_detect_v1_format(self):
         """测试识别 v1 格式"""
-        v1_config = {
-            "skills": [
-                {
-                    "name": "code-review",
-                    "triggers": ["review"]
-                }
-            ]
-        }
+        v1_config = {"skills": [{"name": "code-review", "triggers": ["review"]}]}
         assert SkillAdapter.detect_version(v1_config) == "v1"
 
     def test_detect_v2_format(self):
         """测试识别 v2 格式"""
-        v2_config = {
-            "version": "2.0",
-            "skills": [
-                {
-                    "name": "code-review",
-                    "requires_capability": "code_review"
-                }
-            ]
-        }
+        v2_config = {"version": "2.0", "skills": [{"name": "code-review", "requires_capability": "code_review"}]}
         assert SkillAdapter.detect_version(v2_config) == "v2"
 
     def test_v1_to_v2_conversion(self):
@@ -121,17 +89,11 @@ class TestSkillAdapter:
                     "description": "Execute code review",
                     "path": "skills/code-review/SKILL.md",
                     "triggers": ["code review"],
-                    "depends_on": []
+                    "depends_on": [],
                 },
-                {
-                    "name": "requesting-code-review",
-                    "description": "Request code review",
-                    "triggers": ["request review"]
-                }
+                {"name": "requesting-code-review", "description": "Request code review", "triggers": ["request review"]},
             ],
-            "settings": {
-                "auto_trigger": True
-            }
+            "settings": {"auto_trigger": True},
         }
 
         v2_config = SkillAdapter.v1_to_v2(v1_config)
@@ -154,30 +116,10 @@ class TestCapabilityMatcher:
         return {
             "version": "2.0",
             "agents": [
-                {
-                    "name": "reviewer",
-                    "capabilities": {
-                        "code_review": {},
-                        "design_review": {},
-                        "security_check": {}
-                    }
-                },
-                {
-                    "name": "tester",
-                    "capabilities": {
-                        "test_generation": {},
-                        "test_execution": {},
-                        "coverage_analysis": {}
-                    }
-                },
-                {
-                    "name": "debugger",
-                    "capabilities": {
-                        "error_analysis": {},
-                        "root_cause": {}
-                    }
-                }
-            ]
+                {"name": "reviewer", "capabilities": {"code_review": {}, "design_review": {}, "security_check": {}}},
+                {"name": "tester", "capabilities": {"test_generation": {}, "test_execution": {}, "coverage_analysis": {}}},
+                {"name": "debugger", "capabilities": {"error_analysis": {}, "root_cause": {}}},
+            ],
         }
 
     def test_build_capability_index(self, sample_agents):
@@ -208,10 +150,7 @@ class TestCapabilityMatcher:
         """测试 Skill 到 Agent 匹配"""
         matcher = CapabilityMatcher(sample_agents)
 
-        skill = {
-            "name": "code-review",
-            "requires_capability": "code_review"
-        }
+        skill = {"name": "code-review", "requires_capability": "code_review"}
 
         agent = matcher.match_skill_to_agent(skill)
         assert agent["name"] == "reviewer"
@@ -220,10 +159,7 @@ class TestCapabilityMatcher:
         """测试使用首选 agent"""
         matcher = CapabilityMatcher(sample_agents)
 
-        skill = {
-            "name": "custom-review",
-            "preferred_agent": "tester"
-        }
+        skill = {"name": "custom-review", "preferred_agent": "tester"}
 
         agent = matcher.match_skill_to_agent(skill)
         assert agent["name"] == "tester"

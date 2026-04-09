@@ -5,11 +5,11 @@ Tests for Knowledge Federation
 import pytest
 
 from lingflow.knowledge import (
-    KnowledgeFederation,
-    KnowledgeQuery,
-    KnowledgeItem,
-    ResultSource,
     FederationConfig,
+    KnowledgeFederation,
+    KnowledgeItem,
+    KnowledgeQuery,
+    ResultSource,
 )
 from lingflow.knowledge.sources.base import KnowledgeSource
 
@@ -36,13 +36,13 @@ class MockKnowledgeSource(KnowledgeSource):
 
     async def search(self, query, context=None):
         from lingflow.knowledge.query import KnowledgeResult
+
         result = KnowledgeResult(sources_queried=[self._name])
 
         for item in self._items:
             # Simple keyword matching
             if not query.keywords or any(
-                kw.lower() in item.title.lower() or kw.lower() in item.content.lower()
-                for kw in query.keywords
+                kw.lower() in item.title.lower() or kw.lower() in item.content.lower() for kw in query.keywords
             ):
                 result.add_item(item)
 
@@ -65,10 +65,7 @@ class TestKnowledgeQuery:
         assert "agents" in [kw.lower() for kw in query.keywords]
 
     def test_matches_source(self):
-        query = KnowledgeQuery(
-            keywords=["test"],
-            sources=[ResultSource.LINGFLOW]
-        )
+        query = KnowledgeQuery(keywords=["test"], sources=[ResultSource.LINGFLOW])
         assert query.matches_source(ResultSource.LINGFLOW)
         assert not query.matches_source(ResultSource.EXTERNAL_INTELLIGENCE)
 
@@ -187,29 +184,17 @@ class TestKnowledgeSource:
         assert source.should_query(query) is True
 
         # Source filter
-        query = KnowledgeQuery(
-            keywords=["test"],
-            sources=[ResultSource.LINGFLOW]
-        )
+        query = KnowledgeQuery(keywords=["test"], sources=[ResultSource.LINGFLOW])
         assert source.should_query(query) is True
 
-        query = KnowledgeQuery(
-            keywords=["test"],
-            sources=[ResultSource.EXTERNAL_INTELLIGENCE]
-        )
+        query = KnowledgeQuery(keywords=["test"], sources=[ResultSource.EXTERNAL_INTELLIGENCE])
         assert source.should_query(query) is False
 
         # Project filter
-        query = KnowledgeQuery(
-            keywords=["test"],
-            projects=["test"]
-        )
+        query = KnowledgeQuery(keywords=["test"], projects=["test"])
         assert source.should_query(query) is True
 
-        query = KnowledgeQuery(
-            keywords=["test"],
-            projects=["other"]
-        )
+        query = KnowledgeQuery(keywords=["test"], projects=["other"])
         assert source.should_query(query) is False
 
 

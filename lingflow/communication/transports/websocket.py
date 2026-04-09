@@ -18,8 +18,8 @@ from collections import defaultdict
 from typing import AsyncIterator, Callable, Dict, Optional
 from uuid import uuid4
 
-from ..transport import TransportAdapter
 from ..envelope import MessageEnvelope
+from ..transport import TransportAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -72,12 +72,10 @@ class WebSocketTransport(TransportAdapter):
         if self._session is None or self._session.closed:
             try:
                 import aiohttp
+
                 self._session = aiohttp.ClientSession()
             except ImportError:
-                raise ImportError(
-                    "aiohttp is required for WebSocketTransport. "
-                    "Install it with: pip install aiohttp"
-                )
+                raise ImportError("aiohttp is required for WebSocketTransport. " "Install it with: pip install aiohttp")
         return self._session
 
     async def _connect(self) -> bool:
@@ -151,6 +149,7 @@ class WebSocketTransport(TransportAdapter):
             try:
                 if self._ws and not self._ws.closed:
                     from ..registry import MessageTypeRegistry
+
                     heartbeat = MessageEnvelope(
                         from_service=self.service_name,
                         to_service="*",
@@ -207,9 +206,7 @@ class WebSocketTransport(TransportAdapter):
             self._ws = None
             return False
 
-    async def receive(
-        self, service: str, timeout: Optional[float] = None
-    ) -> Optional[MessageEnvelope]:
+    async def receive(self, service: str, timeout: Optional[float] = None) -> Optional[MessageEnvelope]:
         """
         接收消息
 
@@ -223,9 +220,7 @@ class WebSocketTransport(TransportAdapter):
         try:
             if timeout is None:
                 return await self._receive_queue.get()
-            return await asyncio.wait_for(
-                self._receive_queue.get(), timeout=timeout
-            )
+            return await asyncio.wait_for(self._receive_queue.get(), timeout=timeout)
         except asyncio.TimeoutError:
             return None
 

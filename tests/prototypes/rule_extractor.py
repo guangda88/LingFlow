@@ -10,11 +10,12 @@ from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Any, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 
 class ToolType(Enum):
     """工具类型"""
+
     STATIC_ANALYZER = "static_analyzer"
     CODE_REVIEW = "code_review"
     SECURITY_SCANNER = "security_scanner"
@@ -23,6 +24,7 @@ class ToolType(Enum):
 
 class FeedbackCategory(Enum):
     """反馈类别"""
+
     SECURITY = "security"
     PERFORMANCE = "performance"
     CODE_QUALITY = "code_quality"
@@ -32,6 +34,7 @@ class FeedbackCategory(Enum):
 
 class SeverityLevel(Enum):
     """严重程度"""
+
     CRITICAL = "CRITICAL"
     HIGH = "HIGH"
     MEDIUM = "MEDIUM"
@@ -42,6 +45,7 @@ class SeverityLevel(Enum):
 @dataclass
 class FeedbackItem:
     """反馈项"""
+
     tool_name: str
     tool_type: ToolType
     rule_id: str
@@ -59,6 +63,7 @@ class FeedbackItem:
 @dataclass
 class Pattern:
     """规则模式"""
+
     file_patterns: List[str] = field(default_factory=list)
     code_patterns: List[str] = field(default_factory=list)
     context_keywords: List[str] = field(default_factory=list)
@@ -69,6 +74,7 @@ class Pattern:
 @dataclass
 class LearnedRule:
     """学习到的规则"""
+
     id: str
     name: str
     description: str
@@ -131,7 +137,7 @@ class RuleExtractor:
             tools=tool_names,
             frequency=len(items),
             confidence=avg_confidence,
-            status="draft"
+            status="draft",
         )
 
         # 计算质量分数
@@ -146,8 +152,8 @@ class RuleExtractor:
         # 文件模式
         file_extensions = set()
         for item in items:
-            if '.' in item.file_path:
-                ext = item.file_path.split('.')[-1]
+            if "." in item.file_path:
+                ext = item.file_path.split(".")[-1]
                 file_extensions.add(ext)
         pattern.file_patterns = list(file_extensions)
 
@@ -174,11 +180,11 @@ class RuleExtractor:
         """标准化代码片段"""
         try:
             # 移除注释
-            snippet = re.sub(r'#.*', '', snippet)
+            snippet = re.sub(r"#.*", "", snippet)
             # 移除字符串
             snippet = re.sub(r'["\'][^"\']*["\']', '""', snippet)
             # 移除空白
-            lines = [line.strip() for line in snippet.split('\n') if line.strip()]
+            lines = [line.strip() for line in snippet.split("\n") if line.strip()]
             if lines:
                 return lines[0][:100]  # 限制长度
         except Exception:
@@ -187,18 +193,14 @@ class RuleExtractor:
 
     def _extract_keywords(self, items: List[FeedbackItem]) -> List[str]:
         """提取关键词"""
-        all_text = ' '.join([
-            f"{item.message} {item.rule_name}"
-            for item in items
-        ]).lower()
+        all_text = " ".join([f"{item.message} {item.rule_name}" for item in items]).lower()
 
-        words = re.findall(r'\b[a-zA-Z]{4,}\b', all_text)
+        words = re.findall(r"\b[a-zA-Z]{4,}\b", all_text)
         word_counts = Counter(words)
 
         # 过滤常见词
-        stop_words = {'this', 'that', 'with', 'from', 'have', 'been', 'will', 'can', 'are'}
-        keywords = [word for word, count in word_counts.most_common(10)
-                   if word not in stop_words and count >= 2]
+        stop_words = {"this", "that", "with", "from", "have", "been", "will", "can", "are"}
+        keywords = [word for word, count in word_counts.most_common(10) if word not in stop_words and count >= 2]
 
         return keywords[:5]
 
@@ -207,11 +209,11 @@ class RuleExtractor:
         message_counts = Counter(item.message for item in items)
         base_message = message_counts.most_common(1)[0][0]
 
-        name = base_message.replace('this ', '').replace('the ', '')
-        name = re.sub(r'[^\w\s]', '', name)
+        name = base_message.replace("this ", "").replace("the ", "")
+        name = re.sub(r"[^\w\s]", "", name)
 
         if len(name) > 50:
-            name = name[:47] + '...'
+            name = name[:47] + "..."
 
         return name.title()
 
@@ -279,11 +281,11 @@ class RuleDeduplicator:
     def _compute_rule_hash(self, rule: LearnedRule) -> str:
         """计算规则哈希"""
         # 基于关键词和模式计算哈希
-        keywords_str = ' '.join(sorted(rule.pattern.context_keywords))
-        patterns_str = ' '.join(sorted(rule.pattern.code_patterns))
+        keywords_str = " ".join(sorted(rule.pattern.context_keywords))
+        patterns_str = " ".join(sorted(rule.pattern.code_patterns))
 
         combined = f"{rule.category.value}:{keywords_str}:{patterns_str}"
-        return combined.lower().replace(' ', '')
+        return combined.lower().replace(" ", "")
 
     def _are_similar(self, hash1: str, hash2: str) -> bool:
         """检查哈希是否相似"""
@@ -297,10 +299,7 @@ class SecurityRuleExtractor(RuleExtractor):
     def extract_rules(self, feedback_items: List[FeedbackItem]) -> List[LearnedRule]:
         """提取安全规则"""
         # 只处理安全类别的反馈
-        security_items = [
-            item for item in feedback_items
-            if item.category == FeedbackCategory.SECURITY
-        ]
+        security_items = [item for item in feedback_items if item.category == FeedbackCategory.SECURITY]
 
         # 使用父类方法提取
         rules = super().extract_rules(security_items)
@@ -316,7 +315,7 @@ class SecurityRuleExtractor(RuleExtractor):
         keywords = super()._extract_keywords(items)
 
         # 添加安全特定关键词
-        security_keywords = ['injection', 'xss', 'csrf', 'sql', 'auth', 'crypto']
+        security_keywords = ["injection", "xss", "csrf", "sql", "auth", "crypto"]
         for kw in security_keywords:
             if any(kw in item.message.lower() for item in items) and kw not in keywords:
                 keywords.append(kw)
@@ -340,7 +339,7 @@ def create_sample_feedback() -> List[FeedbackItem]:
             line=45,
             snippet="password = 'admin123'",
             suggestion="Use environment variables for credentials",
-            confidence=0.95
+            confidence=0.95,
         ),
         FeedbackItem(
             tool_name="Bandit",
@@ -354,7 +353,7 @@ def create_sample_feedback() -> List[FeedbackItem]:
             line=45,
             snippet="password = 'admin123'",
             suggestion="Use a secure credential manager",
-            confidence=0.90
+            confidence=0.90,
         ),
         FeedbackItem(
             tool_name="Semgrep",
@@ -368,7 +367,7 @@ def create_sample_feedback() -> List[FeedbackItem]:
             line=12,
             snippet="db_pass = 'secret456'",
             suggestion="Use environment variables",
-            confidence=0.92
+            confidence=0.92,
         ),
         FeedbackItem(
             tool_name="Ruff",
@@ -382,7 +381,7 @@ def create_sample_feedback() -> List[FeedbackItem]:
             line=3,
             snippet="import os",
             suggestion="Remove unused import",
-            confidence=0.85
+            confidence=0.85,
         ),
         FeedbackItem(
             tool_name="Ruff",
@@ -396,7 +395,7 @@ def create_sample_feedback() -> List[FeedbackItem]:
             line=5,
             snippet="import json",
             suggestion="Remove unused import",
-            confidence=0.85
+            confidence=0.85,
         ),
         FeedbackItem(
             tool_name="Ruff",
@@ -410,7 +409,7 @@ def create_sample_feedback() -> List[FeedbackItem]:
             line=2,
             snippet="import sys",
             suggestion="Remove unused import",
-            confidence=0.88
+            confidence=0.88,
         ),
         FeedbackItem(
             tool_name="SonarQube",
@@ -424,7 +423,7 @@ def create_sample_feedback() -> List[FeedbackItem]:
             line=78,
             snippet="def empty_method(self): pass",
             suggestion="Remove or implement this method",
-            confidence=0.80
+            confidence=0.80,
         ),
         FeedbackItem(
             tool_name="Pylint",
@@ -438,7 +437,7 @@ def create_sample_feedback() -> List[FeedbackItem]:
             line=34,
             snippet="data = fetch_data()",
             suggestion="Remove or use this variable",
-            confidence=0.75
+            confidence=0.75,
         ),
         FeedbackItem(
             tool_name="Pylint",
@@ -452,7 +451,7 @@ def create_sample_feedback() -> List[FeedbackItem]:
             line=56,
             snippet="result = calculate()",
             suggestion="Remove or use this variable",
-            confidence=0.78
+            confidence=0.78,
         ),
         FeedbackItem(
             tool_name="Pylint",
@@ -466,7 +465,7 @@ def create_sample_feedback() -> List[FeedbackItem]:
             line=23,
             snippet="temp = get_temp()",
             suggestion="Remove or use this variable",
-            confidence=0.76
+            confidence=0.76,
         ),
     ]
 
@@ -512,28 +511,30 @@ class LongMethodDetector(PatternDetector):
         patterns = []
 
         # 简单实现：统计函数行数
-        lines = source_code.split('\n')
+        lines = source_code.split("\n")
         current_function = None
         function_lines = 0
         function_start = 0
 
         for i, line in enumerate(lines, 1):
             stripped = line.strip()
-            if stripped.startswith('def '):
+            if stripped.startswith("def "):
                 # 保存上一个函数
                 if current_function and function_lines > self.threshold:
-                    patterns.append({
-                        'type': 'anti_pattern',
-                        'name': 'Long Method',
-                        'file': file_path,
-                        'line': function_start,
-                        'message': f"Function '{current_function}' is too long ({function_lines} lines)",
-                        'severity': 'MEDIUM',
-                        'confidence': 0.8
-                    })
+                    patterns.append(
+                        {
+                            "type": "anti_pattern",
+                            "name": "Long Method",
+                            "file": file_path,
+                            "line": function_start,
+                            "message": f"Function '{current_function}' is too long ({function_lines} lines)",
+                            "severity": "MEDIUM",
+                            "confidence": 0.8,
+                        }
+                    )
 
                 # 开始新函数
-                current_function = stripped.split('(')[0].replace('def ', '').strip()
+                current_function = stripped.split("(")[0].replace("def ", "").strip()
                 function_lines = 0
                 function_start = i
             elif current_function:
@@ -541,15 +542,17 @@ class LongMethodDetector(PatternDetector):
 
         # 检查最后一个函数
         if current_function and function_lines > self.threshold:
-            patterns.append({
-                'type': 'anti_pattern',
-                'name': 'Long Method',
-                'file': file_path,
-                'line': function_start,
-                'message': f"Function '{current_function}' is too long ({function_lines} lines)",
-                'severity': 'MEDIUM',
-                'confidence': 0.8
-            })
+            patterns.append(
+                {
+                    "type": "anti_pattern",
+                    "name": "Long Method",
+                    "file": file_path,
+                    "line": function_start,
+                    "message": f"Function '{current_function}' is too long ({function_lines} lines)",
+                    "severity": "MEDIUM",
+                    "confidence": 0.8,
+                }
+            )
 
         return patterns
 
@@ -564,28 +567,30 @@ class UnusedVariableDetector(PatternDetector):
         # 简单实现：查找赋值但未使用的模式
         import re
 
-        lines = source_code.split('\n')
+        lines = source_code.split("\n")
 
         # 查找变量赋值
         for i, line in enumerate(lines, 1):
-            match = re.match(r'^(\w+)\s*=\s*.+', line.strip())
+            match = re.match(r"^(\w+)\s*=\s*.+", line.strip())
             if match:
                 var = match.group(1)
                 # 检查变量是否在其他地方使用
-                var_pattern = rf'\b{var}\b'
+                var_pattern = rf"\b{var}\b"
                 uses = len(re.findall(var_pattern, source_code))
 
                 # 如果只出现一次（赋值时），说明未使用
                 if uses == 1:
-                    patterns.append({
-                        'type': 'anti_pattern',
-                        'name': 'Unused Variable',
-                        'file': file_path,
-                        'line': i,
-                        'message': f"Variable '{var}' is assigned but never used",
-                        'severity': 'LOW',
-                        'confidence': 0.7
-                    })
+                    patterns.append(
+                        {
+                            "type": "anti_pattern",
+                            "name": "Unused Variable",
+                            "file": file_path,
+                            "line": i,
+                            "message": f"Variable '{var}' is assigned but never used",
+                            "severity": "LOW",
+                            "confidence": 0.7,
+                        }
+                    )
 
         return patterns[:3]  # 限制返回数量
 
@@ -595,9 +600,9 @@ class HardcodedSecretDetector(PatternDetector):
 
     def __init__(self):
         self.secret_patterns = {
-            'password': r'password\s*=\s*["\'][^"\']+["\']',
-            'api_key': r'api[_-]?key\s*=\s*["\'][^"\']+["\']',
-            'secret': r'secret\s*=\s*["\'][^"\']+["\']',
+            "password": r'password\s*=\s*["\'][^"\']+["\']',
+            "api_key": r'api[_-]?key\s*=\s*["\'][^"\']+["\']',
+            "secret": r'secret\s*=\s*["\'][^"\']+["\']',
         }
 
     def detect(self, source_code: str, file_path: str) -> List[Dict[str, Any]]:
@@ -607,16 +612,18 @@ class HardcodedSecretDetector(PatternDetector):
         for secret_name, pattern in self.secret_patterns.items():
             matches = re.finditer(pattern, source_code, re.IGNORECASE)
             for match in matches:
-                line_num = source_code[:match.start()].count('\n') + 1
-                patterns.append({
-                    'type': 'security',
-                    'name': 'Hardcoded Secret',
-                    'file': file_path,
-                    'line': line_num,
-                    'message': f"Hardcoded {secret_name} detected",
-                    'severity': 'HIGH',
-                    'confidence': 0.9
-                })
+                line_num = source_code[: match.start()].count("\n") + 1
+                patterns.append(
+                    {
+                        "type": "security",
+                        "name": "Hardcoded Secret",
+                        "file": file_path,
+                        "line": line_num,
+                        "message": f"Hardcoded {secret_name} detected",
+                        "severity": "HIGH",
+                        "confidence": 0.9,
+                    }
+                )
 
         return patterns
 

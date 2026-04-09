@@ -1,9 +1,9 @@
 import pytest
 
 from lingflow.self_optimizer.phase4.sensitivity import (
+    SensitivityAnalyzer,
     SensitivityResult,
     SobolResult,
-    SensitivityAnalyzer,
     analyze_sensitivity,
 )
 

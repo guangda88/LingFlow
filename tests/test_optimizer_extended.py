@@ -1,12 +1,13 @@
-import pytest
 import tempfile
+
+import pytest
 
 from lingflow.self_optimizer.optimizer import (
     OptimizationRequest,
     OptimizationResult,
     ProcessIsolatedOptimizer,
-    SynchronousOptimizer,
     SimpleSearchSpace,
+    SynchronousOptimizer,
     _create_search_space,
     _grid_search,
 )
@@ -29,15 +30,23 @@ class TestOptimizationRequest:
 class TestOptimizationResultExtended:
     def test_with_history(self):
         r = OptimizationResult(
-            success=True, best_params={"x": 1}, best_score=0.5,
-            experiments=10, duration=1.0, history=[{"a": 1}],
+            success=True,
+            best_params={"x": 1},
+            best_score=0.5,
+            experiments=10,
+            duration=1.0,
+            history=[{"a": 1}],
         )
         assert r.history == [{"a": 1}]
 
     def test_error_result(self):
         r = OptimizationResult(
-            success=False, best_params={}, best_score=0,
-            experiments=0, duration=0, error="test error",
+            success=False,
+            best_params={},
+            best_score=0,
+            experiments=0,
+            duration=0,
+            error="test error",
         )
         assert r.success is False
         assert r.error == "test error"
@@ -137,7 +146,8 @@ class TestSynchronousOptimizerExtended:
     def test_optimize_with_params(self):
         opt = SynchronousOptimizer()
         req = OptimizationRequest(
-            target="/tmp", goal="structure",
+            target="/tmp",
+            goal="structure",
             params={"max_class_size": 200},
             config={"max_experiments": 2},
         )
@@ -147,7 +157,9 @@ class TestSynchronousOptimizerExtended:
     def test_optimize_with_history(self):
         opt = SynchronousOptimizer()
         req = OptimizationRequest(
-            target="/tmp", goal="simplicity", params={},
+            target="/tmp",
+            goal="simplicity",
+            params={},
             config={"max_experiments": 3},
         )
         result = opt.optimize(req)
@@ -156,7 +168,9 @@ class TestSynchronousOptimizerExtended:
     def test_optimize_with_time_budget(self):
         opt = SynchronousOptimizer()
         req = OptimizationRequest(
-            target="/tmp", goal="performance", params={},
+            target="/tmp",
+            goal="performance",
+            params={},
             config={"max_experiments": 2, "time_budget": 60},
         )
         result = opt.optimize(req)

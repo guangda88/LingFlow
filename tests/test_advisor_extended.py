@@ -95,10 +95,7 @@ class TestFormatCurrentMetricsPerformance:
 
 class TestFormatCurrentMetricsSimplicity:
     def test_all_simplicity_metrics(self, advisor):
-        result = OptimizationResult(
-            success=True, best_params={"k": 1},
-            best_score=5.0, experiments=5, duration=10.0
-        )
+        result = OptimizationResult(success=True, best_params={"k": 1}, best_score=5.0, experiments=5, duration=10.0)
         metrics = {
             "total_lines": 10000,
             "duplication_rate": 0.15,
@@ -120,28 +117,19 @@ class TestFormatIssues:
         assert "未发现严重问题" in report
 
     def test_simplicity_no_issues(self, advisor):
-        result = OptimizationResult(
-            success=True, best_params={"k": 1},
-            best_score=5.0, experiments=5, duration=10.0
-        )
+        result = OptimizationResult(success=True, best_params={"k": 1}, best_score=5.0, experiments=5, duration=10.0)
         report = advisor.generate_report("simplicity", "/path", {}, result)
         assert "未发现严重问题" in report
 
 
 class TestFormatRecommendationsParams:
     def test_float_params(self, advisor):
-        result = OptimizationResult(
-            success=True, best_params={"ratio": 0.75},
-            best_score=5.0, experiments=5, duration=10.0
-        )
+        result = OptimizationResult(success=True, best_params={"ratio": 0.75}, best_score=5.0, experiments=5, duration=10.0)
         report = advisor.generate_report("structure", "/path", {}, result)
         assert "0.75" in report
 
     def test_int_params(self, advisor):
-        result = OptimizationResult(
-            success=True, best_params={"count": 10},
-            best_score=5.0, experiments=5, duration=10.0
-        )
+        result = OptimizationResult(success=True, best_params={"count": 10}, best_score=5.0, experiments=5, duration=10.0)
         report = advisor.generate_report("structure", "/path", {}, result)
         assert "count" in report
 
@@ -157,10 +145,7 @@ class TestFormatComparisonValues:
         assert "默认" in report
 
     def test_increase_indicator(self, advisor):
-        result = OptimizationResult(
-            success=True, best_params={"timeout": 60},
-            best_score=5.0, experiments=5, duration=10.0
-        )
+        result = OptimizationResult(success=True, best_params={"timeout": 60}, best_score=5.0, experiments=5, duration=10.0)
         metrics = {"current_params": {"timeout": 30}}
         report = advisor.generate_report("structure", "/path", metrics, result)
         assert "建议↑" in report
@@ -198,10 +183,7 @@ class TestPrintSummaryExtended:
         assert "10" in out
 
     def test_print_with_violations(self, advisor, capsys):
-        result = OptimizationResult(
-            success=True, best_params={"k": 1},
-            best_score=5.0, experiments=5, duration=10.0
-        )
+        result = OptimizationResult(success=True, best_params={"k": 1}, best_score=5.0, experiments=5, duration=10.0)
         advisor.print_summary(result, {"structure_violations": 5})
         out = capsys.readouterr().out
         assert "预期改进" in out

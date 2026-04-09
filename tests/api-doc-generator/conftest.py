@@ -1,15 +1,16 @@
 """Fixtures and configuration for api-doc-generator tests"""
 
 import ast
-import pytest
-import tempfile
 import sys
+import tempfile
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Any, Dict, List
+
+import pytest
 
 # Add skills directory to path for imports
-skills_dir = Path(__file__).parent.parent.parent / 'skills'
-sys.path.insert(0, str(skills_dir / 'api-doc-generator'))
+skills_dir = Path(__file__).parent.parent.parent / "skills"
+sys.path.insert(0, str(skills_dir / "api-doc-generator"))
 
 from implementation import (
     RouteInfo,
@@ -21,8 +22,8 @@ from implementation import (
     scan_code,
 )
 
-
 # ============== Sample Code Fixtures ==============
+
 
 @pytest.fixture
 def fastapi_simple_code():
@@ -173,7 +174,7 @@ def search():
 @pytest.fixture
 def pydantic_models_code():
     """Code with Pydantic models"""
-    return '''
+    return """
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
@@ -201,7 +202,7 @@ class PaginatedResponse(BaseModel):
     total: int
     page: int
     per_page: int
-'''
+"""
 
 
 @pytest.fixture
@@ -234,21 +235,22 @@ class Post:
 
 # ============== RouteInfo Fixtures ==============
 
+
 @pytest.fixture
 def route_info_get():
     """GET route info"""
     return RouteInfo(
-        path='/api/users',
-        method='GET',
-        handler_name='list_users',
-        summary='List all users',
-        description='Returns paginated list of users',
-        tags=['users'],
+        path="/api/users",
+        method="GET",
+        handler_name="list_users",
+        summary="List all users",
+        description="Returns paginated list of users",
+        tags=["users"],
         parameters=[
-            {'name': 'skip', 'in': 'query', 'required': False, 'schema': {'type': 'integer'}},
-            {'name': 'limit', 'in': 'query', 'required': False, 'schema': {'type': 'integer'}}
+            {"name": "skip", "in": "query", "required": False, "schema": {"type": "integer"}},
+            {"name": "limit", "in": "query", "required": False, "schema": {"type": "integer"}},
         ],
-        responses={'200': {'description': 'Success'}}
+        responses={"200": {"description": "Success"}},
     )
 
 
@@ -256,21 +258,17 @@ def route_info_get():
 def route_info_post():
     """POST route info"""
     return RouteInfo(
-        path='/api/users',
-        method='POST',
-        handler_name='create_user',
-        summary='Create a new user',
-        description='Creates a user with the provided data',
-        tags=['users'],
+        path="/api/users",
+        method="POST",
+        handler_name="create_user",
+        summary="Create a new user",
+        description="Creates a user with the provided data",
+        tags=["users"],
         request_body={
-            'content': {
-                'application/json': {
-                    'schema': {'$ref': '#/components/schemas/UserCreate'}
-                }
-            },
-            'required': True
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/UserCreate"}}},
+            "required": True,
         },
-        responses={'201': {'description': 'User created'}, '400': {'description': 'Bad request'}}
+        responses={"201": {"description": "User created"}, "400": {"description": "Bad request"}},
     )
 
 
@@ -278,14 +276,12 @@ def route_info_post():
 def route_info_with_path_param():
     """Route with path parameter"""
     return RouteInfo(
-        path='/api/users/{user_id}',
-        method='GET',
-        handler_name='get_user',
-        summary='Get user by ID',
-        parameters=[
-            {'name': 'user_id', 'in': 'path', 'required': True, 'schema': {'type': 'string'}}
-        ],
-        responses={'200': {'description': 'Success'}, '404': {'description': 'Not found'}}
+        path="/api/users/{user_id}",
+        method="GET",
+        handler_name="get_user",
+        summary="Get user by ID",
+        parameters=[{"name": "user_id", "in": "path", "required": True, "schema": {"type": "string"}}],
+        responses={"200": {"description": "Success"}, "404": {"description": "Not found"}},
     )
 
 
@@ -293,29 +289,26 @@ def route_info_with_path_param():
 def route_info_deprecated():
     """Deprecated route"""
     return RouteInfo(
-        path='/api/legacy',
-        method='GET',
-        handler_name='legacy_endpoint',
+        path="/api/legacy",
+        method="GET",
+        handler_name="legacy_endpoint",
         deprecated=True,
-        responses={'200': {'description': 'Success'}}
+        responses={"200": {"description": "Success"}},
     )
 
 
 # ============== SchemaInfo Fixtures ==============
 
+
 @pytest.fixture
 def schema_user():
     """User schema"""
     return SchemaInfo(
-        name='User',
-        type='object',
-        properties={
-            'id': {'type': 'integer'},
-            'name': {'type': 'string'},
-            'email': {'type': 'string'}
-        },
-        required=['id', 'name', 'email'],
-        description='User model'
+        name="User",
+        type="object",
+        properties={"id": {"type": "integer"}, "name": {"type": "string"}, "email": {"type": "string"}},
+        required=["id", "name", "email"],
+        description="User model",
     )
 
 
@@ -323,45 +316,31 @@ def schema_user():
 def schema_user_create():
     """UserCreate schema"""
     return SchemaInfo(
-        name='UserCreate',
-        type='object',
-        properties={
-            'name': {'type': 'string'},
-            'email': {'type': 'string'},
-            'age': {'type': 'integer'}
-        },
-        required=['name', 'email'],
-        description='User creation model'
+        name="UserCreate",
+        type="object",
+        properties={"name": {"type": "string"}, "email": {"type": "string"}, "age": {"type": "integer"}},
+        required=["name", "email"],
+        description="User creation model",
     )
 
 
 @pytest.fixture
 def schema_with_enum():
     """Schema with enum values"""
-    return SchemaInfo(
-        name='Status',
-        type='string',
-        enum=['active', 'inactive', 'pending'],
-        description='User status'
-    )
+    return SchemaInfo(name="Status", type="string", enum=["active", "inactive", "pending"], description="User status")
 
 
 # ============== OpenAPI Document Fixtures ==============
+
 
 @pytest.fixture
 def openapi_minimal():
     """Minimal OpenAPI document"""
     return {
-        'openapi': '3.0.0',
-        'info': {
-            'title': 'API Documentation',
-            'version': '1.0.0',
-            'description': 'Auto-generated API documentation'
-        },
-        'paths': {},
-        'components': {
-            'schemas': {}
-        }
+        "openapi": "3.0.0",
+        "info": {"title": "API Documentation", "version": "1.0.0", "description": "Auto-generated API documentation"},
+        "paths": {},
+        "components": {"schemas": {}},
     }
 
 
@@ -369,98 +348,94 @@ def openapi_minimal():
 def openapi_with_routes():
     """OpenAPI document with routes"""
     return {
-        'openapi': '3.0.0',
-        'info': {
-            'title': 'Test API',
-            'version': '1.0.0',
-            'description': 'Auto-generated API documentation'
-        },
-        'paths': {
-            '/api/users': {
-                'get': {
-                    'summary': 'List users',
-                    'operationId': 'list_users',
-                    'responses': {'200': {'description': 'Success'}},
-                    'tags': ['users']
+        "openapi": "3.0.0",
+        "info": {"title": "Test API", "version": "1.0.0", "description": "Auto-generated API documentation"},
+        "paths": {
+            "/api/users": {
+                "get": {
+                    "summary": "List users",
+                    "operationId": "list_users",
+                    "responses": {"200": {"description": "Success"}},
+                    "tags": ["users"],
                 }
             },
-            '/api/users/{user_id}': {
-                'get': {
-                    'summary': 'Get user',
-                    'operationId': 'get_user',
-                    'parameters': [
-                        {'name': 'user_id', 'in': 'path', 'required': True, 'schema': {'type': 'string'}}
-                    ],
-                    'responses': {'200': {'description': 'Success'}}
+            "/api/users/{user_id}": {
+                "get": {
+                    "summary": "Get user",
+                    "operationId": "get_user",
+                    "parameters": [{"name": "user_id", "in": "path", "required": True, "schema": {"type": "string"}}],
+                    "responses": {"200": {"description": "Success"}},
+                }
+            },
+        },
+        "components": {
+            "schemas": {
+                "User": {
+                    "type": "object",
+                    "properties": {"id": {"type": "integer"}, "name": {"type": "string"}},
+                    "required": ["id", "name"],
                 }
             }
         },
-        'components': {
-            'schemas': {
-                'User': {
-                    'type': 'object',
-                    'properties': {
-                        'id': {'type': 'integer'},
-                        'name': {'type': 'string'}
-                    },
-                    'required': ['id', 'name']
-                }
-            }
-        }
     }
 
 
 # ============== File and Directory Fixtures ==============
 
+
 @pytest.fixture
 def temp_file(tmp_path):
     """Create a temporary file with content"""
+
     def _create_file(filename: str, content: str) -> Path:
         file_path = tmp_path / filename
-        file_path.write_text(content, encoding='utf-8')
+        file_path.write_text(content, encoding="utf-8")
         return file_path
+
     return _create_file
 
 
 @pytest.fixture
 def temp_dir(tmp_path):
     """Create a temporary directory"""
+
     def _create_dir(dirname: str) -> Path:
         dir_path = tmp_path / dirname
         dir_path.mkdir(parents=True, exist_ok=True)
         return dir_path
+
     return _create_dir
 
 
 @pytest.fixture
 def temp_fastapi_project(tmp_path):
     """Create a temporary FastAPI project structure"""
-    project_dir = tmp_path / 'fastapi_project'
+    project_dir = tmp_path / "fastapi_project"
     project_dir.mkdir()
 
     # Create main app
-    (project_dir / 'main.py').write_text('''
+    (project_dir / "main.py").write_text("""
 from fastapi import FastAPI
 app = FastAPI()
 
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-''')
+""")
 
     # Create models
-    (project_dir / 'models.py').write_text('''
+    (project_dir / "models.py").write_text("""
 from pydantic import BaseModel
 
 class Item(BaseModel):
     name: str
     price: float
-''')
+""")
 
     # Create routes
-    routes_dir = project_dir / 'routes'
+    routes_dir = project_dir / "routes"
     routes_dir.mkdir()
-    (routes_dir / 'users.py').write_text('''
+    (routes_dir / "users.py").write_text("""
 from fastapi import APIRouter
 
 router = APIRouter()
@@ -468,7 +443,7 @@ router = APIRouter()
 @router.get("/users")
 def get_users():
     return []
-''')
+""")
 
     return project_dir
 
@@ -476,23 +451,23 @@ def get_users():
 @pytest.fixture
 def temp_flask_project(tmp_path):
     """Create a temporary Flask project structure"""
-    project_dir = tmp_path / 'flask_project'
+    project_dir = tmp_path / "flask_project"
     project_dir.mkdir()
 
     # Create app
-    (project_dir / 'app.py').write_text('''
+    (project_dir / "app.py").write_text("""
 from flask import Flask
 app = Flask(__name__)
 
 @app.route("/")
 def index():
     return "Hello"
-''')
+""")
 
     # Create views
-    views_dir = project_dir / 'views'
+    views_dir = project_dir / "views"
     views_dir.mkdir()
-    (views_dir / 'users.py').write_text('''
+    (views_dir / "users.py").write_text("""
 from flask import Blueprint
 
 bp = Blueprint('users', __name__)
@@ -500,12 +475,13 @@ bp = Blueprint('users', __name__)
 @bp.route("/users")
 def list_users():
     return []
-''')
+""")
 
     return project_dir
 
 
 # ============== AST Tree Fixtures ==============
+
 
 @pytest.fixture
 def fastapi_ast(fastapi_simple_code):
@@ -527,46 +503,39 @@ def pydantic_ast(pydantic_models_code):
 
 # ============== Parameter Fixtures ==============
 
+
 @pytest.fixture
 def skill_params_basic():
     """Basic skill execution parameters"""
     return {
-        'input': '/path/to/app.py',
-        'format': 'yaml',
-        'framework': 'auto',
-        'title': 'My API',
-        'version': '1.0.0',
-        'base_url': 'http://localhost:8000'
+        "input": "/path/to/app.py",
+        "format": "yaml",
+        "framework": "auto",
+        "title": "My API",
+        "version": "1.0.0",
+        "base_url": "http://localhost:8000",
     }
 
 
 @pytest.fixture
 def skill_params_json():
     """Skill parameters for JSON output"""
-    return {
-        'input': '/path/to/app.py',
-        'output': '/path/to/api.json',
-        'format': 'json',
-        'framework': 'fastapi'
-    }
+    return {"input": "/path/to/app.py", "output": "/path/to/api.json", "format": "json", "framework": "fastapi"}
 
 
 @pytest.fixture
 def skill_params_with_output():
     """Skill parameters with output file"""
-    return {
-        'input': '/path/to/app.py',
-        'output': '/path/to/openapi.yaml',
-        'format': 'yaml'
-    }
+    return {"input": "/path/to/app.py", "output": "/path/to/openapi.yaml", "format": "yaml"}
 
 
 # ============== Error Scenario Fixtures ==============
 
+
 @pytest.fixture
 def code_syntax_error():
     """Code with syntax error"""
-    return '''
+    return """
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -574,7 +543,7 @@ app = FastAPI()
 @app.get("/users"
 def get_users():  # Missing closing parenthesis
     return []
-'''
+"""
 
 
 @pytest.fixture
@@ -594,7 +563,7 @@ def multiply(x, y):
 @pytest.fixture
 def code_mixed_frameworks():
     """Code mixing imports from multiple frameworks"""
-    return '''
+    return """
 from fastapi import FastAPI
 from flask import Flask
 
@@ -603,4 +572,4 @@ app = FastAPI()
 @app.get("/api/users")
 def users():
     return []
-'''
+"""

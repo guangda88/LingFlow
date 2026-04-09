@@ -1,9 +1,10 @@
 """LingFlow 测试根配置和共享 fixture"""
 
-import pytest
+import importlib.util
 import sys
 from pathlib import Path
-import importlib.util
+
+import pytest
 
 # Skills 目录路径
 SKILLS_DIR = Path(__file__).parent.parent / "skills"
@@ -15,7 +16,7 @@ def skills_dir():
     return SKILLS_DIR
 
 
-def load_skill_module(skill_name, module_name='implementation'):
+def load_skill_module(skill_name, module_name="implementation"):
     """加载带连字符的 skill 模块
 
     Args:
@@ -26,10 +27,7 @@ def load_skill_module(skill_name, module_name='implementation'):
         加载的模块对象
     """
     module_path = SKILLS_DIR / skill_name / f"{module_name}.py"
-    spec = importlib.util.spec_from_file_location(
-        f"{skill_name.replace('-', '_')}.{module_name}",
-        module_path
-    )
+    spec = importlib.util.spec_from_file_location(f"{skill_name.replace('-', '_')}.{module_name}", module_path)
     module = importlib.util.module_from_spec(spec)
     sys.modules[f"{skill_name.replace('-', '_')}.{module_name}"] = module
     spec.loader.exec_module(module)

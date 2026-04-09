@@ -1,28 +1,29 @@
 """Extended multi-workflow coordinator tests for additional coverage."""
 
-import pytest
 import asyncio
-from unittest.mock import MagicMock, AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
+
+from lingflow.common.models import Task, TaskPriority
 from lingflow.workflow.multi_workflow import (
-    WorkflowType,
-    WorkflowPriority,
-    WorkflowStatus,
-    WorkflowResult,
-    WorkflowConfig,
     BaseWorkflow,
-    FastTrackWorkflow,
-    StableTrackWorkflow,
+    DeployWorkflow,
     DevWorkflow,
-    TestWorkflow,
     DocWorkflow,
+    ExecutionStrategy,
+    FastTrackWorkflow,
+    MultiWorkflowCoordinator,
     OptimizeWorkflow,
     ReviewWorkflow,
-    DeployWorkflow,
-    ExecutionStrategy,
-    MultiWorkflowCoordinator,
+    StableTrackWorkflow,
+    TestWorkflow,
+    WorkflowConfig,
+    WorkflowPriority,
+    WorkflowResult,
+    WorkflowStatus,
+    WorkflowType,
 )
-from lingflow.common.models import Task, TaskPriority
 
 
 def _make_task(tid="t1"):

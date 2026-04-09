@@ -1,9 +1,10 @@
 from unittest.mock import MagicMock, patch
+
 from lingflow.self_optimizer.phase4.integration import (
-    Phase4Integration,
     EnhancedOptimizerAdapter,
-    patch_self_optimizer,
+    Phase4Integration,
     enable_phase4_integration,
+    patch_self_optimizer,
 )
 
 
@@ -61,9 +62,10 @@ class TestEnhancedOptimizerAdapter:
 
     @patch("lingflow.self_optimizer.phase4.integration.OptimizationEngine", create=True)
     def test_init_phase4_import_fails(self, mock_engine):
-        with patch.dict("sys.modules", {"lingflow.self_optimizer.phase4": MagicMock(
-            OptimizationEngine=MagicMock(side_effect=ImportError("no module"))
-        )}):
+        with patch.dict(
+            "sys.modules",
+            {"lingflow.self_optimizer.phase4": MagicMock(OptimizationEngine=MagicMock(side_effect=ImportError("no module")))},
+        ):
             pass
         adapter = EnhancedOptimizerAdapter(use_phase4=False)
         assert adapter.use_phase4 is False
@@ -78,6 +80,7 @@ class TestEnhancedOptimizerAdapter:
 class TestPatchSelfOptimizer:
     def test_patch_self_optimizer(self):
         import lingflow.self_optimizer as opt_mod
+
         original = getattr(opt_mod, "SynchronousOptimizer", None)
         patch_self_optimizer()
         assert hasattr(opt_mod, "_original_SynchronousOptimizer")
@@ -86,6 +89,7 @@ class TestPatchSelfOptimizer:
 
     def test_enable_phase4_integration(self):
         import lingflow.self_optimizer as opt_mod
+
         original = getattr(opt_mod, "SynchronousOptimizer", None)
         enable_phase4_integration()
         if original is not None:

@@ -5,10 +5,10 @@ LingFlow Phase 5: 核心数据模型定义
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, Any, List, Optional
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 class FeedbackSource(Enum):

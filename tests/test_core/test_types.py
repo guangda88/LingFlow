@@ -1,4 +1,5 @@
 """测试核心类型系统"""
+
 import pytest
 
 from lingflow.core.types import Result

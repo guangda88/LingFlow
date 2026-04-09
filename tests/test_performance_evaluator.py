@@ -1,7 +1,8 @@
-import pytest
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 from lingflow.self_optimizer.performance_evaluator import PerformanceEvaluator, PerformanceMetrics, fallback_evaluate
 
@@ -36,16 +37,14 @@ class TestPerformanceEvaluatorInit:
 
 class TestEvaluate:
     def test_evaluate_empty_dir(self):
-        with tempfile.TemporaryDirectory() as tmpdir, \
-             patch("lingflow.self_optimizer.performance_evaluator.psutil"):
+        with tempfile.TemporaryDirectory() as tmpdir, patch("lingflow.self_optimizer.performance_evaluator.psutil"):
             e = PerformanceEvaluator(tmpdir)
             score = e.evaluate({})
             assert isinstance(score, float)
             assert score >= 0
 
     def test_evaluate_returns_score(self):
-        with tempfile.TemporaryDirectory() as tmpdir, \
-             patch("lingflow.self_optimizer.performance_evaluator.psutil"):
+        with tempfile.TemporaryDirectory() as tmpdir, patch("lingflow.self_optimizer.performance_evaluator.psutil"):
             e = PerformanceEvaluator(tmpdir)
             score = e.evaluate({"cache_size": 100, "parallelism": 2})
             assert isinstance(score, float)
@@ -53,16 +52,14 @@ class TestEvaluate:
 
 class TestMeasureImportTime:
     def test_no_init_py(self):
-        with tempfile.TemporaryDirectory() as tmpdir, \
-             patch("lingflow.self_optimizer.performance_evaluator.psutil"):
+        with tempfile.TemporaryDirectory() as tmpdir, patch("lingflow.self_optimizer.performance_evaluator.psutil"):
             e = PerformanceEvaluator(tmpdir)
             t = e._measure_import_time()
             assert isinstance(t, float)
             assert t >= 0
 
     def test_with_init_py(self):
-        with tempfile.TemporaryDirectory() as tmpdir, \
-             patch("lingflow.self_optimizer.performance_evaluator.psutil"):
+        with tempfile.TemporaryDirectory() as tmpdir, patch("lingflow.self_optimizer.performance_evaluator.psutil"):
             (Path(tmpdir) / "__init__.py").write_text("x = 1\n")
             e = PerformanceEvaluator(tmpdir)
             t = e._measure_import_time()
@@ -146,7 +143,6 @@ class TestBenchmarkFunction:
 
 class TestFallbackEvaluate:
     def test_fallback(self):
-        with tempfile.TemporaryDirectory() as tmpdir, \
-             patch("lingflow.self_optimizer.performance_evaluator.psutil"):
+        with tempfile.TemporaryDirectory() as tmpdir, patch("lingflow.self_optimizer.performance_evaluator.psutil"):
             score = fallback_evaluate({}, target_path=tmpdir)
             assert isinstance(score, float)

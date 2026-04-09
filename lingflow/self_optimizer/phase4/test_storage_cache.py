@@ -5,10 +5,10 @@ LingFlow Phase 4: 参数存储和缓存测试
 验证参数持久化存储和缓存机制的功能。
 """
 
-import sys
 import logging
-import tempfile
 import shutil
+import sys
+import tempfile
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -264,9 +264,10 @@ def test_cache_basic_operations():
     print("测试缓存基本操作")
     print("=" * 60)
 
+    from datetime import datetime
+
     from lingflow.self_optimizer.phase4.cache import ParameterCache
     from lingflow.self_optimizer.phase4.data_types import ParameterVersion
-    from datetime import datetime
 
     # 创建缓存
     cache = ParameterCache(max_size=3, ttl_seconds=60)
@@ -310,9 +311,10 @@ def test_cache_lru_eviction():
     print("测试LRU淘汰策略")
     print("=" * 60)
 
+    from datetime import datetime
+
     from lingflow.self_optimizer.phase4.cache import ParameterCache
     from lingflow.self_optimizer.phase4.data_types import ParameterVersion
-    from datetime import datetime
 
     # 创建小缓存
     cache = ParameterCache(max_size=2, ttl_seconds=60)
@@ -347,10 +349,11 @@ def test_cache_expiration():
     print("测试缓存过期")
     print("=" * 60)
 
+    import time
+    from datetime import datetime
+
     from lingflow.self_optimizer.phase4.cache import ParameterCache
     from lingflow.self_optimizer.phase4.data_types import ParameterVersion
-    from datetime import datetime
-    import time
 
     # 创建短TTL缓存
     cache = ParameterCache(max_size=10, ttl_seconds=1)
@@ -384,8 +387,8 @@ def test_cached_store():
     print("测试带缓存的存储")
     print("=" * 60)
 
-    from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore
     from lingflow.self_optimizer.phase4.cache import CachedParameterStore
+    from lingflow.self_optimizer.phase4.storage import FileSystemParameterStore
 
     temp_dir = tempfile.mkdtemp()
 

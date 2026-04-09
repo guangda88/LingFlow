@@ -5,10 +5,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lingflow.workflow.orchestrator import WorkflowOrchestrator
 from lingflow.common.models import TaskResult
-from lingflow.context.manager import ContextManager
 from lingflow.context.degradation import DegradationDetector
+from lingflow.context.manager import ContextManager
+from lingflow.workflow.orchestrator import WorkflowOrchestrator
 
 
 class TestWorkflowDegradationIntegration:
@@ -166,10 +166,12 @@ class TestHandoffAutoGeneration:
         mgr = self._make_manager(tmp_path)
 
         for i in range(10):
-            mgr._messages.append({
-                "role": "assistant",
-                "content": f"error exception traceback failure 错误 异常 {i}",
-            })
+            mgr._messages.append(
+                {
+                    "role": "assistant",
+                    "content": f"error exception traceback failure 错误 异常 {i}",
+                }
+            )
 
         doc = mgr.generate_handoff(reason="degradation_test")
         assert doc.degradation_detected is True
@@ -219,11 +221,13 @@ class TestOrchestratorDegradationReport:
         orch = WorkflowOrchestrator(coord)
 
         for i in range(5):
-            batch = {f"t{i}": TaskResult(
-                task_id=f"t{i}",
-                success=True,
-                output=f"Completed step {i} successfully with unique result",
-            )}
+            batch = {
+                f"t{i}": TaskResult(
+                    task_id=f"t{i}",
+                    success=True,
+                    output=f"Completed step {i} successfully with unique result",
+                )
+            }
             orch._check_degradation(batch)
 
         report = orch.get_degradation_report()

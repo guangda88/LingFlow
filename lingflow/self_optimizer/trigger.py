@@ -3,9 +3,9 @@ LingFlow 自优化触发器
 检测何时应该启动自优化
 """
 
-from typing import Optional, Dict, Any, Tuple
-from datetime import datetime
 from dataclasses import dataclass
+from datetime import datetime
+from typing import Any, Dict, Optional, Tuple
 
 from lingflow.self_optimizer.config import get_global_config
 

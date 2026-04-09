@@ -3,15 +3,15 @@
 扩展情报收集能力，增加对LingFlow自身的监控和评价收集。
 """
 
-from .lingflow_monitor import LingFlowMonitor, MentionData
-from .star_tracker import StarTracker, StargazerData
 from .base import (
     BaseCollector,
-    CollectorManager,
     CollectorConfig,
+    CollectorManager,
 )
-from .reddit import RedditCollector
 from .hackernews import HNCollector
+from .lingflow_monitor import LingFlowMonitor, MentionData
+from .reddit import RedditCollector
+from .star_tracker import StargazerData, StarTracker
 
 __all__ = [
     # 原有采集器

@@ -3,8 +3,8 @@
 提供规则引擎的数据模型和异常类。
 """
 
-from .models import Rule, RuleResult, RuleEngineError, RuleNotFoundError, RuleValidationError
 from ..severity import Severity
+from .models import Rule, RuleEngineError, RuleNotFoundError, RuleResult, RuleValidationError
 
 __all__ = [
     "Rule",

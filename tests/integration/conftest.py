@@ -4,11 +4,12 @@
 提供共享的pytest fixtures和测试配置。
 """
 
-import pytest
 import sys
 from pathlib import Path
-from typing import Generator, Dict, Any
-from unittest.mock import Mock, MagicMock
+from typing import Any, Dict, Generator
+from unittest.mock import MagicMock, Mock
+
+import pytest
 
 # 添加项目根目录到路径
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -16,11 +17,11 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 # 导入测试fixtures
 from tests.integration.fixtures import (
+    SAMPLE_PYTHON_CODE,
+    SAMPLE_SECURITY_ISSUES,
     TempDirectory,
     create_sample_project,
     get_combined_feedback,
-    SAMPLE_PYTHON_CODE,
-    SAMPLE_SECURITY_ISSUES,
 )
 
 
@@ -81,7 +82,7 @@ def mock_semgrep():
                 "line": 1,
                 "snippet": "password = 'admin123'",
                 "suggestion": "Use environment variables",
-                "confidence": 0.95
+                "confidence": 0.95,
             }
         ]
 
@@ -110,7 +111,7 @@ def mock_ruff():
                 "line": 3,
                 "snippet": "import os",
                 "suggestion": "Remove unused import",
-                "confidence": 0.85
+                "confidence": 0.85,
             }
         ]
 
@@ -139,7 +140,7 @@ def mock_bandit():
                 "line": 1,
                 "snippet": "password = 'admin123'",
                 "suggestion": "Use secure credential manager",
-                "confidence": 0.90
+                "confidence": 0.90,
             }
         ]
 
@@ -150,11 +151,7 @@ def mock_bandit():
 @pytest.fixture
 def mock_tools(mock_semgrep, mock_ruff, mock_bandit):
     """所有Mock工具"""
-    return {
-        "semgrep": mock_semgrep,
-        "ruff": mock_ruff,
-        "bandit": mock_bandit
-    }
+    return {"semgrep": mock_semgrep, "ruff": mock_ruff, "bandit": mock_bandit}
 
 
 @pytest.fixture
@@ -166,7 +163,7 @@ def optimization_config():
         "early_stopping_patience": 5,
         "min_improvement": 0.01,
         "seed": 42,
-        "generate_reports": False  # 加速测试
+        "generate_reports": False,  # 加速测试
     }
 
 
@@ -183,6 +180,7 @@ def sample_search_space():
 @pytest.fixture
 def sample_objective():
     """示例目标函数（简单的二次函数）"""
+
     def objective(params):
         x = params.get("max_class_size", 100)
         y = params.get("max_method_count", 10)
@@ -193,23 +191,12 @@ def sample_objective():
 
 
 # pytest标记
-pytestmark = [
-    pytest.mark.integration,
-    pytest.mark.slow
-]
+pytestmark = [pytest.mark.integration, pytest.mark.slow]
 
 
 def pytest_configure(config):
     """pytest配置钩子"""
-    config.addinivalue_line(
-        "markers", "integration: 集成测试标记"
-    )
-    config.addinivalue_line(
-        "markers", "slow: 慢速测试标记"
-    )
-    config.addinivalue_line(
-        "markers", "phase4: Phase 4测试标记"
-    )
-    config.addinivalue_line(
-        "markers", "phase5: Phase 5测试标记"
-    )
+    config.addinivalue_line("markers", "integration: 集成测试标记")
+    config.addinivalue_line("markers", "slow: 慢速测试标记")
+    config.addinivalue_line("markers", "phase4: Phase 4测试标记")
+    config.addinivalue_line("markers", "phase5: Phase 5测试标记")

@@ -1,19 +1,20 @@
 """Tests for lingflow.cli.optimize module"""
 
-import pytest
 from pathlib import Path
+from unittest.mock import MagicMock, patch
+
+import pytest
 from click.testing import CliRunner
-from unittest.mock import patch, MagicMock
 
 from lingflow.cli.optimize import (
+    apply_optimization,
+    cancel,
+    check_trigger,
+    generate_config,
     optimize,
     run,
     status,
     wait_completion,
-    cancel,
-    apply_optimization,
-    generate_config,
-    check_trigger,
 )
 
 
@@ -246,19 +247,23 @@ class TestApplyOptimization:
     def test_apply_valid_report(self, tmp_path):
         """Test apply with valid report"""
         report_path = tmp_path / "report.md"
-        report_path.write_text("""
+        report_path.write_text(
+            """
 # Optimization Report
 
 ```yaml
 max_complexity: 10
 max_class_size: 200
 ```
-""", encoding="utf-8")
+""",
+            encoding="utf-8",
+        )
 
         runner = CliRunner()
         with runner.isolated_filesystem():
             # Copy report to current dir
             import shutil
+
             shutil.copy(report_path, "report.md")
 
             # Use non-interactive flag
@@ -289,18 +294,22 @@ class TestGenerateConfig:
     def test_generate_config_success(self, tmp_path):
         """Test successful config generation"""
         report_path = tmp_path / "report.md"
-        report_path.write_text("""
+        report_path.write_text(
+            """
 # Report
 
 ```yaml
 param1: value1
 param2: 100
 ```
-""", encoding="utf-8")
+""",
+            encoding="utf-8",
+        )
 
         runner = CliRunner()
         with runner.isolated_filesystem():
             import shutil
+
             shutil.copy(report_path, "report.md")
 
             output_file = "config_optimized.yaml"

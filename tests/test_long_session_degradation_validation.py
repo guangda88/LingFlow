@@ -17,13 +17,13 @@ Tests cover:
 import json
 from unittest.mock import MagicMock
 
+from lingflow.common.models import TaskResult
 from lingflow.context.degradation import (
     DegradationDetector,
     DegradationType,
     HealthStatus,
 )
 from lingflow.context.manager import ContextManager
-from lingflow.common.models import TaskResult
 from lingflow.workflow.orchestrator import WorkflowOrchestrator
 
 
@@ -63,10 +63,12 @@ def _build_repetition_collapse_session() -> list:
 
     for i in range(12):
         messages.append({"role": "user", "content": "continue"})
-        messages.append({
-            "role": "assistant",
-            "content": "I will now implement the fix for the issue by modifying the code",
-        })
+        messages.append(
+            {
+                "role": "assistant",
+                "content": "I will now implement the fix for the issue by modifying the code",
+            }
+        )
     return messages
 
 
@@ -159,7 +161,7 @@ class TestHealthyLongSession:
         dd = DegradationDetector(window_size=10)
         messages = _build_healthy_session(50)
         for i in range(3, len(messages), 2):
-            window = messages[max(0, i - 20):i]
+            window = messages[max(0, i - 20) : i]
             report = dd.get_health_score(window)
             assert report.score >= 0.5, f"Unexpected degradation at msg {i}: {report.score}"
 
@@ -169,11 +171,13 @@ class TestHealthyLongSession:
         report = dd.get_health_score(messages)
         assert report.health == HealthStatus.HEALTHY
 
-        messages.extend([
-            {"role": "assistant", "content": "same same same"},
-            {"role": "assistant", "content": "same same same"},
-            {"role": "assistant", "content": "same same same"},
-        ])
+        messages.extend(
+            [
+                {"role": "assistant", "content": "same same same"},
+                {"role": "assistant", "content": "same same same"},
+                {"role": "assistant", "content": "same same same"},
+            ]
+        )
         report = dd.get_health_score(messages[-20:])
         assert report.score < 1.0
 
@@ -228,11 +232,13 @@ class TestErrorEscalationDetection:
             {"role": "assistant", "content": "Success"},
         ]
         report1 = dd.get_health_score(messages)
-        messages.extend([
-            {"role": "assistant", "content": "Error: crash"},
-            {"role": "assistant", "content": "Exception: timeout"},
-            {"role": "assistant", "content": "Failed: overflow"},
-        ])
+        messages.extend(
+            [
+                {"role": "assistant", "content": "Error: crash"},
+                {"role": "assistant", "content": "Exception: timeout"},
+                {"role": "assistant", "content": "Failed: overflow"},
+            ]
+        )
         report2 = dd.get_health_score(messages)
         assert report2.score <= report1.score
 
@@ -374,11 +380,13 @@ class TestWorkflowOrchestratorIntegration:
         orch = WorkflowOrchestrator(coord)
 
         for i in range(10):
-            batch = {f"t{i}": TaskResult(
-                task_id=f"t{i}",
-                success=True,
-                output=f"Task {i}: Implemented {['login', 'cache', 'api', 'db', 'auth', 'logging', 'config', 'test', 'docs', 'deploy'][i]} with unique approach",
-            )}
+            batch = {
+                f"t{i}": TaskResult(
+                    task_id=f"t{i}",
+                    success=True,
+                    output=f"Task {i}: Implemented {['login', 'cache', 'api', 'db', 'auth', 'logging', 'config', 'test', 'docs', 'deploy'][i]} with unique approach",
+                )
+            }
             orch._check_degradation(batch)
 
         report = orch.get_degradation_report()
@@ -391,11 +399,13 @@ class TestWorkflowOrchestratorIntegration:
 
         same_output = "identical output without any variation whatsoever"
         for i in range(10):
-            batch = {f"t{i}": TaskResult(
-                task_id=f"t{i}",
-                success=True,
-                output=same_output,
-            )}
+            batch = {
+                f"t{i}": TaskResult(
+                    task_id=f"t{i}",
+                    success=True,
+                    output=same_output,
+                )
+            }
             orch._check_degradation(batch)
 
         report = orch.get_degradation_report()
@@ -408,12 +418,14 @@ class TestWorkflowOrchestratorIntegration:
 
         for i in range(6):
             success = i % 2 == 0
-            batch = {f"t{i}": TaskResult(
-                task_id=f"t{i}",
-                success=success,
-                output=f"result {i}" if success else None,
-                error=None if success else f"error in task {i}",
-            )}
+            batch = {
+                f"t{i}": TaskResult(
+                    task_id=f"t{i}",
+                    success=success,
+                    output=f"result {i}" if success else None,
+                    error=None if success else f"error in task {i}",
+                )
+            }
             orch._check_degradation(batch)
 
         assert len(orch._workflow_messages) == 6
@@ -431,10 +443,12 @@ class TestContextManagerDegradationIntegration:
     def test_handoff_on_degradation(self, tmp_path):
         mgr = self._make_manager(tmp_path)
         for i in range(15):
-            mgr._messages.append({
-                "role": "assistant",
-                "content": f"Error: failure exception traceback in module {i}",
-            })
+            mgr._messages.append(
+                {
+                    "role": "assistant",
+                    "content": f"Error: failure exception traceback in module {i}",
+                }
+            )
         doc = mgr.generate_handoff(reason="degradation_detected")
         assert doc.degradation_detected is True
         assert len(doc.degradation_types) > 0
@@ -442,24 +456,30 @@ class TestContextManagerDegradationIntegration:
     def test_no_degradation_in_healthy_session(self, tmp_path):
         mgr = self._make_manager(tmp_path)
         for i in range(10):
-            mgr._messages.append({
-                "role": "user",
-                "content": f"request {i}",
-            })
-            mgr._messages.append({
-                "role": "assistant",
-                "content": f"Successfully completed unique task {i} with distinct results",
-            })
+            mgr._messages.append(
+                {
+                    "role": "user",
+                    "content": f"request {i}",
+                }
+            )
+            mgr._messages.append(
+                {
+                    "role": "assistant",
+                    "content": f"Successfully completed unique task {i} with distinct results",
+                }
+            )
         doc = mgr.generate_handoff(reason="normal_end")
         assert len(doc.degradation_types) == 0
 
     def test_handoff_preserves_degradation_types(self, tmp_path):
         mgr = self._make_manager(tmp_path)
         for _ in range(12):
-            mgr._messages.append({
-                "role": "assistant",
-                "content": "Error: same error repeated traceback exception failure",
-            })
+            mgr._messages.append(
+                {
+                    "role": "assistant",
+                    "content": "Error: same error repeated traceback exception failure",
+                }
+            )
         doc = mgr.generate_handoff(reason="degradation")
         if doc.degradation_detected:
             types = doc.degradation_types
@@ -472,10 +492,12 @@ class TestContextManagerDegradationIntegration:
         mgr.add_decision("use FastAPI framework")
 
         for _ in range(10):
-            mgr._messages.append({
-                "role": "assistant",
-                "content": "Error: repeated failure exception traceback",
-            })
+            mgr._messages.append(
+                {
+                    "role": "assistant",
+                    "content": "Error: repeated failure exception traceback",
+                }
+            )
 
         mgr.generate_handoff(reason="degradation_test")
 
@@ -556,17 +578,17 @@ class TestEdgeCases:
 
     def test_two_messages(self):
         dd = DegradationDetector()
-        report = dd.get_health_score([
-            {"role": "user", "content": "hi"},
-            {"role": "assistant", "content": "hello"},
-        ])
+        report = dd.get_health_score(
+            [
+                {"role": "user", "content": "hi"},
+                {"role": "assistant", "content": "hello"},
+            ]
+        )
         assert report.health == HealthStatus.HEALTHY
 
     def test_only_user_messages(self):
         dd = DegradationDetector()
-        report = dd.get_health_score([
-            {"role": "user", "content": f"message {i}"} for i in range(10)
-        ])
+        report = dd.get_health_score([{"role": "user", "content": f"message {i}"} for i in range(10)])
         assert report.score == 1.0
 
     def test_empty_content_handled(self):
@@ -582,12 +604,14 @@ class TestEdgeCases:
     def test_very_long_content(self):
         dd = DegradationDetector()
         long_msg = "word " * 10000
-        report = dd.get_health_score([
-            {"role": "user", "content": "task"},
-            {"role": "assistant", "content": long_msg},
-            {"role": "user", "content": "task"},
-            {"role": "assistant", "content": "done"},
-        ])
+        report = dd.get_health_score(
+            [
+                {"role": "user", "content": "task"},
+                {"role": "assistant", "content": long_msg},
+                {"role": "user", "content": "task"},
+                {"role": "assistant", "content": "done"},
+            ]
+        )
         assert report is not None
         assert 0.0 <= report.score <= 1.0
 

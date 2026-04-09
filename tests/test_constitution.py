@@ -104,9 +104,7 @@ class TestComplianceReport:
 
     def test_add_violation(self):
         """Test adding a violation"""
-        report = ComplianceReport(
-            is_compliant=True, total_principles=10, compliant_principles=10
-        )
+        report = ComplianceReport(is_compliant=True, total_principles=10, compliant_principles=10)
         violation = Violation(
             principle_id="SEC-001",
             principle_name="XSS",
@@ -119,9 +117,7 @@ class TestComplianceReport:
 
     def test_get_summary(self):
         """Test getting summary statistics"""
-        report = ComplianceReport(
-            is_compliant=False, total_principles=10, compliant_principles=8
-        )
+        report = ComplianceReport(is_compliant=False, total_principles=10, compliant_principles=8)
         report.add_violation(
             Violation(
                 principle_id="SEC-001",
@@ -173,9 +169,7 @@ class TestConstitutionInitialization:
                 }
             ]
         }
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".yaml", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             yaml.dump(data, f)
             temp_path = f.name
 
@@ -193,9 +187,7 @@ class TestConstitutionInitialization:
 
     def test_initialization_corrupted_file(self):
         """Test initialization with corrupted YAML file"""
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".yaml", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("invalid: yaml: content: [")
             temp_path = f.name
 
@@ -291,11 +283,7 @@ class TestConstitutionCheckXSS:
         constitution = Constitution()
         code = 'element.innerHTML = userInput + "text"'
         report = constitution.check_compliance(code, "test.js")
-        xss_violations = [
-            v
-            for v in report.violations
-            if v.principle_id == "SEC-001"
-        ]
+        xss_violations = [v for v in report.violations if v.principle_id == "SEC-001"]
         assert len(xss_violations) > 0
 
     def test_check_xss_dangerous_script_tag(self):
@@ -303,11 +291,7 @@ class TestConstitutionCheckXSS:
         constitution = Constitution()
         code = 'html += "<script>" + userInput + "</script>"'
         report = constitution.check_compliance(code, "test.js")
-        xss_violations = [
-            v
-            for v in report.violations
-            if v.principle_id == "SEC-001"
-        ]
+        xss_violations = [v for v in report.violations if v.principle_id == "SEC-001"]
         assert len(xss_violations) > 0
 
 
@@ -319,11 +303,7 @@ class TestConstitutionCheckSQLInjection:
         constitution = Constitution()
         code = 'cursor.execute("SELECT * FROM users WHERE name = \'" + userInput + "\'")'
         report = constitution.check_compliance(code, "test.py")
-        sql_violations = [
-            v
-            for v in report.violations
-            if v.principle_id == "SEC-002"
-        ]
+        sql_violations = [v for v in report.violations if v.principle_id == "SEC-002"]
         assert len(sql_violations) > 0
 
     def test_check_sql_injection_f_string(self):
@@ -331,11 +311,7 @@ class TestConstitutionCheckSQLInjection:
         constitution = Constitution()
         code = 'query = f"SELECT * FROM users WHERE name = {userInput}"'
         report = constitution.check_compliance(code, "test.py")
-        sql_violations = [
-            v
-            for v in report.violations
-            if v.principle_id == "SEC-002"
-        ]
+        sql_violations = [v for v in report.violations if v.principle_id == "SEC-002"]
         assert len(sql_violations) > 0
 
     def test_check_sql_injection_safe_placeholder(self):
@@ -343,11 +319,7 @@ class TestConstitutionCheckSQLInjection:
         constitution = Constitution()
         code = 'cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))'
         report = constitution.check_compliance(code, "test.py")
-        sql_violations = [
-            v
-            for v in report.violations
-            if v.principle_id == "SEC-002"
-        ]
+        sql_violations = [v for v in report.violations if v.principle_id == "SEC-002"]
         assert len(sql_violations) == 0
 
 
@@ -359,11 +331,7 @@ class TestConstitutionCheckHardcodedCredentials:
         constitution = Constitution()
         code = 'password = "hardcoded_password"'
         report = constitution.check_compliance(code, "test.py")
-        cred_violations = [
-            v
-            for v in report.violations
-            if v.principle_id == "SEC-005"
-        ]
+        cred_violations = [v for v in report.violations if v.principle_id == "SEC-005"]
         assert len(cred_violations) > 0
 
     def test_check_hardcoded_api_key(self):
@@ -371,11 +339,7 @@ class TestConstitutionCheckHardcodedCredentials:
         constitution = Constitution()
         code = 'api_key = "sk-1234567890abcdef"'
         report = constitution.check_compliance(code, "test.py")
-        cred_violations = [
-            v
-            for v in report.violations
-            if v.principle_id == "SEC-005"
-        ]
+        cred_violations = [v for v in report.violations if v.principle_id == "SEC-005"]
         assert len(cred_violations) > 0
 
     def test_skip_environment_variable_reference(self):
@@ -383,11 +347,7 @@ class TestConstitutionCheckHardcodedCredentials:
         constitution = Constitution()
         code = 'password = os.environ.get("PASSWORD")'
         report = constitution.check_compliance(code, "test.py")
-        cred_violations = [
-            v
-            for v in report.violations
-            if v.principle_id == "SEC-005"
-        ]
+        cred_violations = [v for v in report.violations if v.principle_id == "SEC-005"]
         assert len(cred_violations) == 0
 
     def test_skip_commented_password(self):
@@ -395,11 +355,7 @@ class TestConstitutionCheckHardcodedCredentials:
         constitution = Constitution()
         code = '# password = "hardcoded_password"'
         report = constitution.check_compliance(code, "test.py")
-        cred_violations = [
-            v
-            for v in report.violations
-            if v.principle_id == "SEC-005"
-        ]
+        cred_violations = [v for v in report.violations if v.principle_id == "SEC-005"]
         assert len(cred_violations) == 0
 
 
@@ -409,25 +365,17 @@ class TestConstitutionCheckWeakCrypto:
     def test_check_md5(self):
         """Test detecting MD5"""
         constitution = Constitution()
-        code = 'hash = hashlib.md5(data).hexdigest()'
+        code = "hash = hashlib.md5(data).hexdigest()"
         report = constitution.check_compliance(code, "test.py")
-        crypto_violations = [
-            v
-            for v in report.violations
-            if v.principle_id == "SEC-004"
-        ]
+        crypto_violations = [v for v in report.violations if v.principle_id == "SEC-004"]
         assert len(crypto_violations) > 0
 
     def test_check_sha1(self):
         """Test detecting SHA1"""
         constitution = Constitution()
-        code = 'hash = hashlib.sha1(data).hexdigest()'
+        code = "hash = hashlib.sha1(data).hexdigest()"
         report = constitution.check_compliance(code, "test.py")
-        crypto_violations = [
-            v
-            for v in report.violations
-            if v.principle_id == "SEC-004"
-        ]
+        crypto_violations = [v for v in report.violations if v.principle_id == "SEC-004"]
         assert len(crypto_violations) > 0
 
 
@@ -439,11 +387,7 @@ class TestConstitutionCheckPathTraversal:
         constitution = Constitution()
         code = 'open("/var/data/" + user_input)'
         report = constitution.check_compliance(code, "test.py")
-        path_violations = [
-            v
-            for v in report.violations
-            if v.principle_id == "SEC-006"
-        ]
+        path_violations = [v for v in report.violations if v.principle_id == "SEC-006"]
         assert len(path_violations) > 0
 
 
@@ -492,7 +436,7 @@ class TestParameterizedSecurityChecks:
                 "SEC-001",
             ),
             (
-                'document.write(userInput)',
+                "document.write(userInput)",
                 True,
                 "SEC-001",
             ),
@@ -502,7 +446,7 @@ class TestParameterizedSecurityChecks:
                 "SEC-001",
             ),
             (
-                'element.textContent = userInput',
+                "element.textContent = userInput",
                 False,
                 "SEC-001",
             ),
@@ -545,17 +489,17 @@ class TestParameterizedSecurityChecks:
             ),
             # Weak cryptography
             (
-                'hash = hashlib.md5(data).hexdigest()',
+                "hash = hashlib.md5(data).hexdigest()",
                 True,
                 "SEC-004",
             ),
             (
-                'hash = hashlib.sha1(data).hexdigest()',
+                "hash = hashlib.sha1(data).hexdigest()",
                 True,
                 "SEC-004",
             ),
             (
-                'hash = hashlib.sha256(data).hexdigest()',
+                "hash = hashlib.sha256(data).hexdigest()",
                 False,
                 "SEC-004",
             ),
@@ -577,9 +521,7 @@ class TestParameterizedSecurityChecks:
         constitution = Constitution()
         report = constitution.check_compliance(code_snippet, "test.py")
 
-        violations = [
-            v for v in report.violations if v.principle_id == principle_id
-        ]
+        violations = [v for v in report.violations if v.principle_id == principle_id]
 
         if expected_violation:
             assert len(violations) > 0, f"Expected violation for {principle_id} in code: {code_snippet}"

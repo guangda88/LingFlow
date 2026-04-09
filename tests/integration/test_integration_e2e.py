@@ -7,27 +7,18 @@ Phase 4 + Phase 5 集成端到端测试
 - 系统集成测试
 """
 
-import pytest
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from unittest.mock import Mock, patch
 
+import pytest
+
+from lingflow.self_optimizer.phase4.bayesian_optimizer import BayesianOptimizer, OptimizationState
 from lingflow.self_optimizer.phase4.engine import OptimizationEngine
-from lingflow.self_optimizer.phase4.bayesian_optimizer import (
-    BayesianOptimizer,
-    OptimizationState
-)
-from lingflow.self_optimizer.phase5.learning import RuleExtractor
+from lingflow.self_optimizer.phase5.adapters import AIToolAdapter, RuffAdapter, SemgrepAdapter
 from lingflow.self_optimizer.phase5.knowledge import InMemoryKnowledgeBase
-from lingflow.self_optimizer.phase5.models import (
-    FeedbackItem,
-    LearnedRule,
-    Pattern,
-    FeedbackCategory,
-    SeverityLevel,
-    ToolType
-)
-from lingflow.self_optimizer.phase5.adapters import SemgrepAdapter, RuffAdapter, AIToolAdapter
+from lingflow.self_optimizer.phase5.learning import RuleExtractor
+from lingflow.self_optimizer.phase5.models import FeedbackCategory, FeedbackItem, LearnedRule, Pattern, SeverityLevel, ToolType
 
 
 @pytest.mark.integration
@@ -49,16 +40,12 @@ class TestPhase4Phase5Integration:
             pattern=pattern,
             tools=["Semgrep", "Ruff"],
             frequency=10,
-            confidence=0.85
+            confidence=0.85,
         )
         kb.add_rule(learned_rule)
 
         # Phase 4: 使用规则指导优化
-        engine = OptimizationEngine(config={
-            "n_trials": 5,
-            "timeout": 30,
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"n_trials": 5, "timeout": 30, "generate_reports": False})
 
         # 自定义搜索空间（基于学习到的规则）
         custom_search_space = {
@@ -66,11 +53,7 @@ class TestPhase4Phase5Integration:
             "max_method_count": {"type": "categorical", "choices": [15, 20, 25]},
         }
 
-        result = engine.optimize_single_objective(
-            target_path=temp_project,
-            goal="structure",
-            search_space=custom_search_space
-        )
+        result = engine.optimize_single_objective(target_path=temp_project, goal="structure", search_space=custom_search_space)
 
         # 验证优化完成
         assert result["goal"] == "structure"
@@ -80,16 +63,9 @@ class TestPhase4Phase5Integration:
     def test_feedback_driven_optimization(self, temp_project):
         """测试反馈驱动的优化"""
         # 1. 初始优化
-        engine = OptimizationEngine(config={
-            "n_trials": 3,
-            "timeout": 20,
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"n_trials": 3, "timeout": 20, "generate_reports": False})
 
-        initial_result = engine.optimize_single_objective(
-            target_path=temp_project,
-            goal="structure"
-        )
+        initial_result = engine.optimize_single_objective(target_path=temp_project, goal="structure")
 
         # 2. 模拟工具反馈
         feedback = [
@@ -105,7 +81,7 @@ class TestPhase4Phase5Integration:
                 line=1,
                 snippet="class LargeClass:",
                 suggestion="Reduce class size",
-                confidence=0.8
+                confidence=0.8,
             )
         ]
 
@@ -122,9 +98,7 @@ class TestPhase4Phase5Integration:
 
             # 5. 重新优化
             adjusted_result = engine.optimize_single_objective(
-                target_path=temp_project,
-                goal="structure",
-                search_space=adjusted_search_space
+                target_path=temp_project, goal="structure", search_space=adjusted_search_space
             )
 
             # 验证参数已调整
@@ -132,11 +106,7 @@ class TestPhase4Phase5Integration:
 
     def test_continuous_improvement_cycle(self, temp_project):
         """测试持续改进循环"""
-        engine = OptimizationEngine(config={
-            "n_trials": 3,
-            "timeout": 15,
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"n_trials": 3, "timeout": 15, "generate_reports": False})
         kb = InMemoryKnowledgeBase()
         extractor = RuleExtractor(min_frequency=1)
 
@@ -145,10 +115,7 @@ class TestPhase4Phase5Integration:
         # 多轮优化和学习
         for iteration in range(3):
             # 优化
-            result = engine.optimize_single_objective(
-                target_path=temp_project,
-                goal="structure"
-            )
+            result = engine.optimize_single_objective(target_path=temp_project, goal="structure")
             scores.append(result["best_score"])
 
             # 模拟反馈
@@ -165,7 +132,7 @@ class TestPhase4Phase5Integration:
                     line=1,
                     snippet="code",
                     suggestion="Improve",
-                    confidence=0.7
+                    confidence=0.7,
                 )
             ]
 
@@ -192,7 +159,7 @@ class TestPhase4Phase5Integration:
                 pattern=Pattern(file_patterns=["*.py"]),
                 tools=["Optimizer"],
                 frequency=1,
-                confidence=0.8
+                confidence=0.8,
             )
             for i in range(5)
         ]
@@ -200,19 +167,12 @@ class TestPhase4Phase5Integration:
 
         # 2. 从知识库获取建议
         stats = kb.get_statistics()
-        assert stats['total_rules'] >= 5
+        assert stats["total_rules"] >= 5
 
         # 3. 使用历史信息指导优化
-        engine = OptimizationEngine(config={
-            "n_trials": 3,
-            "timeout": 20,
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"n_trials": 3, "timeout": 20, "generate_reports": False})
 
-        result = engine.optimize_single_objective(
-            target_path=temp_project,
-            goal="structure"
-        )
+        result = engine.optimize_single_objective(target_path=temp_project, goal="structure")
 
         # 验证优化完成
         assert result["best_score"] is not None
@@ -222,27 +182,21 @@ class TestPhase4Phase5Integration:
 class TestToolIntegration:
     """测试与外部工具的集成"""
 
-    @patch('lingflow.self_optimizer.phase5.adapters.semgrep_adapter.subprocess.run')
+    @patch("lingflow.self_optimizer.phase5.adapters.semgrep_adapter.subprocess.run")
     def test_semgrep_integration(self, mock_run, temp_project):
         """测试Semgrep集成"""
         # Mock subprocess
-        mock_run.return_value = Mock(
-            stdout='{"results": []}',
-            returncode=0
-        )
+        mock_run.return_value = Mock(stdout='{"results": []}', returncode=0)
 
         adapter = SemgrepAdapter()
         results = adapter.run_scan(temp_project)
 
         assert isinstance(results, list)
 
-    @patch('lingflow.self_optimizer.phase5.adapters.semgrep_adapter.subprocess.run')
+    @patch("lingflow.self_optimizer.phase5.adapters.semgrep_adapter.subprocess.run")
     def test_ruff_integration(self, mock_run, temp_project):
         """测试Ruff集成"""
-        mock_run.return_value = Mock(
-            stdout='[]',
-            returncode=0
-        )
+        mock_run.return_value = Mock(stdout="[]", returncode=0)
 
         adapter = RuffAdapter()
         results = adapter.run_scan(temp_project)
@@ -261,6 +215,7 @@ class TestToolIntegration:
         # 标准化结果
         from lingflow.self_optimizer.phase5.adapters import AIToolAdapter
         from lingflow.self_optimizer.phase5.models import FeedbackSource, ToolType
+
         adapter = AIToolAdapter()
         normalized = adapter.normalize_results(all_results)
 
@@ -277,20 +232,22 @@ class TestToolIntegration:
 
         for item in normalized:
             tool_type = source_to_tool_type.get(item.source, ToolType.STATIC_ANALYZER)
-            feedback_items.append(FeedbackItem(
-                tool_name=item.source.value,
-                tool_type=tool_type,
-                rule_id=item.rule_id or "",
-                rule_name=item.rule_id or "",
-                category=item.category,
-                severity=item.severity,
-                message=item.message,
-                file_path=item.file_path,
-                line=item.line_no,
-                snippet=item.code_snippet,
-                suggestion=item.suggestion,
-                confidence=0.8
-            ))
+            feedback_items.append(
+                FeedbackItem(
+                    tool_name=item.source.value,
+                    tool_type=tool_type,
+                    rule_id=item.rule_id or "",
+                    rule_name=item.rule_id or "",
+                    category=item.category,
+                    severity=item.severity,
+                    message=item.message,
+                    file_path=item.file_path,
+                    line=item.line_no,
+                    snippet=item.code_snippet,
+                    suggestion=item.suggestion,
+                    confidence=0.8,
+                )
+            )
         extractor = RuleExtractor(min_frequency=1)
         rules = extractor.extract_rules(feedback_items)
 
@@ -315,22 +272,25 @@ class TestSystemWorkflows:
         if normalized:
             # 将AIFeedback转换为FeedbackItem
             from lingflow.self_optimizer.phase5.models import ToolType
+
             feedback_items = []
             for item in normalized:
-                feedback_items.append(FeedbackItem(
-                    tool_name=item.source.value,
-                    tool_type=ToolType.SECURITY_SCANNER,
-                    rule_id=item.rule_id or "",
-                    rule_name=item.rule_id or "",
-                    category=item.category,
-                    severity=item.severity,
-                    message=item.message,
-                    file_path=item.file_path,
-                    line=item.line_no,
-                    snippet=item.code_snippet,
-                    suggestion=item.suggestion,
-                    confidence=0.8
-                ))
+                feedback_items.append(
+                    FeedbackItem(
+                        tool_name=item.source.value,
+                        tool_type=ToolType.SECURITY_SCANNER,
+                        rule_id=item.rule_id or "",
+                        rule_name=item.rule_id or "",
+                        category=item.category,
+                        severity=item.severity,
+                        message=item.message,
+                        file_path=item.file_path,
+                        line=item.line_no,
+                        snippet=item.code_snippet,
+                        suggestion=item.suggestion,
+                        confidence=0.8,
+                    )
+                )
             extractor = RuleExtractor(min_frequency=1)
             rules = extractor.extract_rules(feedback_items)
 
@@ -339,37 +299,23 @@ class TestSystemWorkflows:
             kb.add_rules_batch(rules)
 
             # 5. 参数优化
-            engine = OptimizationEngine(config={
-                "n_trials": 3,
-                "timeout": 20,
-                "generate_reports": False
-            })
+            engine = OptimizationEngine(config={"n_trials": 3, "timeout": 20, "generate_reports": False})
 
-            result = engine.optimize_single_objective(
-                target_path=temp_project,
-                goal="structure"
-            )
+            result = engine.optimize_single_objective(target_path=temp_project, goal="structure")
 
             # 验证完整流程
             assert result["best_score"] is not None
 
     def test_adaptive_optimization_workflow(self, temp_project):
         """测试自适应优化工作流"""
-        engine = OptimizationEngine(config={
-            "n_trials": 3,
-            "timeout": 15,
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"n_trials": 3, "timeout": 15, "generate_reports": False})
 
         optimization_history = []
 
         # 自适应优化：根据结果调整策略
         for round_num in range(3):
             # 运行优化
-            result = engine.optimize_single_objective(
-                target_path=temp_project,
-                goal="structure"
-            )
+            result = engine.optimize_single_objective(target_path=temp_project, goal="structure")
 
             optimization_history.append(result)
 
@@ -386,23 +332,15 @@ class TestSystemWorkflows:
 
     def test_error_recovery_workflow(self, temp_project):
         """测试错误恢复工作流"""
-        engine = OptimizationEngine(config={
-            "n_trials": 2,
-            "timeout": 10,
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"n_trials": 2, "timeout": 10, "generate_reports": False})
 
         # 模拟错误场景
         try:
             # 使用无效的搜索空间
-            invalid_search_space = {
-                "invalid_param": {"type": "unknown", "min": 0, "max": 10}
-            }
+            invalid_search_space = {"invalid_param": {"type": "unknown", "min": 0, "max": 10}}
 
             result = engine.optimize_single_objective(
-                target_path=temp_project,
-                goal="structure",
-                search_space=invalid_search_space
+                target_path=temp_project, goal="structure", search_space=invalid_search_space
             )
 
         except Exception as e:
@@ -410,15 +348,9 @@ class TestSystemWorkflows:
             assert isinstance(e, (ValueError, KeyError, AttributeError))
 
         # 恢复：使用有效搜索空间
-        valid_search_space = {
-            "max_class_size": {"type": "int", "min": 100, "max": 500}
-        }
+        valid_search_space = {"max_class_size": {"type": "int", "min": 100, "max": 500}}
 
-        result = engine.optimize_single_objective(
-            target_path=temp_project,
-            goal="structure",
-            search_space=valid_search_space
-        )
+        result = engine.optimize_single_objective(target_path=temp_project, goal="structure", search_space=valid_search_space)
 
         # 验证恢复成功
         assert result["best_score"] is not None
@@ -433,17 +365,10 @@ class TestPerformanceIntegration:
         """测试优化性能"""
         import time
 
-        engine = OptimizationEngine(config={
-            "n_trials": 5,
-            "timeout": 30,
-            "generate_reports": False
-        })
+        engine = OptimizationEngine(config={"n_trials": 5, "timeout": 30, "generate_reports": False})
 
         start_time = time.time()
-        result = engine.optimize_single_objective(
-            target_path=temp_project,
-            goal="structure"
-        )
+        result = engine.optimize_single_objective(target_path=temp_project, goal="structure")
         elapsed_time = time.time() - start_time
 
         # 验证性能
@@ -504,7 +429,7 @@ class TestDataConsistency:
             pattern=pattern,
             tools=["Ruff"],
             frequency=1,
-            confidence=0.8
+            confidence=0.8,
         )
 
         # 添加规则
