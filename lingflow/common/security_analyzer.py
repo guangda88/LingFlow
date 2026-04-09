@@ -61,8 +61,9 @@ class SecurityAnalyzer(ast.NodeVisitor):
         # 将 os.path → os 也视为允许
         self._allowed_base_modules = set()
         for mod in self.allowed_modules:
-            base = mod.split(".")[0]
-            self._allowed_base_modules.add(base)
+            if "." in mod:
+                base = mod.split(".")[0]
+                self._allowed_base_modules.add(base)
         self.function_depth = 0
         self.loop_depth = 0
         self.has_recursion = False
@@ -85,12 +86,13 @@ class SecurityAnalyzer(ast.NodeVisitor):
         return self.violations
 
     def _is_module_allowed(self, module_name: str) -> bool:
-        """检查模块是否在白名单中（支持精确匹配和 base 匹配）"""
+        """检查模块是否在白名单中（支持精确匹配和子模块匹配）"""
         if module_name in self.allowed_modules:
             return True
-        base = module_name.split(".")[0]
-        if base in self._allowed_base_modules:
-            return True
+        if "." in module_name:
+            base = module_name.split(".")[0]
+            if base in self.allowed_modules:
+                return True
         return False
 
     def visit_Import(self, node: ast.Import) -> None:
@@ -189,7 +191,7 @@ class SecurityAnalyzer(ast.NodeVisitor):
                     "types",
                 }
                 # importlib 危险子模块（但允许 util）
-                _importlib_dangerous = {"__import__", "reload", "invalidate_caches"}
+                _importlib_dangerous = {"__import__", "reload", "invalidate_caches", "import_module"}
                 # os 的危险子模块调用（但允许 os.path）
                 _os_dangerous = {
                     "system",

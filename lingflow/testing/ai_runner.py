@@ -232,6 +232,7 @@ class AIScenarioRunner:
             try:
 
                 logger.debug(f"  AI 调用工具: {tool_name}")
+                await capture_tool_call(tool_name, {})
             except Exception as e:
                 logger.warning(f"  工具调用失败: {tool_name} - {e}")
 

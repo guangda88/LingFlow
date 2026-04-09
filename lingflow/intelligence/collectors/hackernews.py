@@ -34,6 +34,9 @@ class HNCollector(BaseCollector):
         super().__init__(config)
         self.keywords = self.SEARCH_KEYWORDS
 
+    def collect(self, **kwargs) -> List[MentionData]:
+        return self.search_mentions(**kwargs)
+
     def search_mentions(
         self, keywords: Optional[List[str]] = None, limit: int = 100, days: int = 7, use_cache: bool = True
     ) -> List[MentionData]:

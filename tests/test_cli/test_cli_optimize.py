@@ -41,17 +41,17 @@ class TestRunCommand:
         assert "--async" in result.output
         assert "--experiments" in result.output
         assert "--report" in result.output
-        assert "GOAL" in result.output
+        assert "{structure|performance|simplicity}" in result.output
 
     def test_run_invalid_goal(self):
         """Test run with invalid goal choice"""
         runner = CliRunner()
         result = runner.invoke(run, ["invalid_goal"])
         assert result.exit_code != 0
-        assert "Invalid value for 'goal'" in result.output
+        assert "Invalid value for '{structure|performance|simplicity}'" in result.output
 
     @patch("lingflow.self_optimizer.quick_optimize")
-    @patch("lingflow.self_optimizer.evaluator.StructureEvaluator")
+    @patch("lingflow.self_optimizer.StructureEvaluator")
     @patch("lingflow.self_optimizer.config.get_global_config")
     def test_run_structure_goal(self, mock_config, mock_evaluator_class, mock_quick_optimize):
         """Test run with structure goal"""
@@ -71,11 +71,15 @@ class TestRunCommand:
 
         mock_result = MagicMock()
         mock_result.success = True
+        mock_result.experiments = 10
+        mock_result.duration = 5.0
+        mock_result.best_score = 0.85
+        mock_result.best_params = {"max_complexity": 10}
         mock_quick_optimize.return_value = mock_result
 
         runner = CliRunner()
         with runner.isolated_filesystem():
-            result = runner.invoke(run, ["structure"])
+            result = runner.invoke(run, ["structure"], input="n\n")
 
         assert result.exit_code == 0
         assert "结构违规: 5" in result.output
@@ -97,7 +101,7 @@ class TestRunCommand:
         assert result.exit_code == 0
         assert "优化已启动（后台运行）" in result.output
 
-    @patch("lingflow.cli.optimize.quick_optimize")
+    @patch("lingflow.self_optimizer.quick_optimize")
     @patch("lingflow.self_optimizer.config.get_global_config")
     def test_run_with_custom_experiments(self, mock_config, mock_quick_optimize):
         """Test run with custom experiments count"""
@@ -106,18 +110,22 @@ class TestRunCommand:
 
         mock_result = MagicMock()
         mock_result.success = True
+        mock_result.experiments = 50
+        mock_result.duration = 10.0
+        mock_result.best_score = 0.9
+        mock_result.best_params = {"max_complexity": 8}
         mock_quick_optimize.return_value = mock_result
 
         runner = CliRunner()
         with runner.isolated_filesystem():
-            result = runner.invoke(run, ["structure", "--experiments", "50"])
+            result = runner.invoke(run, ["structure", "--experiments", "50"], input="n\n")
 
         assert result.exit_code == 0
         mock_config_obj.set.assert_called()
         call_args = mock_config_obj.set.call_args
         assert "optimization.max_experiments" in str(call_args)
 
-    @patch("lingflow.cli.optimize.quick_optimize")
+    @patch("lingflow.self_optimizer.quick_optimize")
     @patch("lingflow.self_optimizer.config.get_global_config")
     def test_run_failure(self, mock_config, mock_quick_optimize):
         """Test run when optimization fails"""
@@ -315,9 +323,9 @@ param2: 100
             output_file = "config_optimized.yaml"
             result = runner.invoke(generate_config, ["--report", "report.md", "--output", output_file])
 
-        assert result.exit_code == 0
-        assert "配置文件已生成" in result.output
-        assert Path(output_file).exists()
+            assert result.exit_code == 0
+            assert "配置文件已生成" in result.output
+            assert Path(output_file).exists()
 
 
 class TestCheckTrigger:
@@ -330,8 +338,8 @@ class TestCheckTrigger:
         assert result.exit_code == 0
         assert "--target" in result.output
 
-    @patch("lingflow.self_optimizer.evaluator.StructureEvaluator")
-    @patch("lingflow.self_optimizer.trigger.OptimizationTrigger")
+    @patch("lingflow.self_optimizer.StructureEvaluator")
+    @patch("lingflow.self_optimizer.OptimizationTrigger")
     def test_check_no_trigger_needed(self, mock_trigger_class, mock_evaluator_class):
         """Test check when no trigger is needed"""
         mock_evaluator = MagicMock()
@@ -352,8 +360,8 @@ class TestCheckTrigger:
         assert result.exit_code == 0
         assert "暂时不需要优化" in result.output
 
-    @patch("lingflow.self_optimizer.evaluator.StructureEvaluator")
-    @patch("lingflow.self_optimizer.trigger.OptimizationTrigger")
+    @patch("lingflow.self_optimizer.StructureEvaluator")
+    @patch("lingflow.self_optimizer.OptimizationTrigger")
     def test_check_trigger_needed(self, mock_trigger_class, mock_evaluator_class):
         """Test check when trigger is needed"""
         mock_evaluator = MagicMock()

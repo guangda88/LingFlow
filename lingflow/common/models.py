@@ -81,6 +81,8 @@ class Task:
     description: str
     priority: TaskPriority
     agent_type: str = ""
+    project: str = ""
+    working_dir: str = ""
     dependencies: List[str] = field(default_factory=list)
     context: Dict[str, Any] = field(default_factory=dict)
 
