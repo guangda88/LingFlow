@@ -225,6 +225,88 @@ LingFlow's test engine provides verification for:
 8. **Integration** - Components work together
 9. **Documentation** - Accurate and complete
 
+## System Audit (系统审计)
+
+When auditing changes before commit, the audit must cover **three layers**:
+
+### Layer 1: Single-File Audit (单文件审计)
+
+Each changed file verified in isolation:
+- Logic correctness — does the code do what it claims?
+- Edge cases — empty inputs, None, boundary values
+- Error handling — exceptions caught, graceful degradation
+- Style compliance — lint, type hints, docstrings
+
+### Layer 2: Cross-File Verification (交叉文件验证)
+
+Verify interface contracts and data flow between changed files and their dependents:
+
+**Interface Consistency** — When A imports from B, verify:
+- B actually exports what A expects (type, shape, behavior)
+- No silent type coercion (e.g., `str` vs `Enum` pretending to match)
+
+**Data Flow Integrity** — When A passes data to B, verify:
+- Producer's output type matches consumer's expected input type
+- Transformations in the pipeline don't lose or corrupt data
+- Return value shapes match what callers destructure
+
+**Impact Propagation** — When changing a shared module:
+- Check all callers via `lsp_references` or grep
+- Verify `__init__.py` exports match actual module contents
+- Confirm no naming conflicts with new exports
+
+> **Real example**: `mcp_tools.py` imported `InfluenceAnalyzer` which expected `MentionData(platform=Platform)`, but `LingFlowMonitor.collect_issues()` returned `MentionData(platform=str)`. Neither file had a bug in isolation — only cross-file data flow analysis revealed the type fracture.
+
+### Layer 3: Peer Audit (交叉审计 / Peer Review)
+
+After AI-A completes the system audit, **hand the audit report to AI-B for independent review**:
+
+```
+AI-A: 完成系统审计 → 产出审计报告
+                          ↓
+AI-B: 收到审计报告 → 独立验证：
+     1. 抽查 AI-A 标记为"通过"的项 — 是否真的通过？
+     2. 检查 AI-A 是否遗漏了审计维度
+     3. 用不同视角重审关键变更
+     4. 确认修复方案是否治本（vs 贴创可贴）
+                          ↓
+AI-B: 产出交叉审计补充报告
+```
+
+**Why this matters**: Single-auditor blind spots. The auditor who found bugs may have a bias toward confirming their own fixes work. A second pair of eyes catches:
+- False positives in the audit (flagged issues that aren't real bugs)
+- False negatives (missed issues, especially in files the auditor considers "safe")
+- Confirmation bias in fix verification
+- Overlooked edge cases in the audit itself
+
+### Audit Checklist Template
+
+```markdown
+## Pre-Commit Audit Report
+
+### Scope
+Files changed: [list]
+Lines changed: +X/-Y
+
+### Layer 1: Single-File Audit
+| File | Logic | Edge Cases | Error Handling | Style | Status |
+|------|-------|-----------|---------------|-------|--------|
+| file1.py | ✅ | ✅ | ✅ | ✅ | PASS |
+| file2.py | ⚠️ | ✅ | ✅ | ✅ | FIX: [description] |
+
+### Layer 2: Cross-File Verification
+| Dependency | Interface | Data Flow | Impact | Status |
+|-----------|-----------|-----------|--------|--------|
+| A→B import | type match ✅ | shape ok ✅ | no callers affected ✅ | PASS |
+| C uses D output | type mismatch ⚠️ | — | — | FIX: [description] |
+
+### Layer 3: Peer Audit (by AI-B)
+- [ ] Spot-check: [N] items marked PASS, [X] re-verified independently
+- [ ] Missing dimensions: [none / list]
+- [ ] Fix quality assessment: [root cause / band-aid]
+- [ ] Final verdict: PASS / NEEDS WORK
+```
+
 ## Verification Templates
 
 ### Bug Fix Verification
