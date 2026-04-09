@@ -1,15 +1,16 @@
 """Rate limiter tests"""
 
-import time
 import threading
+import time
+
 import pytest
 
 from lingflow.utils.rate_limiter import (
+    APIClient,
+    ConcurrencyController,
     RateLimitConfig,
     RateLimiter,
     SmartRetry,
-    ConcurrencyController,
-    APIClient,
 )
 
 

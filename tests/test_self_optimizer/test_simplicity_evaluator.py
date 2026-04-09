@@ -2,8 +2,10 @@
 测试简洁性评估器
 """
 
-import pytest
 from pathlib import Path
+
+import pytest
+
 from lingflow.self_optimizer.simplicity_evaluator import SimplicityEvaluator
 
 

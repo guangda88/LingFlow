@@ -5,6 +5,7 @@
 """
 
 import pytest
+
 from lingflow.code_review.core.scorer import QualityScorer
 from lingflow.code_review.core.severity import Severity
 
@@ -16,15 +17,15 @@ class TestQualityScorer:
         """测试使用默认权重初始化"""
         scorer = QualityScorer()
         assert scorer.dimension_weights is not None
-        assert 'security' in scorer.dimension_weights
-        assert 'performance' in scorer.dimension_weights
+        assert "security" in scorer.dimension_weights
+        assert "performance" in scorer.dimension_weights
 
     def test_initialization_custom_weights(self):
         """测试使用自定义权重初始化"""
         custom_weights = {
-            'security': 0.5,
-            'performance': 0.3,
-            'code_quality': 0.2,
+            "security": 0.5,
+            "performance": 0.3,
+            "code_quality": 0.2,
         }
         scorer = QualityScorer(dimension_weights=custom_weights)
         assert scorer.dimension_weights == custom_weights
@@ -34,10 +35,10 @@ class TestQualityScorer:
         scorer = QualityScorer()
 
         review_result = {
-            'dimensions': {
-                'security': {'issues': [], 'suggestions': [], 'score': 0},
-                'performance': {'issues': [], 'suggestions': [], 'score': 0},
-                'code_quality': {'issues': [], 'suggestions': [], 'score': 0},
+            "dimensions": {
+                "security": {"issues": [], "suggestions": [], "score": 0},
+                "performance": {"issues": [], "suggestions": [], "score": 0},
+                "code_quality": {"issues": [], "suggestions": [], "score": 0},
             }
         }
 
@@ -49,15 +50,15 @@ class TestQualityScorer:
         scorer = QualityScorer()
 
         review_result = {
-            'dimensions': {
-                'security': {
-                    'issues': [
-                        {'severity': 'critical'},
+            "dimensions": {
+                "security": {
+                    "issues": [
+                        {"severity": "critical"},
                     ],
-                    'suggestions': [],
-                    'score': 0
+                    "suggestions": [],
+                    "score": 0,
                 },
-                'performance': {'issues': [], 'suggestions': [], 'score': 0},
+                "performance": {"issues": [], "suggestions": [], "score": 0},
             }
         }
 
@@ -71,13 +72,13 @@ class TestQualityScorer:
         scorer = QualityScorer()
 
         review_result = {
-            'dimensions': {
-                'code_quality': {
-                    'issues': [],
-                    'suggestions': [
-                        {'priority': 'low'},
+            "dimensions": {
+                "code_quality": {
+                    "issues": [],
+                    "suggestions": [
+                        {"priority": "low"},
                     ],
-                    'score': 0
+                    "score": 0,
                 },
             }
         }
@@ -90,22 +91,14 @@ class TestQualityScorer:
         """测试不同严重程度的扣分"""
         scorer = QualityScorer()
 
-        severities = ['critical', 'high', 'medium', 'low']
+        severities = ["critical", "high", "medium", "low"]
         scores = []
 
         for severity in severities:
             review_result = {
-                'dimensions': {
-                    'code_quality': {
-                        'issues': [{'severity': severity}],
-                        'suggestions': [],
-                        'score': 0
-                    },
-                    'security': {  # 添加安全维度以满足权重要求
-                        'issues': [],
-                        'suggestions': [],
-                        'score': 0
-                    },
+                "dimensions": {
+                    "code_quality": {"issues": [{"severity": severity}], "suggestions": [], "score": 0},
+                    "security": {"issues": [], "suggestions": [], "score": 0},  # 添加安全维度以满足权重要求
                 }
             }
             scores.append(scorer.calculate_score(review_result))
@@ -124,15 +117,15 @@ class TestQualityScorer:
         scorer = QualityScorer()
 
         review_result = {
-            'dimensions': {
-                'security': {'issues': [], 'suggestions': [], 'score': 5.0},
-                'performance': {'issues': [], 'suggestions': [], 'score': 4.5},
+            "dimensions": {
+                "security": {"issues": [], "suggestions": [], "score": 5.0},
+                "performance": {"issues": [], "suggestions": [], "score": 4.5},
             }
         }
 
         breakdown = scorer.get_score_breakdown(review_result)
-        assert breakdown['security'] == 5.0
-        assert breakdown['performance'] == 4.5
+        assert breakdown["security"] == 5.0
+        assert breakdown["performance"] == 4.5
 
     def test_get_score_grade(self):
         """测试获取评分等级"""
@@ -160,16 +153,16 @@ class TestQualityScorer:
         scorer = QualityScorer()
 
         review_result = {
-            'dimensions': {
-                'security': {'issues': [], 'suggestions': []},
+            "dimensions": {
+                "security": {"issues": [], "suggestions": []},
             }
         }
 
         scorer.calculate_score(review_result)
 
         # 检查 score 是否被正确赋值
-        assert 'score' in review_result['dimensions']['security']
-        assert isinstance(review_result['dimensions']['security']['score'], float)
+        assert "score" in review_result["dimensions"]["security"]
+        assert isinstance(review_result["dimensions"]["security"]["score"], float)
 
 
 class TestScorerEdgeCases:
@@ -179,9 +172,7 @@ class TestScorerEdgeCases:
         """测试空维度"""
         scorer = QualityScorer()
 
-        review_result = {
-            'dimensions': {}
-        }
+        review_result = {"dimensions": {}}
 
         score = scorer.calculate_score(review_result)
         # 空维度应该返回 0 或处理不当
@@ -202,12 +193,8 @@ class TestScorerEdgeCases:
         scorer = QualityScorer()
 
         review_result = {
-            'dimensions': {
-                'security': {
-                    'issues': [{'severity': 'critical'} for _ in range(10)],
-                    'suggestions': [],
-                    'score': 0
-                },
+            "dimensions": {
+                "security": {"issues": [{"severity": "critical"} for _ in range(10)], "suggestions": [], "score": 0},
             }
         }
 

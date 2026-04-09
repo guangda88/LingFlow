@@ -1,18 +1,19 @@
 """Tests for lingflow.core.prompt_router module"""
 
 import json
-import pytest
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+
+import pytest
 
 from lingflow.core.prompt_router import (
     PromptRouter,
-    RouteRule,
-    RouteTarget,
     RouteResult,
+    RouteRule,
     RouteStrategy,
-    create_default_router,
+    RouteTarget,
     create_code_focused_router,
+    create_default_router,
 )
 
 
@@ -85,7 +86,7 @@ class TestRouteRule:
         matches, score = rule.matches("I need help with python")
 
         assert matches is True
-        assert score == pytest.approx(1/3, rel=0.01)
+        assert score == pytest.approx(1 / 3, rel=0.01)
 
     def test_keyword_match_score_zero(self):
         """Test keyword matching with no matches"""
@@ -113,9 +114,7 @@ class TestRouteRule:
 
     def test_pattern_match_score_positive(self):
         """Test pattern matching with positive score"""
-        rule = RouteRule(
-            name="test", patterns=[r"error:\s*\d+", r"warning:\s*\d+"], strategy=RouteStrategy.PATTERN_MATCH
-        )
+        rule = RouteRule(name="test", patterns=[r"error:\s*\d+", r"warning:\s*\d+"], strategy=RouteStrategy.PATTERN_MATCH)
         matches, score = rule.matches("error: 404 occurred")
 
         assert matches is True
@@ -238,9 +237,7 @@ class TestPromptRouter:
         """Test routing with keyword match"""
         router = PromptRouter()
         router.add_target(RouteTarget(name="code", agent_type="CodeAgent", description="Code"))
-        router.add_rule(
-            RouteRule(name="code_rule", keywords=["code", "programming"], metadata={"target_name": "code"})
-        )
+        router.add_rule(RouteRule(name="code_rule", keywords=["code", "programming"], metadata={"target_name": "code"}))
 
         result = router.route("I need help with code")
 

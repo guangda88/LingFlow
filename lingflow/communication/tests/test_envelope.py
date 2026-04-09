@@ -3,6 +3,7 @@ MessageEnvelope 单元测试
 """
 
 from datetime import datetime, timedelta
+
 import pytest
 
 from lingflow.communication.envelope import MessageEnvelope, create_envelope

@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from lingflow.monitoring.operations_monitor import OperationsMonitor
 from lingflow.monitoring.metrics.models import Alert, AlertSeverity, SystemMetrics
+from lingflow.monitoring.operations_monitor import OperationsMonitor
 
 
 def _make_metrics(cpu=50.0, mem=60.0):
@@ -69,10 +69,12 @@ class TestAlerts:
     def test_get_alerts_by_severity(self):
         m = OperationsMonitor(auto_collect=False)
         with m._alerts_lock:
-            m.alerts.extend([
-                _make_alert(aid="a1", severity=AlertSeverity.WARNING),
-                _make_alert(aid="a2", severity=AlertSeverity.CRITICAL),
-            ])
+            m.alerts.extend(
+                [
+                    _make_alert(aid="a1", severity=AlertSeverity.WARNING),
+                    _make_alert(aid="a2", severity=AlertSeverity.CRITICAL),
+                ]
+            )
         warnings = m.get_alerts(severity=AlertSeverity.WARNING)
         assert len(warnings) == 1
 

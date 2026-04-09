@@ -1,7 +1,8 @@
 """Environment Manager 安全审计测试"""
 
-import pytest
 import tempfile
+
+import pytest
 
 
 class TestSecurityAudit:
@@ -9,7 +10,7 @@ class TestSecurityAudit:
 
     def test_detect_secrets(self, env_manager_module, tmp_path):
         """测试检测敏感信息"""
-        audit_security = getattr(env_manager_module, 'audit_security', None)
+        audit_security = getattr(env_manager_module, "audit_security", None)
         if audit_security is None:
             pytest.skip("audit_security 函数不存在")
 
@@ -20,12 +21,12 @@ class TestSecurityAudit:
         result = audit_security(str(tmp_path))
 
         # 检查是否有秘密被发现
-        assert 'secrets_found' in result
-        assert len(result['secrets_found']) > 0
+        assert "secrets_found" in result
+        assert len(result["secrets_found"]) > 0
 
     def test_detect_weak_credentials(self, env_manager_module, tmp_path):
         """测试检测弱凭据"""
-        audit_security = getattr(env_manager_module, 'audit_security', None)
+        audit_security = getattr(env_manager_module, "audit_security", None)
         if audit_security is None:
             pytest.skip("audit_security 函数不存在")
 
@@ -35,12 +36,12 @@ class TestSecurityAudit:
         result = audit_security(str(tmp_path))
 
         # 检查是否有风险被发现
-        assert 'secrets_found' in result
-        assert len(result['secrets_found']) > 0
+        assert "secrets_found" in result
+        assert len(result["secrets_found"]) > 0
 
     def test_safe_config(self, env_manager_module, tmp_path):
         """测试安全配置"""
-        audit_security = getattr(env_manager_module, 'audit_security', None)
+        audit_security = getattr(env_manager_module, "audit_security", None)
         if audit_security is None:
             pytest.skip("audit_security 函数不存在")
 
@@ -50,11 +51,11 @@ class TestSecurityAudit:
         result = audit_security(str(tmp_path))
 
         # 安全配置应该没有发现秘密
-        assert len(result.get('secrets_found', [])) == 0
+        assert len(result.get("secrets_found", [])) == 0
 
     def test_detect_url_patterns(self, env_manager_module, tmp_path):
         """测试检测 URL 模式"""
-        audit_security = getattr(env_manager_module, 'audit_security', None)
+        audit_security = getattr(env_manager_module, "audit_security", None)
         if audit_security is None:
             pytest.skip("audit_security 函数不存在")
 
@@ -64,4 +65,4 @@ class TestSecurityAudit:
         result = audit_security(str(tmp_path))
 
         # URL 中的凭据应该被检测到
-        assert 'secrets_found' in result
+        assert "secrets_found" in result

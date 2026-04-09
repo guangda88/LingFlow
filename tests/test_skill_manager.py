@@ -1,7 +1,8 @@
-import pytest
-import tempfile
 import os
+import tempfile
 from unittest.mock import patch
+
+import pytest
 
 from lingflow.common.skill_manager import SkillManager
 
@@ -50,6 +51,7 @@ class TestLoadSkill:
     def test_load_nonexistent(self, mock_config):
         m = SkillManager()
         from lingflow.common.exceptions import SkillNotFoundError
+
         with pytest.raises(SkillNotFoundError):
             m.load_skill("nonexistent")
 

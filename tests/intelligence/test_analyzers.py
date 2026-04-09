@@ -5,12 +5,12 @@
 
 import pytest  # noqa
 
-from lingflow.intelligence.analyzers.sentiment import SentimentAnalyzer
+from lingflow.intelligence.analyzers.base import AnalyzerPipeline
 from lingflow.intelligence.analyzers.influence import (
     InfluenceAnalyzer,
     InfluenceConfig,
 )
-from lingflow.intelligence.analyzers.base import AnalyzerPipeline
+from lingflow.intelligence.analyzers.sentiment import SentimentAnalyzer
 from lingflow.intelligence.models.common import (
     MentionData,
     Platform,
@@ -225,10 +225,12 @@ class TestAnalyzerPipeline:
 
     def test_run(self):
         """测试运行流水线"""
-        pipeline = AnalyzerPipeline([
-            SentimentAnalyzer(),
-            InfluenceAnalyzer(),
-        ])
+        pipeline = AnalyzerPipeline(
+            [
+                SentimentAnalyzer(),
+                InfluenceAnalyzer(),
+            ]
+        )
 
         mentions = [
             MentionData(

@@ -7,14 +7,16 @@ Tests the ability of AI agents to:
 4. Track learning progress
 """
 
-import pytest
 from datetime import datetime
+
+import pytest
+
 from lingflow.trust.metacognition import (
-    CapabilityLevel,
     Capability,
+    CapabilityLevel,
     EvolutionPath,
-    TaskRequirements,
     MetacognitiveAgent,
+    TaskRequirements,
     get_metacognitive_agent,
 )
 
@@ -60,10 +62,7 @@ class TestCapability:
     def test_create_capability(self):
         """Test creating a capability"""
         capability = Capability(
-            name="Python",
-            category="programming",
-            level=CapabilityLevel.MASTERED,
-            notes="Experienced Python developer"
+            name="Python", category="programming", level=CapabilityLevel.MASTERED, notes="Experienced Python developer"
         )
         assert capability.name == "Python"
         assert capability.category == "programming"
@@ -72,22 +71,14 @@ class TestCapability:
 
     def test_can_handle_task(self):
         """Test capability task handling"""
-        capability = Capability(
-            name="Python",
-            category="programming",
-            level=CapabilityLevel.PARTIAL
-        )
+        capability = Capability(name="Python", category="programming", level=CapabilityLevel.PARTIAL)
         assert capability.can_handle_task("simple")
         assert capability.can_handle_task("medium")
         assert not capability.can_handle_task("complex")
 
     def test_needs_evolution(self):
         """Test evolution need detection"""
-        capability = Capability(
-            name="Python",
-            category="programming",
-            level=CapabilityLevel.PARTIAL
-        )
+        capability = Capability(name="Python", category="programming", level=CapabilityLevel.PARTIAL)
         assert not capability.needs_evolution("medium")
         assert capability.needs_evolution("complex")
 
@@ -98,10 +89,7 @@ class TestMetacognitiveAgent:
     def test_declare_capability(self, agent):
         """Test declaring a capability"""
         agent.declare_capability(
-            name="Python",
-            category="programming",
-            level=CapabilityLevel.MASTERED,
-            notes="Extensive experience"
+            name="Python", category="programming", level=CapabilityLevel.MASTERED, notes="Extensive experience"
         )
 
         capability = agent.get_capability("Python")
@@ -116,7 +104,7 @@ class TestMetacognitiveAgent:
             name="Python",
             category="programming",
             level=CapabilityLevel.PARTIAL,
-            evolution_steps=["Read PEP 8", "Build 5 projects", "Contribute to open source"]
+            evolution_steps=["Read PEP 8", "Build 5 projects", "Contribute to open source"],
         )
 
         capability = agent.get_capability("Python")
@@ -132,7 +120,7 @@ class TestMetacognitiveAgent:
             task_id="test-1",
             task_description="Write Python tests using pytest",
             required_capabilities=["Python", "pytest"],
-            complexity="medium"
+            complexity="medium",
         )
 
         assert len(requirements.gaps) == 0
@@ -147,7 +135,7 @@ class TestMetacognitiveAgent:
             task_id="test-2",
             task_description="Migrate database to PostgreSQL",
             required_capabilities=["Python", "PostgreSQL"],
-            complexity="complex"
+            complexity="complex",
         )
 
         assert len(requirements.gaps) == 1
@@ -163,7 +151,7 @@ class TestMetacognitiveAgent:
             task_id="test-3",
             task_description="Build complex Python application",
             required_capabilities=["Python"],
-            complexity="complex"
+            complexity="complex",
         )
 
         assert len(requirements.gaps) == 1
@@ -176,11 +164,7 @@ class TestMetacognitiveAgent:
         evolution_path = agent.propose_evolution(
             capability_name="Python",
             target_level=CapabilityLevel.MASTERED,
-            steps=[
-                "Read 'Fluent Python' book",
-                "Build 10 production projects",
-                "Review 50 pull requests"
-            ]
+            steps=["Read 'Fluent Python' book", "Build 10 production projects", "Review 50 pull requests"],
         )
 
         assert evolution_path.source_level == CapabilityLevel.FAMILIAR
@@ -191,11 +175,7 @@ class TestMetacognitiveAgent:
     def test_start_evolution(self, agent):
         """Test starting evolution"""
         agent.declare_capability("Python", "programming", CapabilityLevel.FAMILIAR)
-        agent.propose_evolution(
-            capability_name="Python",
-            target_level=CapabilityLevel.MASTERED,
-            steps=["Step 1", "Step 2"]
-        )
+        agent.propose_evolution(capability_name="Python", target_level=CapabilityLevel.MASTERED, steps=["Step 1", "Step 2"])
 
         started = agent.start_evolution("Python")
         assert started is True
@@ -206,11 +186,7 @@ class TestMetacognitiveAgent:
     def test_complete_evolution(self, agent):
         """Test completing evolution"""
         agent.declare_capability("Python", "programming", CapabilityLevel.FAMILIAR)
-        agent.propose_evolution(
-            capability_name="Python",
-            target_level=CapabilityLevel.MASTERED,
-            steps=["Step 1", "Step 2"]
-        )
+        agent.propose_evolution(capability_name="Python", target_level=CapabilityLevel.MASTERED, steps=["Step 1", "Step 2"])
 
         completed = agent.complete_evolution("Python", CapabilityLevel.MASTERED)
         assert completed is True
@@ -225,10 +201,7 @@ class TestMetacognitiveAgent:
         agent.declare_capability("Python", "programming", CapabilityLevel.MASTERED)
 
         requirements = agent.analyze_task_requirements(
-            task_id="test-4",
-            task_description="Write Python code",
-            required_capabilities=["Python"],
-            complexity="medium"
+            task_id="test-4", task_description="Write Python code", required_capabilities=["Python"], complexity="medium"
         )
 
         can_complete, reason = agent.can_declare_completion(requirements)
@@ -240,10 +213,7 @@ class TestMetacognitiveAgent:
         # No capabilities declared
 
         requirements = agent.analyze_task_requirements(
-            task_id="test-5",
-            task_description="Use TensorFlow",
-            required_capabilities=["TensorFlow"],
-            complexity="complex"
+            task_id="test-5", task_description="Use TensorFlow", required_capabilities=["TensorFlow"], complexity="complex"
         )
 
         can_complete, reason = agent.can_declare_completion(requirements)
@@ -275,13 +245,9 @@ class TestKnowledgeBoundaryScenario:
         agent = MetacognitiveAgent()
 
         # Declare what AI knows
+        agent.declare_capability("Python", "programming", CapabilityLevel.MASTERED, notes="Extensive experience with Python")
         agent.declare_capability(
-            "Python", "programming", CapabilityLevel.MASTERED,
-            notes="Extensive experience with Python"
-        )
-        agent.declare_capability(
-            "SQL", "database", CapabilityLevel.PARTIAL,
-            notes="Basic SQL queries, but not database-specific features"
+            "SQL", "database", CapabilityLevel.PARTIAL, notes="Basic SQL queries, but not database-specific features"
         )
 
         # Analyze migration task
@@ -289,7 +255,7 @@ class TestKnowledgeBoundaryScenario:
             task_id="migrate-to-postgresql",
             task_description="Migrate application to PostgreSQL",
             required_capabilities=["Python", "SQL", "PostgreSQL"],
-            complexity="complex"
+            complexity="complex",
         )
 
         # Should detect PostgreSQL is unknown and SQL is insufficient
@@ -304,11 +270,7 @@ class TestKnowledgeBoundaryScenario:
         agent.propose_evolution(
             capability_name="PostgreSQL",
             target_level=CapabilityLevel.PARTIAL,
-            steps=[
-                "Read PostgreSQL documentation",
-                "Set up local PostgreSQL instance",
-                "Practice with sample data"
-            ]
+            steps=["Read PostgreSQL documentation", "Set up local PostgreSQL instance", "Practice with sample data"],
         )
 
         # Check evolution queue
@@ -319,20 +281,14 @@ class TestKnowledgeBoundaryScenario:
         agent = MetacognitiveAgent()
 
         # AI claims to add energy_pct field
-        agent.declare_capability(
-            "Python", "programming", CapabilityLevel.MASTERED
-        )
+        agent.declare_capability("Python", "programming", CapabilityLevel.MASTERED)
 
         # Analyze requirements for adding field with update logic
         requirements = agent.analyze_task_requirements(
             task_id="add-energy-pct",
             task_description="Add energy_pct field to database and UI with update logic",
-            required_capabilities=[
-                "Python",
-                "Database Schema Design",
-                "Data Flow Management"
-            ],
-            complexity="medium"
+            required_capabilities=["Python", "Database Schema Design", "Data Flow Management"],
+            complexity="medium",
         )
 
         # Should detect missing data flow capability

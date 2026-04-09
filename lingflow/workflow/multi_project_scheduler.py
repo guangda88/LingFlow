@@ -10,7 +10,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-from lingflow.common.models import Task, TaskResult, TaskPriority
+from lingflow.common.models import Task, TaskPriority, TaskResult
 from lingflow.coordination.coordinator import AgentCoordinator
 from lingflow.coordination.project_manager import ProjectManager
 from lingflow.workflow.orchestrator import WorkflowOrchestrator
@@ -199,6 +199,7 @@ class MultiProjectScheduler:
         """设置工作目录上下文（为 coordinator 的 skill 执行准备）"""
         if working_dir:
             import os
+
             os.chdir(working_dir)
             logger.debug(f"Switched working directory to: {working_dir}")
 

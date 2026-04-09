@@ -1,16 +1,17 @@
 """Extended guardrail validation tests for additional coverage."""
 
-import pytest
 from unittest.mock import patch
 
+import pytest
+
 from lingflow.guardrail import (
-    ValidationLevel,
-    Severity,
-    Violation,
-    ValidationResult,
-    SecurityReport,
-    GuardrailValidator,
     DeploymentGate,
+    GuardrailValidator,
+    SecurityReport,
+    Severity,
+    ValidationLevel,
+    ValidationResult,
+    Violation,
 )
 
 
@@ -41,7 +42,7 @@ class TestGuardrailValidatorPolicyPatterns:
         assert result.is_passed is False
 
     def test_xss_dangerouslySetInnerHTML(self, validator):
-        code = 'div = <div dangerouslySetInnerHTML={html} />\n'
+        code = "div = <div dangerouslySetInnerHTML={html} />\n"
         result = validator.validate_policy(code, "test.jsx")
         violations = [v for v in result.violations if "xss" in v.code.lower()]
         assert len(violations) > 0
@@ -52,27 +53,27 @@ class TestGuardrailValidatorPolicyPatterns:
         assert any("xss" in v.code.lower() for v in result.violations)
 
     def test_xss_document_write(self, validator):
-        code = 'document.write(user_input)\n'
+        code = "document.write(user_input)\n"
         result = validator.validate_policy(code, "test.js")
         assert any("xss" in v.code.lower() for v in result.violations)
 
     def test_weak_crypto_md5(self, validator):
-        code = 'hash = MD5(data)\n'
+        code = "hash = MD5(data)\n"
         result = validator.validate_policy(code, "test.py")
         assert any("weak_crypto" in v.code.lower() for v in result.violations)
 
     def test_weak_crypto_sha1(self, validator):
-        code = 'h = SHA1(data)\n'
+        code = "h = SHA1(data)\n"
         result = validator.validate_policy(code, "test.py")
         assert any("weak_crypto" in v.code.lower() for v in result.violations)
 
     def test_weak_crypto_des(self, validator):
-        code = 'encrypted = DES(key)\n'
+        code = "encrypted = DES(key)\n"
         result = validator.validate_policy(code, "test.py")
         assert any("weak_crypto" in v.code.lower() for v in result.violations)
 
     def test_weak_crypto_rc4(self, validator):
-        code = 'cipher = RC4(key)\n'
+        code = "cipher = RC4(key)\n"
         result = validator.validate_policy(code, "test.py")
         assert any("weak_crypto" in v.code.lower() for v in result.violations)
 
@@ -87,7 +88,7 @@ class TestGuardrailValidatorPolicyPatterns:
         assert any("debug_info" in v.code.lower() for v in result.violations)
 
     def test_debug_info_pprint_token(self, validator):
-        code = 'pprint(token_data)\n'
+        code = "pprint(token_data)\n"
         result = validator.validate_policy(code, "test.py")
         assert any("debug_info" in v.code.lower() for v in result.violations)
 
@@ -128,7 +129,7 @@ class TestGuardrailValidateSemantics:
         return GuardrailValidator()
 
     def test_exec_semantic_detection(self, validator):
-        code = 'exec("os.system(\'rm -rf /\')")\n'
+        code = "exec(\"os.system('rm -rf /')\")\n"
         result = validator.validate_semantics(code, "test.py")
         assert any(v.code == "DANGEROUS_EXEC" for v in result.violations)
 
@@ -228,9 +229,7 @@ class TestGenerateReportDetails:
 
     def test_report_clean_no_violations(self, validator):
         report = SecurityReport(overall_score=100.0, risk_level="LOW", is_approved=True)
-        report.validation_results[ValidationLevel.SYNTAX] = ValidationResult(
-            level=ValidationLevel.SYNTAX, is_passed=True
-        )
+        report.validation_results[ValidationLevel.SYNTAX] = ValidationResult(level=ValidationLevel.SYNTAX, is_passed=True)
         text = validator.generate_report(report)
         assert "No violations" in text
 

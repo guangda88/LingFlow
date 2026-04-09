@@ -2,12 +2,13 @@
 
 import asyncio
 import logging
-import yaml
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+import yaml
+
 from lingflow.common.config import get_config
-from lingflow.common.models import Task, TaskResult, TaskPriority
+from lingflow.common.models import Task, TaskPriority, TaskResult
 from lingflow.coordination.coordinator import AgentCoordinator
 
 # 常量定义（消除魔法值）

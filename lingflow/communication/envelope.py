@@ -9,11 +9,11 @@
 - 传递追踪 (reply_to, trace_id)
 """
 
+import json
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Dict, Optional
 from uuid import uuid4
-import json
 
 
 @dataclass(frozen=True)
@@ -92,6 +92,7 @@ class MessageEnvelope:
         # frozen dataclass 需要通过 object.__setattr__ 修改
         # 或者使用 dataclasses.replace
         from dataclasses import replace
+
         return replace(self, reply_to=reply_service)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -149,6 +150,7 @@ class MessageEnvelope:
             新的 MessageEnvelope 作为回复
         """
         from dataclasses import replace
+
         return replace(
             self,
             msg_id=uuid4().hex,

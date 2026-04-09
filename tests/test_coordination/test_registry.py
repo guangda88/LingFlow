@@ -2,9 +2,9 @@
 
 import pytest
 
-from lingflow.coordination.registry import AgentRegistry
-from lingflow.coordination.agent import Agent
 from lingflow.common.models import AgentConfig, Task, TaskPriority
+from lingflow.coordination.agent import Agent
+from lingflow.coordination.registry import AgentRegistry
 
 
 class TestAgentRegistry:
@@ -19,11 +19,7 @@ class TestAgentRegistry:
     def test_register_agent(self):
         """Test registering an agent"""
         registry = AgentRegistry()
-        config = AgentConfig(
-            name="test_agent",
-            description="Test agent",
-            capabilities=["test", "demo"]
-        )
+        config = AgentConfig(name="test_agent", description="Test agent", capabilities=["test", "demo"])
         agent = Agent(config)
 
         registry.register_agent(agent)
@@ -36,11 +32,7 @@ class TestAgentRegistry:
         registry = AgentRegistry()
 
         for i in range(5):
-            config = AgentConfig(
-                name=f"agent_{i}",
-                description=f"Agent {i}",
-                capabilities=[f"cap{i}"]
-            )
+            config = AgentConfig(name=f"agent_{i}", description=f"Agent {i}", capabilities=[f"cap{i}"])
             agent = Agent(config)
             registry.register_agent(agent)
 
@@ -50,19 +42,11 @@ class TestAgentRegistry:
         """Test that registering with same name overwrites"""
         registry = AgentRegistry()
 
-        config1 = AgentConfig(
-            name="agent",
-            description="First",
-            capabilities=["first"]
-        )
+        config1 = AgentConfig(name="agent", description="First", capabilities=["first"])
         agent1 = Agent(config1)
         registry.register_agent(agent1)
 
-        config2 = AgentConfig(
-            name="agent",
-            description="Second",
-            capabilities=["second"]
-        )
+        config2 = AgentConfig(name="agent", description="Second", capabilities=["second"])
         agent2 = Agent(config2)
         registry.register_agent(agent2)
 
@@ -73,11 +57,7 @@ class TestAgentRegistry:
     def test_get_agent_exists(self):
         """Test getting existing agent"""
         registry = AgentRegistry()
-        config = AgentConfig(
-            name="test_agent",
-            description="Test",
-            capabilities=["test"]
-        )
+        config = AgentConfig(name="test_agent", description="Test", capabilities=["test"])
         agent = Agent(config)
         registry.register_agent(agent)
 
@@ -105,16 +85,8 @@ class TestAgentRegistry:
         """Test listing agents with registered agents"""
         registry = AgentRegistry()
 
-        registry.register_agent(Agent(AgentConfig(
-            name="agent1",
-            description="Agent 1",
-            capabilities=["a1"]
-        )))
-        registry.register_agent(Agent(AgentConfig(
-            name="agent2",
-            description="Agent 2",
-            capabilities=["a2"]
-        )))
+        registry.register_agent(Agent(AgentConfig(name="agent1", description="Agent 1", capabilities=["a1"])))
+        registry.register_agent(Agent(AgentConfig(name="agent2", description="Agent 2", capabilities=["a2"])))
 
         agents = registry.list_agents()
 
@@ -131,20 +103,10 @@ class TestAgentRegistry:
         """Test finding agents for task with specific agent_type"""
         registry = AgentRegistry()
 
-        config = AgentConfig(
-            name="python_expert",
-            description="Python expert",
-            capabilities=["python"]
-        )
+        config = AgentConfig(name="python_expert", description="Python expert", capabilities=["python"])
         registry.register_agent(Agent(config))
 
-        task = Task(
-            task_id="test",
-            name="Test",
-            description="Test",
-            priority=TaskPriority.NORMAL,
-            agent_type="python_expert"
-        )
+        task = Task(task_id="test", name="Test", description="Test", priority=TaskPriority.NORMAL, agent_type="python_expert")
         agents = registry.find_agents_for_task(task)
 
         assert len(agents) == 1
@@ -154,24 +116,10 @@ class TestAgentRegistry:
         """Test finding agents for task without agent_type"""
         registry = AgentRegistry()
 
-        registry.register_agent(Agent(AgentConfig(
-            name="agent1",
-            description="A1",
-            capabilities=["general"]
-        )))
-        registry.register_agent(Agent(AgentConfig(
-            name="agent2",
-            description="A2",
-            capabilities=["general"]
-        )))
+        registry.register_agent(Agent(AgentConfig(name="agent1", description="A1", capabilities=["general"])))
+        registry.register_agent(Agent(AgentConfig(name="agent2", description="A2", capabilities=["general"])))
 
-        task = Task(
-            task_id="test",
-            name="Generic",
-            description="Generic task",
-            priority=TaskPriority.NORMAL,
-            agent_type=""
-        )
+        task = Task(task_id="test", name="Generic", description="Generic task", priority=TaskPriority.NORMAL, agent_type="")
         agents = registry.find_agents_for_task(task)
 
         # Should return all agents that can execute (all in this case)
@@ -181,19 +129,9 @@ class TestAgentRegistry:
         """Test finding agents for task with non-existent agent_type"""
         registry = AgentRegistry()
 
-        registry.register_agent(Agent(AgentConfig(
-            name="agent1",
-            description="A1",
-            capabilities=["a1"]
-        )))
+        registry.register_agent(Agent(AgentConfig(name="agent1", description="A1", capabilities=["a1"])))
 
-        task = Task(
-            task_id="test",
-            name="Test",
-            description="Test",
-            priority=TaskPriority.NORMAL,
-            agent_type="nonexistent"
-        )
+        task = Task(task_id="test", name="Test", description="Test", priority=TaskPriority.NORMAL, agent_type="nonexistent")
         agents = registry.find_agents_for_task(task)
 
         # Should return empty list since no agent matches
@@ -203,11 +141,7 @@ class TestAgentRegistry:
         """Test that list_agents returns complete info"""
         registry = AgentRegistry()
 
-        config = AgentConfig(
-            name="complete_agent",
-            description="Complete",
-            capabilities=["cap1", "cap2"]
-        )
+        config = AgentConfig(name="complete_agent", description="Complete", capabilities=["cap1", "cap2"])
         agent = Agent(config)
         registry.register_agent(agent)
 
@@ -237,11 +171,7 @@ class TestAgentRegistryIntegration:
         ]
 
         for name, desc, caps in agent_types:
-            config = AgentConfig(
-                name=name,
-                description=desc,
-                capabilities=caps
-            )
+            config = AgentConfig(name=name, description=desc, capabilities=caps)
             agent = Agent(config)
             registry.register_agent(agent)
 
@@ -259,27 +189,15 @@ class TestAgentRegistryIntegration:
 
         # Register specialized agents
         python_config = AgentConfig(
-            name="python_agent",
-            description="Python expert",
-            capabilities=["python", "django", "flask"]
+            name="python_agent", description="Python expert", capabilities=["python", "django", "flask"]
         )
         registry.register_agent(Agent(python_config))
 
-        js_config = AgentConfig(
-            name="js_agent",
-            description="JavaScript expert",
-            capabilities=["javascript", "react", "vue"]
-        )
+        js_config = AgentConfig(name="js_agent", description="JavaScript expert", capabilities=["javascript", "react", "vue"])
         registry.register_agent(Agent(js_config))
 
         # Task with specific agent type
-        task = Task(
-            task_id="test",
-            name="Test",
-            description="Test",
-            priority=TaskPriority.NORMAL,
-            agent_type="python_agent"
-        )
+        task = Task(task_id="test", name="Test", description="Test", priority=TaskPriority.NORMAL, agent_type="python_agent")
         agents = registry.find_agents_for_task(task)
 
         assert len(agents) == 1
@@ -287,11 +205,7 @@ class TestAgentRegistryIntegration:
 
         # Generic task - should match capable agents
         generic_task = Task(
-            task_id="generic",
-            name="Generic",
-            description="Need help",
-            priority=TaskPriority.NORMAL,
-            agent_type=""
+            task_id="generic", name="Generic", description="Need help", priority=TaskPriority.NORMAL, agent_type=""
         )
         capable_agents = registry.find_agents_for_task(generic_task)
 

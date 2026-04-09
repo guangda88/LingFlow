@@ -1,9 +1,10 @@
 """Tests for lingflow.core.session_v2 module"""
 
 import json
-import pytest
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+
+import pytest
 
 from lingflow.core.session_v2 import SessionManager, SessionSnapshot
 
@@ -28,9 +29,7 @@ class TestSessionSnapshot:
 
     def test_snapshot_is_immutable(self):
         """Test that SessionSnapshot is immutable (frozen)"""
-        snapshot = SessionSnapshot(
-            session_id="test", messages=(), input_tokens=0, output_tokens=0, created_at=""
-        )
+        snapshot = SessionSnapshot(session_id="test", messages=(), input_tokens=0, output_tokens=0, created_at="")
         with pytest.raises(AttributeError):
             snapshot.session_id = "new-id"
 

@@ -8,38 +8,16 @@ Phase 5 端到端集成测试
 - 知识库
 """
 
-import pytest
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
-from lingflow.self_optimizer.phase5.models import (
-    FeedbackItem,
-    LearnedRule,
-    Pattern,
-    FeedbackCategory,
-    SeverityLevel,
-    ToolType
-)
-from lingflow.self_optimizer.phase5.learning import (
-    RuleExtractor,
-    SecurityRuleExtractor,
-    RuleDeduplicator,
-    RuleValidator
-)
-from lingflow.self_optimizer.phase5.patterns import (
-    PatternRecognizer,
-    LongMethodDetector,
-    HardcodedSecretDetector
-)
-from lingflow.self_optimizer.phase5.knowledge import (
-    KnowledgeBase,
-    InMemoryKnowledgeBase
-)
-from lingflow.self_optimizer.phase5.adapters import (
-    AIToolAdapter,
-    SemgrepAdapter,
-    RuffAdapter
-)
+import pytest
+
+from lingflow.self_optimizer.phase5.adapters import AIToolAdapter, RuffAdapter, SemgrepAdapter
+from lingflow.self_optimizer.phase5.knowledge import InMemoryKnowledgeBase, KnowledgeBase
+from lingflow.self_optimizer.phase5.learning import RuleDeduplicator, RuleExtractor, RuleValidator, SecurityRuleExtractor
+from lingflow.self_optimizer.phase5.models import FeedbackCategory, FeedbackItem, LearnedRule, Pattern, SeverityLevel, ToolType
+from lingflow.self_optimizer.phase5.patterns import HardcodedSecretDetector, LongMethodDetector, PatternRecognizer
 
 
 @pytest.mark.phase5
@@ -76,11 +54,11 @@ class TestToolAdapters:
         assert isinstance(normalized, list)
         for item in normalized:
             assert isinstance(item, AIFeedback)
-            assert hasattr(item, 'source')
-            assert hasattr(item, 'category')
-            assert hasattr(item, 'severity')
-            assert hasattr(item, 'rule_id')
-            assert hasattr(item, 'message')
+            assert hasattr(item, "source")
+            assert hasattr(item, "category")
+            assert hasattr(item, "severity")
+            assert hasattr(item, "rule_id")
+            assert hasattr(item, "message")
 
 
 @pytest.mark.phase5
@@ -92,9 +70,7 @@ class TestRuleExtraction:
         extractor = RuleExtractor(min_frequency=2, min_confidence=0.7)
 
         # 转换为FeedbackItem
-        feedback_items = [
-            FeedbackItem(**item) for item in mock_feedback_data
-        ]
+        feedback_items = [FeedbackItem(**item) for item in mock_feedback_data]
 
         rules = extractor.extract_rules(feedback_items)
 
@@ -105,10 +81,7 @@ class TestRuleExtraction:
         """测试安全规则提取"""
         extractor = SecurityRuleExtractor(min_frequency=1, min_confidence=0.7)
 
-        feedback_items = [
-            FeedbackItem(**item) for item in mock_feedback_data
-            if item.get("category") == "security"
-        ]
+        feedback_items = [FeedbackItem(**item) for item in mock_feedback_data if item.get("category") == "security"]
 
         rules = extractor.extract_rules(feedback_items)
 
@@ -120,10 +93,7 @@ class TestRuleExtraction:
 
         feedback_items = [FeedbackItem(**item) for item in mock_feedback_data]
 
-        security_rules = extractor.extract_rules(
-            feedback_items,
-            category=FeedbackCategory.SECURITY
-        )
+        security_rules = extractor.extract_rules(feedback_items, category=FeedbackCategory.SECURITY)
 
         assert all(rule.category == FeedbackCategory.SECURITY for rule in security_rules)
 
@@ -135,7 +105,7 @@ class TestRuleExtraction:
         rules = extractor.extract_rules(feedback_items)
 
         for rule in rules:
-            assert hasattr(rule, 'quality_score')
+            assert hasattr(rule, "quality_score")
             assert 0 <= rule.quality_score <= 1
 
 
@@ -160,17 +130,9 @@ class TestRuleDeduplication:
         deduplicator = RuleDeduplicator()
 
         # 创建相似规则
-        pattern1 = Pattern(
-            file_patterns=["*.py"],
-            code_patterns=["import os"],
-            context_keywords=["import", "unused"]
-        )
+        pattern1 = Pattern(file_patterns=["*.py"], code_patterns=["import os"], context_keywords=["import", "unused"])
 
-        pattern2 = Pattern(
-            file_patterns=["*.py"],
-            code_patterns=["import os"],
-            context_keywords=["import", "unused"]
-        )
+        pattern2 = Pattern(file_patterns=["*.py"], code_patterns=["import os"], context_keywords=["import", "unused"])
 
         hash1 = deduplicator._compute_rule_hash(
             LearnedRule(
@@ -181,7 +143,7 @@ class TestRuleDeduplication:
                 pattern=pattern1,
                 tools=["Ruff"],
                 frequency=1,
-                confidence=0.8
+                confidence=0.8,
             )
         )
 
@@ -194,7 +156,7 @@ class TestRuleDeduplication:
                 pattern=pattern2,
                 tools=["Ruff"],
                 frequency=1,
-                confidence=0.8
+                confidence=0.8,
             )
         )
 
@@ -219,7 +181,7 @@ class TestRuleValidation:
             pattern=pattern,
             tools=["Ruff"],
             frequency=5,
-            confidence=0.8
+            confidence=0.8,
         )
         rule.quality_score = 0.7
 
@@ -238,7 +200,7 @@ class TestRuleValidation:
             pattern=pattern,
             tools=[],  # 无工具支持
             frequency=1,
-            confidence=0.3
+            confidence=0.3,
         )
         rule.quality_score = 0.2  # 低质量
 
@@ -259,7 +221,7 @@ class TestRuleValidation:
                 pattern=pattern,
                 tools=["Ruff"],
                 frequency=i + 1,
-                confidence=0.5 + (i * 0.1)
+                confidence=0.5 + (i * 0.1),
             )
             for i in range(5)
         ]
@@ -286,22 +248,22 @@ class TestPatternRecognition:
         patterns = detector.detect(long_method, "test.py")
 
         assert len(patterns) > 0
-        assert patterns[0]['name'] == 'Long Method'
+        assert patterns[0]["name"] == "Long Method"
 
     def test_hardcoded_secret_detection(self):
         """测试硬编码密钥检测"""
         detector = HardcodedSecretDetector()
 
-        code = '''
+        code = """
         password = "admin123"
         api_key = "sk-1234567890abcdef"
         secret = 'my_secret_key_12345'
-        '''
+        """
 
         patterns = detector.detect(code, "test.py")
 
         assert len(patterns) >= 2
-        assert all(p['name'] == 'Hardcoded Secret' for p in patterns)
+        assert all(p["name"] == "Hardcoded Secret" for p in patterns)
 
     def test_pattern_recognizer_integration(self, sample_code):
         """测试模式识别器集成"""
@@ -313,21 +275,25 @@ class TestPatternRecognition:
 
     def test_multiple_pattern_detection(self):
         """测试多模式检测"""
-        code = '''
+        code = (
+            '''
         def very_long_function():
             """A very long function with many lines"""
             x = 1
-            ''' + '\n'.join([f"    var_{i} = {i}" for i in range(50)]) + '''
+            '''
+            + "\n".join([f"    var_{i} = {i}" for i in range(50)])
+            + """
             password = "secret123"
             return x
-        '''
+        """
+        )
 
         recognizer = PatternRecognizer()
         patterns = recognizer.recognize_patterns(code, "test.py")
 
         # 应该检测到多个模式
-        pattern_names = [p['name'] for p in patterns]
-        assert 'Long Method' in pattern_names or 'Hardcoded Secret' in pattern_names
+        pattern_names = [p["name"] for p in patterns]
+        assert "Long Method" in pattern_names or "Hardcoded Secret" in pattern_names
 
 
 @pytest.mark.phase5
@@ -347,7 +313,7 @@ class TestKnowledgeBase:
             pattern=pattern,
             tools=["Ruff"],
             frequency=5,
-            confidence=0.85
+            confidence=0.85,
         )
 
         assert kb.add_rule(rule) is True
@@ -365,7 +331,7 @@ class TestKnowledgeBase:
             pattern=pattern,
             tools=["Ruff"],
             frequency=1,
-            confidence=0.8
+            confidence=0.8,
         )
 
         kb.add_rule(rule)
@@ -388,7 +354,7 @@ class TestKnowledgeBase:
                 pattern=pattern,
                 tools=["Ruff"],
                 frequency=1,
-                confidence=0.8
+                confidence=0.8,
             )
             kb.add_rule(rule)
 
@@ -408,7 +374,7 @@ class TestKnowledgeBase:
             pattern=pattern,
             tools=["Semgrep"],
             frequency=10,
-            confidence=0.9
+            confidence=0.9,
         )
 
         kb.add_rule(rule)
@@ -430,7 +396,7 @@ class TestKnowledgeBase:
             tools=["Ruff"],
             frequency=1,
             confidence=0.8,
-            status="draft"
+            status="draft",
         )
 
         kb.add_rule(rule)
@@ -452,7 +418,7 @@ class TestKnowledgeBase:
             pattern=pattern,
             tools=["Ruff"],
             frequency=1,
-            confidence=0.8
+            confidence=0.8,
         )
 
         kb.add_rule(rule)
@@ -475,15 +441,15 @@ class TestKnowledgeBase:
                 pattern=pattern,
                 tools=["Ruff"],
                 frequency=1,
-                confidence=0.8
+                confidence=0.8,
             )
             kb.add_rule(rule)
 
         stats = kb.get_statistics()
 
-        assert stats['total_rules'] == 5
-        assert 'by_category' in stats
-        assert 'by_status' in stats
+        assert stats["total_rules"] == 5
+        assert "by_category" in stats
+        assert "by_status" in stats
 
     def test_batch_add_rules(self):
         """测试批量添加规则"""
@@ -500,7 +466,7 @@ class TestKnowledgeBase:
                 pattern=pattern,
                 tools=["Ruff"],
                 frequency=1,
-                confidence=0.8
+                confidence=0.8,
             )
             rules.append(rule)
 
@@ -536,7 +502,7 @@ class TestLearningPipeline:
 
         # 6. 验证结果
         stats = kb.get_statistics()
-        assert stats['total_rules'] > 0
+        assert stats["total_rules"] > 0
 
     def test_continuous_learning_cycle(self, mock_feedback_data):
         """测试持续学习循环"""
@@ -548,7 +514,7 @@ class TestLearningPipeline:
         rules = extractor.extract_rules(feedback_items)
         kb.add_rules_batch(rules)
 
-        initial_count = kb.get_statistics()['total_rules']
+        initial_count = kb.get_statistics()["total_rules"]
 
         # 第二轮学习（新反馈）
         new_feedback = [
@@ -564,7 +530,7 @@ class TestLearningPipeline:
                 line=10,
                 snippet="code",
                 suggestion="Fix it",
-                confidence=0.9
+                confidence=0.9,
             )
         ]
 
@@ -572,7 +538,7 @@ class TestLearningPipeline:
         kb.add_rules_batch(new_rules)
 
         # 应该有更多规则
-        final_count = kb.get_statistics()['total_rules']
+        final_count = kb.get_statistics()["total_rules"]
         assert final_count >= initial_count
 
 
@@ -594,22 +560,25 @@ class TestPhase5Workflows:
         if normalized:
             # 将AIFeedback转换为FeedbackItem
             from lingflow.self_optimizer.phase5.models import ToolType
+
             feedback_items = []
             for item in normalized:
-                feedback_items.append(FeedbackItem(
-                    tool_name=item.source.value,
-                    tool_type=ToolType.SECURITY_SCANNER,
-                    rule_id=item.rule_id or "",
-                    rule_name=item.rule_id or "",
-                    category=item.category,
-                    severity=item.severity,
-                    message=item.message,
-                    file_path=item.file_path,
-                    line=item.line_no,
-                    snippet=item.code_snippet,
-                    suggestion=item.suggestion,
-                    confidence=0.8
-                ))
+                feedback_items.append(
+                    FeedbackItem(
+                        tool_name=item.source.value,
+                        tool_type=ToolType.SECURITY_SCANNER,
+                        rule_id=item.rule_id or "",
+                        rule_name=item.rule_id or "",
+                        category=item.category,
+                        severity=item.severity,
+                        message=item.message,
+                        file_path=item.file_path,
+                        line=item.line_no,
+                        snippet=item.code_snippet,
+                        suggestion=item.suggestion,
+                        confidence=0.8,
+                    )
+                )
             extractor = RuleExtractor(min_frequency=1)
             rules = extractor.extract_rules(feedback_items)
 
@@ -632,7 +601,7 @@ class TestPhase5Workflows:
                 pattern=Pattern(file_patterns=["*.py"]),
                 tools=["Analyzer"],
                 frequency=1,
-                confidence=0.7
+                confidence=0.7,
             )
 
             # 3. 存储规则

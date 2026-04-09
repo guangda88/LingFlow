@@ -1,17 +1,18 @@
 """Sampling monitor tests"""
 
 import time
-import pytest
 from unittest.mock import MagicMock, patch
 
+import pytest
+
+from lingflow.utils.performance import PerformanceMonitor
 from lingflow.utils.sampling import (
     SamplingConfig,
     SamplingMonitor,
-    sampling_monitor,
     get_sampling_stats,
+    sampling_monitor,
     track_with_sampling,
 )
-from lingflow.utils.performance import PerformanceMonitor
 
 
 class TestSamplingConfig:

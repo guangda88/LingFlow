@@ -1,7 +1,8 @@
 import pytest
+
 from lingflow.common.sandbox import (
-    SkillSandbox,
     SandboxTimeoutError,
+    SkillSandbox,
     _create_safe_import,
     execute_in_sandbox,
     get_default_sandbox,
@@ -12,6 +13,7 @@ class TestCreateSafeImport:
     def test_allowed_module(self):
         safe_import = _create_safe_import({"math", "time"})
         import math
+
         result = safe_import("math")
         assert result is math
 
@@ -23,6 +25,7 @@ class TestCreateSafeImport:
     def test_submodule_base_check(self):
         safe_import = _create_safe_import({"datetime"})
         import datetime
+
         result = safe_import("datetime")
         assert result is datetime
 
@@ -143,9 +146,7 @@ class TestExecuteCode:
 
     def test_execute_code_math_allowed(self):
         sb = SkillSandbox(timeout=10)
-        result = sb.execute_code(
-            "import math\nresult = math.sqrt(16)"
-        )
+        result = sb.execute_code("import math\nresult = math.sqrt(16)")
         assert isinstance(result, dict)
 
     def test_execute_code_unsafe_import_blocked(self):

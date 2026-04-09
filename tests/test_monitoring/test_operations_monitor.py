@@ -1,23 +1,24 @@
 """Tests for lingflow.monitoring.operations_monitor module"""
 
-import pytest
 import time
 from datetime import datetime
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
+import pytest
+
+from lingflow.monitoring.alerts.rules import AlertRule
+from lingflow.monitoring.metrics.models import Alert, AlertSeverity, HealthCheckResult
 from lingflow.monitoring.operations_monitor import (
     OperationsMonitor,
-    get_global_monitor,
-    get_operations_monitor,
-    register_health_check,
     add_alert_rule,
-    run_health_checks,
     evaluate_all_metrics,
     get_active_alerts,
+    get_global_monitor,
     get_monitoring_summary,
+    get_operations_monitor,
+    register_health_check,
+    run_health_checks,
 )
-from lingflow.monitoring.metrics.models import AlertSeverity, Alert, HealthCheckResult
-from lingflow.monitoring.alerts.rules import AlertRule
 
 
 class TestOperationsMonitor:
@@ -52,6 +53,7 @@ class TestOperationsMonitor:
         monitor = OperationsMonitor(auto_collect=False)
 
         from lingflow.monitoring.metrics.models import SystemMetrics
+
         metrics = SystemMetrics(
             cpu_percent=50.0,
             memory_percent=60.0,
@@ -101,6 +103,7 @@ class TestOperationsMonitor:
         monitor = OperationsMonitor(auto_collect=False)
 
         from lingflow.monitoring.metrics.models import SystemMetrics
+
         test_metrics = SystemMetrics(
             cpu_percent=75.0,
             memory_percent=55.0,
@@ -197,12 +200,12 @@ class TestOperationsMonitor:
         """Test running all health checks"""
         monitor = OperationsMonitor(auto_collect=False)
 
-        monitor.register_health_check("check1", lambda: HealthCheckResult(
-            component="c1", healthy=True, message="OK", timestamp=datetime.now()
-        ))
-        monitor.register_health_check("check2", lambda: HealthCheckResult(
-            component="c2", healthy=False, message="Failed", timestamp=datetime.now()
-        ))
+        monitor.register_health_check(
+            "check1", lambda: HealthCheckResult(component="c1", healthy=True, message="OK", timestamp=datetime.now())
+        )
+        monitor.register_health_check(
+            "check2", lambda: HealthCheckResult(component="c2", healthy=False, message="Failed", timestamp=datetime.now())
+        )
 
         results = monitor.run_health_checks()
 
@@ -414,9 +417,9 @@ class TestOperationsMonitor:
         """Test getting overall health status"""
         monitor = OperationsMonitor(auto_collect=False)
 
-        monitor.register_health_check("healthy", lambda: HealthCheckResult(
-            component="healthy", healthy=True, message="OK", timestamp=datetime.now()
-        ))
+        monitor.register_health_check(
+            "healthy", lambda: HealthCheckResult(component="healthy", healthy=True, message="OK", timestamp=datetime.now())
+        )
 
         health = monitor.get_overall_health()
         assert health is True
@@ -425,9 +428,10 @@ class TestOperationsMonitor:
         """Test overall health with failing check"""
         monitor = OperationsMonitor(auto_collect=False)
 
-        monitor.register_health_check("failing", lambda: HealthCheckResult(
-            component="failing", healthy=False, message="Failed", timestamp=datetime.now()
-        ))
+        monitor.register_health_check(
+            "failing",
+            lambda: HealthCheckResult(component="failing", healthy=False, message="Failed", timestamp=datetime.now()),
+        )
 
         health = monitor.get_overall_health()
         assert health is False
@@ -436,9 +440,9 @@ class TestOperationsMonitor:
         """Test getting monitoring summary"""
         monitor = OperationsMonitor(auto_collect=False)
 
-        monitor.register_health_check("check1", lambda: HealthCheckResult(
-            component="c1", healthy=True, message="OK", timestamp=datetime.now()
-        ))
+        monitor.register_health_check(
+            "check1", lambda: HealthCheckResult(component="c1", healthy=True, message="OK", timestamp=datetime.now())
+        )
 
         summary = monitor.get_monitoring_summary()
 
@@ -498,12 +502,11 @@ class TestGlobalMonitorFunctions:
         """Test global register_health_check function"""
         # Clear any existing instance
         import lingflow.monitoring.operations_monitor as ops
+
         ops._global_monitor = None
 
         def test_check():
-            return HealthCheckResult(
-                component="test", healthy=True, message="OK", timestamp=datetime.now()
-            )
+            return HealthCheckResult(component="test", healthy=True, message="OK", timestamp=datetime.now())
 
         register_health_check("global_test", test_check)
 
@@ -514,6 +517,7 @@ class TestGlobalMonitorFunctions:
         """Test global add_alert_rule function"""
         # Clear instance
         import lingflow.monitoring.operations_monitor as ops
+
         ops._global_monitor = None
 
         rule = AlertRule(
@@ -532,6 +536,7 @@ class TestGlobalMonitorFunctions:
         """Test global run_health_checks function"""
         # Clear instance
         import lingflow.monitoring.operations_monitor as ops
+
         ops._global_monitor = None
 
         results = run_health_checks()
@@ -541,6 +546,7 @@ class TestGlobalMonitorFunctions:
         """Test global get_active_alerts function"""
         # Clear instance
         import lingflow.monitoring.operations_monitor as ops
+
         ops._global_monitor = None
 
         alerts = get_active_alerts()
@@ -550,6 +556,7 @@ class TestGlobalMonitorFunctions:
         """Test global get_monitoring_summary function"""
         # Clear instance
         import lingflow.monitoring.operations_monitor as ops
+
         ops._global_monitor = None
 
         summary = get_monitoring_summary()

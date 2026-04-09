@@ -15,7 +15,7 @@ import json
 import logging
 import time
 import uuid
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
@@ -65,6 +65,7 @@ class ScheduledTask:
     def __post_init__(self) -> None:
         if not self.created_at:
             from datetime import datetime
+
             self.created_at = datetime.now().isoformat()
         if self.next_run is None:
             self._compute_next_run()
@@ -148,8 +149,12 @@ class LingScheduler:
         self._callbacks[name] = func
 
     def add_cron(
-        self, name: str, callback_name: str, cron_expr: str,
-        params: Optional[Dict[str, Any]] = None, max_retries: int = _MAX_RETRIES,
+        self,
+        name: str,
+        callback_name: str,
+        cron_expr: str,
+        params: Optional[Dict[str, Any]] = None,
+        max_retries: int = _MAX_RETRIES,
     ) -> str:
         """Add a cron-based scheduled task.
 
@@ -165,9 +170,13 @@ class LingScheduler:
         """
         task_id = f"cron_{name}_{uuid.uuid4().hex[:8]}"
         task = ScheduledTask(
-            task_id=task_id, name=name, schedule_type=ScheduleType.CRON,
-            callback_name=callback_name, cron_expr=cron_expr,
-            params=params or {}, max_retries=max_retries,
+            task_id=task_id,
+            name=name,
+            schedule_type=ScheduleType.CRON,
+            callback_name=callback_name,
+            cron_expr=cron_expr,
+            params=params or {},
+            max_retries=max_retries,
         )
         self._tasks[task_id] = task
         self._persist_tasks()
@@ -175,15 +184,23 @@ class LingScheduler:
         return task_id
 
     def add_interval(
-        self, name: str, callback_name: str, interval_seconds: float = _DEFAULT_INTERVAL,
-        params: Optional[Dict[str, Any]] = None, max_retries: int = _MAX_RETRIES,
+        self,
+        name: str,
+        callback_name: str,
+        interval_seconds: float = _DEFAULT_INTERVAL,
+        params: Optional[Dict[str, Any]] = None,
+        max_retries: int = _MAX_RETRIES,
     ) -> str:
         """Add an interval-based scheduled task."""
         task_id = f"int_{name}_{uuid.uuid4().hex[:8]}"
         task = ScheduledTask(
-            task_id=task_id, name=name, schedule_type=ScheduleType.INTERVAL,
-            callback_name=callback_name, interval_seconds=interval_seconds,
-            params=params or {}, max_retries=max_retries,
+            task_id=task_id,
+            name=name,
+            schedule_type=ScheduleType.INTERVAL,
+            callback_name=callback_name,
+            interval_seconds=interval_seconds,
+            params=params or {},
+            max_retries=max_retries,
         )
         self._tasks[task_id] = task
         self._persist_tasks()
@@ -191,15 +208,23 @@ class LingScheduler:
         return task_id
 
     def add_delay(
-        self, name: str, callback_name: str, delay_seconds: float,
-        params: Optional[Dict[str, Any]] = None, max_retries: int = _MAX_RETRIES,
+        self,
+        name: str,
+        callback_name: str,
+        delay_seconds: float,
+        params: Optional[Dict[str, Any]] = None,
+        max_retries: int = _MAX_RETRIES,
     ) -> str:
         """Add a one-shot delayed task."""
         task_id = f"del_{name}_{uuid.uuid4().hex[:8]}"
         task = ScheduledTask(
-            task_id=task_id, name=name, schedule_type=ScheduleType.DELAY,
-            callback_name=callback_name, delay_seconds=delay_seconds,
-            params=params or {}, max_retries=max_retries,
+            task_id=task_id,
+            name=name,
+            schedule_type=ScheduleType.DELAY,
+            callback_name=callback_name,
+            delay_seconds=delay_seconds,
+            params=params or {},
+            max_retries=max_retries,
         )
         self._tasks[task_id] = task
         self._persist_tasks()
@@ -303,6 +328,7 @@ class LingScheduler:
         task.state = TaskState.RUNNING
 
         from datetime import datetime
+
         task.last_run = datetime.now().isoformat()
 
         exec_record = TaskExecution(task_id=task.task_id, started_at=time.time())
@@ -381,11 +407,12 @@ class LingScheduler:
             data = json.loads(path.read_text(encoding="utf-8"))
             for tid, tdata in data.get("tasks", {}).items():
                 tdata["schedule_type"] = ScheduleType(tdata["schedule_type"])
-                tdata["state"] = TaskState.PENDING if tdata.get("state") in (
-                    TaskState.RUNNING.value, TaskState.RETRYING.value
-                ) else TaskState(tdata.get("state", TaskState.PENDING.value))
-                task = ScheduledTask(**{k: v for k, v in tdata.items()
-                                        if k in ScheduledTask.__dataclass_fields__})
+                tdata["state"] = (
+                    TaskState.PENDING
+                    if tdata.get("state") in (TaskState.RUNNING.value, TaskState.RETRYING.value)
+                    else TaskState(tdata.get("state", TaskState.PENDING.value))
+                )
+                task = ScheduledTask(**{k: v for k, v in tdata.items() if k in ScheduledTask.__dataclass_fields__})
                 self._tasks[tid] = task
             logger.info("Loaded %d persisted tasks", len(self._tasks))
         except Exception as e:

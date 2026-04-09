@@ -10,16 +10,15 @@ import tempfile
 import pytest
 
 from lingflow.self_optimizer.phase5.patterns import (
-    PatternRecognizer,
-    PatternDetector,
-    LongMethodDetector,
-    UnusedVariableDetector,
-    HardcodedSecretDetector,
+    ComplexityDetector,
     DuplicateCodeDetector,
     EmptyBlockDetector,
-    ComplexityDetector,
+    HardcodedSecretDetector,
+    LongMethodDetector,
+    PatternDetector,
+    PatternRecognizer,
+    UnusedVariableDetector,
 )
-
 
 # ============================================================================
 # Fixtures
@@ -94,7 +93,7 @@ def very_long_function():
 @pytest.fixture
 def sample_code_with_unused_variables():
     """包含未使用变量的代码"""
-    return '''
+    return """
 def function_with_unused():
     used_var = 10
     unused_var = 20
@@ -106,13 +105,13 @@ def another_function():
     x = 1
     y = 2
     return x
-'''
+"""
 
 
 @pytest.fixture
 def sample_code_with_secrets():
     """包含硬编码密钥的代码"""
-    return '''
+    return """
 class Config:
     def __init__(self):
         self.password = "secret123"
@@ -123,13 +122,13 @@ class Config:
 def connect():
     db_password = "admin123"
     return db_password
-'''
+"""
 
 
 @pytest.fixture
 def sample_code_with_duplicates():
     """包含重复代码的代码"""
-    return '''
+    return """
 def process_data_a(data):
     result = []
     for item in data:
@@ -153,7 +152,7 @@ def process_data_c(data):
             processed = item * 2
             result.append(processed)
     return result
-'''
+"""
 
 
 @pytest.fixture
@@ -188,7 +187,7 @@ def function_with_empty_loop():
 @pytest.fixture
 def sample_code_with_high_complexity():
     """包含高复杂度的代码"""
-    return '''
+    return """
 def complex_function(x, y, z):
     if x > 0:
         if y > 0:
@@ -210,7 +209,7 @@ def complex_function(x, y, z):
                 except:
                     result = 0
     return 0
-'''
+"""
 
 
 @pytest.fixture
@@ -235,18 +234,9 @@ class TestPatternDetector:
 
     def test_create_finding_basic(self):
         """测试创建基本发现结果"""
-        detector = PatternDetector(
-            name="Test Detector",
-            pattern_type="test",
-            severity="MEDIUM"
-        )
+        detector = PatternDetector(name="Test Detector", pattern_type="test", severity="MEDIUM")
 
-        finding = detector._create_finding(
-            file_path="test.py",
-            line=10,
-            message="Test message",
-            confidence=0.9
-        )
+        finding = detector._create_finding(file_path="test.py", line=10, message="Test message", confidence=0.9)
 
         assert finding["type"] == "test"
         assert finding["name"] == "Test Detector"
@@ -258,17 +248,10 @@ class TestPatternDetector:
 
     def test_create_finding_with_extra_data(self):
         """测试创建带额外数据的发现结果"""
-        detector = PatternDetector(
-            name="Test Detector",
-            pattern_type="test"
-        )
+        detector = PatternDetector(name="Test Detector", pattern_type="test")
 
         finding = detector._create_finding(
-            file_path="test.py",
-            line=10,
-            message="Test",
-            confidence=0.8,
-            extra={"custom_field": "custom_value", "count": 42}
+            file_path="test.py", line=10, message="Test", confidence=0.8, extra={"custom_field": "custom_value", "count": 42}
         )
 
         assert finding["custom_field"] == "custom_value"
@@ -276,10 +259,7 @@ class TestPatternDetector:
 
     def test_detect_not_implemented(self):
         """测试detect方法需要子类实现"""
-        detector = PatternDetector(
-            name="Test",
-            pattern_type="test"
-        )
+        detector = PatternDetector(name="Test", pattern_type="test")
 
         with pytest.raises(NotImplementedError):
             detector.detect("code", "file.py")
@@ -316,12 +296,12 @@ class TestLongMethodDetector:
 
     def test_detect_normal_method(self):
         """测试正常方法不被检测"""
-        code = '''
+        code = """
 def normal_function():
     x = 1
     y = 2
     return x + y
-'''
+"""
         detector = LongMethodDetector(threshold=50)
         findings = detector.detect(code, "test.py")
 
@@ -331,15 +311,21 @@ def normal_function():
 
     def test_detect_multiple_long_methods(self):
         """测试检测多个长方法"""
-        code = '''
+        code = (
+            """
 def long_method_1():
-    ''' + '\n'.join([f'    x{i} = {i}' for i in range(60)]) + '''
+    """
+            + "\n".join([f"    x{i} = {i}" for i in range(60)])
+            + """
     return 0
 
 def long_method_2():
-    ''' + '\n'.join([f'    y{i} = {i}' for i in range(55)]) + '''
+    """
+            + "\n".join([f"    y{i} = {i}" for i in range(55)])
+            + """
     return 1
-'''
+"""
+        )
 
         detector = LongMethodDetector(threshold=40)
         findings = detector.detect(code, "test.py")
@@ -349,11 +335,15 @@ def long_method_2():
 
     def test_simple_detection_fallback(self):
         """测试简单检测回退方法"""
-        code = '''
+        code = (
+            """
 def long_method():
-    ''' + '\n'.join([f'    x{i} = {i}' for i in range(60)]) + '''
+    """
+            + "\n".join([f"    x{i} = {i}" for i in range(60)])
+            + """
     return 0
-'''
+"""
+        )
 
         detector = LongMethodDetector(threshold=40)
         # 使用简单检测
@@ -387,12 +377,12 @@ class TestUnusedVariableDetector:
 
     def test_detect_no_unused_variables(self):
         """测试没有未使用变量的情况"""
-        code = '''
+        code = """
 def all_used():
     x = 1
     y = 2
     return x + y
-'''
+"""
         detector = UnusedVariableDetector()
         findings = detector.detect(code, "test.py")
 
@@ -401,25 +391,22 @@ def all_used():
 
     def test_ignores_underscore_variables(self):
         """测试忽略下划线变量"""
-        code = '''
+        code = """
 def with_underscore():
     _unused = 1
     x = 2
     return x
-'''
+"""
         detector = UnusedVariableDetector()
         findings = detector.detect(code, "test.py")
 
         # _unused 应该被忽略
         unused_vars = [f for f in findings if "unused" in f["message"].lower()]
-        assert not any(
-            "_unused" in f.get("extra", {}).get("variable_name", "")
-            for f in unused_vars
-        )
+        assert not any("_unused" in f.get("extra", {}).get("variable_name", "") for f in unused_vars)
 
     def test_limits_findings(self):
         """测试限制返回数量"""
-        code = '''
+        code = """
 def many_unused():
     a = 1
     b = 2
@@ -434,7 +421,7 @@ def many_unused():
     k = 11
     l = 12
     return a
-'''
+"""
         detector = UnusedVariableDetector()
         findings = detector.detect(code, "test.py")
 
@@ -466,17 +453,16 @@ class TestHardcodedSecretDetector:
         assert len(secret_findings) > 0
 
         # 应该检测到密码
-        password_findings = [f for f in secret_findings
-                             if "password" in f["message"].lower()]
+        password_findings = [f for f in secret_findings if "password" in f["message"].lower()]
         assert len(password_findings) > 0
 
     def test_detect_api_key(self):
         """测试检测API密钥"""
         # API密钥需要至少10个字符
-        code = '''class Config:
+        code = """class Config:
     api_key = "sk-1234567890abcdef"
     APIKEY = "key_with_10_chars"
-'''
+"""
         detector = HardcodedSecretDetector()
         findings = detector.detect(code, "test.py")
 
@@ -486,10 +472,10 @@ class TestHardcodedSecretDetector:
     def test_detect_secret_token(self):
         """测试检测secret token"""
         # Secret需要至少10个字符
-        code = '''def config():
+        code = """def config():
     secret_token = "my_secret_token_here"
     secret = "secret123456"
-'''
+"""
         detector = HardcodedSecretDetector()
         findings = detector.detect(code, "test.py")
 
@@ -499,11 +485,11 @@ class TestHardcodedSecretDetector:
 
     def test_case_insensitive_detection(self):
         """测试不区分大小写检测"""
-        code = '''
+        code = """
 PASSWORD = "secret"
 ApiKeY = "key"
 SECRET = "value"
-'''
+"""
         detector = HardcodedSecretDetector()
         findings = detector.detect(code, "test.py")
 
@@ -511,12 +497,12 @@ SECRET = "value"
 
     def test_no_false_positives(self):
         """测试无误报"""
-        code = '''
+        code = """
 def get_config():
     password = os.getenv("PASSWORD")
     api_key = load_from_vault()
     return password, api_key
-'''
+"""
         detector = HardcodedSecretDetector()
         findings = detector.detect(code, "test.py")
 
@@ -549,7 +535,7 @@ class TestDuplicateCodeDetector:
 
     def test_detect_no_duplicates(self):
         """测试无重复代码"""
-        code = '''
+        code = """
 def func_a():
     return 1
 
@@ -558,7 +544,7 @@ def func_b():
 
 def func_c():
     return 3
-'''
+"""
         detector = DuplicateCodeDetector(min_lines=2)
         findings = detector.detect(code, "test.py")
 
@@ -568,15 +554,20 @@ def func_c():
     def test_limits_findings(self):
         """测试限制返回数量"""
         # 创建大量重复代码
-        code = '\n'.join([
-            '''
-def func_''' + str(i) + '''():
+        code = "\n".join(
+            [
+                """
+def func_"""
+                + str(i)
+                + """():
     x = 1
     y = 2
     z = 3
     return x + y + z
-''' for i in range(20)
-        ])
+"""
+                for i in range(20)
+            ]
+        )
 
         detector = DuplicateCodeDetector(min_lines=3)
         findings = detector.detect(code, "test.py")
@@ -586,7 +577,7 @@ def func_''' + str(i) + '''():
 
     def test_min_lines_threshold(self):
         """测试最小行数阈值"""
-        code = '''
+        code = """
 def func_a():
     x = 1
     return x
@@ -594,7 +585,7 @@ def func_a():
 def func_b():
     y = 2
     return y
-'''
+"""
         detector = DuplicateCodeDetector(min_lines=5)
         findings = detector.detect(code, "test.py")
 
@@ -638,12 +629,12 @@ class TestEmptyBlockDetector:
         """测试检测空的if块"""
         # 空if块需要使用AST分析 - 但AST中if块通常有body
         # 我们测试检测只有pass的函数
-        code = '''def check_value():
+        code = """def check_value():
     pass
 
 def another_empty():
     pass
-'''
+"""
         detector = EmptyBlockDetector()
         findings = detector.detect(code, "test.py")
 
@@ -654,7 +645,7 @@ def another_empty():
     def test_simple_detection_fallback(self):
         """测试简单检测回退"""
         # 简单检测只匹配单行的 def/if/for/while/class ...: pass
-        code = 'def empty_func(): pass\nif True: pass\n'
+        code = "def empty_func(): pass\nif True: pass\n"
         detector = EmptyBlockDetector()
         findings = detector._simple_detection(code, "test.py")
 
@@ -691,7 +682,7 @@ class TestComplexityDetector:
 
     def test_calculate_complexity(self):
         """测试复杂度计算"""
-        code = '''
+        code = """
 def simple():
     return 1
 
@@ -708,7 +699,7 @@ def high(x):
                 if i % 2 == 0:
                     return i
     return 0
-'''
+"""
         detector = ComplexityDetector(threshold=3)
         findings = detector.detect(code, "test.py")
 
@@ -758,10 +749,7 @@ class TestPatternRecognizer:
 
     def test_initialization_custom_detectors(self):
         """测试使用自定义检测器初始化"""
-        custom_detector = PatternDetector(
-            name="Custom",
-            pattern_type="custom"
-        )
+        custom_detector = PatternDetector(name="Custom", pattern_type="custom")
         recognizer = PatternRecognizer(detectors=[custom_detector])
 
         assert len(recognizer.detectors) == 1
@@ -772,26 +760,27 @@ class TestPatternRecognizer:
         recognizer = PatternRecognizer()
         initial_count = len(recognizer.detectors)
 
-        custom_detector = PatternDetector(
-            name="Custom",
-            pattern_type="custom"
-        )
+        custom_detector = PatternDetector(name="Custom", pattern_type="custom")
         recognizer.register_detector(custom_detector)
 
         assert len(recognizer.detectors) == initial_count + 1
 
     def test_recognize_patterns(self):
         """测试识别模式"""
-        code = '''
+        code = (
+            """
 def long_function():
     x = 1
-    ''' + '\n'.join([f'    y{i} = {i}' for i in range(60)]) + '''
+    """
+            + "\n".join([f"    y{i} = {i}" for i in range(60)])
+            + """
     return x
 
 def another():
     unused = 1
     return 2
-'''
+"""
+        )
         recognizer = PatternRecognizer()
         patterns = recognizer.recognize_patterns(code, "test.py")
 
@@ -801,7 +790,7 @@ def another():
     def test_recognize_from_file(self, sample_code_with_long_method, temp_python_file):
         """测试从文件识别模式"""
         # 写入测试代码
-        with open(temp_python_file, 'w') as f:
+        with open(temp_python_file, "w") as f:
             f.write(sample_code_with_long_method)
 
         recognizer = PatternRecognizer()
@@ -828,6 +817,7 @@ def another():
 
     def test_detector_failure_doesnt_affect_others(self):
         """测试单个检测器失败不影响其他"""
+
         class FailingDetector(PatternDetector):
             def detect(self, source_code, file_path):
                 raise Exception("Intentional failure")
@@ -836,10 +826,9 @@ def another():
             def detect(self, source_code, file_path):
                 return [self._create_finding(file_path, 1, "Working")]
 
-        recognizer = PatternRecognizer(detectors=[
-            FailingDetector("Failing", "failing"),
-            WorkingDetector("Working", "working")
-        ])
+        recognizer = PatternRecognizer(
+            detectors=[FailingDetector("Failing", "failing"), WorkingDetector("Working", "working")]
+        )
 
         patterns = recognizer.recognize_patterns("code", "test.py")
 
@@ -903,11 +892,11 @@ def empty_method():
         """测试检测后统计信息更新"""
         recognizer = PatternRecognizer()
 
-        code = '''
+        code = """
 def test():
     x = 1
     return x
-'''
+"""
         recognizer.recognize_patterns(code, "test.py")
 
         stats = recognizer.get_statistics()
@@ -919,13 +908,13 @@ def test():
         files = []
         for i in range(3):
             file_path = tmp_path / f"test_{i}.py"
-            with open(file_path, 'w') as f:
-                f.write(f'''
+            with open(file_path, "w") as f:
+                f.write(f"""
 def function_{i}():
     unused_var_{i} = {i}
     password_{i} = "secret{i}"
     return {i}
-''')
+""")
             files.append(file_path)
 
         recognizer = PatternRecognizer()
@@ -967,11 +956,11 @@ class TestPatternRecognitionEdgeCases:
 
     def test_code_with_syntax_errors(self):
         """测试有语法错误的代码"""
-        code = '''
+        code = """
 def broken(
     # Missing closing parenthesis
     return 1
-'''
+"""
         recognizer = PatternRecognizer()
         findings = recognizer.recognize_patterns(code, "test.py")
         # 应该优雅处理语法错误
@@ -979,22 +968,22 @@ def broken(
 
     def test_very_long_line(self):
         """测试非常长的行"""
-        code = f'''def long_line():
+        code = f"""def long_line():
     x = "{'a' * 10000}"
     return x
-'''
+"""
         detector = LongMethodDetector(threshold=5)
         findings = detector.detect(code, "test.py")
         assert isinstance(findings, list)
 
     def test_unicode_in_code(self):
         """测试代码中的Unicode字符"""
-        code = '''
+        code = """
 def unicode_function():
     # 中文注释
     message = "Hello 世界 🌍"
     return message
-'''
+"""
         recognizer = PatternRecognizer()
         findings = recognizer.recognize_patterns(code, "test.py")
         # 应该正常处理Unicode
@@ -1002,27 +991,27 @@ def unicode_function():
 
     def test_nested_classes_and_functions(self):
         """测试嵌套的类和函数"""
-        code = '''
+        code = """
 class Outer:
     class Inner:
         def method(self):
             def nested():
                 pass
             return nested
-'''
+"""
         recognizer = PatternRecognizer()
         findings = recognizer.recognize_patterns(code, "test.py")
         assert isinstance(findings, list)
 
     def test_async_functions(self):
         """测试异步函数"""
-        code = '''
+        code = """
 async def async_function():
     async for item in async_iter:
         if item:
             async with context():
                 await process(item)
-'''
+"""
         recognizer = PatternRecognizer()
         findings = recognizer.recognize_patterns(code, "test.py")
         assert isinstance(findings, list)
@@ -1041,17 +1030,18 @@ class TestPatternRecognitionPerformance:
         # 创建一个大文件
         code_lines = []
         for i in range(100):
-            code_lines.append(f'''
+            code_lines.append(f"""
 def function_{i}():
     x{i} = {i}
     y{i} = {i * 2}
     z{i} = {i * 3}
     return x{i} + y{i} + z{i}
-''')
+""")
 
-        code = '\n'.join(code_lines)
+        code = "\n".join(code_lines)
 
         import time
+
         recognizer = PatternRecognizer()
 
         start = time.time()

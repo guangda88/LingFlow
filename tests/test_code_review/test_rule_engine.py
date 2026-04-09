@@ -5,15 +5,17 @@
 """
 
 import ast
-import pytest
 from pathlib import Path
+
+import pytest
+
 from lingflow.code_review.core.rule_engine import RuleEngine
 from lingflow.code_review.core.rules.models import (
     Rule,
     RuleEngineError,
     RuleNotFoundError,
-    RuleValidationError,
     RuleResult,
+    RuleValidationError,
 )
 from lingflow.code_review.core.severity import Severity
 
@@ -21,6 +23,7 @@ from lingflow.code_review.core.severity import Severity
 def _make_rule(rule_id="TEST001", name="test_rule", category="test", severity=Severity.LOW):
     def dummy_check(content, tree, path):
         return None
+
     return Rule(
         id=rule_id,
         name=name,
@@ -214,6 +217,7 @@ class TestRuleCheckFunctions:
 
     def test_sql_injection_check_func(self):
         import re
+
         def check_sql(content, tree, path):
             pattern = r'execute\s*\(\s*["\'].*?\+\s*\w+'
             if re.search(pattern, content):

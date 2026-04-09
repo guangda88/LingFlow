@@ -42,9 +42,8 @@ def sample_result_with_history():
             {"experiment_id": 1, "params": {"max_class_size": 200}, "score": 4.0},
             {"experiment_id": 2, "params": {"max_class_size": 150}, "score": 6.0},
             {"experiment_id": 3, "params": {"max_class_size": 100, "extra": "x", "more": "y", "last": "z"}, "score": 5.5},
-        ] + [
-            {"experiment_id": i, "params": {"k": i}, "score": float(i)} for i in range(4, 14)
-        ],
+        ]
+        + [{"experiment_id": i, "params": {"k": i}, "score": float(i)} for i in range(4, 14)],
     )
 
 
@@ -212,10 +211,7 @@ class TestGenerateReportHistory:
             best_score=8.0,
             experiments=15,
             duration=20.0,
-            history=[
-                {"experiment_id": i, "params": {"k": i}, "score": float(i)}
-                for i in range(15)
-            ],
+            history=[{"experiment_id": i, "params": {"k": i}, "score": float(i)} for i in range(15)],
         )
         report = advisor.generate_report("structure", "/path", {}, result)
         assert "15 次实验" in report

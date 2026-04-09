@@ -5,18 +5,18 @@
 
 from lingflow.requirements.traceability import (
     Requirement,
-    RequirementStatus,
     RequirementPriority,
+    RequirementStatus,
     RequirementsTraceability,
     TraceEvent,
-    get_traceability,
+    add_commit,
     create_requirement,
     get_requirement,
-    update_requirement,
-    list_requirements,
-    link_to_branch,
-    add_commit,
+    get_traceability,
     get_traceability_report,
+    link_to_branch,
+    list_requirements,
+    update_requirement,
 )
 
 __all__ = [

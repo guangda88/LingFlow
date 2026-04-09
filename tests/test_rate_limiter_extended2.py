@@ -1,4 +1,5 @@
 """Extended tests for rate_limiter covering remaining gaps."""
+
 import asyncio
 import threading
 import time
@@ -128,6 +129,7 @@ class TestAPIClientGetStats:
         async def run():
             async def func():
                 return "ok"
+
             await client.request_async(func)
 
         asyncio.run(run())
@@ -216,8 +218,7 @@ class TestSmartRetryCallback:
 
         async def run():
             return await retry.execute_async(
-                func,
-                on_retry=lambda attempt, error, delay: callback_log.append((attempt, str(error), delay))
+                func, on_retry=lambda attempt, error, delay: callback_log.append((attempt, str(error), delay))
             )
 
         result = asyncio.run(run())

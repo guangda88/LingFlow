@@ -1,18 +1,14 @@
 """Environment Manager 测试配置和 fixture"""
 
-import pytest
 from pathlib import Path
+
+import pytest
 
 
 @pytest.fixture
 def sample_env_dict():
     """示例环境变量字典"""
-    return {
-        'DATABASE_URL': 'postgresql://localhost/mydb',
-        'REDIS_URL': 'redis://localhost/0',
-        'DEBUG': 'true',
-        'PORT': '8000'
-    }
+    return {"DATABASE_URL": "postgresql://localhost/mydb", "REDIS_URL": "redis://localhost/0", "DEBUG": "true", "PORT": "8000"}
 
 
 @pytest.fixture
@@ -49,16 +45,13 @@ app:
 @pytest.fixture(scope="session")
 def env_manager_module():
     """加载 environment-manager 模块"""
-    import sys
     import importlib.util
+    import sys
     from pathlib import Path
 
     skills_dir = Path(__file__).parent.parent.parent / "skills"
-    module_path = skills_dir / 'environment-manager' / "implementation.py"
-    spec = importlib.util.spec_from_file_location(
-        "environment_manager_implementation",
-        module_path
-    )
+    module_path = skills_dir / "environment-manager" / "implementation.py"
+    spec = importlib.util.spec_from_file_location("environment_manager_implementation", module_path)
     module = importlib.util.module_from_spec(spec)
     sys.modules["environment_manager_implementation"] = module
     spec.loader.exec_module(module)

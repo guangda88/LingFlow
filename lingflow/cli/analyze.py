@@ -67,9 +67,10 @@ def run_analyze(target, metrics, output, format, verbose):
 @click.option("--verbose", "-v", is_flag=True, help="详细输出")
 def analyze_complexity(target, threshold, verbose=False):
     """分析代码复杂度"""
-    from lingflow.self_optimizer.evaluator import StructureEvaluator
     import ast
     from pathlib import Path
+
+    from lingflow.self_optimizer.evaluator import StructureEvaluator
 
     click.echo(f"\n🔍 分析复杂度: {target}")
     click.echo(f"阈值: {threshold}")

@@ -10,7 +10,7 @@ from collections import Counter
 from datetime import datetime
 from typing import List, Optional, Set
 
-from .models import FeedbackItem, LearnedRule, Pattern, FeedbackCategory
+from .models import FeedbackCategory, FeedbackItem, LearnedRule, Pattern
 
 
 class RuleExtractor:

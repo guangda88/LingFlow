@@ -5,7 +5,7 @@ LingFlow Phase 4 集成到现有 self_optimizer
 """
 
 import logging
-from typing import Dict, Any
+from typing import Any, Dict
 
 logger = logging.getLogger(__name__)
 

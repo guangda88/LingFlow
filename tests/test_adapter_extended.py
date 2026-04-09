@@ -1,15 +1,16 @@
 import json
-import pytest
 from pathlib import Path
-from unittest.mock import patch, mock_open
+from unittest.mock import mock_open, patch
+
+import pytest
 
 from lingflow.coordination.adapter import (
     AgentAdapter,
-    SkillAdapter,
     CapabilityMatcher,
+    SkillAdapter,
+    create_matcher,
     load_agents,
     load_skills,
-    create_matcher,
 )
 
 
@@ -211,11 +212,13 @@ class TestSkillAdapterConversion:
         assert cats["unknown-skill"] == "other"
 
     def test_v1_to_v2_capability_mapping(self):
-        v1 = {"skills": [
-            {"name": "writing-plans", "triggers": ["plan"]},
-            {"name": "test-driven-development", "triggers": ["tdd"]},
-            {"name": "systematic-debugging", "triggers": ["debug"]},
-        ]}
+        v1 = {
+            "skills": [
+                {"name": "writing-plans", "triggers": ["plan"]},
+                {"name": "test-driven-development", "triggers": ["tdd"]},
+                {"name": "systematic-debugging", "triggers": ["debug"]},
+            ]
+        }
         v2 = SkillAdapter.v1_to_v2(v1)
         caps = {s["name"]: s["requires_capability"] for s in v2["skills"]}
         assert caps["writing-plans"] == "system_design"
@@ -223,14 +226,16 @@ class TestSkillAdapterConversion:
         assert caps["systematic-debugging"] == ["error_analysis", "log_analysis"]
 
     def test_v1_to_v2_phase_mapping(self):
-        v1 = {"skills": [
-            {"name": "brainstorming", "triggers": []},
-            {"name": "writing-plans", "triggers": []},
-            {"name": "test-driven-development", "triggers": []},
-            {"name": "systematic-debugging", "triggers": []},
-            {"name": "subagent-driven-development", "triggers": []},
-            {"name": "verification-before-completion", "triggers": []},
-        ]}
+        v1 = {
+            "skills": [
+                {"name": "brainstorming", "triggers": []},
+                {"name": "writing-plans", "triggers": []},
+                {"name": "test-driven-development", "triggers": []},
+                {"name": "systematic-debugging", "triggers": []},
+                {"name": "subagent-driven-development", "triggers": []},
+                {"name": "verification-before-completion", "triggers": []},
+            ]
+        }
         v2 = SkillAdapter.v1_to_v2(v1)
         phases = {s["name"]: s["phase"] for s in v2["skills"]}
         assert phases["brainstorming"] == "requirements"
@@ -330,28 +335,37 @@ class TestCapabilityMatcherExtended:
 
     def test_match_skill_with_requires_capability(self, agents_config):
         matcher = CapabilityMatcher(agents_config)
-        result = matcher.match_skill_to_agent({
-            "name": "test-skill",
-            "requires_capability": "error_analysis",
-        })
+        result = matcher.match_skill_to_agent(
+            {
+                "name": "test-skill",
+                "requires_capability": "error_analysis",
+            }
+        )
         assert result is not None
         assert result["name"] == "debugger"
 
     def test_match_skill_preferred_agent_overrides(self, agents_config):
         matcher = CapabilityMatcher(agents_config)
-        result = matcher.match_skill_to_agent({
-            "name": "test-skill",
-            "preferred_agent": "tester",
-            "requires_capability": "code_review",
-        })
+        result = matcher.match_skill_to_agent(
+            {
+                "name": "test-skill",
+                "preferred_agent": "tester",
+                "requires_capability": "code_review",
+            }
+        )
         assert result["name"] == "tester"
 
     def test_match_skill_unresolvable_capability(self, agents_config):
         matcher = CapabilityMatcher(agents_config)
-        assert matcher.match_skill_to_agent({
-            "name": "test-skill",
-            "requires_capability": "nonexistent",
-        }) is None
+        assert (
+            matcher.match_skill_to_agent(
+                {
+                    "name": "test-skill",
+                    "requires_capability": "nonexistent",
+                }
+            )
+            is None
+        )
 
 
 class TestConvenienceFunctions:

@@ -6,9 +6,9 @@ LingFlow Phase 4: 多目标优化器实现
 """
 
 import logging
-from typing import Dict, Any, List, Callable, Optional
-from dataclasses import dataclass, field
 import time
+from dataclasses import dataclass, field
+from typing import Any, Callable, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 

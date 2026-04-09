@@ -7,34 +7,34 @@
 - PromptRouter
 """
 
-import sys
-import unittest
-import tempfile
 import shutil
+import sys
+import tempfile
+import unittest
 from pathlib import Path
 
 # 添加项目路径
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from lingflow.core import (
-    SessionManager,
-    SessionSnapshot,
+    PromptRouter,
     QueryEngine,
     QueryEngineConfig,
-    TurnResult,
+    RouteRule,
+    RouteStrategy,
+    RouteTarget,
+    SessionManager,
+    SessionSnapshot,
     StopReason,
+    TurnResult,
     UsageSummary,
     create_default_engine,
-    PromptRouter,
-    RouteRule,
-    RouteTarget,
-    RouteStrategy,
 )
-
 
 # ============================================================================
 # Session v2 测试
 # ============================================================================
+
 
 class TestSessionV2(unittest.TestCase):
     """Session v2单元测试"""
@@ -42,9 +42,7 @@ class TestSessionV2(unittest.TestCase):
     def setUp(self):
         """测试设置"""
         self.temp_dir = tempfile.mkdtemp()
-        self.manager = SessionManager(
-            session_dir=Path(self.temp_dir)
-        )
+        self.manager = SessionManager(session_dir=Path(self.temp_dir))
 
     def tearDown(self):
         """测试清理"""
@@ -55,10 +53,10 @@ class TestSessionV2(unittest.TestCase):
         self.manager.add_message("测试消息", input_tokens=10, output_tokens=5)
         summary = self.manager.get_usage_summary()
 
-        self.assertEqual(summary['message_count'], 1)
-        self.assertEqual(summary['input_tokens'], 10)
-        self.assertEqual(summary['output_tokens'], 5)
-        self.assertEqual(summary['total_tokens'], 15)
+        self.assertEqual(summary["message_count"], 1)
+        self.assertEqual(summary["input_tokens"], 10)
+        self.assertEqual(summary["output_tokens"], 5)
+        self.assertEqual(summary["total_tokens"], 15)
 
     def test_multiple_messages(self):
         """测试多条消息"""
@@ -66,8 +64,8 @@ class TestSessionV2(unittest.TestCase):
             self.manager.add_message(f"消息{i}", input_tokens=10, output_tokens=5)
 
         summary = self.manager.get_usage_summary()
-        self.assertEqual(summary['message_count'], 5)
-        self.assertEqual(summary['total_tokens'], 75)
+        self.assertEqual(summary["message_count"], 5)
+        self.assertEqual(summary["total_tokens"], 75)
 
     def test_create_snapshot(self):
         """测试创建快照"""
@@ -107,26 +105,23 @@ class TestSessionV2(unittest.TestCase):
 
         summary = self.manager.get_usage_summary()
 
-        self.assertIn('message_count', summary)
-        self.assertIn('input_tokens', summary)
-        self.assertIn('output_tokens', summary)
-        self.assertIn('total_tokens', summary)
+        self.assertIn("message_count", summary)
+        self.assertIn("input_tokens", summary)
+        self.assertIn("output_tokens", summary)
+        self.assertIn("total_tokens", summary)
 
 
 # ============================================================================
 # QueryEngine 测试
 # ============================================================================
 
+
 class TestQueryEngine(unittest.TestCase):
     """QueryEngine单元测试"""
 
     def setUp(self):
         """测试设置"""
-        self.config = QueryEngineConfig(
-            max_turns=5,
-            max_budget_tokens=1000,
-            auto_compact=True
-        )
+        self.config = QueryEngineConfig(max_turns=5, max_budget_tokens=1000, auto_compact=True)
         self.engine = QueryEngine(self.config)
 
     def test_basic_query(self):
@@ -146,8 +141,8 @@ class TestQueryEngine(unittest.TestCase):
             self.assertEqual(result.stop_reason, StopReason.COMPLETED)
 
         stats = self.engine.get_stats()
-        self.assertEqual(stats['turn_count'], 3)
-        self.assertEqual(stats['message_count'], 6)  # 每轮2条消息
+        self.assertEqual(stats["turn_count"], 3)
+        self.assertEqual(stats["message_count"], 6)  # 每轮2条消息
 
     def test_max_turns_limit(self):
         """测试最大轮数限制"""
@@ -169,40 +164,30 @@ class TestQueryEngine(unittest.TestCase):
         result2 = self.engine.submit("查询2")
 
         usage = self.engine.usage_summary
-        self.assertEqual(usage.total_input_tokens,
-                        result1.input_tokens + result2.input_tokens)
-        self.assertEqual(usage.total_output_tokens,
-                        result1.output_tokens + result2.output_tokens)
+        self.assertEqual(usage.total_input_tokens, result1.input_tokens + result2.input_tokens)
+        self.assertEqual(usage.total_output_tokens, result1.output_tokens + result2.output_tokens)
 
     def test_tool_matching(self):
         """测试工具匹配"""
         tools = ["code_analyzer", "file_reader", "test_runner"]
-        result = self.engine.submit(
-            "请使用code_analyzer工具分析代码",
-            tools=tools
-        )
+        result = self.engine.submit("请使用code_analyzer工具分析代码", tools=tools)
 
         self.assertIn("code_analyzer", result.matched_tools)
 
     def test_agent_matching(self):
         """测试Agent匹配"""
         agents = ["code_reviewer", "optimizer", "documenter"]
-        result = self.engine.submit(
-            "请让code_reviewer审查代码",
-            agents=agents
-        )
+        result = self.engine.submit("请让code_reviewer审查代码", agents=agents)
 
         self.assertIn("code_reviewer", result.matched_agents)
 
     def test_custom_processor(self):
         """测试自定义处理函数"""
+
         def custom_func(prompt: str) -> str:
             return f"处理结果: {prompt.upper()}"
 
-        result = self.engine.submit(
-            "测试",
-            process_func=custom_func
-        )
+        result = self.engine.submit("测试", process_func=custom_func)
 
         self.assertEqual(result.output, "处理结果: 测试")
 
@@ -221,7 +206,7 @@ class TestQueryEngine(unittest.TestCase):
             loaded_engine = QueryEngine.load_state(state_path)
 
             stats = loaded_engine.get_stats()
-            self.assertEqual(stats['turn_count'], 2)
+            self.assertEqual(stats["turn_count"], 2)
 
         finally:
             shutil.rmtree(temp_dir)
@@ -234,8 +219,8 @@ class TestQueryEngine(unittest.TestCase):
         self.engine.reset()
 
         stats = self.engine.get_stats()
-        self.assertEqual(stats['turn_count'], 0)
-        self.assertEqual(stats['message_count'], 0)
+        self.assertEqual(stats["turn_count"], 0)
+        self.assertEqual(stats["message_count"], 0)
 
     def test_get_history(self):
         """测试获取历史"""
@@ -252,6 +237,7 @@ class TestQueryEngine(unittest.TestCase):
 # PromptRouter 测试
 # ============================================================================
 
+
 class TestPromptRouter(unittest.TestCase):
     """PromptRouter单元测试"""
 
@@ -260,31 +246,15 @@ class TestPromptRouter(unittest.TestCase):
         self.router = PromptRouter()
 
         # 添加测试目标
-        self.target1 = RouteTarget(
-            name="test_agent1",
-            agent_type="TestAgent1",
-            description="测试Agent 1"
-        )
-        self.target2 = RouteTarget(
-            name="test_agent2",
-            agent_type="TestAgent2",
-            description="测试Agent 2"
-        )
+        self.target1 = RouteTarget(name="test_agent1", agent_type="TestAgent1", description="测试Agent 1")
+        self.target2 = RouteTarget(name="test_agent2", agent_type="TestAgent2", description="测试Agent 2")
 
         self.router.add_target(self.target1)
         self.router.add_target(self.target2)
 
         # 添加测试规则
-        self.rule1 = RouteRule(
-            name="test_rule1",
-            keywords=["测试", "test"],
-            metadata={"target_name": "test_agent1"}
-        )
-        self.rule2 = RouteRule(
-            name="test_rule2",
-            keywords=["代码", "code"],
-            metadata={"target_name": "test_agent2"}
-        )
+        self.rule1 = RouteRule(name="test_rule1", keywords=["测试", "test"], metadata={"target_name": "test_agent1"})
+        self.rule2 = RouteRule(name="test_rule2", keywords=["代码", "code"], metadata={"target_name": "test_agent2"})
 
         self.router.add_rule(self.rule1)
         self.router.add_rule(self.rule2)
@@ -305,14 +275,10 @@ class TestPromptRouter(unittest.TestCase):
         result2 = self.router.route("分析代码")
 
         # "测试代码"应该匹配test_rule1
-        self.assertTrue(
-            any("test_rule1" in match[0] for match in result1.matched_rules)
-        )
+        self.assertTrue(any("test_rule1" in match[0] for match in result1.matched_rules))
 
         # "分析代码"应该匹配test_rule2
-        self.assertTrue(
-            any("test_rule2" in match[0] for match in result2.matched_rules)
-        )
+        self.assertTrue(any("test_rule2" in match[0] for match in result2.matched_rules))
 
     def test_no_match_default(self):
         """测试无匹配时使用默认目标"""
@@ -338,21 +304,16 @@ class TestPromptRouter(unittest.TestCase):
     def test_route_statistics(self):
         """测试路由统计"""
         # 执行多次路由
-        prompts = [
-            "测试请求1",
-            "测试请求2",
-            "代码请求1",
-            "测试请求3"
-        ]
+        prompts = ["测试请求1", "测试请求2", "代码请求1", "测试请求3"]
 
         for prompt in prompts:
             self.router.route(prompt)
 
         stats = self.router.get_statistics()
 
-        self.assertEqual(stats['total_routes'], 4)
-        self.assertGreater(stats['avg_confidence'], 0)
-        self.assertGreater(len(stats['most_used_targets']), 0)
+        self.assertEqual(stats["total_routes"], 4)
+        self.assertGreater(stats["avg_confidence"], 0)
+        self.assertGreater(len(stats["most_used_targets"]), 0)
 
     def test_config_persistence(self):
         """测试配置持久化"""
@@ -380,31 +341,25 @@ class TestPromptRouter(unittest.TestCase):
         self.router.route("测试2")
 
         stats_before = self.router.get_statistics()
-        self.assertEqual(stats_before['total_routes'], 2)
+        self.assertEqual(stats_before["total_routes"], 2)
 
         self.router.clear_history()
 
         stats_after = self.router.get_statistics()
-        self.assertEqual(stats_after['total_routes'], 0)
+        self.assertEqual(stats_after["total_routes"], 0)
 
     def test_pattern_matching(self):
         """测试模式匹配"""
         router = PromptRouter()
 
-        router.add_target(
-            RouteTarget(
-                name="email_agent",
-                agent_type="EmailAgent",
-                description="邮件处理"
-            )
-        )
+        router.add_target(RouteTarget(name="email_agent", agent_type="EmailAgent", description="邮件处理"))
 
         # 添加正则表达式规则
         rule = RouteRule(
             name="email_pattern",
-            patterns=[r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'],
+            patterns=[r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"],
             strategy=RouteStrategy.PATTERN_MATCH,
-            metadata={"target_name": "email_agent"}
+            metadata={"target_name": "email_agent"},
         )
         router.add_rule(rule)
 
@@ -416,28 +371,12 @@ class TestPromptRouter(unittest.TestCase):
         """测试优先级系统"""
         router = PromptRouter()
 
-        router.add_target(
-            RouteTarget(
-                name="test_agent",
-                agent_type="TestAgent",
-                description="测试"
-            )
-        )
+        router.add_target(RouteTarget(name="test_agent", agent_type="TestAgent", description="测试"))
 
         # 添加不同优先级的规则
-        rule1 = RouteRule(
-            name="low_priority",
-            keywords=["帮助"],
-            priority=0,
-            metadata={"target_name": "test_agent"}
-        )
+        rule1 = RouteRule(name="low_priority", keywords=["帮助"], priority=0, metadata={"target_name": "test_agent"})
 
-        rule2 = RouteRule(
-            name="high_priority",
-            keywords=["帮助"],
-            priority=5,
-            metadata={"target_name": "test_agent"}
-        )
+        rule2 = RouteRule(name="high_priority", keywords=["帮助"], priority=5, metadata={"target_name": "test_agent"})
 
         router.add_rule(rule1)
         router.add_rule(rule2)
@@ -452,6 +391,7 @@ class TestPromptRouter(unittest.TestCase):
 # ============================================================================
 # 测试运行器
 # ============================================================================
+
 
 def run_tests():
     """运行所有测试"""

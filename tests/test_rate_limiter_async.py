@@ -1,11 +1,11 @@
 import pytest
 
 from lingflow.utils.rate_limiter import (
+    APIClient,
+    ConcurrencyController,
     RateLimitConfig,
     RateLimiter,
     SmartRetry,
-    ConcurrencyController,
-    APIClient,
 )
 
 

@@ -1,16 +1,17 @@
-import pytest
-import tempfile
 import json
+import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 from lingflow.compression.config import (
     CompressionConfig,
     ConversationCompressor,
-    get_conversation_compressor,
     compress_if_needed,
     compress_messages,
     enable_auto_compression,
+    get_conversation_compressor,
 )
 
 
@@ -122,6 +123,7 @@ class TestConversationCompressor:
 class TestGetConversationCompressor:
     def test_singleton(self):
         import lingflow.compression.config as mod
+
         mod._conversation_compressor = None
         c1 = get_conversation_compressor()
         c2 = get_conversation_compressor()
@@ -130,6 +132,7 @@ class TestGetConversationCompressor:
 
     def test_with_config(self):
         import lingflow.compression.config as mod
+
         mod._conversation_compressor = None
         cfg = CompressionConfig({"enabled": False})
         c = get_conversation_compressor(config=cfg)
@@ -140,6 +143,7 @@ class TestGetConversationCompressor:
 class TestCompressIfNeeded:
     def test_small_context(self):
         import lingflow.compression.config as mod
+
         mod._conversation_compressor = None
         result = compress_if_needed({"key": "small"})
         assert isinstance(result, dict)
@@ -149,6 +153,7 @@ class TestCompressIfNeeded:
 class TestCompressMessages:
     def test_short_messages(self):
         import lingflow.compression.config as mod
+
         mod._conversation_compressor = None
         msgs = [{"role": "user", "content": "hi"}]
         result = compress_messages(msgs)
@@ -159,6 +164,7 @@ class TestCompressMessages:
 class TestEnableAutoCompression:
     def test_enable(self):
         import lingflow.compression.config as mod
+
         mod._conversation_compressor = None
         enable_auto_compression(threshold_tokens=1000)
         c = get_conversation_compressor()

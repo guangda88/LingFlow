@@ -34,55 +34,55 @@ __author__ = "LingFlow Team"
 #     LearningResult,
 # )
 
-# 数据模型导出
-from lingflow.self_optimizer.phase5.models import (
-    FeedbackItem,
-    ToolType,
-    FeedbackCategory,
-    FeedbackSeverity,
-    SeverityLevel,
-    LearnedRule,
-    Pattern,
-)
-
-# 学习引擎导出
-from lingflow.self_optimizer.phase5.learning import (
-    RuleExtractor,
-    SecurityRuleExtractor,
-    RuleDeduplicator,
-    RuleValidator,
-)
-
-# 模式识别导出
-from lingflow.self_optimizer.phase5.patterns import (
-    PatternRecognizer,
-    PatternDetector,
-    LongMethodDetector,
-    UnusedVariableDetector,
-    HardcodedSecretDetector,
-    DuplicateCodeDetector,
-    EmptyBlockDetector,
-    ComplexityDetector,
-)
-
-# 知识库导出
-from lingflow.self_optimizer.phase5.knowledge import (
-    KnowledgeBase,
-    InMemoryKnowledgeBase,
-)
-
 # 规则应用导出
 from lingflow.self_optimizer.phase5.applier import (
-    RuleApplier,
     AutoFixer,
     PreCommitHookGenerator,
+    RuleApplier,
 )
 
 # 反馈循环导出
 from lingflow.self_optimizer.phase5.feedback import (
     FeedbackCollector,
-    RuleQualityAdjuster,
     FeedbackLoop,
+    RuleQualityAdjuster,
+)
+
+# 知识库导出
+from lingflow.self_optimizer.phase5.knowledge import (
+    InMemoryKnowledgeBase,
+    KnowledgeBase,
+)
+
+# 学习引擎导出
+from lingflow.self_optimizer.phase5.learning import (
+    RuleDeduplicator,
+    RuleExtractor,
+    RuleValidator,
+    SecurityRuleExtractor,
+)
+
+# 数据模型导出
+from lingflow.self_optimizer.phase5.models import (
+    FeedbackCategory,
+    FeedbackItem,
+    FeedbackSeverity,
+    LearnedRule,
+    Pattern,
+    SeverityLevel,
+    ToolType,
+)
+
+# 模式识别导出
+from lingflow.self_optimizer.phase5.patterns import (
+    ComplexityDetector,
+    DuplicateCodeDetector,
+    EmptyBlockDetector,
+    HardcodedSecretDetector,
+    LongMethodDetector,
+    PatternDetector,
+    PatternRecognizer,
+    UnusedVariableDetector,
 )
 
 # 便捷函数（待core模块实现后启用）

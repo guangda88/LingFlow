@@ -3,11 +3,12 @@ InMemoryTransport 单元测试
 """
 
 import asyncio
+
 import pytest
 
 from lingflow.communication import (
-    MessageEnvelope,
     InMemoryTransport,
+    MessageEnvelope,
     MessageTypeRegistry,
 )
 

@@ -104,10 +104,7 @@ class KnowledgeSync:
                 content = report_file.read_text(encoding="utf-8")
 
                 # Extract knowledge items from report
-                items = self._extract_items_from_report(
-                    content,
-                    report_file.name
-                )
+                items = self._extract_items_from_report(content, report_file.name)
 
                 for item in items:
                     # In a real implementation, this would store in the knowledge DB
@@ -174,10 +171,7 @@ class KnowledgeSync:
 
             for section_title, section_content in sections.items():
                 # Extract key decisions and patterns
-                items = self._extract_items_from_section(
-                    section_title,
-                    section_content
-                )
+                items = self._extract_items_from_section(section_title, section_content)
                 result.items_added += len(items)
 
         except Exception as e:
@@ -202,16 +196,12 @@ class KnowledgeSync:
 
         return results
 
-    def _extract_items_from_report(
-        self,
-        content: str,
-        source_file: str
-    ) -> List[KnowledgeItem]:
+    def _extract_items_from_report(self, content: str, source_file: str) -> List[KnowledgeItem]:
         """Extract knowledge items from a research report"""
         items = []
 
         # Look for code blocks with patterns
-        code_blocks = re.findall(r'```(\w+)?\n(.*?)```', content, re.DOTALL)
+        code_blocks = re.findall(r"```(\w+)?\n(.*?)```", content, re.DOTALL)
 
         for lang, code in code_blocks:
             if len(code) > 50:  # Filter out trivial blocks
@@ -229,7 +219,7 @@ class KnowledgeSync:
                 items.append(item)
 
         # Look for TODO/FIXME items
-        todos = re.findall(r'(?:TODO|FIXME):?\s*(.+)', content)
+        todos = re.findall(r"(?:TODO|FIXME):?\s*(.+)", content)
         for todo in todos:
             item = KnowledgeItem(
                 title=f"Action Item from {source_file}",
@@ -266,18 +256,14 @@ class KnowledgeSync:
 
         return sections
 
-    def _extract_items_from_section(
-        self,
-        title: str,
-        content: str
-    ) -> List[KnowledgeItem]:
+    def _extract_items_from_section(self, title: str, content: str) -> List[KnowledgeItem]:
         """Extract knowledge items from a memory section"""
         items = []
 
         # Extract key-value pairs
         patterns = [
-            r'###?\s*\*\*(.+?)\*\*:\s*(.+)',  # **Key**: Value
-            r'###?\s*(.+?):\s*(.+)',           # Key: Value
+            r"###?\s*\*\*(.+?)\*\*:\s*(.+)",  # **Key**: Value
+            r"###?\s*(.+?):\s*(.+)",  # Key: Value
         ]
 
         for pattern in patterns:

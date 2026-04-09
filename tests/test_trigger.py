@@ -1,12 +1,13 @@
-import pytest
-import tempfile
 import os
-from pathlib import Path
-from unittest.mock import patch, MagicMock
+import tempfile
 from datetime import datetime, timedelta
+from pathlib import Path
+from unittest.mock import MagicMock, patch
 
-from lingflow.self_optimizer.trigger import OptimizationTrigger, TriggerInfo
+import pytest
+
 from lingflow.self_optimizer.config import OptimizationConfig, get_global_config, set_global_config
+from lingflow.self_optimizer.trigger import OptimizationTrigger, TriggerInfo
 
 
 class TestTriggerInfo:
@@ -214,20 +215,24 @@ class TestCheckStructure:
 class TestCheckPerformance:
     def test_execution_time_increase(self):
         trigger = OptimizationTrigger()
-        result = trigger._check_performance({
-            "execution_time": 3.0,
-            "baseline_time": 1.0,
-        })
+        result = trigger._check_performance(
+            {
+                "execution_time": 3.0,
+                "baseline_time": 1.0,
+            }
+        )
         assert result is not None
         assert result.type == "performance"
         assert result.priority == "high"
 
     def test_execution_time_ok(self):
         trigger = OptimizationTrigger()
-        result = trigger._check_performance({
-            "execution_time": 1.2,
-            "baseline_time": 1.0,
-        })
+        result = trigger._check_performance(
+            {
+                "execution_time": 1.2,
+                "baseline_time": 1.0,
+            }
+        )
         assert result is None
 
     def test_execution_time_no_baseline(self):

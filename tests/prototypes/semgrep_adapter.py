@@ -10,14 +10,15 @@ import json
 import subprocess
 import tempfile
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from datetime import datetime
 
 
 class SemgrepSeverity(Enum):
     """Semgrep严重性级别映射"""
+
     ERROR = "ERROR"
     WARNING = "WARNING"
     INFO = "INFO"
@@ -26,6 +27,7 @@ class SemgrepSeverity(Enum):
 @dataclass
 class SemgrepFinding:
     """Semgrep发现结果"""
+
     rule_id: str
     severity: SemgrepSeverity
     message: str
@@ -42,6 +44,7 @@ class SemgrepFinding:
 @dataclass
 class AIFeedback:
     """标准化AI反馈格式（Phase 5规范）"""
+
     source: str  # 工具名称，如 "semgrep"
     category: str  # 反馈类别
     severity: str  # 严重性
@@ -64,11 +67,7 @@ class SemgrepAdapter:
     5. 错误处理和超时
     """
 
-    def __init__(
-        self,
-        semgrep_path: str = "/tmp/semgrep_venv/bin/semgrep",
-        timeout: int = 300
-    ):
+    def __init__(self, semgrep_path: str = "/tmp/semgrep_venv/bin/semgrep", timeout: int = 300):
         """初始化适配器
 
         Args:
@@ -82,12 +81,7 @@ class SemgrepAdapter:
     def _validate_installation(self) -> None:
         """验证Semgrep是否可用"""
         try:
-            result = subprocess.run(
-                [self.semgrep_path, "--version"],
-                capture_output=True,
-                timeout=10,
-                text=True
-            )
+            result = subprocess.run([self.semgrep_path, "--version"], capture_output=True, timeout=10, text=True)
             if result.returncode != 0:
                 raise RuntimeError(f"Semgrep验证失败: {result.stderr}")
         except FileNotFoundError:
@@ -101,7 +95,7 @@ class SemgrepAdapter:
         rules: Optional[List[str]] = None,
         config: Optional[str] = None,
         incremental: bool = False,
-        base_ref: Optional[str] = None
+        base_ref: Optional[str] = None,
     ) -> List[AIFeedback]:
         """执行Semgrep扫描
 
@@ -128,7 +122,7 @@ class SemgrepAdapter:
                 capture_output=True,
                 timeout=self.timeout,
                 text=True,
-                cwd=str(target_path.parent) if target_path.is_file() else str(target_path)
+                cwd=str(target_path.parent) if target_path.is_file() else str(target_path),
             )
 
             if result.returncode == 0 or result.returncode == 1:
@@ -143,12 +137,7 @@ class SemgrepAdapter:
             raise RuntimeError(f"Semgrep输出解析失败: {e}")
 
     def _build_command(
-        self,
-        target: str,
-        rules: Optional[List[str]],
-        config: Optional[str],
-        incremental: bool,
-        base_ref: Optional[str]
+        self, target: str, rules: Optional[List[str]], config: Optional[str], incremental: bool, base_ref: Optional[str]
     ) -> List[str]:
         """构建Semgrep命令"""
         cmd = [
@@ -276,22 +265,18 @@ class SemgrepAdapter:
         rule_id = finding.rule_id.lower()
 
         # 安全相关
-        if any(keyword in rule_id for keyword in [
-            "security", "injection", "xss", "sql", "csrf",
-            "auth", "crypto", "tls", "ssl", "password"
-        ]):
+        if any(
+            keyword in rule_id
+            for keyword in ["security", "injection", "xss", "sql", "csrf", "auth", "crypto", "tls", "ssl", "password"]
+        ):
             return "security"
 
         # 性能相关
-        if any(keyword in rule_id for keyword in [
-            "performance", "slow", "inefficient", "leak"
-        ]):
+        if any(keyword in rule_id for keyword in ["performance", "slow", "inefficient", "leak"]):
             return "performance"
 
         # 代码质量
-        if any(keyword in rule_id for keyword in [
-            "code-quality", "complexity", "duplicate", "smell"
-        ]):
+        if any(keyword in rule_id for keyword in ["code-quality", "complexity", "duplicate", "smell"]):
             return "code_quality"
 
         # 默认
@@ -301,6 +286,7 @@ class SemgrepAdapter:
 # ============================================================================
 # 使用示例和测试
 # ============================================================================
+
 
 def test_basic_scan():
     """测试基本扫描功能"""
@@ -337,11 +323,7 @@ def test_incremental_scan():
 
     try:
         # 仅扫描git diff
-        findings = adapter.scan(
-            target="/home/ai/LingFlow",
-            incremental=True,
-            base_ref="HEAD~1"
-        )
+        findings = adapter.scan(target="/home/ai/LingFlow", incremental=True, base_ref="HEAD~1")
 
         print(f"增量扫描发现 {len(findings)} 个问题")
         return findings

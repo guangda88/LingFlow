@@ -5,16 +5,17 @@
 基于 SnapshotTest 进行回归检测
 """
 
-import pytest
 import ast
 import sys
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
+
+import pytest
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from lingflow.testing.snapshot import SnapshotTest, SnapshotMetadata
+from lingflow.testing.snapshot import SnapshotMetadata, SnapshotTest
 
 
 class CodeAnalyzer:

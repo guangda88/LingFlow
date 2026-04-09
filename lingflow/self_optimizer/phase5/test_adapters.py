@@ -4,21 +4,23 @@ Phase 5 AI工具适配器测试
 测试适配器的基本功能和集成。
 """
 
-import pytest
 import tempfile
 from pathlib import Path
+
+import pytest
+
 from lingflow.self_optimizer.phase5.adapters import (
     AIToolAdapter,
-    SemgrepAdapter,
-    RuffAdapter,
     PylintAdapter,
+    RuffAdapter,
+    SemgrepAdapter,
     get_adapter,
     get_available_adapters,
 )
 from lingflow.self_optimizer.phase5.models import (
-    FeedbackSource,
     FeedbackCategory,
     FeedbackSeverity,
+    FeedbackSource,
 )
 
 

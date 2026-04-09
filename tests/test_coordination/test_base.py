@@ -2,8 +2,8 @@
 
 import pytest
 
-from lingflow.coordination.base import BaseCoordinator, BaseAgent
-from lingflow.common.models import Task, TaskResult, TaskPriority
+from lingflow.common.models import Task, TaskPriority, TaskResult
+from lingflow.coordination.base import BaseAgent, BaseCoordinator
 
 
 class TestBaseCoordinator:
@@ -47,24 +47,14 @@ class TestBaseCoordinator:
     def test_validate_task_valid(self):
         """Test validating a valid task"""
         coordinator = BaseCoordinator()
-        task = Task(
-            task_id="test-task",
-            name="Test Task",
-            description="Test task",
-            priority=TaskPriority.NORMAL
-        )
+        task = Task(task_id="test-task", name="Test Task", description="Test task", priority=TaskPriority.NORMAL)
 
         assert coordinator._validate_task(task) is True
 
     def test_validate_task_minimal(self):
         """Test validating minimal task"""
         coordinator = BaseCoordinator()
-        task = Task(
-            task_id="minimal",
-            name="Minimal",
-            description="Minimal task",
-            priority=TaskPriority.LOW
-        )
+        task = Task(task_id="minimal", name="Minimal", description="Minimal task", priority=TaskPriority.LOW)
 
         assert coordinator._validate_task(task) is True
 
@@ -80,12 +70,7 @@ class TestBaseAgent:
     def test_can_execute_default_true(self):
         """Test default can_execute returns True"""
         agent = BaseAgent()
-        task = Task(
-            task_id="test",
-            name="Test",
-            description="Test task",
-            priority=TaskPriority.NORMAL
-        )
+        task = Task(task_id="test", name="Test", description="Test task", priority=TaskPriority.NORMAL)
 
         assert agent.can_execute(task) is True
 
@@ -93,18 +78,9 @@ class TestBaseAgent:
         """Test can_execute with different task contexts"""
         agent = BaseAgent()
 
-        task1 = Task(
-            task_id="1",
-            name="Simple",
-            description="Simple task",
-            priority=TaskPriority.NORMAL
-        )
+        task1 = Task(task_id="1", name="Simple", description="Simple task", priority=TaskPriority.NORMAL)
         task2 = Task(
-            task_id="2",
-            name="Complex",
-            description="Complex task",
-            priority=TaskPriority.HIGH,
-            context={"key": "value"}
+            task_id="2", name="Complex", description="Complex task", priority=TaskPriority.HIGH, context={"key": "value"}
         )
 
         assert agent.can_execute(task1) is True
@@ -128,12 +104,7 @@ class TestBaseCoordinatorIntegration:
         coordinator = BaseCoordinator()
         agent = BaseAgent()
 
-        task = Task(
-            task_id="integration-test",
-            name="Integration",
-            description="Test",
-            priority=TaskPriority.NORMAL
-        )
+        task = Task(task_id="integration-test", name="Integration", description="Test", priority=TaskPriority.NORMAL)
         assert coordinator._validate_task(task)
         assert agent.can_execute(task)
 

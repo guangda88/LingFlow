@@ -9,6 +9,7 @@
 """
 
 import json
+
 from lingflow.context.handoff import HandoffDocument
 from lingflow.context.manager import ContextSnapshot
 

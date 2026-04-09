@@ -3,25 +3,27 @@
 import os
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from lingflow.requirements.traceability import (
-    RequirementStatus,
-    RequirementPriority,
     Requirement,
-    TraceEvent,
+    RequirementPriority,
+    RequirementStatus,
     RequirementsTraceability,
-    get_traceability,
-    create_requirement as mod_create,
-    get_requirement as mod_get,
-    update_requirement as mod_update,
-    list_requirements as mod_list,
-    link_to_branch as mod_link,
-    add_commit as mod_add_commit,
-    get_traceability_report as mod_report,
+    TraceEvent,
 )
+from lingflow.requirements.traceability import add_commit as mod_add_commit
+from lingflow.requirements.traceability import create_requirement as mod_create
+from lingflow.requirements.traceability import get_requirement as mod_get
+from lingflow.requirements.traceability import (
+    get_traceability,
+)
+from lingflow.requirements.traceability import get_traceability_report as mod_report
+from lingflow.requirements.traceability import link_to_branch as mod_link
+from lingflow.requirements.traceability import list_requirements as mod_list
+from lingflow.requirements.traceability import update_requirement as mod_update
 
 
 @pytest.fixture
@@ -184,15 +186,22 @@ class TestDefaultStoragePath:
 class TestRequirementToDict:
     def test_all_fields(self):
         r = Requirement(
-            id="r1", title="Title", description="Desc",
+            id="r1",
+            title="Title",
+            description="Desc",
             status=RequirementStatus.IMPLEMENTED,
             priority=RequirementPriority.HIGH,
-            category="cat", epic="epic",
-            tags=["t1"], commits=["c1"],
-            pull_requests=["p1"], tasks=["task1"],
-            test_cases=["tc1"], child_ids=["child"],
-            depends_on=["dep"], blocks=["block"],
-            metadata={"key": "val"}
+            category="cat",
+            epic="epic",
+            tags=["t1"],
+            commits=["c1"],
+            pull_requests=["p1"],
+            tasks=["task1"],
+            test_cases=["tc1"],
+            child_ids=["child"],
+            depends_on=["dep"],
+            blocks=["block"],
+            metadata={"key": "val"},
         )
         d = r.to_dict()
         assert d["status"] == "implemented"
@@ -224,10 +233,7 @@ class TestRequirementFromDictEdge:
 
 class TestTraceEventInit:
     def test_with_metadata(self):
-        e = TraceEvent(
-            id="e1", requirement_id="r1", event_type="test",
-            description="desc", metadata={"key": "val"}
-        )
+        e = TraceEvent(id="e1", requirement_id="r1", event_type="test", description="desc", metadata={"key": "val"})
         assert e.metadata == {"key": "val"}
 
     def test_auto_timestamp(self):

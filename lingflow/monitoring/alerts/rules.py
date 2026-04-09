@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional
 
-from ..metrics.models import AlertSeverity, Alert
+from ..metrics.models import Alert, AlertSeverity
 
 logger = logging.getLogger(__name__)
 

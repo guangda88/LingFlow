@@ -5,8 +5,8 @@ LingFlow Phase 4 核心算法测试
 验证贝叶斯优化、多目标优化和敏感性分析功能。
 """
 
-import sys
 import logging
+import sys
 from pathlib import Path
 
 # 设置日志
@@ -178,9 +178,9 @@ def test_visualization():
     print("=" * 60)
 
     from lingflow.self_optimizer.phase4 import (
-        OptimizationVisualizer,
-        OptimizationTrial,
         OptimizationState,
+        OptimizationTrial,
+        OptimizationVisualizer,
         get_default_search_space,
     )
 

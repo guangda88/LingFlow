@@ -1,41 +1,37 @@
-"""Test trust framework
-"""
+"""Test trust framework"""
 
-import pytest
 from pathlib import Path
 
+import pytest
+
 from lingflow.trust import (
-    VerificationLevel,
-    TaskClaim,
-    VerificationResult,
-    VerificationPipeline,
-    FileContentVerifier,
+    AuditReport,
     CommandOutputVerifier,
     DirectoryStructureVerifier,
+    FileContentVerifier,
     GitDiffVerifier,
     Skeptic,
-    AuditReport,
+    TaskClaim,
+    VerificationLevel,
+    VerificationPipeline,
+    VerificationResult,
 )
 
 
 def test_file_content_verifier_success():
     """Test file content verifier success."""
-    claim = TaskClaim(
-        action="Add test content",
-        target="/tmp/test_trust_file.txt",
-        expected="hello from trust framework"
-    )
-    
+    claim = TaskClaim(action="Add test content", target="/tmp/test_trust_file.txt", expected="hello from trust framework")
+
     # Create file first
     Path("/tmp/test_trust_file.txt").write_text("hello from trust framework", encoding="utf-8")
-    
+
     verifier = FileContentVerifier()
     result = verifier.verify(claim)
-    
+
     assert result.passed
     assert "hello from trust framework" in result.detail
     assert result.confidence == 0.95
-    
+
     # Cleanup
     Path("/tmp/test_trust_file.txt").unlink()
 
@@ -43,56 +39,46 @@ def test_file_content_verifier_success():
 def test_file_content_verifier_failure():
     """Test file content verifier failure - file not found."""
     claim = TaskClaim(
-        action="Add test content",
-        target="/tmp/test_trust_file_missing.txt",
-        expected="hello from trust framework"
+        action="Add test content", target="/tmp/test_trust_file_missing.txt", expected="hello from trust framework"
     )
-    
+
     verifier = FileContentVerifier()
     result = verifier.verify(claim)
-    
+
     assert not result.passed
     assert "test_trust_file_missing.txt" in result.detail
 
 
 def test_verification_pipeline():
     """Test verification pipeline."""
-    claim = TaskClaim(
-        action="Add test content",
-        target="/tmp/test_trust_file2.txt",
-        expected="test content"
-    )
-    
+    claim = TaskClaim(action="Add test content", target="/tmp/test_trust_file2.txt", expected="test content")
+
     # Create file
     Path("/tmp/test_trust_file2.txt").write_text("test content", encoding="utf-8")
-    
+
     pipeline = VerificationPipeline()
     pipeline.add_verifier(FileContentVerifier())
-    
+
     result = pipeline.execute(claim)
-    
+
     assert result.passed
     assert "test content" in result.detail
-    
+
     # Cleanup
     Path("/tmp/test_trust_file2.txt").unlink()
 
 
 def test_skeptic_audit():
     """Test skeptic audit."""
-    claim = TaskClaim(
-        action="Add feature",
-        target="file.txt",
-        expected="feature added"
-    )
-    
+    claim = TaskClaim(action="Add feature", target="file.txt", expected="feature added")
+
     skeptic = Skeptic()
     report = skeptic.audit(claim)
-    
+
     # Check questions list
     assert len(report.questions) > 0
     assert "I claimed:" in report.questions[0]
-    
+
     # Should have challenges since no verification results set
     assert len(report.challenges) > 0
     assert report.confidence == 0.0
@@ -100,21 +86,14 @@ def test_skeptic_audit():
 
 def test_skeptic_confidence():
     """Test confidence calculation."""
-    claim = TaskClaim(
-        action="Complete all verifications",
-        target="test",
-        expected="result"
-    )
+    claim = TaskClaim(action="Complete all verifications", target="test", expected="result")
 
     skeptic = Skeptic()
 
     # Add a successful verification result
-    skeptic.verification_results = [VerificationResult(
-        level=VerificationLevel.SEMANTIC,
-        passed=True,
-        detail="Verification passed",
-        confidence=0.9
-    )]
+    skeptic.verification_results = [
+        VerificationResult(level=VerificationLevel.SEMANTIC, passed=True, detail="Verification passed", confidence=0.9)
+    ]
 
     report = skeptic.audit(claim)
 
@@ -125,11 +104,7 @@ def test_skeptic_confidence():
 
 def test_command_output_verifier_success():
     """Test command output verifier success."""
-    claim = TaskClaim(
-        action="Run test command",
-        target="echo",
-        expected="hello"
-    )
+    claim = TaskClaim(action="Run test command", target="echo", expected="hello")
 
     verifier = CommandOutputVerifier()
     result = verifier.verify(claim, actual_result="hello from command")
@@ -140,11 +115,7 @@ def test_command_output_verifier_success():
 
 def test_command_output_verifier_failure():
     """Test command output verifier failure."""
-    claim = TaskClaim(
-        action="Run test command",
-        target="echo",
-        expected="goodbye"
-    )
+    claim = TaskClaim(action="Run test command", target="echo", expected="goodbye")
 
     verifier = CommandOutputVerifier()
     result = verifier.verify(claim, actual_result="hello from command")
@@ -157,11 +128,7 @@ def test_directory_structure_verifier_success():
     """Test directory structure verifier success."""
     import tempfile
 
-    claim = TaskClaim(
-        action="Create directory structure",
-        target="/tmp/test_trust_dir",
-        expected="file1.txt,subdir"
-    )
+    claim = TaskClaim(action="Create directory structure", target="/tmp/test_trust_dir", expected="file1.txt,subdir")
 
     # Create directory structure
     Path("/tmp/test_trust_dir").mkdir(exist_ok=True)
@@ -176,6 +143,7 @@ def test_directory_structure_verifier_success():
 
     # Cleanup
     import shutil
+
     shutil.rmtree("/tmp/test_trust_dir")
 
 
@@ -183,11 +151,7 @@ def test_directory_structure_verifier_missing():
     """Test directory structure verifier with missing items."""
     import tempfile
 
-    claim = TaskClaim(
-        action="Create directory structure",
-        target="/tmp/test_trust_dir2",
-        expected="file1.txt,missing.txt"
-    )
+    claim = TaskClaim(action="Create directory structure", target="/tmp/test_trust_dir2", expected="file1.txt,missing.txt")
 
     # Create directory with only one expected item
     Path("/tmp/test_trust_dir2").mkdir(exist_ok=True)
@@ -201,14 +165,15 @@ def test_directory_structure_verifier_missing():
 
     # Cleanup
     import shutil
+
     shutil.rmtree("/tmp/test_trust_dir2")
 
 
 def test_git_diff_verifier():
     """Test git diff verifier."""
+    import shutil
     import subprocess
     import tempfile
-    import shutil
 
     # Create a temp git repo
     temp_dir = Path(tempfile.mkdtemp())
@@ -219,18 +184,8 @@ def test_git_diff_verifier():
         # Create and commit initial file
         initial_file = temp_dir / "initial.txt"
         initial_file.write_text("initial content")
-        subprocess.run(
-            ["git", "config", "user.email", "test@example.com"],
-            cwd=temp_dir,
-            capture_output=True,
-            check=True
-        )
-        subprocess.run(
-            ["git", "config", "user.name", "Test User"],
-            cwd=temp_dir,
-            capture_output=True,
-            check=True
-        )
+        subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=temp_dir, capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.name", "Test User"], cwd=temp_dir, capture_output=True, check=True)
         subprocess.run(["git", "add", "initial.txt"], cwd=temp_dir, capture_output=True, check=True)
         subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=temp_dir, capture_output=True, check=True)
 
@@ -240,11 +195,7 @@ def test_git_diff_verifier():
         # Verify with GitDiffVerifier using a file inside the repo
         verifier = GitDiffVerifier()
         # Pass the file path, not the dir path - GitDiffVerifier will use the parent dir
-        result = verifier.verify(TaskClaim(
-            action="Commit changes",
-            target=str(initial_file),
-            expected="test_trust_marker"
-        ))
+        result = verifier.verify(TaskClaim(action="Commit changes", target=str(initial_file), expected="test_trust_marker"))
 
         # Should find marker in unstaged changes or show working dir status
         assert result.passed or "test_trust_marker" in result.detail or "工作区干净" in result.detail

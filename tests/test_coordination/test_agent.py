@@ -1,10 +1,11 @@
 """Tests for lingflow.coordination.agent module"""
 
-import pytest
 import asyncio
 
+import pytest
+
+from lingflow.common.models import AgentConfig, AgentStatus, Task, TaskPriority, TaskResult
 from lingflow.coordination.agent import Agent
-from lingflow.common.models import AgentConfig, AgentStatus, Task, TaskResult, TaskPriority
 
 
 class TestAgent:
@@ -26,73 +27,36 @@ class TestAgent:
 
     def test_can_execute_matching_agent_type(self):
         """Test can_execute with matching agent type"""
-        config = AgentConfig(
-            name="python_expert",
-            description="Python expert",
-            capabilities=["python"]
-        )
+        config = AgentConfig(name="python_expert", description="Python expert", capabilities=["python"])
         agent = Agent(config)
 
-        task = Task(
-            task_id="test",
-            name="Test",
-            description="Test",
-            priority=TaskPriority.NORMAL,
-            agent_type="python_expert"
-        )
+        task = Task(task_id="test", name="Test", description="Test", priority=TaskPriority.NORMAL, agent_type="python_expert")
         assert agent.can_execute(task) is True
 
     def test_can_execute_different_agent_type(self):
         """Test can_execute with different agent type"""
-        config = AgentConfig(
-            name="python_expert",
-            description="Python expert",
-            capabilities=["python"]
-        )
+        config = AgentConfig(name="python_expert", description="Python expert", capabilities=["python"])
         agent = Agent(config)
 
         task = Task(
-            task_id="test",
-            name="Test",
-            description="Test",
-            priority=TaskPriority.NORMAL,
-            agent_type="javascript_expert"
+            task_id="test", name="Test", description="Test", priority=TaskPriority.NORMAL, agent_type="javascript_expert"
         )
         assert agent.can_execute(task) is False
 
     def test_can_execute_no_agent_type_specified(self):
         """Test can_execute when no agent type is specified"""
-        config = AgentConfig(
-            name="general_agent",
-            description="General agent",
-            capabilities=["general"]
-        )
+        config = AgentConfig(name="general_agent", description="General agent", capabilities=["general"])
         agent = Agent(config)
 
-        task = Task(
-            task_id="test",
-            name="Test",
-            description="Test",
-            priority=TaskPriority.NORMAL,
-            agent_type=""
-        )
+        task = Task(task_id="test", name="Test", description="Test", priority=TaskPriority.NORMAL, agent_type="")
         assert agent.can_execute(task) is True
 
     async def test_execute_task_success(self):
         """Test successful task execution"""
-        config = AgentConfig(
-            name="test_agent",
-            description="Test",
-            capabilities=["testing"]
-        )
+        config = AgentConfig(name="test_agent", description="Test", capabilities=["testing"])
         agent = Agent(config)
 
-        task = Task(
-            task_id="test-task",
-            name="TestTask",
-            description="Test task",
-            priority=TaskPriority.NORMAL
-        )
+        task = Task(task_id="test-task", name="TestTask", description="Test task", priority=TaskPriority.NORMAL)
         context = {"key": "value"}
 
         result = await agent.execute_task(task, context)
@@ -112,25 +76,11 @@ class TestAgent:
 
     async def test_execute_task_multiple(self):
         """Test executing multiple tasks"""
-        config = AgentConfig(
-            name="multi_agent",
-            description="Multi",
-            capabilities=["multi"]
-        )
+        config = AgentConfig(name="multi_agent", description="Multi", capabilities=["multi"])
         agent = Agent(config)
 
-        task1 = Task(
-            task_id="task-1",
-            name="First",
-            description="First",
-            priority=TaskPriority.NORMAL
-        )
-        task2 = Task(
-            task_id="task-2",
-            name="Second",
-            description="Second",
-            priority=TaskPriority.NORMAL
-        )
+        task1 = Task(task_id="task-1", name="First", description="First", priority=TaskPriority.NORMAL)
+        task2 = Task(task_id="task-2", name="Second", description="Second", priority=TaskPriority.NORMAL)
 
         result1 = await agent.execute_task(task1, {})
         result2 = await agent.execute_task(task2, {})
@@ -160,11 +110,7 @@ class TestAgent:
 
     def test_get_info_after_tasks(self):
         """Test getting agent info after tasks"""
-        config = AgentConfig(
-            name="active_agent",
-            description="Active",
-            capabilities=["active"]
-        )
+        config = AgentConfig(name="active_agent", description="Active", capabilities=["active"])
         agent = Agent(config)
 
         # Simulate task completion
@@ -182,26 +128,14 @@ class TestAgentAsyncIntegration:
     @pytest.mark.asyncio
     async def test_concurrent_task_execution(self):
         """Test executing tasks concurrently"""
-        config = AgentConfig(
-            name="concurrent_agent",
-            description="Concurrent",
-            capabilities=["concurrent"]
-        )
+        config = AgentConfig(name="concurrent_agent", description="Concurrent", capabilities=["concurrent"])
         agent = Agent(config)
 
         tasks = [
-            Task(
-                task_id=f"task-{i}",
-                name=f"Task{i}",
-                description=f"Task {i}",
-                priority=TaskPriority.NORMAL
-            )
-            for i in range(5)
+            Task(task_id=f"task-{i}", name=f"Task{i}", description=f"Task {i}", priority=TaskPriority.NORMAL) for i in range(5)
         ]
 
-        results = await asyncio.gather(*[
-            agent.execute_task(task, {}) for task in tasks
-        ])
+        results = await asyncio.gather(*[agent.execute_task(task, {}) for task in tasks])
 
         assert len(results) == 5
         assert all(r.success for r in results)
@@ -210,19 +144,10 @@ class TestAgentAsyncIntegration:
     @pytest.mark.asyncio
     async def test_agent_status_during_execution(self):
         """Test agent status changes during execution"""
-        config = AgentConfig(
-            name="status_agent",
-            description="Status",
-            capabilities=["status"]
-        )
+        config = AgentConfig(name="status_agent", description="Status", capabilities=["status"])
         agent = Agent(config)
 
-        task = Task(
-            task_id="status-task",
-            name="Status",
-            description="Status test",
-            priority=TaskPriority.NORMAL
-        )
+        task = Task(task_id="status-task", name="Status", description="Status test", priority=TaskPriority.NORMAL)
 
         # Status should be IDLE before execution
         assert agent.status == AgentStatus.IDLE

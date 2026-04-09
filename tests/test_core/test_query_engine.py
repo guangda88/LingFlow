@@ -1,19 +1,20 @@
 """Tests for lingflow.core.query_engine module"""
 
 import json
-import pytest
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+
+import pytest
 
 from lingflow.core.query_engine import (
+    MessageCompactor,
     QueryEngine,
     QueryEngineConfig,
+    StopReason,
     TurnResult,
     UsageSummary,
-    StopReason,
-    MessageCompactor,
-    create_default_engine,
     create_budget_conscious_engine,
+    create_default_engine,
     create_long_conversation_engine,
 )
 
@@ -100,7 +101,13 @@ class TestTurnResult:
         """Test turn result has timestamp"""
         before = datetime.now()
         result = TurnResult(
-            prompt="Test", output="Output", matched_tools=(), matched_agents=(), input_tokens=1, output_tokens=1, stop_reason=StopReason.COMPLETED
+            prompt="Test",
+            output="Output",
+            matched_tools=(),
+            matched_agents=(),
+            input_tokens=1,
+            output_tokens=1,
+            stop_reason=StopReason.COMPLETED,
         )
         after = datetime.now()
         assert before < datetime.fromisoformat(result.timestamp) < after
@@ -108,7 +115,13 @@ class TestTurnResult:
     def test_turn_result_is_immutable(self):
         """Test that turn result is immutable (frozen)"""
         result = TurnResult(
-            prompt="Test", output="Output", matched_tools=(), matched_agents=(), input_tokens=1, output_tokens=1, stop_reason=StopReason.COMPLETED
+            prompt="Test",
+            output="Output",
+            matched_tools=(),
+            matched_agents=(),
+            input_tokens=1,
+            output_tokens=1,
+            stop_reason=StopReason.COMPLETED,
         )
         with pytest.raises(AttributeError):
             result.prompt = "New prompt"

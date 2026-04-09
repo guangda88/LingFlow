@@ -9,10 +9,10 @@
     >>> result = await client.navigate("https://example.com")
 """
 
-import subprocess
 import asyncio
-from typing import Any, Dict, Optional
+import subprocess
 from dataclasses import dataclass
+from typing import Any, Dict, Optional
 
 
 @dataclass

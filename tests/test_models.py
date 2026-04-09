@@ -1,10 +1,10 @@
 """Models module tests — AgentStatus, TaskPriority, AgentConfig, Task, TaskResult"""
 
 from lingflow.common.models import (
-    AgentStatus,
-    TaskPriority,
     AgentConfig,
+    AgentStatus,
     Task,
+    TaskPriority,
     TaskResult,
 )
 
@@ -42,8 +42,13 @@ class TestAgentConfig:
 
     def test_custom(self):
         cfg = AgentConfig(
-            name="x", description="y", capabilities=["z"],
-            max_tasks=5, context_limit=16000, timeout=60, parallel_safe=False,
+            name="x",
+            description="y",
+            capabilities=["z"],
+            max_tasks=5,
+            context_limit=16000,
+            timeout=60,
+            parallel_safe=False,
         )
         assert cfg.max_tasks == 5
         assert cfg.context_limit == 16000
@@ -59,9 +64,13 @@ class TestTask:
 
     def test_full(self):
         t = Task(
-            task_id="t2", name="n", description="d",
-            priority=TaskPriority.HIGH, agent_type="review",
-            dependencies=["t1"], context={"key": "val"},
+            task_id="t2",
+            name="n",
+            description="d",
+            priority=TaskPriority.HIGH,
+            agent_type="review",
+            dependencies=["t1"],
+            context={"key": "val"},
         )
         assert t.agent_type == "review"
         assert t.dependencies == ["t1"]
@@ -85,8 +94,11 @@ class TestTaskResult:
 
     def test_full(self):
         r = TaskResult(
-            task_id="t3", success=True, output="done",
-            execution_time=1.5, agent_used="impl",
+            task_id="t3",
+            success=True,
+            output="done",
+            execution_time=1.5,
+            agent_used="impl",
         )
         assert r.execution_time == 1.5
         assert r.agent_used == "impl"

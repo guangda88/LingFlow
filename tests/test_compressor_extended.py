@@ -2,10 +2,10 @@ import pytest
 
 from lingflow.compression.compressor import (
     AdvancedContextCompressor,
-    ContextCompressor,
     CompressionLevel,
-    CompressionStrategy,
     CompressionResult,
+    CompressionStrategy,
+    ContextCompressor,
     _BasicCompressor,
 )
 

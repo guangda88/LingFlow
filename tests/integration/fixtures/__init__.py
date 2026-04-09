@@ -4,12 +4,12 @@
 提供测试数据、Mock对象和工具函数。
 """
 
-from pathlib import Path
-from typing import Dict, List, Any
-import tempfile
 import shutil
+import tempfile
+from pathlib import Path
+from typing import Any, Dict, List
 
-from lingflow.self_optimizer.phase5.models import ToolType, FeedbackCategory, SeverityLevel
+from lingflow.self_optimizer.phase5.models import FeedbackCategory, SeverityLevel, ToolType
 
 # 测试数据目录
 FIXTURES_DIR = Path(__file__).parent
@@ -115,7 +115,7 @@ MOCK_SEMGREP_FEEDBACK = [
         "line": 45,
         "snippet": "password = 'admin123'",
         "suggestion": "Use environment variables for credentials",
-        "confidence": 0.95
+        "confidence": 0.95,
     },
     {
         "tool_name": "Semgrep",
@@ -129,8 +129,8 @@ MOCK_SEMGREP_FEEDBACK = [
         "line": 23,
         "snippet": 'query = f"SELECT * FROM users WHERE id = {user_id}"',
         "suggestion": "Use parameterized queries",
-        "confidence": 0.90
-    }
+        "confidence": 0.90,
+    },
 ]
 
 MOCK_RUFF_FEEDBACK = [
@@ -146,7 +146,7 @@ MOCK_RUFF_FEEDBACK = [
         "line": 3,
         "snippet": "import os",
         "suggestion": "Remove unused import",
-        "confidence": 0.85
+        "confidence": 0.85,
     },
     {
         "tool_name": "Ruff",
@@ -160,8 +160,8 @@ MOCK_RUFF_FEEDBACK = [
         "line": 45,
         "snippet": "long_line_with_many_characters_here = '...'",
         "suggestion": "Break line into multiple lines",
-        "confidence": 0.90
-    }
+        "confidence": 0.90,
+    },
 ]
 
 MOCK_BANDIT_FEEDBACK = [
@@ -177,7 +177,7 @@ MOCK_BANDIT_FEEDBACK = [
         "line": 45,
         "snippet": "password = 'admin123'",
         "suggestion": "Use a secure credential manager",
-        "confidence": 0.90
+        "confidence": 0.90,
     }
 ]
 

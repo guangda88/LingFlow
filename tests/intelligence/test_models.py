@@ -6,15 +6,15 @@
 import pytest  # noqa
 
 from lingflow.intelligence.models.common import (
+    DailyReport,
+    InfluenceScore,
     MentionData,
     Platform,
-    SourceType,
     SentimentLabel,
-    TrendDirection,
     SentimentResult,
-    InfluenceScore,
+    SourceType,
+    TrendDirection,
     TrendMetrics,
-    DailyReport,
 )
 
 
@@ -184,11 +184,7 @@ class TestDailyReport:
             metrics={"total_mentions": 10},
             highlights=["Great feedback!"],
             concerns=[],
-            sentiment_summary={
-                "positive": 7,
-                "neutral": 2,
-                "negative": 1,
-                "total": 10},
+            sentiment_summary={"positive": 7, "neutral": 2, "negative": 1, "total": 10},
             top_topics=["automation", "ai"],
             actionable_insights=["Keep improving"],
         )

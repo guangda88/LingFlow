@@ -5,11 +5,11 @@ LingFlow Phase 4: 贝叶斯优化器实现
 实现高效的参数搜索，相比网格搜索可减少50%以上的评估次数。
 """
 
+import hashlib
 import logging
 import time
-from typing import Dict, Any, List, Callable
 from dataclasses import dataclass, field
-import hashlib
+from typing import Any, Callable, Dict, List
 
 logger = logging.getLogger(__name__)
 

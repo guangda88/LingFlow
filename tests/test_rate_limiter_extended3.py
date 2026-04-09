@@ -1,16 +1,17 @@
 """Targeted tests for rate_limiter APIClient and remaining uncovered code."""
 
-import pytest
 import asyncio
 import threading
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 from lingflow.utils.rate_limiter import (
+    APIClient,
+    ConcurrencyController,
     RateLimitConfig,
     RateLimiter,
     SmartRetry,
-    ConcurrencyController,
-    APIClient,
 )
 
 
@@ -22,9 +23,7 @@ class TestAPIClient:
         assert result == "ok"
 
     def test_request_with_retry(self):
-        config = RateLimitConfig(
-            requests_per_second=100.0, max_retries=3, base_delay=0.01, jitter=False
-        )
+        config = RateLimitConfig(requests_per_second=100.0, max_retries=3, base_delay=0.01, jitter=False)
         client = APIClient(config, max_concurrent=2)
         call_count = [0]
 
@@ -38,9 +37,7 @@ class TestAPIClient:
         assert result == "recovered"
 
     def test_request_all_retries_fail(self):
-        config = RateLimitConfig(
-            requests_per_second=100.0, max_retries=2, base_delay=0.01, jitter=False
-        )
+        config = RateLimitConfig(requests_per_second=100.0, max_retries=2, base_delay=0.01, jitter=False)
         client = APIClient(config, max_concurrent=2)
 
         with pytest.raises(Exception, match="always fails"):

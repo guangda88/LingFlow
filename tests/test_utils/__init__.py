@@ -1,8 +1,9 @@
 """测试工具模块"""
+
 import pytest
 
-from lingflow.utils.sampling import ReservoirSampler
 from lingflow.utils.rate_limiter import RateLimiter
+from lingflow.utils.sampling import ReservoirSampler
 
 
 class TestSampling:

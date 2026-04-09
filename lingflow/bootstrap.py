@@ -94,7 +94,7 @@ def show_session_resume(enabled: bool = True, force: bool = False) -> None:
         return
 
     try:
-        from lingflow.context.auto_resume import auto_resume, SESSION_FILE
+        from lingflow.context.auto_resume import SESSION_FILE, auto_resume
 
         if not SESSION_FILE.exists():
             return

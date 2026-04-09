@@ -7,13 +7,13 @@ from pathlib import Path
 import pytest
 
 from lingflow.core.prompt_router import (
-    RouteStrategy,
-    RouteRule,
-    RouteTarget,
-    RouteResult,
     PromptRouter,
-    create_default_router,
+    RouteResult,
+    RouteRule,
+    RouteStrategy,
+    RouteTarget,
     create_code_focused_router,
+    create_default_router,
 )
 
 
@@ -111,10 +111,7 @@ class TestRouteTarget:
         assert target.metadata == {}
 
     def test_with_capabilities(self):
-        target = RouteTarget(
-            name="t1", agent_type="CodeAgent", description="code",
-            capabilities=["review", "refactor"]
-        )
+        target = RouteTarget(name="t1", agent_type="CodeAgent", description="code", capabilities=["review", "refactor"])
         assert len(target.capabilities) == 2
 
 
@@ -124,20 +121,12 @@ class TestRouteResult:
         assert result.best_match is None
 
     def test_best_match_single(self):
-        result = RouteResult(
-            prompt="test",
-            matched_rules=[("rule1", 0.8)],
-            selected_target=None,
-            confidence=0.8
-        )
+        result = RouteResult(prompt="test", matched_rules=[("rule1", 0.8)], selected_target=None, confidence=0.8)
         assert result.best_match == ("rule1", 0.8)
 
     def test_best_match_multiple(self):
         result = RouteResult(
-            prompt="test",
-            matched_rules=[("rule1", 0.5), ("rule2", 0.9), ("rule3", 0.7)],
-            selected_target=None,
-            confidence=0.9
+            prompt="test", matched_rules=[("rule1", 0.5), ("rule2", 0.9), ("rule3", 0.7)], selected_target=None, confidence=0.9
         )
         assert result.best_match == ("rule2", 0.9)
 
@@ -188,12 +177,7 @@ class TestPromptRouter:
         router = PromptRouter()
         target = RouteTarget(name="code", agent_type="CodeAgent", description="code")
         router.add_target(target)
-        router.add_rule(RouteRule(
-            name="code_rule",
-            keywords=["code", "python"],
-            priority=1,
-            metadata={"target_name": "code"}
-        ))
+        router.add_rule(RouteRule(name="code_rule", keywords=["code", "python"], priority=1, metadata={"target_name": "code"}))
         result = router.route("write python code")
         assert result.selected_target is target
         assert result.confidence > 0
@@ -205,28 +189,15 @@ class TestPromptRouter:
         t2 = RouteTarget(name="t2", agent_type="B", description="b")
         router.add_target(t1)
         router.add_target(t2)
-        router.add_rule(RouteRule(
-            name="low", keywords=["test"],
-            priority=1,
-            metadata={"target_name": "t1"}
-        ))
-        router.add_rule(RouteRule(
-            name="high", keywords=["test"],
-            priority=5,
-            metadata={"target_name": "t2"}
-        ))
+        router.add_rule(RouteRule(name="low", keywords=["test"], priority=1, metadata={"target_name": "t1"}))
+        router.add_rule(RouteRule(name="high", keywords=["test"], priority=5, metadata={"target_name": "t2"}))
         result = router.route("test")
         assert result.selected_target is t2
 
     def test_route_top_k(self):
         router = PromptRouter()
         for i in range(5):
-            router.add_rule(RouteRule(
-                name=f"rule_{i}",
-                keywords=["common"],
-                priority=i,
-                metadata={"target_name": "t"}
-            ))
+            router.add_rule(RouteRule(name=f"rule_{i}", keywords=["common"], priority=i, metadata={"target_name": "t"}))
         router.add_target(RouteTarget(name="t", agent_type="A", description="d"))
         result = router.route("common", top_k=2)
         assert len(result.matched_rules) == 2
@@ -257,11 +228,7 @@ class TestPromptRouter:
         target = RouteTarget(name="code", agent_type="A", description="d")
         router.add_target(target)
         router.set_default_target(target)
-        router.add_rule(RouteRule(
-            name="code_rule",
-            keywords=["code"],
-            metadata={"target_name": "code"}
-        ))
+        router.add_rule(RouteRule(name="code_rule", keywords=["code"], metadata={"target_name": "code"}))
         router.route("code analysis")
         router.route("code review")
         stats = router.get_statistics()
@@ -275,14 +242,16 @@ class TestPromptRouter:
         target = RouteTarget(name="t1", agent_type="A", description="desc", capabilities=["cap1"])
         router.add_target(target)
         router.set_default_target(target)
-        router.add_rule(RouteRule(
-            name="r1",
-            keywords=["python"],
-            patterns=[r"\d+"],
-            priority=2,
-            strategy=RouteStrategy.KEYWORD_MATCH,
-            metadata={"target_name": "t1"}
-        ))
+        router.add_rule(
+            RouteRule(
+                name="r1",
+                keywords=["python"],
+                patterns=[r"\d+"],
+                priority=2,
+                strategy=RouteStrategy.KEYWORD_MATCH,
+                metadata={"target_name": "t1"},
+            )
+        )
 
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / "config.json"

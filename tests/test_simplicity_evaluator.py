@@ -1,6 +1,7 @@
-import pytest
 import tempfile
 from pathlib import Path
+
+import pytest
 
 from lingflow.self_optimizer.simplicity_evaluator import SimplicityEvaluator, SimplicityMetrics, fallback_evaluate
 

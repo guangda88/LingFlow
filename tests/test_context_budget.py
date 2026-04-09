@@ -9,8 +9,8 @@
 """
 
 from lingflow.context.budget import (
-    ContextBudgetManager,
     BudgetLevel,
+    ContextBudgetManager,
 )
 
 

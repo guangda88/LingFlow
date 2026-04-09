@@ -1,9 +1,10 @@
-import pytest
-import tempfile
 import os
+import tempfile
 from pathlib import Path
 
-from lingflow.self_optimizer.evaluator import StructureEvaluator, StructureMetrics, fallback_evaluate, _get_code_review_module
+import pytest
+
+from lingflow.self_optimizer.evaluator import StructureEvaluator, StructureMetrics, _get_code_review_module, fallback_evaluate
 
 
 class TestStructureMetrics:
@@ -111,6 +112,7 @@ class TestAnalyzeStructure:
 class TestCountClassLines:
     def test_empty_class(self):
         import ast
+
         e = StructureEvaluator()
         node = ast.parse("class C: pass").body[0]
         result = e._count_class_lines(node, "class C: pass")
@@ -118,6 +120,7 @@ class TestCountClassLines:
 
     def test_class_with_body(self):
         import ast
+
         e = StructureEvaluator()
         code = "class C:\n    def m(self): pass\n"
         node = ast.parse(code).body[0]
@@ -128,24 +131,28 @@ class TestCountClassLines:
 class TestCalculateComplexity:
     def test_simple_function(self):
         import ast
+
         e = StructureEvaluator()
         node = ast.parse("def f(): pass").body[0]
         assert e._calculate_complexity(node) == 1
 
     def test_function_with_if(self):
         import ast
+
         e = StructureEvaluator()
         node = ast.parse("def f():\n    if x: pass").body[0]
         assert e._calculate_complexity(node) == 2
 
     def test_function_with_loop(self):
         import ast
+
         e = StructureEvaluator()
         node = ast.parse("def f():\n    for i in range(10): pass\n    while True: pass").body[0]
         assert e._calculate_complexity(node) == 3
 
     def test_function_with_boolop(self):
         import ast
+
         e = StructureEvaluator()
         node = ast.parse("def f():\n    if a and b and c: pass").body[0]
         c = e._calculate_complexity(node)
@@ -153,6 +160,7 @@ class TestCalculateComplexity:
 
     def test_function_with_try_except(self):
         import ast
+
         e = StructureEvaluator()
         node = ast.parse("def f():\n    try: pass\n    except: pass").body[0]
         assert e._calculate_complexity(node) == 2

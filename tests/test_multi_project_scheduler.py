@@ -1,11 +1,13 @@
 """多项目并行调度器测试"""
+
 import asyncio
 import os
 import tempfile
+
 import pytest
 
-from lingflow.common.models import Task, TaskResult, TaskPriority
-from lingflow.coordination.project_manager import ProjectManager, ProjectContext
+from lingflow.common.models import Task, TaskPriority, TaskResult
+from lingflow.coordination.project_manager import ProjectContext, ProjectManager
 from lingflow.workflow.multi_project_scheduler import MultiProjectScheduler, ProjectScheduleStatus
 
 
@@ -61,6 +63,7 @@ class TestProjectManager:
     def test_git_status(self, pm, tmp_projects):
         # Init a real git repo in one project
         import subprocess
+
         p = tmp_projects["LingFlow"]
         subprocess.run(["git", "init"], cwd=p, capture_output=True)
         subprocess.run(["git", "config", "user.email", "test@test.com"], cwd=p, capture_output=True)

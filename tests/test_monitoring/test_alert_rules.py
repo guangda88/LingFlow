@@ -1,11 +1,12 @@
 """Tests for lingflow.monitoring.alerts.rules module"""
 
-import pytest
 from datetime import datetime, timedelta
 from unittest.mock import patch
 
+import pytest
+
 from lingflow.monitoring.alerts.rules import AlertRule, RuleRegistry, create_common_rules
-from lingflow.monitoring.metrics.models import AlertSeverity, Alert
+from lingflow.monitoring.metrics.models import Alert, AlertSeverity
 
 
 class TestAlertRule:

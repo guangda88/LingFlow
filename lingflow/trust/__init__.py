@@ -3,28 +3,27 @@
 让 AI 的输出可验证、可质疑、可信。
 """
 
+from .metacognition import (
+    Capability,
+    CapabilityLevel,
+    EvolutionPath,
+    MetacognitiveAgent,
+    TaskRequirements,
+    get_metacognitive_agent,
+)
 from .verifier import (
-    VerificationLevel,
-    VerificationResult,
-    TaskClaim,
-    Verifier,
-    FileContentVerifier,
+    AuditReport,
     CommandOutputVerifier,
     DirectoryStructureVerifier,
+    FileContentVerifier,
     GitDiffVerifier,
-    VerificationPipeline,
     Skeptic,
-    AuditReport,
+    TaskClaim,
+    VerificationLevel,
+    VerificationPipeline,
     VerificationReport,
-)
-
-from .metacognition import (
-    CapabilityLevel,
-    Capability,
-    EvolutionPath,
-    TaskRequirements,
-    MetacognitiveAgent,
-    get_metacognitive_agent,
+    VerificationResult,
+    Verifier,
 )
 
 __all__ = [

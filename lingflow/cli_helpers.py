@@ -4,15 +4,16 @@ LingFlow CLI 辅助函数
 用于降低主命令函数的复杂度，提取可重用的逻辑。
 """
 
-from typing import List, Tuple, Dict, Any
-from lingflow.self_optimizer.phase5.adapters import (
-    SemgrepAdapter,
-    RuffAdapter,
-    PylintAdapter,
-)
+from typing import Any, Dict, List, Tuple
+
 from lingflow.self_optimizer.phase5 import (
-    RuleExtractor,
     InMemoryKnowledgeBase,
+    RuleExtractor,
+)
+from lingflow.self_optimizer.phase5.adapters import (
+    PylintAdapter,
+    RuffAdapter,
+    SemgrepAdapter,
 )
 from lingflow.self_optimizer.phase5.patterns import PatternRecognizer
 

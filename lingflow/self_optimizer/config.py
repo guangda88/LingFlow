@@ -2,8 +2,8 @@
 LingFlow 自优化配置管理
 """
 
-from typing import Dict, Any
 from pathlib import Path
+from typing import Any, Dict
 
 # 默认配置
 DEFAULT_CONFIG = {

@@ -6,10 +6,14 @@ LingFlow Phase 4: 优化引擎核心实现
 """
 
 import logging
-from typing import Dict, Any, List
 from datetime import datetime
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
+
+# 导入现有评估器
+from lingflow.self_optimizer.evaluator import StructureEvaluator
+from lingflow.self_optimizer.performance_evaluator import PerformanceEvaluator
 
 # 导入Phase 4模块
 from lingflow.self_optimizer.phase4.bayesian_optimizer import create_optimizer, get_default_search_space
@@ -20,10 +24,6 @@ from lingflow.self_optimizer.phase4.sensitivity import (
 from lingflow.self_optimizer.phase4.visualization import (
     OptimizationVisualizer,
 )
-
-# 导入现有评估器
-from lingflow.self_optimizer.evaluator import StructureEvaluator
-from lingflow.self_optimizer.performance_evaluator import PerformanceEvaluator
 from lingflow.self_optimizer.simplicity_evaluator import SimplicityEvaluator
 
 

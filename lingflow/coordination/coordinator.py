@@ -6,14 +6,14 @@ import types
 from typing import Any, Dict, List, Optional
 
 from lingflow.common.models import AgentConfig, Task, TaskResult
+from lingflow.common.sandbox import SandboxError, SandboxTimeoutError, SkillSandbox
 from lingflow.compression.compressor import (
-    ContextCompressor,
     CompressionLevel,
+    ContextCompressor,
 )
+from lingflow.coordination.agent import Agent
 from lingflow.coordination.base import BaseCoordinator
 from lingflow.coordination.registry import AgentRegistry
-from lingflow.common.sandbox import SkillSandbox, SandboxError, SandboxTimeoutError
-from lingflow.coordination.agent import Agent
 
 logger = logging.getLogger(__name__)
 
@@ -492,7 +492,9 @@ class AgentCoordinator(BaseCoordinator):
                         # 估算目标等级
                         current_level_str = params["current_capabilities"].get(capability_name, "UNKNOWN")
                         current_level = CapabilityLevel[current_level_str]
-                        target_level = current_level + 1 if current_level < CapabilityLevel.MASTERED else CapabilityLevel.MASTERED
+                        target_level = (
+                            current_level + 1 if current_level < CapabilityLevel.MASTERED else CapabilityLevel.MASTERED
+                        )
 
                         # 生成进化路径
                         evolution = agent.propose_evolution(capability_name, target_level)
@@ -581,8 +583,8 @@ class AgentCoordinator(BaseCoordinator):
         """
         """获取技能文件路径（增强安全版本）"""
         import os
-        import re
         import pathlib
+        import re
 
         # 严格验证技能名称
         if not skill_name:
@@ -654,6 +656,7 @@ class AgentCoordinator(BaseCoordinator):
         """
         import importlib.util
         import types
+
         from lingflow.common.exceptions import SkillLoadError
 
         try:

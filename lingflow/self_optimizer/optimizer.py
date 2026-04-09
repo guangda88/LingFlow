@@ -4,8 +4,8 @@ LingFlow 进程隔离的优化器
 """
 
 import multiprocessing as mp
-from typing import Dict, Any, Optional
 from dataclasses import dataclass, field
+from typing import Any, Dict, Optional
 
 
 @dataclass
@@ -36,7 +36,7 @@ def _optimization_worker(request: OptimizationRequest, result_queue: mp.Queue):
     try:
         # 尝试导入LingMinOpt
         try:
-            from lingminopt import MinimalOptimizer, ExperimentConfig
+            from lingminopt import ExperimentConfig, MinimalOptimizer
 
             HAS_LINGMINOPT = True
         except ImportError:
@@ -300,7 +300,7 @@ class SynchronousOptimizer:
             优化结果
         """
         try:
-            from lingminopt import MinimalOptimizer, ExperimentConfig
+            from lingminopt import ExperimentConfig, MinimalOptimizer
 
             # 创建搜索空间
             search_space = _create_search_space(request.goal)

@@ -1,13 +1,21 @@
 import time
-import pytest
 from unittest.mock import AsyncMock, MagicMock
+
+import pytest
+
 from lingflow.testing.ai_runner import AIScenarioRunner, ScenarioResult, ScenarioStatus
-from lingflow.testing.scenario import CodeTestScenario, CapturedToolCall
+from lingflow.testing.scenario import CapturedToolCall, CodeTestScenario
 
 
-def _make_scenario(name="test_scenario", prompt="test prompt", code="def foo(): pass",
-                   expected_tools=None, required_tools=None, expectations=None,
-                   max_turns=3):
+def _make_scenario(
+    name="test_scenario",
+    prompt="test prompt",
+    code="def foo(): pass",
+    expected_tools=None,
+    required_tools=None,
+    expectations=None,
+    max_turns=3,
+):
     return CodeTestScenario(
         name=name,
         prompt=prompt,
@@ -158,10 +166,7 @@ class TestAIScenarioRunner:
     @pytest.mark.asyncio
     async def test_run_batch(self, runner):
         mock_tool = AsyncMock()
-        scenarios = [
-            _make_scenario(name=f"scene_{i}", expected_tools=["tool1"])
-            for i in range(3)
-        ]
+        scenarios = [_make_scenario(name=f"scene_{i}", expected_tools=["tool1"]) for i in range(3)]
         tools = {"tool1": mock_tool}
         results = await runner.run_batch(scenarios, tools)
         assert len(results) == 3

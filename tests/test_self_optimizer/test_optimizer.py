@@ -2,12 +2,11 @@
 测试优化器
 """
 
-import pytest
 import time
-from lingflow.self_optimizer.optimizer import (
-    SynchronousOptimizer,
-    OptimizationRequest
-)
+
+import pytest
+
+from lingflow.self_optimizer.optimizer import OptimizationRequest, SynchronousOptimizer
 
 
 class TestSynchronousOptimizer:
@@ -28,7 +27,7 @@ class TestSynchronousOptimizer:
             config={
                 "max_experiments": 3,  # 只运行3次实验（测试用）
                 "time_budget": 60,
-            }
+            },
         )
 
     def test_optimize(self, optimizer, opt_request):
@@ -63,12 +62,7 @@ class TestOptimizationRequest:
 
     def test_create_request(self):
         """测试创建请求"""
-        request = OptimizationRequest(
-            target=".",
-            goal="structure",
-            params={},
-            config={}
-        )
+        request = OptimizationRequest(target=".", goal="structure", params={}, config={})
 
         assert request.target == "."
         assert request.goal == "structure"

@@ -7,43 +7,193 @@ import re
 from collections import Counter
 from typing import Any, Dict, List, Optional
 
-from .base import BaseAnalyzer, AnalyzerConfig
-from ..models.common import MentionData
 from ..logging_config import get_logger
+from ..models.common import MentionData
+from .base import AnalyzerConfig, BaseAnalyzer
 
 logger = get_logger(__name__)
 
 
-STOP_WORDS = frozenset({
-    "the", "a", "an", "is", "are", "was", "were", "be", "been", "being",
-    "have", "has", "had", "do", "does", "did", "will", "would", "shall",
-    "should", "may", "might", "can", "could", "must", "to", "of", "in",
-    "for", "on", "with", "at", "by", "from", "as", "into", "through",
-    "during", "before", "after", "above", "below", "between", "out", "off",
-    "over", "under", "again", "further", "then", "once", "here", "there",
-    "when", "where", "why", "how", "all", "each", "every", "both", "few",
-    "more", "most", "other", "some", "such", "no", "nor", "not", "only",
-    "own", "same", "so", "than", "too", "very", "just", "because", "but",
-    "and", "or", "if", "while", "about", "up", "it", "its", "this", "that",
-    "these", "those", "i", "me", "my", "we", "our", "you", "your", "he",
-    "him", "his", "she", "her", "they", "them", "their", "what", "which",
-    "who", "whom",
-})
+STOP_WORDS = frozenset(
+    {
+        "the",
+        "a",
+        "an",
+        "is",
+        "are",
+        "was",
+        "were",
+        "be",
+        "been",
+        "being",
+        "have",
+        "has",
+        "had",
+        "do",
+        "does",
+        "did",
+        "will",
+        "would",
+        "shall",
+        "should",
+        "may",
+        "might",
+        "can",
+        "could",
+        "must",
+        "to",
+        "of",
+        "in",
+        "for",
+        "on",
+        "with",
+        "at",
+        "by",
+        "from",
+        "as",
+        "into",
+        "through",
+        "during",
+        "before",
+        "after",
+        "above",
+        "below",
+        "between",
+        "out",
+        "off",
+        "over",
+        "under",
+        "again",
+        "further",
+        "then",
+        "once",
+        "here",
+        "there",
+        "when",
+        "where",
+        "why",
+        "how",
+        "all",
+        "each",
+        "every",
+        "both",
+        "few",
+        "more",
+        "most",
+        "other",
+        "some",
+        "such",
+        "no",
+        "nor",
+        "not",
+        "only",
+        "own",
+        "same",
+        "so",
+        "than",
+        "too",
+        "very",
+        "just",
+        "because",
+        "but",
+        "and",
+        "or",
+        "if",
+        "while",
+        "about",
+        "up",
+        "it",
+        "its",
+        "this",
+        "that",
+        "these",
+        "those",
+        "i",
+        "me",
+        "my",
+        "we",
+        "our",
+        "you",
+        "your",
+        "he",
+        "him",
+        "his",
+        "she",
+        "her",
+        "they",
+        "them",
+        "their",
+        "what",
+        "which",
+        "who",
+        "whom",
+    }
+)
 
-TECH_KEYWORDS = frozenset({
-    "python", "javascript", "typescript", "rust", "golang", "java",
-    "react", "vue", "angular", "nextjs", "svelte",
-    "docker", "kubernetes", "aws", "gcp", "azure",
-    "api", "rest", "graphql", "grpc", "websocket",
-    "database", "sql", "nosql", "redis", "postgresql",
-    "machine", "learning", "deep", "neural", "transformer",
-    "llm", "gpt", "claude", "model", "ai", "agent",
-    "mcp", "tool", "framework", "library", "sdk",
-    "workflow", "pipeline", "automation", "cicd", "devops",
-    "testing", "pytest", "unittest", "integration",
-    "cli", "terminal", "shell", "bash",
-    "open", "source", "github", "git", "repository",
-})
+TECH_KEYWORDS = frozenset(
+    {
+        "python",
+        "javascript",
+        "typescript",
+        "rust",
+        "golang",
+        "java",
+        "react",
+        "vue",
+        "angular",
+        "nextjs",
+        "svelte",
+        "docker",
+        "kubernetes",
+        "aws",
+        "gcp",
+        "azure",
+        "api",
+        "rest",
+        "graphql",
+        "grpc",
+        "websocket",
+        "database",
+        "sql",
+        "nosql",
+        "redis",
+        "postgresql",
+        "machine",
+        "learning",
+        "deep",
+        "neural",
+        "transformer",
+        "llm",
+        "gpt",
+        "claude",
+        "model",
+        "ai",
+        "agent",
+        "mcp",
+        "tool",
+        "framework",
+        "library",
+        "sdk",
+        "workflow",
+        "pipeline",
+        "automation",
+        "cicd",
+        "devops",
+        "testing",
+        "pytest",
+        "unittest",
+        "integration",
+        "cli",
+        "terminal",
+        "shell",
+        "bash",
+        "open",
+        "source",
+        "github",
+        "git",
+        "repository",
+    }
+)
 
 
 class TopicAnalyzer(BaseAnalyzer):
@@ -98,12 +248,14 @@ class TopicAnalyzer(BaseAnalyzer):
             if keyword in STOP_WORDS or len(keyword) < 3:
                 continue
             source_count = len(keyword_sources.get(keyword, set()))
-            topics.append({
-                "keyword": keyword,
-                "count": count,
-                "source_count": source_count,
-                "is_tech": keyword in TECH_KEYWORDS,
-            })
+            topics.append(
+                {
+                    "keyword": keyword,
+                    "count": count,
+                    "source_count": source_count,
+                    "is_tech": keyword in TECH_KEYWORDS,
+                }
+            )
             if len(topics) >= top_n:
                 break
 
@@ -156,17 +308,19 @@ class TopicAnalyzer(BaseAnalyzer):
 
             top_keywords = [kw for kw, _ in all_keywords.most_common(5) if kw != keyword]
 
-            clusters.append({
-                "name": keyword,
-                "mention_count": len(new_mentions),
-                "top_keywords": top_keywords[:4],
-                "sample_ids": list(new_mentions)[:5],
-            })
+            clusters.append(
+                {
+                    "name": keyword,
+                    "mention_count": len(new_mentions),
+                    "top_keywords": top_keywords[:4],
+                    "sample_ids": list(new_mentions)[:5],
+                }
+            )
             used_mentions.update(new_mentions)
 
         return clusters
 
     def _tokenize(self, text: str) -> List[str]:
         """简单分词"""
-        words = re.findall(r'[a-z]{2,}', text.lower())
+        words = re.findall(r"[a-z]{2,}", text.lower())
         return words

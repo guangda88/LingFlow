@@ -1,6 +1,7 @@
 """LingScheduler tests."""
 
 import asyncio
+
 import pytest
 
 from lingflow.scheduler import LingScheduler
@@ -63,8 +64,7 @@ class TestLingScheduler:
 
     @pytest.mark.asyncio
     async def test_retry_on_failure(self) -> None:
-        self.scheduler.add_delay("retry_test", "fail_once", delay_seconds=0.1,
-                                 params={"val": "x"}, max_retries=3)
+        self.scheduler.add_delay("retry_test", "fail_once", delay_seconds=0.1, params={"val": "x"}, max_retries=3)
         await self.scheduler.start()
         await asyncio.sleep(8.0)
         await self.scheduler.stop()

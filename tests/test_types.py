@@ -1,6 +1,7 @@
 """Result[T] type tests"""
 
 import pytest
+
 from lingflow.core.types import Result
 
 

@@ -3,9 +3,9 @@ LingFlow 优化建议生成器
 生成详细的优化建议报告
 """
 
-from typing import Dict, Any
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict
 
 from lingflow.self_optimizer.optimizer import OptimizationResult
 

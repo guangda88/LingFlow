@@ -2,8 +2,8 @@ from lingflow.self_optimizer.optimizer import (
     OptimizationRequest,
     OptimizationResult,
     ProcessIsolatedOptimizer,
-    SynchronousOptimizer,
     SimpleSearchSpace,
+    SynchronousOptimizer,
     _create_search_space,
     _grid_search,
 )
@@ -12,16 +12,23 @@ from lingflow.self_optimizer.optimizer import (
 class TestOptimizationResult:
     def test_defaults(self):
         r = OptimizationResult(
-            success=True, best_params={"x": 1}, best_score=0.5,
-            experiments=10, duration=1.0,
+            success=True,
+            best_params={"x": 1},
+            best_score=0.5,
+            experiments=10,
+            duration=1.0,
         )
         assert r.error == ""
         assert r.history == []
 
     def test_with_error(self):
         r = OptimizationResult(
-            success=False, best_params={}, best_score=0,
-            experiments=0, duration=0, error="fail",
+            success=False,
+            best_params={},
+            best_score=0,
+            experiments=0,
+            duration=0,
+            error="fail",
         )
         assert r.error == "fail"
 
@@ -95,7 +102,9 @@ class TestSynchronousOptimizer:
     def test_optimize_structure(self):
         opt = SynchronousOptimizer()
         req = OptimizationRequest(
-            target="/tmp", goal="structure", params={},
+            target="/tmp",
+            goal="structure",
+            params={},
             config={"max_experiments": 2},
         )
         result = opt.optimize(req)
@@ -105,7 +114,9 @@ class TestSynchronousOptimizer:
     def test_optimize_performance(self):
         opt = SynchronousOptimizer()
         req = OptimizationRequest(
-            target="/tmp", goal="performance", params={},
+            target="/tmp",
+            goal="performance",
+            params={},
             config={"max_experiments": 2},
         )
         result = opt.optimize(req)
@@ -114,7 +125,9 @@ class TestSynchronousOptimizer:
     def test_optimize_simplicity(self):
         opt = SynchronousOptimizer()
         req = OptimizationRequest(
-            target="/tmp", goal="simplicity", params={},
+            target="/tmp",
+            goal="simplicity",
+            params={},
             config={"max_experiments": 2},
         )
         result = opt.optimize(req)
@@ -123,7 +136,9 @@ class TestSynchronousOptimizer:
     def test_optimize_unknown_goal(self):
         opt = SynchronousOptimizer()
         req = OptimizationRequest(
-            target="/tmp", goal="unknown", params={},
+            target="/tmp",
+            goal="unknown",
+            params={},
             config={"max_experiments": 2},
         )
         result = opt.optimize(req)

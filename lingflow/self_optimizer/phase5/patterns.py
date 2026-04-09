@@ -7,7 +7,7 @@ YOLO模式：基于原型快速生产化
 
 import ast
 import re
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List, Optional
 
 
 class PatternRecognizer:

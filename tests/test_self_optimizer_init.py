@@ -1,23 +1,24 @@
-import pytest
-import tempfile
 import os
-from unittest.mock import patch, MagicMock
+import tempfile
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 from lingflow.self_optimizer import (
-    quick_optimize,
-    check_and_optimize,
+    DEFAULT_CONFIG,
+    ConfigManager,
+    OptimizationAdvisor,
     OptimizationConfig,
-    OptimizationTrigger,
-    TriggerInfo,
-    ProcessIsolatedOptimizer,
-    SynchronousOptimizer,
     OptimizationRequest,
     OptimizationResult,
-    StructureEvaluator,
+    OptimizationTrigger,
+    ProcessIsolatedOptimizer,
     SimplicityEvaluator,
-    OptimizationAdvisor,
-    ConfigManager,
-    DEFAULT_CONFIG,
+    StructureEvaluator,
+    SynchronousOptimizer,
+    TriggerInfo,
+    check_and_optimize,
+    quick_optimize,
 )
 
 
@@ -72,7 +73,8 @@ class TestCheckAndOptimize:
     def test_with_trigger_auto(self):
         cfg = OptimizationConfig()
         cfg.config["hooks"]["require_confirmation"] = False
-        from lingflow.self_optimizer.config import set_global_config, get_global_config
+        from lingflow.self_optimizer.config import get_global_config, set_global_config
+
         old = get_global_config()
         set_global_config(cfg)
         try:
@@ -92,7 +94,8 @@ class TestCheckAndOptimize:
     def test_with_trigger_requires_confirmation(self):
         cfg = OptimizationConfig()
         cfg.config["hooks"]["require_confirmation"] = True
-        from lingflow.self_optimizer.config import set_global_config, get_global_config
+        from lingflow.self_optimizer.config import get_global_config, set_global_config
+
         old = get_global_config()
         set_global_config(cfg)
         try:

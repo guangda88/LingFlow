@@ -4,7 +4,8 @@
 """
 
 from dataclasses import dataclass, field
-from typing import Callable, Dict, Any, Optional
+from typing import Any, Callable, Dict, Optional
+
 from .severity import Severity
 
 

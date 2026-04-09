@@ -11,9 +11,9 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
 from lingflow.knowledge.query import (
+    KnowledgeItem,
     KnowledgeQuery,
     KnowledgeResult,
-    KnowledgeItem,
     ResultSource,
 )
 from lingflow.knowledge.sources.base import (
@@ -21,9 +21,9 @@ from lingflow.knowledge.sources.base import (
     SearchContext,
     SearchResult,
 )
+from lingflow.knowledge.sources.external import ExternalIntelligenceSource
 from lingflow.knowledge.sources.lingflow import LingFlowKnowledgeSource
 from lingflow.knowledge.sources.lingtongask import LingTongAskKnowledgeSource
-from lingflow.knowledge.sources.external import ExternalIntelligenceSource
 
 
 @dataclass(frozen=True)
@@ -45,15 +45,17 @@ class FederationConfig:
     enable_parallel: bool = True
 
     # Source priorities (higher = more priority)
-    source_priorities: Dict[ResultSource, float] = field(default_factory=lambda: {
-        ResultSource.LINGFLOW: 1.0,
-        ResultSource.LINGTONGASK: 1.0,
-        ResultSource.LINGCLAUDE: 0.9,
-        ResultSource.LINGYI: 0.8,
-        ResultSource.RESEARCH: 0.7,
-        ResultSource.EXTERNAL_INTELLIGENCE: 0.6,
-        ResultSource.MEMORY: 0.5,
-    })
+    source_priorities: Dict[ResultSource, float] = field(
+        default_factory=lambda: {
+            ResultSource.LINGFLOW: 1.0,
+            ResultSource.LINGTONGASK: 1.0,
+            ResultSource.LINGCLAUDE: 0.9,
+            ResultSource.LINGYI: 0.8,
+            ResultSource.RESEARCH: 0.7,
+            ResultSource.EXTERNAL_INTELLIGENCE: 0.6,
+            ResultSource.MEMORY: 0.5,
+        }
+    )
 
 
 @dataclass
@@ -129,11 +131,7 @@ class KnowledgeFederation:
 
         return len(self._sources) > 0
 
-    async def query(
-        self,
-        query: KnowledgeQuery,
-        context: Optional[SearchContext] = None
-    ) -> KnowledgeResult:
+    async def query(self, query: KnowledgeQuery, context: Optional[SearchContext] = None) -> KnowledgeResult:
         """
         Execute a cross-source knowledge query.
 
@@ -156,10 +154,7 @@ class KnowledgeFederation:
             context = SearchContext(timeout_seconds=self._config.query_timeout_seconds)
 
         # Select sources to query
-        sources_to_query = [
-            source for source in self._sources.values()
-            if source.should_query(query)
-        ]
+        sources_to_query = [source for source in self._sources.values() if source.should_query(query)]
 
         if not sources_to_query:
             return KnowledgeResult(
@@ -192,20 +187,14 @@ class KnowledgeFederation:
         context: SearchContext,
     ) -> List[SearchResult]:
         """Query multiple sources in parallel"""
-        tasks = [
-            self._query_single(source, query, context)
-            for source in sources
-        ]
+        tasks = [self._query_single(source, query, context) for source in sources]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         # Convert exceptions to error results
         final_results = []
         for source, result in zip(sources, results):
             if isinstance(result, Exception):
-                final_results.append(SearchResult.error(
-                    source.name,
-                    str(result)
-                ))
+                final_results.append(SearchResult.error(source.name, str(result)))
             else:
                 final_results.append(result)
 
@@ -264,17 +253,10 @@ class KnowledgeFederation:
 
             for item in search_result.result.items:
                 # Calculate priority score
-                priority = self._config.source_priorities.get(
-                    item.source,
-                    0.5
-                )
+                priority = self._config.source_priorities.get(item.source, 0.5)
 
                 # Combined score: relevance * quality * priority
-                combined_score = (
-                    item.relevance_score *
-                    item.quality_score *
-                    priority
-                )
+                combined_score = item.relevance_score * item.quality_score * priority
 
                 all_items.append((item, combined_score))
 
@@ -284,8 +266,8 @@ class KnowledgeFederation:
         # Filter by thresholds
         for item, score in all_items:
             if (
-                item.quality_score >= self._config.min_quality_score and
-                item.relevance_score >= self._config.min_relevance_score
+                item.quality_score >= self._config.min_quality_score
+                and item.relevance_score >= self._config.min_relevance_score
             ):
                 merged.add_item(item)
 
@@ -298,11 +280,7 @@ class KnowledgeFederation:
 
         return merged
 
-    async def query_by_keywords(
-        self,
-        keywords: List[str],
-        **kwargs
-    ) -> KnowledgeResult:
+    async def query_by_keywords(self, keywords: List[str], **kwargs) -> KnowledgeResult:
         """
         Convenience method: Query by keywords.
 
@@ -316,11 +294,7 @@ class KnowledgeFederation:
         query = KnowledgeQuery.from_keywords(keywords, **kwargs)
         return await self.query(query)
 
-    async def query_by_context(
-        self,
-        context: str,
-        **kwargs
-    ) -> KnowledgeResult:
+    async def query_by_context(self, context: str, **kwargs) -> KnowledgeResult:
         """
         Convenience method: Query by context text.
 

@@ -2,26 +2,27 @@ import json
 import os
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from lingflow.context.manager import (
+    _CONTEXT_MANAGER_LOCK,
     ContextManager,
     ContextSnapshot,
-    get_context_manager,
-    track_context,
     add_task,
     complete_task,
     compress_context,
+    get_context_manager,
     get_recovery_context,
-    _CONTEXT_MANAGER_LOCK,
+    track_context,
 )
 
 
 @pytest.fixture(autouse=True)
 def reset_global_cm():
     import lingflow.context.manager as mod
+
     mod._CONTEXT_MANAGER = None
     yield
     mod._CONTEXT_MANAGER = None
@@ -265,7 +266,7 @@ class TestCompressNow:
     def test_compress_with_messages(self, cm):
         cm.record_message("user", "hello " * 200)
         cm.record_message("assistant", "world " * 200)
-        with patch.object(cm, '_get_smart_compressor') as mock_sc:
+        with patch.object(cm, "_get_smart_compressor") as mock_sc:
             mock_result = MagicMock()
             mock_result.compressed_messages = [{"role": "user", "content": "compressed"}]
             mock_result.compressed_tokens = 10
@@ -306,15 +307,17 @@ class TestGenerateHandoff:
 
     def test_generate_handoff_with_messages(self, cm):
         cm.record_message("user", "hello world")
-        with patch("lingflow.context.handoff.HandoffDocument") as mock_hd, \
-             patch("lingflow.context.degradation.DegradationDetector") as mock_dd:
+        with (
+            patch("lingflow.context.handoff.HandoffDocument") as mock_hd,
+            patch("lingflow.context.degradation.DegradationDetector") as mock_dd,
+        ):
             mock_report = MagicMock()
             mock_report.health.value = "healthy"
             mock_report.detected_types = []
             mock_dd.return_value.get_health_score.return_value = mock_report
             mock_doc = MagicMock()
             mock_doc.to_markdown.return_value = "# Handoff"
-            mock_doc.to_json.return_value = '{}'
+            mock_doc.to_json.return_value = "{}"
             mock_hd.from_context_snapshot.return_value = mock_doc
             doc = cm.generate_handoff()
             assert doc is mock_doc

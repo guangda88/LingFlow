@@ -3,11 +3,11 @@ LingFlow 自优化钩子
 在特定事件触发时检查是否需要自优化
 """
 
-from typing import Dict, Any
 from datetime import datetime
+from typing import Any, Dict
 
+from lingflow.self_optimizer.optimizer import OptimizationRequest, ProcessIsolatedOptimizer
 from lingflow.self_optimizer.trigger import OptimizationTrigger, TriggerInfo
-from lingflow.self_optimizer.optimizer import ProcessIsolatedOptimizer, OptimizationRequest
 
 
 class AutoOptimizeHook:

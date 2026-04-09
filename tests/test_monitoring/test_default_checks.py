@@ -1,21 +1,22 @@
 """Tests for lingflow.monitoring.default_checks module"""
 
-import pytest
 import time
 from datetime import datetime
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 from lingflow.monitoring.default_checks import (
-    check_skill_loader,
-    check_memory_usage,
-    check_disk_usage,
+    MonitoringLoop,
     check_cpu_usage,
-    log_notification_handler,
+    check_disk_usage,
+    check_memory_usage,
+    check_skill_loader,
     console_notification_handler,
+    log_notification_handler,
     register_default_checks,
     register_default_handlers,
     setup_default_monitoring,
-    MonitoringLoop,
     start_monitoring,
     stop_monitoring,
 )

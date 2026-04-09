@@ -5,17 +5,17 @@
 
 import logging
 from dataclasses import dataclass
-from typing import List, Dict, Optional, Any
+from typing import Any, Dict, List, Optional
 
-from .base import BaseAnalyzer, AnalyzerConfig, calculate_percentile
-from ..models.common import MentionData, InfluenceScore, Platform
 from ..constants import (
-    PlatformWeights,
-    ScoreWeights,
-    InfluenceThresholds,
     AuthorTiers,
+    InfluenceThresholds,
+    PlatformWeights,
     RecencyDecay,
+    ScoreWeights,
 )
+from ..models.common import InfluenceScore, MentionData, Platform
+from .base import AnalyzerConfig, BaseAnalyzer, calculate_percentile
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class InfluenceConfig(AnalyzerConfig):
     """影响力分析器配置"""
+
     # 平台权重 (使用常量类)
     platform_weights: Dict[Platform, float] = None
 
@@ -67,11 +68,7 @@ class InfluenceAnalyzer(BaseAnalyzer):
         super().__init__(config)
         self.config: InfluenceConfig = config or InfluenceConfig()
 
-    def analyze(
-        self,
-        mentions: List[MentionData],
-        calculate_percentiles: bool = True
-    ) -> Dict[str, Any]:
+    def analyze(self, mentions: List[MentionData], calculate_percentiles: bool = True) -> Dict[str, Any]:
         """分析所有提及的影响力
 
         Args:
@@ -83,9 +80,9 @@ class InfluenceAnalyzer(BaseAnalyzer):
         """
         if not mentions:
             return {
-                'total': 0,
-                'scores': [],
-                'summary': {},
+                "total": 0,
+                "scores": [],
+                "summary": {},
             }
 
         scores = []
@@ -97,24 +94,24 @@ class InfluenceAnalyzer(BaseAnalyzer):
         score_values = [s.score for s in scores]
 
         result = {
-            'total': len(scores),
-            'scores': [s.to_dict() for s in scores],
-            'summary': {
-                'avg_score': sum(score_values) / len(score_values) if score_values else 0,
-                'max_score': max(score_values) if score_values else 0,
-                'min_score': min(score_values) if score_values else 0,
-                'high_influence': sum(1 for s in scores if s.level == 'high'),
-                'medium_influence': sum(1 for s in scores if s.level == 'medium'),
-                'low_influence': sum(1 for s in scores if s.level == 'low'),
+            "total": len(scores),
+            "scores": [s.to_dict() for s in scores],
+            "summary": {
+                "avg_score": sum(score_values) / len(score_values) if score_values else 0,
+                "max_score": max(score_values) if score_values else 0,
+                "min_score": min(score_values) if score_values else 0,
+                "high_influence": sum(1 for s in scores if s.level == "high"),
+                "medium_influence": sum(1 for s in scores if s.level == "medium"),
+                "low_influence": sum(1 for s in scores if s.level == "low"),
             },
         }
 
         if calculate_percentiles:
-            result['summary']['percentiles'] = {
-                'p50': calculate_percentile(score_values, 50),
-                'p75': calculate_percentile(score_values, 75),
-                'p90': calculate_percentile(score_values, 90),
-                'p95': calculate_percentile(score_values, 95),
+            result["summary"]["percentiles"] = {
+                "p50": calculate_percentile(score_values, 50),
+                "p75": calculate_percentile(score_values, 75),
+                "p90": calculate_percentile(score_values, 90),
+                "p95": calculate_percentile(score_values, 95),
             }
 
         return result
@@ -144,34 +141,31 @@ class InfluenceAnalyzer(BaseAnalyzer):
                 platform = Platform(platform)
             except ValueError:
                 platform = Platform.GITHUB
-        platform_weight = self.config.platform_weights.get(
-            platform,
-            0.5
-        )
-        components['platform'] = platform_weight * 100
+        platform_weight = self.config.platform_weights.get(platform, 0.5)
+        components["platform"] = platform_weight * 100
 
         # 2. 互动指标 (0-100)
         engagement_score = self._calculate_engagement(mention)
-        components['engagement'] = engagement_score
+        components["engagement"] = engagement_score
 
         # 3. 作者评分 (0-100)
         author_score = self._assess_author(mention.author)
-        components['author'] = author_score
+        components["author"] = author_score
 
         # 4. 内容质量 (0-100)
         content_score = self._assess_content(mention)
-        components['content'] = content_score
+        components["content"] = content_score
 
         # 5. 时效性 (0-100)
         recency_score = self._assess_recency(mention.published_at)
-        components['recency'] = recency_score
+        components["recency"] = recency_score
 
         # 综合评分
         total_score = (
-            components['engagement'] * self.config.engagement_weight +
-            components['author'] * self.config.author_weight +
-            components['content'] * self.config.content_weight +
-            components['recency'] * self.config.recency_weight
+            components["engagement"] * self.config.engagement_weight
+            + components["author"] * self.config.author_weight
+            + components["content"] * self.config.content_weight
+            + components["recency"] * self.config.recency_weight
         ) * platform_weight
 
         # 确保在0-100范围内
@@ -204,15 +198,14 @@ class InfluenceAnalyzer(BaseAnalyzer):
             raw_score = mention.points + mention.comments * 2
         elif mention.platform == Platform.GITHUB:
             # GitHub: reactions + comments
-            reactions = sum(
-                mention.reactions.values()) if isinstance(
-                mention.reactions, dict) else 0
+            reactions = sum(mention.reactions.values()) if isinstance(mention.reactions, dict) else 0
             raw_score = reactions + mention.comments * 3
         else:
             raw_score = mention.comments
 
         # 转换为对数刻度 (避免少数极端值主导)
         import math
+
         if raw_score <= 0:
             return 0.0
 
@@ -234,11 +227,11 @@ class InfluenceAnalyzer(BaseAnalyzer):
 
         # 这里使用简单的启发式规则
         known_authors = {
-            'guangda88': 100,  # 项目作者
+            "guangda88": 100,  # 项目作者
             # 可以添加其他核心贡献者
         }
 
-        return known_authors.get(author, self.AUTHOR_TIERS['medium'])
+        return known_authors.get(author, self.AUTHOR_TIERS["medium"])
 
     def _assess_content(self, mention: MentionData) -> float:
         """评估内容质量
@@ -280,9 +273,8 @@ class InfluenceAnalyzer(BaseAnalyzer):
         from datetime import datetime, timedelta
 
         try:
-            if 'T' in published_at:
-                dt = datetime.fromisoformat(
-                    published_at.replace('Z', '+00:00'))
+            if "T" in published_at:
+                dt = datetime.fromisoformat(published_at.replace("Z", "+00:00"))
             else:
                 dt = datetime.fromisoformat(published_at)
         except (ValueError, AttributeError) as e:
@@ -303,11 +295,7 @@ class InfluenceAnalyzer(BaseAnalyzer):
         else:
             return RecencyDecay.OLD_SCORE
 
-    def get_top_influential(
-        self,
-        mentions: List[MentionData],
-        limit: int = 10
-    ) -> List[InfluenceScore]:
+    def get_top_influential(self, mentions: List[MentionData], limit: int = 10) -> List[InfluenceScore]:
         """获取最有影响力的提及
 
         Args:

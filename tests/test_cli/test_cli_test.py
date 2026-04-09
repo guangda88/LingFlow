@@ -1,14 +1,15 @@
 """Tests for lingflow.cli.test module"""
 
-import pytest
 from pathlib import Path
+from unittest.mock import MagicMock, patch
+
+import pytest
 from click.testing import CliRunner
-from unittest.mock import patch, MagicMock
 
 from lingflow.cli.test import (
-    test,
-    run_test,
     run_e2e_test,
+    run_test,
+    test,
 )
 
 
@@ -153,9 +154,7 @@ class TestRunTest:
 
         runner = CliRunner()
         with runner.isolated_filesystem():
-            result = runner.invoke(
-                run_test, ["--coverage", "--verbose", "--parallel", "--target", "tests/test_utils/"]
-            )
+            result = runner.invoke(run_test, ["--coverage", "--verbose", "--parallel", "--target", "tests/test_utils/"])
 
         assert result.exit_code == 0
         call_args = mock_run.call_args[0][0]
@@ -210,6 +209,7 @@ class TestRunE2ETest:
         runner = CliRunner()
         with runner.isolated_filesystem():
             import shutil
+
             shutil.copytree(integration_dir.parent.parent, "tests", dirs_exist_ok=True)
             result = runner.invoke(run_e2e_test)
 

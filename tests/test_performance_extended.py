@@ -1,4 +1,5 @@
 """Extended tests for performance utilities covering remaining gaps."""
+
 import time
 from unittest.mock import patch
 
@@ -18,6 +19,7 @@ from lingflow.utils.performance import (
 class TestPerformanceMonitorPrintReport:
     def test_print_report_with_data(self, caplog):
         import logging
+
         monitor = PerformanceMonitor()
 
         @monitor.track("test_op")
@@ -31,6 +33,7 @@ class TestPerformanceMonitorPrintReport:
 
     def test_print_report_empty(self, caplog):
         import logging
+
         monitor = PerformanceMonitor()
         with caplog.at_level(logging.INFO, logger="lingflow.utils.performance"):
             monitor.print_report()
@@ -56,6 +59,7 @@ class TestContextTimerEdgeCases:
     def test_default_monitor(self):
         saved = performance_monitor
         import lingflow.utils.performance as perf_mod
+
         test_monitor = PerformanceMonitor()
         perf_mod.performance_monitor = test_monitor
         try:
@@ -79,6 +83,7 @@ class TestContextTimerEdgeCases:
 
     def test_slow_operation_warning(self, caplog):
         import logging
+
         monitor = PerformanceMonitor()
         with caplog.at_level(logging.WARNING, logger="lingflow.utils.performance"):
             with patch("time.perf_counter", side_effect=[0.0, 1.5]):
@@ -171,10 +176,12 @@ class TestPerformanceMonitorDisabled:
 class TestTrackPerformanceGlobal:
     def test_global_decorator_records(self):
         import lingflow.utils.performance as perf_mod
+
         saved = perf_mod.performance_monitor
         test_monitor = PerformanceMonitor()
         perf_mod.performance_monitor = test_monitor
         try:
+
             @track_performance("global_test")
             def op():
                 return "done"
@@ -202,9 +209,7 @@ class TestTrimMetricsEdge:
     def test_trim_with_exact_limit(self):
         monitor = PerformanceMonitor(max_metrics_per_key=3)
         for i in range(5):
-            monitor.metrics["op"].append(
-                PerformanceMetric(name="op", execution_time=float(i), timestamp=None)
-            )
+            monitor.metrics["op"].append(PerformanceMetric(name="op", execution_time=float(i), timestamp=None))
             monitor._total_metrics_count += 1
         monitor._trim_metrics("op")
         assert len(monitor.metrics["op"]) == 3

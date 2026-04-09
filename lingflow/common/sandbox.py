@@ -11,11 +11,11 @@ LingFlow 安全沙箱执行器
 - 异常隔离：捕获所有异常，防止影响主进程
 """
 
+import logging
 import multiprocessing
+import resource
 import sys
 import time
-import logging
-import resource
 from typing import Any, Callable, Dict, Optional
 
 from lingflow.common.security_analyzer import (

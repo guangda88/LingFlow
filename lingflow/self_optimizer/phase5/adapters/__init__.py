@@ -4,13 +4,13 @@ LingFlow Phase 5: AI工具适配器
 提供与各种AI代码分析工具（Semgrep、Ruff、Pylint等）的集成适配器。
 """
 
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, List, Optional
 
-from lingflow.self_optimizer.phase5.models import FeedbackSource
 from lingflow.self_optimizer.phase5.adapters.base_adapter import AIToolAdapter
-from lingflow.self_optimizer.phase5.adapters.semgrep_adapter import SemgrepAdapter
-from lingflow.self_optimizer.phase5.adapters.ruff_adapter import RuffAdapter
 from lingflow.self_optimizer.phase5.adapters.pylint_adapter import PylintAdapter
+from lingflow.self_optimizer.phase5.adapters.ruff_adapter import RuffAdapter
+from lingflow.self_optimizer.phase5.adapters.semgrep_adapter import SemgrepAdapter
+from lingflow.self_optimizer.phase5.models import FeedbackSource
 
 __all__ = [
     "AIToolAdapter",

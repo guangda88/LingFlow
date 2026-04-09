@@ -3,15 +3,15 @@
 定义采集器接口和通用功能。
 """
 
+import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import List, Dict, Any, Optional
-import json
+from typing import Any, Dict, List, Optional
 
-from ..models.common import MentionData, Platform
 from ..logging_config import get_logger
+from ..models.common import MentionData, Platform
 
 logger = get_logger(__name__)
 
@@ -19,6 +19,7 @@ logger = get_logger(__name__)
 @dataclass
 class CollectorConfig:
     """采集器配置"""
+
     enabled: bool = True
     rate_limit: int = 100  # 每分钟请求数
     cache_ttl: int = 3600  # 缓存时间(秒)
@@ -76,19 +77,19 @@ class BaseCollector(ABC):
         Returns:
             保存的文件路径
         """
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"{self.NAME}_{timestamp}.json"
         filepath = self.data_dir / filename
 
         data = {
-            'collector': self.NAME,
-            'platform': self.PLATFORM.value,
-            'timestamp': datetime.now().isoformat(),
-            'count': len(mentions),
-            'mentions': [m.to_dict() for m in mentions],
+            "collector": self.NAME,
+            "platform": self.PLATFORM.value,
+            "timestamp": datetime.now().isoformat(),
+            "count": len(mentions),
+            "mentions": [m.to_dict() for m in mentions],
         }
 
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
         return filepath
@@ -102,10 +103,10 @@ class BaseCollector(ABC):
         Returns:
             MentionData列表
         """
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        return [MentionData.from_dict(m) for m in data.get('mentions', [])]
+        return [MentionData.from_dict(m) for m in data.get("mentions", [])]
 
     def get_recent_files(self, days: int = 7) -> List[Path]:
         """获取最近的数据文件
@@ -162,9 +163,9 @@ class BaseCollector(ABC):
             return None
 
         try:
-            with open(cache_file, 'r', encoding='utf-8') as f:
+            with open(cache_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            return [MentionData.from_dict(m) for m in data.get('mentions', [])]
+            return [MentionData.from_dict(m) for m in data.get("mentions", [])]
         except Exception:
             return None
 
@@ -178,11 +179,11 @@ class BaseCollector(ABC):
         cache_file = self.cache_dir / f"{cache_key}.json"
 
         data = {
-            'timestamp': datetime.now().isoformat(),
-            'mentions': [m.to_dict() for m in mentions],
+            "timestamp": datetime.now().isoformat(),
+            "mentions": [m.to_dict() for m in mentions],
         }
 
-        with open(cache_file, 'w', encoding='utf-8') as f:
+        with open(cache_file, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
     def clean_old_cache(self, days: int = 7):
@@ -210,15 +211,14 @@ class BaseCollector(ABC):
         """
         if not mentions:
             return {
-                'total': 0,
-                'platform': self.PLATFORM.value,
+                "total": 0,
+                "platform": self.PLATFORM.value,
             }
 
         # 按类型统计
         by_type: Dict[str, int] = {}
         for m in mentions:
-            source_type = m.source_type.value if hasattr(
-                m.source_type, 'value') else str(m.source_type)
+            source_type = m.source_type.value if hasattr(m.source_type, "value") else str(m.source_type)
             by_type[source_type] = by_type.get(source_type, 0) + 1
 
         # 按作者统计
@@ -233,16 +233,16 @@ class BaseCollector(ABC):
                 by_state[m.state] = by_state.get(m.state, 0) + 1
 
         return {
-            'total': len(mentions),
-            'platform': self.PLATFORM.value,
-            'by_type': by_type,
-            'by_state': by_state,
-            'unique_authors': len(authors),
-            'top_authors': sorted(authors.items(), key=lambda x: x[1], reverse=True)[:5],
-            'total_comments': sum(m.comments for m in mentions),
-            'date_range': {
-                'earliest': min(m.published_at for m in mentions),
-                'latest': max(m.published_at for m in mentions),
+            "total": len(mentions),
+            "platform": self.PLATFORM.value,
+            "by_type": by_type,
+            "by_state": by_state,
+            "unique_authors": len(authors),
+            "top_authors": sorted(authors.items(), key=lambda x: x[1], reverse=True)[:5],
+            "total_comments": sum(m.comments for m in mentions),
+            "date_range": {
+                "earliest": min(m.published_at for m in mentions),
+                "latest": max(m.published_at for m in mentions),
             },
         }
 
@@ -318,18 +318,16 @@ class CollectorManager:
             汇总信息
         """
         summary = {
-            'total_collectors': len(self.collectors),
-            'enabled_collectors': sum(
-                1 for c in self.collectors.values() if c.config.enabled
-            ),
-            'collectors': {},
+            "total_collectors": len(self.collectors),
+            "enabled_collectors": sum(1 for c in self.collectors.values() if c.config.enabled),
+            "collectors": {},
         }
 
         for name, collector in self.collectors.items():
-            summary['collectors'][name] = {
-                'platform': collector.PLATFORM.value,
-                'enabled': collector.config.enabled,
-                'data_dir': str(collector.data_dir),
+            summary["collectors"][name] = {
+                "platform": collector.PLATFORM.value,
+                "enabled": collector.config.enabled,
+                "data_dir": str(collector.data_dir),
             }
 
         return summary

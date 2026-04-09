@@ -6,7 +6,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Any, Callable, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from ..rules.models import Rule, RuleValidationError
 from ..rules.severity import Severity

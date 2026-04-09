@@ -3,13 +3,13 @@
 import sys
 
 import click
+
+from lingflow import LingFlow
 from lingflow.feedback import (
     FeedbackCategory,
     FeedbackSeverity,
     get_feedback_collector,
 )
-
-from lingflow import LingFlow
 
 lf = LingFlow()
 

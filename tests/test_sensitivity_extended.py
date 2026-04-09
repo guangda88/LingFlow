@@ -1,11 +1,12 @@
 """Extended tests for sensitivity analysis covering remaining gaps."""
+
 import numpy as np
 import pytest
 
 from lingflow.self_optimizer.phase4.sensitivity import (
+    SensitivityAnalyzer,
     SensitivityResult,
     SobolResult,
-    SensitivityAnalyzer,
     analyze_sensitivity,
 )
 
@@ -23,6 +24,7 @@ SIMPLE_SPACE = {
 class TestSensitivityResultDefaults:
     def test_default_timestamp(self):
         import time
+
         before = time.time()
         r = SensitivityResult(parameter_name="x", sensitivity_score=0.5, method="local", baseline_value=1.0)
         after = time.time()
@@ -37,6 +39,7 @@ class TestSensitivityResultDefaults:
 class TestSobolResultDefaults:
     def test_default_timestamp(self):
         import time
+
         before = time.time()
         r = SobolResult(first_order={}, total_order={}, parameters=[])
         after = time.time()
@@ -72,6 +75,7 @@ class TestGetDefaultParamsLog:
         }
         analyzer = SensitivityAnalyzer(space, simple_objective)
         import math
+
         expected = math.sqrt(0.001 * 1.0)
         assert abs(analyzer.base_params["lr"] - expected) < 1e-10
 
@@ -132,6 +136,7 @@ class TestAnalyzeGlobalSimpleExtended:
 
     def test_simple_partial_exceptions(self):
         call_count = [0]
+
         def sometimes_failing(params):
             call_count[0] += 1
             if call_count[0] > 2:
@@ -175,8 +180,11 @@ class TestConvertSamplesToDicts:
 class TestAnalyzeSensitivityMorris:
     def test_morris_method_no_salib(self):
         result = analyze_sensitivity(
-            SIMPLE_SPACE, simple_objective, {"x": 0, "y": 0},
-            method="morris", n_samples=20,
+            SIMPLE_SPACE,
+            simple_objective,
+            {"x": 0, "y": 0},
+            method="morris",
+            n_samples=20,
         )
         assert result == {}
 

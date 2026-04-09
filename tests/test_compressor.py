@@ -1,6 +1,7 @@
 """Tests for ContextCompressor"""
 
 import asyncio
+
 import pytest
 
 from lingflow.compression.compressor import ContextCompressor
@@ -261,22 +262,26 @@ class TestCompressorConcurrentSafety:
         async def compress_large():
             """Compress large context"""
             long_text = "a" * 5000
-            return compressor.compress({
-                "requirements": long_text,
-                "specification": "b" * 5000,
-                "description": "c" * 3000,
-                "field1": "d" * 700,
-                "field2": "e" * 700,
-                "field3": "f" * 700,
-                "field4": "g" * 700,
-            })
+            return compressor.compress(
+                {
+                    "requirements": long_text,
+                    "specification": "b" * 5000,
+                    "description": "c" * 3000,
+                    "field1": "d" * 700,
+                    "field2": "e" * 700,
+                    "field3": "f" * 700,
+                    "field4": "g" * 700,
+                }
+            )
 
         async def compress_medium():
             """Compress medium context"""
-            return compressor.compress({
-                "requirements": "Medium req",
-                "description": "Medium desc",
-            })
+            return compressor.compress(
+                {
+                    "requirements": "Medium req",
+                    "description": "Medium desc",
+                }
+            )
 
         # Mix different types of compressions (note: empty dicts return early, so not counted)
         tasks = [

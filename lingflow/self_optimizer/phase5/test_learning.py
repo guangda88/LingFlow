@@ -9,21 +9,20 @@ from unittest.mock import patch
 
 import pytest
 
+from lingflow.self_optimizer.phase5.learning import (
+    RuleDeduplicator,
+    RuleExtractor,
+    RuleValidator,
+    SecurityRuleExtractor,
+)
 from lingflow.self_optimizer.phase5.models import (
+    FeedbackCategory,
     FeedbackItem,
+    FeedbackSeverity,
     LearnedRule,
     Pattern,
-    FeedbackCategory,
-    FeedbackSeverity,
     ToolType,
 )
-from lingflow.self_optimizer.phase5.learning import (
-    RuleExtractor,
-    SecurityRuleExtractor,
-    RuleDeduplicator,
-    RuleValidator,
-)
-
 
 # ============================================================================
 # Fixtures
@@ -142,11 +141,7 @@ class TestRuleExtractor:
 
     def test_initialization(self):
         """测试初始化"""
-        extractor = RuleExtractor(
-            min_frequency=2,
-            min_confidence=0.6,
-            max_rules=100
-        )
+        extractor = RuleExtractor(min_frequency=2, min_confidence=0.6, max_rules=100)
         assert extractor.min_frequency == 2
         assert extractor.min_confidence == 0.6
         assert extractor.max_rules == 100
@@ -173,10 +168,7 @@ class TestRuleExtractor:
         extractor = RuleExtractor(min_frequency=1, min_confidence=0.5)
 
         # 只提取安全类别
-        security_rules = extractor.extract_rules(
-            diverse_feedback_items,
-            category=FeedbackCategory.SECURITY
-        )
+        security_rules = extractor.extract_rules(diverse_feedback_items, category=FeedbackCategory.SECURITY)
 
         assert all(r.category == FeedbackCategory.SECURITY for r in security_rules)
 
@@ -556,10 +548,7 @@ class TestRuleValidator:
 
     def test_initialization(self):
         """测试初始化"""
-        validator = RuleValidator(
-            min_quality_score=0.5,
-            min_tool_support=1
-        )
+        validator = RuleValidator(min_quality_score=0.5, min_tool_support=1)
         assert validator.min_quality_score == 0.5
         assert validator.min_tool_support == 1
 
@@ -603,7 +592,7 @@ class TestRuleValidator:
     def test_validate_by_category_validity(self, sample_learned_rule):
         """测试按类别有效性验证"""
         # 设置无效的类别
-        with patch.object(sample_learned_rule, 'category', "invalid"):
+        with patch.object(sample_learned_rule, "category", "invalid"):
             validator = RuleValidator()
             result = validator.validate(sample_learned_rule)
             assert result is False
@@ -873,6 +862,7 @@ class TestRuleExtractorPerformance:
             items.append(item)
 
         import time
+
         extractor = RuleExtractor(min_frequency=5, min_confidence=0.5)
 
         start = time.time()

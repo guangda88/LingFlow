@@ -228,7 +228,7 @@ class TestAgentExecuteTaskFailure:
     @pytest.mark.asyncio
     async def test_execute_task_with_exception(self):
         """Test that exceptions are handled gracefully."""
-        from unittest.mock import patch, AsyncMock
+        from unittest.mock import AsyncMock, patch
 
         config = AgentConfig(name="test_agent", description="Test agent", capabilities=["test"])
         agent = Agent(config)
@@ -241,7 +241,7 @@ class TestAgentExecuteTaskFailure:
         )
 
         # Mock asyncio.sleep to raise an exception
-        with patch('asyncio.sleep', new_callable=AsyncMock) as mock_sleep:
+        with patch("asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             mock_sleep.side_effect = ValueError("Test exception")
             result = await agent.execute_task(task, {})
 
@@ -256,7 +256,7 @@ class TestAgentExecuteTaskFailure:
     @pytest.mark.asyncio
     async def test_execute_task_failure_sets_failed_status(self):
         """Test that agent status is set to FAILED on exception."""
-        from unittest.mock import patch, AsyncMock
+        from unittest.mock import AsyncMock, patch
 
         config = AgentConfig(name="test_agent", description="Test agent", capabilities=["test"])
         agent = Agent(config)
@@ -269,7 +269,7 @@ class TestAgentExecuteTaskFailure:
         )
 
         # Mock asyncio.sleep to raise an exception
-        with patch('asyncio.sleep', new_callable=AsyncMock) as mock_sleep:
+        with patch("asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             mock_sleep.side_effect = RuntimeError("Test error")
             await agent.execute_task(task, {})
 
@@ -278,7 +278,7 @@ class TestAgentExecuteTaskFailure:
     @pytest.mark.asyncio
     async def test_execute_task_failure_increments_failure_counter(self):
         """Test that tasks_failed counter is incremented on exception."""
-        from unittest.mock import patch, AsyncMock
+        from unittest.mock import AsyncMock, patch
 
         config = AgentConfig(name="test_agent", description="Test agent", capabilities=["test"])
         agent = Agent(config)
@@ -293,7 +293,7 @@ class TestAgentExecuteTaskFailure:
         assert agent.tasks_failed == 0
 
         # Mock asyncio.sleep to raise an exception
-        with patch('asyncio.sleep', new_callable=AsyncMock) as mock_sleep:
+        with patch("asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             mock_sleep.side_effect = Exception("Test exception")
             await agent.execute_task(task, {})
 
@@ -452,10 +452,7 @@ class TestAgentConcurrentExecution:
     async def test_multiple_agents_execute_concurrently(self):
         """Test that multiple agents can execute tasks concurrently."""
         # Create multiple agents
-        configs = [
-            AgentConfig(name=f"agent-{i}", description=f"Agent {i}", capabilities=["test"])
-            for i in range(5)
-        ]
+        configs = [AgentConfig(name=f"agent-{i}", description=f"Agent {i}", capabilities=["test"]) for i in range(5)]
         agents = [Agent(config) for config in configs]
 
         # Create tasks for each agent
@@ -470,9 +467,7 @@ class TestAgentConcurrentExecution:
         ]
 
         # Execute all tasks concurrently
-        results = await asyncio.gather(
-            *[agents[i].execute_task(tasks[i], {}) for i in range(5)]
-        )
+        results = await asyncio.gather(*[agents[i].execute_task(tasks[i], {}) for i in range(5)])
 
         # Verify all tasks completed successfully
         assert len(results) == 5
@@ -519,10 +514,7 @@ class TestAgentConcurrentExecution:
     async def test_concurrent_with_varying_durations(self):
         """Test concurrent execution with tasks of different durations."""
         # Create agents
-        configs = [
-            AgentConfig(name=f"agent-{i}", description=f"Agent {i}", capabilities=["test"])
-            for i in range(3)
-        ]
+        configs = [AgentConfig(name=f"agent-{i}", description=f"Agent {i}", capabilities=["test"]) for i in range(3)]
         agents = [Agent(config) for config in configs]
 
         # Create tasks with different simulated durations
@@ -538,9 +530,7 @@ class TestAgentConcurrentExecution:
 
         # Execute all tasks concurrently
         start_time = asyncio.get_event_loop().time()
-        results = await asyncio.gather(
-            *[agents[i].execute_task(tasks[i], {}) for i in range(3)]
-        )
+        results = await asyncio.gather(*[agents[i].execute_task(tasks[i], {}) for i in range(3)])
         end_time = asyncio.get_event_loop().time()
 
         # Verify all tasks completed

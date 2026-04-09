@@ -84,11 +84,7 @@ class LingFlowKnowledgeSource(KnowledgeSource):
         except Exception:
             pass
 
-    async def search(
-        self,
-        query: KnowledgeQuery,
-        context: Optional[SearchContext] = None
-    ) -> KnowledgeResult:
+    async def search(self, query: KnowledgeQuery, context: Optional[SearchContext] = None) -> KnowledgeResult:
         """Search LingFlow knowledge"""
         items = []
 
@@ -291,10 +287,7 @@ class LingFlowKnowledgeSource(KnowledgeSource):
 
     def _score_item(self, item: KnowledgeItem, query: KnowledgeQuery) -> KnowledgeItem:
         """Score an item's relevance to the query"""
-        score = self._calculate_relevance(
-            f"{item.title} {item.content}",
-            query.keywords
-        )
+        score = self._calculate_relevance(f"{item.title} {item.content}", query.keywords)
         return replace(item, relevance_score=score)
 
     def _calculate_relevance(self, text: str, keywords: List[str]) -> float:
@@ -330,11 +323,13 @@ class LingFlowKnowledgeSource(KnowledgeSource):
         if self._reports_dir.exists():
             report_count = len(list(self._reports_dir.glob("*.md")))
 
-        stats.update({
-            "database_items": db_count,
-            "report_count": report_count,
-            "memory_available": bool(self._memory_cache),
-        })
+        stats.update(
+            {
+                "database_items": db_count,
+                "report_count": report_count,
+                "memory_available": bool(self._memory_cache),
+            }
+        )
 
         return stats
 

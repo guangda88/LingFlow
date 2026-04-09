@@ -12,12 +12,7 @@ from pathlib import Path
 def run_command(cmd: list) -> tuple:
     """运行命令并返回结果"""
     try:
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=30
-        )
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         return result.returncode, result.stdout, result.stderr
     except subprocess.TimeoutExpired:
         return -1, "", "Command timeout"

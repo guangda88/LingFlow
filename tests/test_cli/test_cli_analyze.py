@@ -1,17 +1,18 @@
 """Tests for lingflow.cli.analyze module"""
 
 import json
-import pytest
 from pathlib import Path
+from unittest.mock import MagicMock, patch
+
+import pytest
 from click.testing import CliRunner
-from unittest.mock import patch, MagicMock
 
 from lingflow.cli.analyze import (
+    _generate_analysis_report,
     analyze,
-    run_analyze,
     analyze_complexity,
     analyze_duplication,
-    _generate_analysis_report,
+    run_analyze,
 )
 
 
@@ -217,13 +218,16 @@ class TestAnalyzeDuplication:
         runner = CliRunner()
         with runner.isolated_filesystem():
             # Create some test Python files
-            (Path("test1.py")).write_text("""
+            (Path("test1.py")).write_text(
+                """
 def func1():
     return 1
 
 def func2():
     return 1
-""", encoding="utf-8")
+""",
+                encoding="utf-8",
+            )
 
             result = runner.invoke(analyze_duplication, [])
 

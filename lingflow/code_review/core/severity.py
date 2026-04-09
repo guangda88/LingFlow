@@ -5,9 +5,9 @@
 用于代码审查中的问题严重程度评估和评分计算。
 """
 
-from enum import Enum
 from dataclasses import dataclass
-from typing import List, Dict
+from enum import Enum
+from typing import Dict, List
 
 
 class Severity(Enum):

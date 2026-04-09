@@ -3,12 +3,13 @@
 测试RedditCollector、HNCollector等采集器。
 """
 
-import pytest  # noqa
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
-from lingflow.intelligence.collectors.reddit import RedditCollector
+import pytest  # noqa
+
+from lingflow.intelligence.collectors.base import CollectorConfig, CollectorManager
 from lingflow.intelligence.collectors.hackernews import HNCollector
-from lingflow.intelligence.collectors.base import CollectorManager, CollectorConfig
+from lingflow.intelligence.collectors.reddit import RedditCollector
 from lingflow.intelligence.models.common import Platform, SourceType
 
 
@@ -29,7 +30,7 @@ class TestRedditCollector:
         collector = RedditCollector()
 
         # Mock缓存
-        with patch.object(collector, 'load_cache', return_value=[]):
+        with patch.object(collector, "load_cache", return_value=[]):
             result = collector.search_mentions(use_cache=True)
 
         # 应该调用load_cache

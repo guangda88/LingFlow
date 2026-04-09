@@ -7,14 +7,14 @@ from pathlib import Path
 import pytest
 
 from lingflow.core.query_engine import (
-    StopReason,
-    QueryEngineConfig,
-    TurnResult,
-    UsageSummary,
     MessageCompactor,
     QueryEngine,
-    create_default_engine,
+    QueryEngineConfig,
+    StopReason,
+    TurnResult,
+    UsageSummary,
     create_budget_conscious_engine,
+    create_default_engine,
     create_long_conversation_engine,
 )
 
@@ -53,26 +53,39 @@ class TestQueryEngineConfig:
 class TestTurnResult:
     def test_defaults(self):
         result = TurnResult(
-            prompt="test", output="out", matched_tools=(),
-            matched_agents=(), input_tokens=5, output_tokens=3,
-            stop_reason=StopReason.COMPLETED
+            prompt="test",
+            output="out",
+            matched_tools=(),
+            matched_agents=(),
+            input_tokens=5,
+            output_tokens=3,
+            stop_reason=StopReason.COMPLETED,
         )
         assert result.error is None
         assert result.timestamp is not None
 
     def test_with_error(self):
         result = TurnResult(
-            prompt="test", output="", matched_tools=(),
-            matched_agents=(), input_tokens=0, output_tokens=0,
-            stop_reason=StopReason.ERROR, error="boom"
+            prompt="test",
+            output="",
+            matched_tools=(),
+            matched_agents=(),
+            input_tokens=0,
+            output_tokens=0,
+            stop_reason=StopReason.ERROR,
+            error="boom",
         )
         assert result.error == "boom"
 
     def test_frozen(self):
         result = TurnResult(
-            prompt="test", output="out", matched_tools=(),
-            matched_agents=(), input_tokens=5, output_tokens=3,
-            stop_reason=StopReason.COMPLETED
+            prompt="test",
+            output="out",
+            matched_tools=(),
+            matched_agents=(),
+            input_tokens=5,
+            output_tokens=3,
+            stop_reason=StopReason.COMPLETED,
         )
         with pytest.raises(AttributeError):
             result.prompt = "changed"

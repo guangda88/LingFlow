@@ -6,16 +6,16 @@ AI 场景测试运行器
 """
 
 import asyncio
-import time
-from typing import Dict, List, Any, Optional, Callable
-from dataclasses import dataclass, field, asdict
-from enum import Enum
 import logging
-
-from .scenario import CodeTestScenario, CapturedToolCall
-from .test_server import CodeTestServer
-from .tool_definition import ToolDefinition, ToolRequest, ToolResponse, TestContext
+import time
+from dataclasses import asdict, dataclass, field
+from enum import Enum
 from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
+
+from .scenario import CapturedToolCall, CodeTestScenario
+from .test_server import CodeTestServer
+from .tool_definition import TestContext, ToolDefinition, ToolRequest, ToolResponse
 
 logger = logging.getLogger(__name__)
 

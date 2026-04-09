@@ -3,9 +3,10 @@
 """
 
 import ast
-import pytest
 import tempfile
 from pathlib import Path
+
+import pytest
 
 
 @pytest.fixture
@@ -28,7 +29,7 @@ class DataProcessor:
             result += str(item)
         return result
 """
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
         f.write(content)
         temp_path = Path(f.name)
 
@@ -80,7 +81,7 @@ def hello():
 @pytest.fixture
 def temp_file_path():
     """临时文件路径"""
-    with tempfile.NamedTemporaryFile(suffix='.py', delete=False) as f:
+    with tempfile.NamedTemporaryFile(suffix=".py", delete=False) as f:
         temp_path = Path(f.name)
 
     yield temp_path

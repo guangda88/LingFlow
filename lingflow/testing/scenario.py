@@ -5,9 +5,9 @@
 参考 Chrome DevTools MCP 的 eval_scenarios 模式
 """
 
-from typing import Callable, Optional, List, Dict, Any
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any, Callable, Dict, List, Optional
 
 
 class TestInteractionType(Enum):

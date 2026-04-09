@@ -1,4 +1,5 @@
 """Extended tests for coordinator covering skill execution, budget compression, etc."""
+
 import os
 import tempfile
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -82,8 +83,10 @@ class TestExecuteSkillHappyPath:
 
     def test_execute_skill_returns_error_for_failed_load(self):
         coord = AgentCoordinator()
-        with patch.object(coord, "_get_skill_path", return_value="/fake/path.py"), \
-             patch.object(coord, "_load_skill_module", return_value=None):
+        with (
+            patch.object(coord, "_get_skill_path", return_value="/fake/path.py"),
+            patch.object(coord, "_load_skill_module", return_value=None),
+        ):
             result = coord.execute_skill("broken-skill", {})
         assert result["skill"] == "broken-skill"
         assert "error" in result
@@ -93,8 +96,10 @@ class TestExecuteSkillHappyPath:
         mock_module = MagicMock()
         mock_module.execute_skill.return_value = {"output": 42}
 
-        with patch.object(coord, "_get_skill_path", return_value="/fake/path.py"), \
-             patch.object(coord, "_load_skill_module", return_value=mock_module):
+        with (
+            patch.object(coord, "_get_skill_path", return_value="/fake/path.py"),
+            patch.object(coord, "_load_skill_module", return_value=mock_module),
+        ):
             result = coord.execute_skill("good-skill", {"x": 1})
         assert result["skill"] == "good-skill"
         assert result["result"] == {"output": 42}
@@ -190,7 +195,13 @@ class TestListSkillsEdgeCases:
 class TestFindAgentForTaskDetails:
     def test_finds_implementation_agent(self):
         coord = AgentCoordinator()
-        task = Task(task_id="t1", name="code gen", description="generate code", priority=TaskPriority.NORMAL, agent_type="implementation")
+        task = Task(
+            task_id="t1",
+            name="code gen",
+            description="generate code",
+            priority=TaskPriority.NORMAL,
+            agent_type="implementation",
+        )
         agent = coord._find_agent_for_task(task)
         assert agent is not None
         assert agent.config.name == "implementation"
@@ -198,6 +209,8 @@ class TestFindAgentForTaskDetails:
     def test_no_agent_for_unknown_type(self):
         registry = AgentRegistry()
         coord = AgentCoordinator(registry=registry)
-        task = Task(task_id="t1", name="unknown", description="unknown task", priority=TaskPriority.NORMAL, agent_type="nonexistent")
+        task = Task(
+            task_id="t1", name="unknown", description="unknown task", priority=TaskPriority.NORMAL, agent_type="nonexistent"
+        )
         agent = coord._find_agent_for_task(task)
         assert agent is None

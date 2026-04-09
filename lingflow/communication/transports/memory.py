@@ -17,8 +17,8 @@ from collections import defaultdict
 from typing import AsyncIterator, Callable, Dict, Optional, Set
 from uuid import uuid4
 
-from ..transport import TransportAdapter
 from ..envelope import MessageEnvelope
+from ..transport import TransportAdapter
 
 
 class InMemoryTransport(TransportAdapter):

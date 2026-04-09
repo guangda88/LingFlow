@@ -21,14 +21,14 @@ import threading
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
-from lingflow.compression.token_estimator import TokenEstimator
+from lingflow.compression.result import CompressionResult
 from lingflow.compression.scoring import MessageScorer
 from lingflow.compression.strategies.base import (
-    TieredCompressionStrategy,
     CompressionStrategy,
+    TieredCompressionStrategy,
 )
 from lingflow.compression.summarizer import ConversationSummarizer
-from lingflow.compression.result import CompressionResult
+from lingflow.compression.token_estimator import TokenEstimator
 
 logger = logging.getLogger(__name__)
 

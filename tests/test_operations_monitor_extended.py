@@ -5,20 +5,20 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from lingflow.monitoring.alerts.rules import AlertRule
+from lingflow.monitoring.metrics.models import Alert, AlertSeverity, HealthCheckResult, SystemMetrics
 from lingflow.monitoring.operations_monitor import (
     OperationsMonitor,
-    get_global_monitor,
-    get_operations_monitor,
-    register_health_check,
     add_alert_rule,
-    run_health_checks,
+    add_notification_handler,
     evaluate_all_metrics,
     get_active_alerts,
+    get_global_monitor,
     get_monitoring_summary,
-    add_notification_handler,
+    get_operations_monitor,
+    register_health_check,
+    run_health_checks,
 )
-from lingflow.monitoring.metrics.models import Alert, AlertSeverity, HealthCheckResult, SystemMetrics
-from lingflow.monitoring.alerts.rules import AlertRule
 
 
 def _make_metrics(cpu=50.0, mem=60.0, disk=70.0):
@@ -204,10 +204,12 @@ class TestAlerts:
     def test_get_alerts_by_severity(self):
         m = OperationsMonitor(auto_collect=False)
         with m._alerts_lock:
-            m.alerts.extend([
-                _make_alert(aid="a1", severity=AlertSeverity.WARNING),
-                _make_alert(aid="a2", severity=AlertSeverity.CRITICAL),
-            ])
+            m.alerts.extend(
+                [
+                    _make_alert(aid="a1", severity=AlertSeverity.WARNING),
+                    _make_alert(aid="a2", severity=AlertSeverity.CRITICAL),
+                ]
+            )
         warnings = m.get_alerts(severity=AlertSeverity.WARNING)
         assert len(warnings) == 1
         critical = m.get_alerts(severity=AlertSeverity.CRITICAL)
@@ -216,10 +218,12 @@ class TestAlerts:
     def test_get_alerts_by_resolved(self):
         m = OperationsMonitor(auto_collect=False)
         with m._alerts_lock:
-            m.alerts.extend([
-                _make_alert(aid="a1", resolved=False),
-                _make_alert(aid="a2", resolved=True),
-            ])
+            m.alerts.extend(
+                [
+                    _make_alert(aid="a1", resolved=False),
+                    _make_alert(aid="a2", resolved=True),
+                ]
+            )
         active = m.get_alerts(resolved=False)
         assert len(active) == 1
         assert active[0].id == "a1"
@@ -238,11 +242,13 @@ class TestAlerts:
     def test_get_alerts_combined_filters(self):
         m = OperationsMonitor(auto_collect=False)
         with m._alerts_lock:
-            m.alerts.extend([
-                _make_alert(aid="a1", severity=AlertSeverity.WARNING, resolved=False),
-                _make_alert(aid="a2", severity=AlertSeverity.WARNING, resolved=True),
-                _make_alert(aid="a3", severity=AlertSeverity.CRITICAL, resolved=False),
-            ])
+            m.alerts.extend(
+                [
+                    _make_alert(aid="a1", severity=AlertSeverity.WARNING, resolved=False),
+                    _make_alert(aid="a2", severity=AlertSeverity.WARNING, resolved=True),
+                    _make_alert(aid="a3", severity=AlertSeverity.CRITICAL, resolved=False),
+                ]
+            )
         result = m.get_alerts(severity=AlertSeverity.WARNING, resolved=False)
         assert len(result) == 1
         assert result[0].id == "a1"
@@ -321,9 +327,9 @@ class TestAlertRules:
 class TestHealthChecks:
     def test_register_and_run(self):
         m = OperationsMonitor(auto_collect=False)
-        m.register_health_check("test_check", lambda: HealthCheckResult(
-            component="test", healthy=True, message="ok", timestamp=datetime.now()
-        ))
+        m.register_health_check(
+            "test_check", lambda: HealthCheckResult(component="test", healthy=True, message="ok", timestamp=datetime.now())
+        )
         assert "test_check" in m.health_collector.checks
 
     def test_unregister(self):
@@ -334,9 +340,9 @@ class TestHealthChecks:
 
     def test_run_single_health_check(self):
         m = OperationsMonitor(auto_collect=False)
-        m.register_health_check("test_check", lambda: HealthCheckResult(
-            component="test", healthy=True, message="ok", timestamp=datetime.now()
-        ))
+        m.register_health_check(
+            "test_check", lambda: HealthCheckResult(component="test", healthy=True, message="ok", timestamp=datetime.now())
+        )
         result = m.run_health_check("test_check")
         assert result is not None
         assert result.healthy is True
@@ -347,12 +353,12 @@ class TestHealthChecks:
 
     def test_run_all_health_checks(self):
         m = OperationsMonitor(auto_collect=False)
-        m.register_health_check("check1", lambda: HealthCheckResult(
-            component="c1", healthy=True, message="ok", timestamp=datetime.now()
-        ))
-        m.register_health_check("check2", lambda: HealthCheckResult(
-            component="c2", healthy=False, message="bad", timestamp=datetime.now()
-        ))
+        m.register_health_check(
+            "check1", lambda: HealthCheckResult(component="c1", healthy=True, message="ok", timestamp=datetime.now())
+        )
+        m.register_health_check(
+            "check2", lambda: HealthCheckResult(component="c2", healthy=False, message="bad", timestamp=datetime.now())
+        )
         results = m.run_health_checks()
         assert len(results) == 4
         assert results["check1"].healthy is True
@@ -371,28 +377,28 @@ class TestHealthChecks:
 
     def test_get_component_status(self):
         m = OperationsMonitor(auto_collect=False)
-        m.register_health_check("c1", lambda: HealthCheckResult(
-            component="c1", healthy=True, message="ok", timestamp=datetime.now()
-        ))
-        m.register_health_check("c2", lambda: HealthCheckResult(
-            component="c2", healthy=False, message="bad", timestamp=datetime.now()
-        ))
+        m.register_health_check(
+            "c1", lambda: HealthCheckResult(component="c1", healthy=True, message="ok", timestamp=datetime.now())
+        )
+        m.register_health_check(
+            "c2", lambda: HealthCheckResult(component="c2", healthy=False, message="bad", timestamp=datetime.now())
+        )
         status = m.get_component_status()
         assert status["c1"] is True
         assert status["c2"] is False
 
     def test_get_overall_health_all_healthy(self):
         m = OperationsMonitor(auto_collect=False)
-        m.register_health_check("c1", lambda: HealthCheckResult(
-            component="c1", healthy=True, message="ok", timestamp=datetime.now()
-        ))
+        m.register_health_check(
+            "c1", lambda: HealthCheckResult(component="c1", healthy=True, message="ok", timestamp=datetime.now())
+        )
         assert m.get_overall_health() is True
 
     def test_get_overall_health_unhealthy(self):
         m = OperationsMonitor(auto_collect=False)
-        m.register_health_check("c1", lambda: HealthCheckResult(
-            component="c1", healthy=False, message="bad", timestamp=datetime.now()
-        ))
+        m.register_health_check(
+            "c1", lambda: HealthCheckResult(component="c1", healthy=False, message="bad", timestamp=datetime.now())
+        )
         assert m.get_overall_health() is False
 
     def test_get_overall_health_no_checks(self):
@@ -499,9 +505,10 @@ class TestModuleFunctions:
         assert isinstance(m, OperationsMonitor)
 
     def test_register_health_check_module(self):
-        register_health_check("module_test", lambda: HealthCheckResult(
-            component="module_test", healthy=True, message="ok", timestamp=datetime.now()
-        ))
+        register_health_check(
+            "module_test",
+            lambda: HealthCheckResult(component="module_test", healthy=True, message="ok", timestamp=datetime.now()),
+        )
         m = get_global_monitor()
         assert "module_test" in m.health_collector.checks
 

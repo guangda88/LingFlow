@@ -94,13 +94,9 @@ class TestExecuteTasksParallel:
         coordinator = AgentCoordinator()
 
         # Mock the agent execution
-        with patch.object(
-            coordinator, "_find_agent_for_task", return_value=MagicMock()
-        ) as mock_find:
+        with patch.object(coordinator, "_find_agent_for_task", return_value=MagicMock()) as mock_find:
             mock_agent = mock_find.return_value
-            mock_agent.execute_task = AsyncMock(
-                return_value=TaskResult(task_id="test-1", success=True, output="Done")
-            )
+            mock_agent.execute_task = AsyncMock(return_value=TaskResult(task_id="test-1", success=True, output="Done"))
 
             tasks = [
                 Task(
@@ -123,15 +119,9 @@ class TestExecuteTasksParallel:
         """Test handling task failures"""
         coordinator = AgentCoordinator()
 
-        with patch.object(
-            coordinator, "_find_agent_for_task", return_value=MagicMock()
-        ) as mock_find:
+        with patch.object(coordinator, "_find_agent_for_task", return_value=MagicMock()) as mock_find:
             mock_agent = mock_find.return_value
-            mock_agent.execute_task = AsyncMock(
-                return_value=TaskResult(
-                    task_id="test-1", success=False, error="Task failed"
-                )
-            )
+            mock_agent.execute_task = AsyncMock(return_value=TaskResult(task_id="test-1", success=False, error="Task failed"))
 
             tasks = [
                 Task(
@@ -155,9 +145,7 @@ class TestExecuteTasksParallel:
         """Test executing task when no agent is found"""
         coordinator = AgentCoordinator()
 
-        with patch.object(
-            coordinator, "_find_agent_for_task", return_value=None
-        ):
+        with patch.object(coordinator, "_find_agent_for_task", return_value=None):
             tasks = [
                 Task(
                     task_id="test-1",
@@ -226,9 +214,7 @@ class TestCompressContext:
         coordinator = AgentCoordinator()
 
         # Mock compressor to raise an error
-        with patch.object(
-            coordinator.compressor, "compress", side_effect=ValueError("Test error")
-        ):
+        with patch.object(coordinator.compressor, "compress", side_effect=ValueError("Test error")):
             context = {"test": "data"}
             compressed = coordinator._compress_context(context)
             # Should return original context on error
@@ -241,9 +227,7 @@ class TestCreateErrorResult:
     def test_create_error_result(self):
         """Test creating an error result"""
         coordinator = AgentCoordinator()
-        task = Task(
-            task_id="test-1", name="Test Task", description="A test task", priority=TaskPriority.NORMAL
-        )
+        task = Task(task_id="test-1", name="Test Task", description="A test task", priority=TaskPriority.NORMAL)
         result = coordinator._create_error_result(task, "Something went wrong")
         assert result.task_id == "test-1"
         assert result.success is False
@@ -302,12 +286,8 @@ class TestGetStatus:
     def test_get_status_with_tasks(self):
         """Test getting status with tasks"""
         coordinator = AgentCoordinator()
-        coordinator.completed_tasks["test-1"] = TaskResult(
-            task_id="test-1", success=True, output="Done"
-        )
-        coordinator.failed_tasks["test-2"] = TaskResult(
-            task_id="test-2", success=False, error="Failed"
-        )
+        coordinator.completed_tasks["test-1"] = TaskResult(task_id="test-1", success=True, output="Done")
+        coordinator.failed_tasks["test-2"] = TaskResult(task_id="test-2", success=False, error="Failed")
         status = coordinator.get_status()
         assert status["completed_tasks"] == 1
         assert status["failed_tasks"] == 1
@@ -320,15 +300,9 @@ class TestReset:
     def test_reset(self):
         """Test resetting coordinator"""
         coordinator = AgentCoordinator()
-        coordinator.submit_task(
-            Task(task_id="test-1", name="Test", description="Test", priority=TaskPriority.NORMAL)
-        )
-        coordinator.completed_tasks["test-2"] = TaskResult(
-            task_id="test-2", success=True, output="Done"
-        )
-        coordinator.failed_tasks["test-3"] = TaskResult(
-            task_id="test-3", success=False, error="Failed"
-        )
+        coordinator.submit_task(Task(task_id="test-1", name="Test", description="Test", priority=TaskPriority.NORMAL))
+        coordinator.completed_tasks["test-2"] = TaskResult(task_id="test-2", success=True, output="Done")
+        coordinator.failed_tasks["test-3"] = TaskResult(task_id="test-3", success=False, error="Failed")
 
         coordinator.reset()
 
@@ -393,7 +367,7 @@ class TestLoadSkillModule:
     def test_load_skill_module_invalid_code(self):
         """Test loading skill module with invalid code"""
         coordinator = AgentCoordinator()
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
             f.write("this is not valid python code !!!")
             temp_path = f.name
 
@@ -406,7 +380,7 @@ class TestLoadSkillModule:
     def test_load_skill_module_unsafe_code(self):
         """Test loading skill module with unsafe code (import os)"""
         coordinator = AgentCoordinator()
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
             f.write("""
 import os
 
@@ -424,7 +398,7 @@ def execute_skill(params):
     def test_load_skill_module_missing_execute_skill(self):
         """Test loading skill module without execute_skill function"""
         coordinator = AgentCoordinator()
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
             f.write("""
 def other_function(params):
     return "result"
@@ -482,9 +456,7 @@ class TestErrorHandling:
         async def failing_execute(task, context):
             raise ValueError("Simulated execution failure")
 
-        with patch.object(
-            coordinator, "_find_agent_for_task", return_value=MagicMock()
-        ) as mock_find:
+        with patch.object(coordinator, "_find_agent_for_task", return_value=MagicMock()) as mock_find:
             mock_agent = mock_find.return_value
             mock_agent.execute_task = failing_execute
 
@@ -512,9 +484,7 @@ class TestErrorHandling:
         )
 
         # Find agent for task should return None
-        with patch.object(
-            coordinator, "_find_agent_for_task", return_value=None
-        ):
+        with patch.object(coordinator, "_find_agent_for_task", return_value=None):
             results = await coordinator.execute_tasks_parallel([task], max_parallel=1)
 
             # Verify error is captured
@@ -539,20 +509,16 @@ class TestErrorHandling:
         # Mock agent to sleep for longer than timeout
         async def timeout_execute(task, context):
             import asyncio
+
             await asyncio.sleep(10)  # Sleep longer than expected timeout
 
-        with patch.object(
-            coordinator, "_find_agent_for_task", return_value=MagicMock()
-        ) as mock_find:
+        with patch.object(coordinator, "_find_agent_for_task", return_value=MagicMock()) as mock_find:
             mock_agent = mock_find.return_value
             mock_agent.execute_task = timeout_execute
 
             # Execute task with short timeout
             try:
-                result = await asyncio.wait_for(
-                    coordinator.execute_tasks_parallel([task], max_parallel=1),
-                    timeout=0.1
-                )
+                result = await asyncio.wait_for(coordinator.execute_tasks_parallel([task], max_parallel=1), timeout=0.1)
                 # If we get here, timeout wasn't enforced
                 # This is expected behavior for current implementation
             except asyncio.TimeoutError:
@@ -583,20 +549,10 @@ class TestErrorHandling:
             execution_count[0] += 1
             if task.task_id == "task-1":
                 # Return a failed TaskResult instead of throwing exception
-                return TaskResult(
-                    task_id=task.task_id,
-                    success=False,
-                    error=f"Task {task.task_id} failed"
-                )
-            return TaskResult(
-                task_id=task.task_id,
-                success=True,
-                output=f"{task.task_id} completed"
-            )
+                return TaskResult(task_id=task.task_id, success=False, error=f"Task {task.task_id} failed")
+            return TaskResult(task_id=task.task_id, success=True, output=f"{task.task_id} completed")
 
-        with patch.object(
-            coordinator, "_find_agent_for_task", return_value=MagicMock()
-        ) as mock_find:
+        with patch.object(coordinator, "_find_agent_for_task", return_value=MagicMock()) as mock_find:
             mock_agent = mock_find.return_value
             mock_agent.execute_task = mixed_execute
 
@@ -642,20 +598,10 @@ class TestErrorHandling:
             execution_count[0] += 1
             if task.task_id == "fail-1":
                 # Return a failed TaskResult
-                return TaskResult(
-                    task_id=task.task_id,
-                    success=False,
-                    error="First task fails"
-                )
-            return TaskResult(
-                task_id=task.task_id,
-                success=True,
-                output=f"{task.task_id} completed"
-            )
+                return TaskResult(task_id=task.task_id, success=False, error="First task fails")
+            return TaskResult(task_id=task.task_id, success=True, output=f"{task.task_id} completed")
 
-        with patch.object(
-            coordinator, "_find_agent_for_task", return_value=MagicMock()
-        ) as mock_find:
+        with patch.object(coordinator, "_find_agent_for_task", return_value=MagicMock()) as mock_find:
             mock_agent = mock_find.return_value
             mock_agent.execute_task = stateful_execute
 

@@ -6,8 +6,9 @@
 """
 
 import logging
-from typing import Dict, List, Any, Optional
-from .severity import Severity, SeverityWeight, DIMENSION_WEIGHTS
+from typing import Any, Dict, List, Optional
+
+from .severity import DIMENSION_WEIGHTS, Severity, SeverityWeight
 
 logger = logging.getLogger(__name__)
 

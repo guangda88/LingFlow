@@ -1,17 +1,17 @@
 import time
 from datetime import datetime
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from lingflow.monitoring.default_checks import (
-    check_skill_loader,
-    check_memory_usage,
-    check_cpu_usage,
     MonitoringLoop,
+    check_cpu_usage,
+    check_memory_usage,
+    check_skill_loader,
+    setup_default_monitoring,
     start_monitoring,
     stop_monitoring,
-    setup_default_monitoring,
 )
 
 
@@ -159,5 +159,6 @@ class TestStartStopMonitoring:
 
     def test_stop_monitoring_without_start(self):
         import lingflow.monitoring.default_checks as mod
+
         mod._monitoring_loop = None
         stop_monitoring()
