@@ -9,11 +9,10 @@ Core Concepts:
 - Pre-Task Checks: Verify capability before starting work
 """
 
-import json
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional
 
 
 class CapabilityLevel(Enum):

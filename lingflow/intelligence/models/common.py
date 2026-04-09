@@ -366,18 +366,9 @@ class DailyReport:
             [
                 "║                                                            ║",
                 "║  💬 情感分析                                               ║",
-                f"║    积极: {
-                self.sentiment_summary.get(
-                    'positive',
-                    0):.0%}                                    ║",
-                f"║    中性: {
-                self.sentiment_summary.get(
-                    'neutral',
-                    0):.0%}                                    ║",
-                f"║    消极: {
-                self.sentiment_summary.get(
-                    'negative',
-                    0):.0%}                                    ║",
+                f"║    积极: {self.sentiment_summary.get('positive', 0):.0%}" f"                                    ║",
+                f"║    中性: {self.sentiment_summary.get('neutral', 0):.0%}" f"                                    ║",
+                f"║    消极: {self.sentiment_summary.get('negative', 0):.0%}" f"                                    ║",
                 "║                                                            ║",
                 "║  🔥 热门议题                                               ║",
             ]

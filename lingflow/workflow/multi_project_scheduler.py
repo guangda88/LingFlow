@@ -7,7 +7,7 @@ import asyncio
 import logging
 import time
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from lingflow.common.models import Task, TaskPriority, TaskResult

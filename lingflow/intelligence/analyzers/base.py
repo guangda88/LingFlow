@@ -10,11 +10,7 @@ from typing import Any, Dict, List, Optional
 
 from ..logging_config import get_logger
 from ..models.common import (
-    InfluenceScore,
     MentionData,
-    SentimentResult,
-    TopicCluster,
-    TrendMetrics,
 )
 
 logger = get_logger(__name__)

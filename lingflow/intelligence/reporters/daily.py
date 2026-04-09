@@ -14,9 +14,6 @@ from ..analyzers.sentiment import SentimentAnalyzer
 from ..models.common import (
     DailyReport,
     MentionData,
-    SentimentLabel,
-    TrendDirection,
-    TrendMetrics,
 )
 
 
@@ -375,15 +372,12 @@ class DailyReporter:
         total = sentiment.get("total", 1)
         lines.extend(
             [
-                f"- 积极: {sentiment.get('positive',
-                                   0)} ({sentiment.get('positive',
-                                                       0) / total * 100:.0f}%)",
-                f"- 中性: {sentiment.get('neutral',
-                                   0)} ({sentiment.get('neutral',
-                                                       0) / total * 100:.0f}%)",
-                f"- 消极: {sentiment.get('negative',
-                                   0)} ({sentiment.get('negative',
-                                                       0) / total * 100:.0f}%)",
+                f"- 积极: {sentiment.get('positive', 0)}"
+                f" ({sentiment.get('positive', 0) / total * 100:.0f}%)",
+                f"- 中性: {sentiment.get('neutral', 0)}"
+                f" ({sentiment.get('neutral', 0) / total * 100:.0f}%)",
+                f"- 消极: {sentiment.get('negative', 0)}"
+                f" ({sentiment.get('negative', 0) / total * 100:.0f}%)",
                 "",
                 "## 🔥 热门话题",
             ]

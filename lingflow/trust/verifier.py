@@ -188,7 +188,7 @@ class DirectoryStructureVerifier(Verifier):
                     )
             else:
                 return VerificationResult(
-                    level=self.level, passed=True, detail=f"目录存在: {claim.target}", evidence=f"Path exists", confidence=1.0
+                    level=self.level, passed=True, detail=f"目录存在: {claim.target}", evidence="Path exists", confidence=1.0
                 )
         except Exception as e:
             return VerificationResult(

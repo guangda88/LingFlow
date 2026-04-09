@@ -270,7 +270,7 @@ class InfluenceAnalyzer(BaseAnalyzer):
         Returns:
             分数 (0-100)
         """
-        from datetime import datetime, timedelta
+        from datetime import datetime
 
         try:
             if "T" in published_at:
