@@ -4,9 +4,10 @@ REST API 单元测试
 覆盖率目标: >80%
 """
 import pytest
-from fastapi.testclient import TestClient
 from unittest.mock import Mock, patch
-import json
+
+fastapi = pytest.importorskip("fastapi", reason="FastAPI needed for REST API tests")
+from fastapi.testclient import TestClient
 
 # 导入应用
 import sys

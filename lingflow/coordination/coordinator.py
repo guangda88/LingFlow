@@ -2,6 +2,9 @@
 
 import asyncio
 import logging
+import os
+import re
+import time
 import types
 from typing import Any, Dict, List, Optional
 
@@ -21,6 +24,13 @@ logger = logging.getLogger(__name__)
 class AgentCoordinator(BaseCoordinator):
     """简化的代理协调器"""
 
+    # 停止命令关键词（用户意图终止当前执行）
+    STOP_KEYWORDS = [
+        "停止", "stop", "暂停", "pause", "别继续", "停下来",
+        "halt", "终止", "terminate", "cancel", "abort",
+        "不要了", "够了", "别做了", "别写了", "停一下",
+    ]
+
     def __init__(self, registry: Optional[AgentRegistry] = None):
         super().__init__()
         self.registry = registry or AgentRegistry()
@@ -35,6 +45,18 @@ class AgentCoordinator(BaseCoordinator):
         from lingflow.context.budget import ContextBudgetManager
 
         self._budget_manager = ContextBudgetManager(max_tokens=180000)
+
+        # 硬中断机制 — 停止命令监控
+        self._stop_requested = False
+        self._stop_reason: Optional[str] = None
+        self._stop_requested_at: Optional[float] = None
+        self._active_tasks: Dict[str, asyncio.Task] = {}
+        self._stop_metrics = {
+            "stop_commands_received": 0,
+            "stop_commands_honored": 0,
+            "stop_commands_ignored": 0,
+            "stop_latency_ms": [],
+        }
 
         self._register_default_agents()
 
@@ -106,8 +128,17 @@ class AgentCoordinator(BaseCoordinator):
         return results
 
     async def _execute_one_task(self, task: Task, semaphore: asyncio.Semaphore) -> TaskResult:
-        """执行单个任务"""
+        """执行单个任务 — 含硬中断检查"""
+        # 检查是否已有停止请求
+        if self._stop_requested:
+            logger.warning("Task %s skipped: stop requested (%s)", task.task_id, self._stop_reason)
+            return self._create_error_result(task, f"Stopped by user: {self._stop_reason}")
+
         async with semaphore:
+            # 二次检查（等待信号量期间可能收到停止请求）
+            if self._stop_requested:
+                return self._create_error_result(task, f"Stopped by user: {self._stop_reason}")
+
             # 查找代理
             agent = self._find_agent_for_task(task)
             if not agent:
@@ -184,6 +215,96 @@ class AgentCoordinator(BaseCoordinator):
                     logger.warning("Task %s failed: %s", result.task_id, result.error)
         return results
 
+    def handle_stop_command(self, reason: str = "user request") -> Dict[str, Any]:
+        """处理停止命令 — 硬中断机制
+
+        立即取消所有活跃任务，设置停止标志阻止新任务启动。
+        这是P0安全功能，防止AI在用户要求停止后继续执行。
+
+        Args:
+            reason: 停止原因
+
+        Returns:
+            停止处理结果
+        """
+        self._stop_requested = True
+        self._stop_reason = reason
+        self._stop_requested_at = time.time()
+        self._stop_metrics["stop_commands_received"] += 1
+
+        cancelled = []
+        for task_id, atask in list(self._active_tasks.items()):
+            if not atask.done():
+                atask.cancel()
+                cancelled.append(task_id)
+                logger.warning("Hard interrupt: cancelled task %s", task_id)
+
+        if cancelled:
+            self._stop_metrics["stop_commands_honored"] += 1
+        else:
+            self._stop_metrics["stop_commands_ignored"] += 1
+
+        logger.warning(
+            "Stop command received: reason=%s, cancelled_tasks=%d, active_tasks=%d",
+            reason, len(cancelled), len(self._active_tasks),
+        )
+
+        return {
+            "stopped": True,
+            "reason": reason,
+            "cancelled_tasks": cancelled,
+            "timestamp": self._stop_requested_at,
+        }
+
+    def check_stop_in_message(self, content: str) -> bool:
+        """检查消息内容是否包含停止命令
+
+        Args:
+            content: 用户消息内容
+
+        Returns:
+            是否检测到停止意图
+        """
+        if not content:
+            return False
+        content_lower = content.lower()
+        for keyword in self.STOP_KEYWORDS:
+            if keyword in content_lower:
+                self.handle_stop_command(f"stop keyword detected: '{keyword}'")
+                return True
+        return False
+
+    def clear_stop(self) -> None:
+        """清除停止状态，允许恢复执行"""
+        if self._stop_requested and self._stop_requested_at:
+            latency = (time.time() - self._stop_requested_at) * 1000
+            self._stop_metrics["stop_latency_ms"].append(latency)
+        self._stop_requested = False
+        self._stop_reason = None
+        self._stop_requested_at = None
+
+    def get_stop_metrics(self) -> Dict[str, Any]:
+        """获取停止命令监控指标
+
+        Returns:
+            停止命令统计数据
+        """
+        metrics = dict(self._stop_metrics)
+        latencies = metrics.pop("stop_latency_ms")
+        if latencies:
+            metrics["avg_stop_latency_ms"] = round(sum(latencies) / len(latencies), 1)
+            metrics["max_stop_latency_ms"] = round(max(latencies), 1)
+        else:
+            metrics["avg_stop_latency_ms"] = 0
+            metrics["max_stop_latency_ms"] = 0
+        metrics["stop_failure_rate"] = (
+            metrics["stop_commands_ignored"] / metrics["stop_commands_received"]
+            if metrics["stop_commands_received"] > 0
+            else 0.0
+        )
+        metrics["currently_stopped"] = self._stop_requested
+        return metrics
+
     def get_status(self) -> Dict[str, Any]:
         """Get the current status of the coordinator.
 
@@ -202,6 +323,7 @@ class AgentCoordinator(BaseCoordinator):
             "agents": len(self.registry.agents),
             "compression_stats": self.compressor.get_stats(),
             "budget": self._budget_manager.get_status(0),
+            "stop_metrics": self.get_stop_metrics(),
         }
 
     def reset(self) -> None:
@@ -228,6 +350,17 @@ class AgentCoordinator(BaseCoordinator):
             - error: Error message (if failed)
         """
         try:
+            # 审计门检查 — 审计不可被环境变量完全跳过
+            audit_result = self._check_audit_gate(skill_name, params)
+            if not audit_result.get("passed", True):
+                logger.warning(f"Audit gate blocked skill '{skill_name}': {audit_result.get('reason', 'Unknown')}")
+                return {
+                    "skill": skill_name,
+                    "params": params,
+                    "error": f"Audit gate: {audit_result.get('reason', 'Audit check failed')}",
+                    "audit_result": audit_result,
+                }
+
             skill_path = self._get_skill_path(skill_name)
             if not skill_path:
                 return {
@@ -354,6 +487,107 @@ class AgentCoordinator(BaseCoordinator):
             else:
                 logger.warning(f"Metacognition check failed but strict_mode is disabled: {str(e)}")
                 return {"can_start": True}
+
+    def _check_audit_gate(self, skill_name: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """审计门检查 — 审计不可被环境变量完全跳过
+
+        LING_SKIP_AUDIT=1 已被弃用，改为 LING_AUDIT_LEVEL=minimal（只降低严格度，
+        不跳过审计）。即使设置为 skip，也至少运行最小审计。
+
+        Args:
+            skill_name: 技能名称
+            params: 技能参数
+
+        Returns:
+            审计结果字典，包含 passed/reason/level
+        """
+        skip_flag = os.environ.get("LING_SKIP_AUDIT", "")
+        audit_level = os.environ.get("LING_AUDIT_LEVEL", "standard")
+
+        if skip_flag == "1":
+            logger.warning(
+                "LING_SKIP_AUDIT=1 is DEPRECATED. Use LING_AUDIT_LEVEL=minimal instead. " "Running minimal audit as fallback."
+            )
+            audit_level = "minimal"
+
+        if audit_level == "skip":
+            logger.warning(
+                "LING_AUDIT_LEVEL=skip is not allowed. " "Falling back to 'minimal' — audit cannot be fully bypassed."
+            )
+            audit_level = "minimal"
+
+        if audit_level == "minimal":
+            logger.info(f"Running minimal audit for skill '{skill_name}'")
+            return self._run_minimal_audit(skill_name, params)
+
+        return self._run_standard_audit(skill_name, params)
+
+    def _run_minimal_audit(self, skill_name: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """最小审计 — 只检查技能是否可加载和参数是否有效
+
+        Args:
+            skill_name: 技能名称
+            params: 技能参数
+
+        Returns:
+            审计结果字典
+        """
+        skill_path = self._get_skill_path(skill_name)
+        if not skill_path:
+            return {
+                "passed": False,
+                "level": "minimal",
+                "reason": f"技能文件不存在: {skill_name}",
+            }
+
+        if not isinstance(params, dict):
+            return {
+                "passed": False,
+                "level": "minimal",
+                "reason": f"参数类型错误: expected dict, got {type(params).__name__}",
+            }
+
+        return {"passed": True, "level": "minimal"}
+
+    def _run_standard_audit(self, skill_name: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """标准审计 — 包含最小审计 + 安全检查 + 元认知预检
+
+        Args:
+            skill_name: 技能名称
+            params: 技能参数
+
+        Returns:
+            审计结果字典
+        """
+        minimal_result = self._run_minimal_audit(skill_name, params)
+        if not minimal_result["passed"]:
+            return minimal_result
+
+        try:
+            from pathlib import Path as _Path
+
+            from lingflow.common.security_analyzer import SecurityAnalyzer
+
+            skill_path_str = self._get_skill_path(skill_name)
+            if skill_path_str:
+                skill_path_obj = _Path(skill_path_str)
+                if skill_path_obj.exists():
+                    code = skill_path_obj.read_text(encoding="utf-8")
+                    analyzer = SecurityAnalyzer()
+                    violations = analyzer.analyze(code)
+                    if violations:
+                        critical = [v for v in violations if v.severity == "CRITICAL"]
+                        if critical:
+                            return {
+                                "passed": False,
+                                "level": "standard",
+                                "reason": f"安全审计发现 {len(critical)} 个严重违规: {[v.message for v in critical[:3]]}",
+                                "violations": [v.to_dict() for v in violations],
+                            }
+        except Exception as e:
+            logger.warning(f"Security analysis skipped for '{skill_name}': {e}")
+
+        return {"passed": True, "level": "standard"}
 
     def _extract_required_capabilities(self, skill_name: str, params: Dict[str, Any]) -> List[str]:
         """从技能参数中提取所需能力

@@ -398,6 +398,20 @@
         "元认知",
         "能力检查"
       ]
+    },
+    {
+      "name": "ci-health-monitor",
+      "description": "CI 健康监控 — 解析 CI 输出，分类失败原因，生成修复建议 / CI health monitor — parse CI output, classify failures, generate fix suggestions",
+      "path": "skills/ci-health-monitor/SKILL.md",
+      "triggers": [
+        "ci",
+        "ci health",
+        "ci诊断",
+        "pipeline",
+        "workflow失败",
+        "ci失败",
+        "build失败"
+      ]
     }
   ],
   "settings": {
