@@ -1,0 +1,139 @@
+# 灵族集群基础设施注册表 — Single Source of Truth
+# 所有硬件/网络/服务引用必须从这里读取，禁止硬编码或猜测
+# 修改此文件前必须验证：实际登录节点确认
+# 最后验证: 2026-04-11
+
+cluster:
+  name: 灵族集群
+  network_segments:
+    - name: 小米路由 LAN
+      cidr: 192.168.31.0/24
+      description: 主局域网
+    - name: 千兆直连
+      cidr: 192.168.2.0/24
+      description: zhineng-ai ↔ zhineng-ai01 直连
+    - name: Zerotier P2P
+      cidr: 10.113.22.0/24
+      description: 业务内网管线1 - 跨地域 P2P 组网
+    - name: 节点小宝 VPN
+      cidr: 100.66.1.0/24
+      description: 业务内网管线2 - 国内 VPN 组网
+
+  public:
+    domain: test888.iepose.cn
+    ip: 103.215.36.110
+
+nodes:
+  - name: zhineng-ai
+    role: primary_compute
+    model: ZBOX-EN51660T
+    status: active
+    ips:
+      lan: 192.168.31.99
+      direct: 192.168.2.1
+      zerotier: 10.113.22.99
+      vpn: 100.66.1.8
+    cpu: unknown
+    gpu:
+      model: NVIDIA GTX 1660 Ti
+      vram_gb: 6
+    ram_gb: 32
+    storage: local
+    services:
+      - Prometheus
+      - Grafana
+      - SafeLine WAF
+    notes: 主力开发机，当前运行 LingFlow
+
+  - name: zhineng-ai01
+    role: distributed_compute
+    model: ZBOX-EN1070-K
+    status: active
+    ips:
+      lan: 192.168.31.208
+      direct: 192.168.2.2
+      zerotier: 10.113.22.208
+      vpn: 100.66.1.9
+    cpu: unknown
+    gpu:
+      model: NVIDIA GTX 1070
+      vram_gb: 8
+    ram_gb: 32
+    storage: local
+    services:
+      - PyTorch DDP
+      - Ray
+      - 语音模型(已弃用)
+    notes: 分布式计算节点，DDP+Ray 已配置，GTX1070 8GB 适合 7B LoRA
+
+  - name: ZhinengNAS
+    role: storage_gateway
+    model: Mac mini M2
+    status: active
+    ips:
+      lan: 192.168.31.88
+      zerotier: 10.113.22.88
+      vpn: 100.66.1.1
+    cpu: Apple M2
+    gpu:
+      model: null
+      vram_gb: 0
+    ram_gb: 8
+    storage: AList 存储网关
+    services:
+      - FNOS
+      - AList
+    notes: 存储网关，连接 160T 网盘存储
+
+  - name: ZhinengServer
+    role: database_server
+    model: DELL PowerEdge R730
+    status: active
+    ips:
+      lan: 192.168.31.90
+      zerotier: 10.113.22.90
+      vpn: 100.66.1.90
+    cpu: Intel Xeon
+    gpu:
+      model: null
+      vram_gb: 0
+    ram_gb: 64
+    storage: ECC
+    services:
+      - 诊疗系统
+      - Gitea
+      - OpenList
+      - Windows Server (远程)
+    notes: Xeon+64GB ECC，数据库+Git+OpenList
+
+  - name: PC-RIZC
+    role: workstation
+    model: 自组装
+    status: active
+    ips:
+      lan: 192.168.31.66
+      vpn: 100.66.1.2
+    cpu: Intel i5-12500H
+    gpu:
+      model: null
+      vram_gb: 0
+    ram_gb: 16
+    storage: local
+    services: []
+    notes: Windows 10 工作站
+
+cloud_storage:
+  total_tb: 160
+  providers:
+    - name: 阿里云盘
+      capacity_tb: 50
+    - name: 百度云 #1
+      capacity_tb: 40
+    - name: 百度云 #2
+      capacity_tb: 30
+    - name: 夸克
+      capacity_tb: 20
+    - name: 豆包
+      capacity_tb: 15
+    - name: 115
+      capacity_tb: 5
