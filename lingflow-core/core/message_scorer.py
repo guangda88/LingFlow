@@ -39,6 +39,11 @@ class MessageScorer:
         "low": [
             "ok", "yes", "no", "thanks", "good", "好的",
             "谢谢", "可以", "确定"
+        ],
+        "stop_command": [
+            "停止", "stop", "暂停", "pause", "别继续", "停下来",
+            "halt", "终止", "terminate", "cancel", "abort",
+            "不要了", "够了", "别做了", "别写了", "停一下",
         ]
     }
 
@@ -90,6 +95,19 @@ class MessageScorer:
                 time_score=0.0,
                 quality_score=0.0,
                 reasoning="Empty message"
+            )
+
+        # 停止命令重要性提升 — 包含停止关键词的消息永远不被压缩
+        content_lower = content.lower()
+        stop_keywords = self.IMPORTANCE_KEYWORDS.get("stop_command", [])
+        has_stop = any(kw in content_lower for kw in stop_keywords)
+        if has_stop:
+            return MessageScore(
+                importance_score=1.0,
+                relevance_score=1.0,
+                time_score=1.0,
+                quality_score=1.0,
+                reasoning="STOP COMMAND — must never be compressed"
             )
 
         # 计算各维度评分
