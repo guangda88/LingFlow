@@ -263,11 +263,14 @@ class TestProcessTaskResults:
         assert "test-1" in coordinator.failed_tasks
 
     def test_process_exception_results(self):
-        """Test processing results with exceptions"""
+        """Test processing results with exceptions — should create TaskResult"""
         coordinator = AgentCoordinator()
         results_list = [Exception("Task failed")]
         results = coordinator._process_task_results(results_list)
-        assert len(results) == 0
+        assert len(results) == 1
+        assert results["unknown-0"].success is False
+        assert "Task failed" in results["unknown-0"].error
+        assert "unknown-0" in coordinator.failed_tasks
 
 
 class TestGetStatus:
@@ -463,12 +466,11 @@ class TestErrorHandling:
             # Execute task using parallel API
             results = await coordinator.execute_tasks_parallel([task], max_parallel=1)
 
-            # Verify error is captured - with return_exceptions=True,
-            # exceptions are logged and skipped, so results dict is empty
-            assert len(results) == 0
-            # failed_tasks dict should also be empty because exceptions are skipped
-            assert len(coordinator.failed_tasks) == 0
-            # The error should be logged (checked via captured log)
+            # Verify error is captured — exceptions now create TaskResult
+            assert len(results) == 1
+            assert results["test-fail"].success is False
+            assert "Simulated execution failure" in results["test-fail"].error
+            assert "test-fail" in coordinator.failed_tasks
 
     @pytest.mark.asyncio
     async def test_agent_not_found_handling(self):

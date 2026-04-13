@@ -3,17 +3,18 @@
 import asyncio
 import logging
 import os
-import re
 import time
 import types
 from typing import Any, Dict, List, Optional
 
+from lingflow.common.config import get_config
 from lingflow.common.models import AgentConfig, Task, TaskResult
 from lingflow.common.sandbox import SandboxError, SandboxTimeoutError, SkillSandbox
 from lingflow.compression.compressor import (
     CompressionLevel,
     ContextCompressor,
 )
+from lingflow.context.budget import ContextBudgetManager
 from lingflow.coordination.agent import Agent
 from lingflow.coordination.base import BaseCoordinator
 from lingflow.coordination.registry import AgentRegistry
@@ -42,7 +43,6 @@ class AgentCoordinator(BaseCoordinator):
         self.sandbox = SkillSandbox(timeout=30.0, memory_limit=256 * 1024 * 1024)  # 256MB
 
         # 上下文预算管理（基于 40% 安全线防止长上下文退化）
-        from lingflow.context.budget import ContextBudgetManager
 
         self._budget_manager = ContextBudgetManager(max_tokens=180000)
 
@@ -148,7 +148,11 @@ class AgentCoordinator(BaseCoordinator):
             compressed_context = self._compress_context(task.context)
 
             # 执行任务
-            result = await agent.execute_task(task, compressed_context)
+            try:
+                result = await agent.execute_task(task, compressed_context)
+            except Exception as exc:
+                logger.error("Task %s agent execution failed: %s", task.task_id, exc)
+                result = self._create_error_result(task, f"{type(exc).__name__}: {exc}")
             return result
 
     def _find_agent_for_task(self, task: Task) -> Optional["Agent"]:
@@ -199,9 +203,17 @@ class AgentCoordinator(BaseCoordinator):
     def _process_task_results(self, results_list: List[TaskResult]) -> Dict[str, TaskResult]:
         """处理任务结果"""
         results = {}
-        for result in results_list:
+        for i, result in enumerate(results_list):
             if isinstance(result, Exception):
-                logger.error("Exception in task result: %s", result)
+                logger.error("Exception in task result [%d]: %s", i, result)
+                task_id = getattr(result, 'task_id', f'unknown-{i}')
+                error_result = TaskResult(
+                    task_id=task_id,
+                    success=False,
+                    error=f"{type(result).__name__}: {result}",
+                )
+                results[task_id] = error_result
+                self.failed_tasks[task_id] = error_result
                 continue
 
             if result:
@@ -360,6 +372,12 @@ class AgentCoordinator(BaseCoordinator):
                     "error": f"Audit gate: {audit_result.get('reason', 'Audit check failed')}",
                     "audit_result": audit_result,
                 }
+
+            # MCP 路由分发 — 如果 task context 中有 _mcp_route，按路由走
+            mcp_route = params.get("_mcp_route") or (params.get("context") or {}).get("_mcp_route")
+            if mcp_route:
+                logger.info(f"MCP route detected for skill '{skill_name}': {mcp_route}")
+                return self._execute_via_mcp_route(skill_name, params, mcp_route)
 
             skill_path = self._get_skill_path(skill_name)
             if not skill_path:
@@ -974,6 +992,98 @@ class AgentCoordinator(BaseCoordinator):
             return module.execute_skill(params)
         else:
             raise Exception("技能模块中没有 execute_skill 函数")
+
+    def _execute_via_mcp_route(
+        self, skill_name: str, params: Dict[str, Any], mcp_route: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """通过 MCP 路由执行技能
+
+        当 params 或 context 中包含 _mcp_route 字段时，
+        使用路由指定的目标（外部 MCP 服务器）执行，而非本地技能。
+
+        Args:
+            skill_name: 技能名称
+            params: 原始参数
+            mcp_route: 路由信息，包含 target/tool/args 等
+
+        Returns:
+            执行结果字典
+        """
+        target = mcp_route.get("target", "")
+        tool_name = mcp_route.get("tool", skill_name)
+        route_args = mcp_route.get("args", params)
+
+        logger.info(f"Routing skill '{skill_name}' to MCP target '{target}', tool '{tool_name}'")
+
+        try:
+            import json
+            import subprocess
+
+            mcp_config = get_config("mcp", default={})
+            servers = mcp_config.get("servers", {}) if isinstance(mcp_config, dict) else {}
+            server_config = servers.get(target, {})
+
+            if not server_config:
+                logger.warning(f"MCP server '{target}' not configured, falling back to local execution")
+                return self._fallback_local_execution(skill_name, params)
+
+            cmd = server_config.get("command", [])
+            if isinstance(cmd, str):
+                cmd = cmd.split()
+
+            if not cmd:
+                return {"skill": skill_name, "params": params, "error": f"MCP server '{target}' has no command"}
+
+            tool_call = {
+                "jsonrpc": "2.0",
+                "method": "tools/call",
+                "params": {"name": tool_name, "arguments": route_args},
+                "id": 1,
+            }
+
+            result = subprocess.run(
+                cmd,
+                input=json.dumps(tool_call),
+                capture_output=True,
+                text=True,
+                timeout=server_config.get("timeout", 30),
+            )
+
+            if result.returncode != 0:
+                return {
+                    "skill": skill_name,
+                    "params": params,
+                    "error": f"MCP server error: {result.stderr[:500]}",
+                }
+
+            response = json.loads(result.stdout)
+            content = response.get("result", {}).get("content", [])
+            return {"skill": skill_name, "params": params, "result": content, "routed_via": target}
+
+        except Exception as e:
+            logger.warning(f"MCP route failed for '{skill_name}': {e}, falling back to local")
+            return self._fallback_local_execution(skill_name, params)
+
+    def _fallback_local_execution(self, skill_name: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """MCP 路由失败时的本地回退执行
+
+        Args:
+            skill_name: 技能名称
+            params: 原始参数
+
+        Returns:
+            本地执行结果
+        """
+        skill_path = self._get_skill_path(skill_name)
+        if not skill_path:
+            return {"skill": skill_name, "params": params, "error": f"技能文件不存在（本地回退）: {skill_name}"}
+
+        module = self._load_skill_module(skill_name, skill_path)
+        if not module:
+            return {"skill": skill_name, "params": params, "error": f"加载技能模块失败（本地回退）: {skill_name}"}
+
+        result = self._execute_skill_module(module, params)
+        return {"skill": skill_name, "params": params, "result": result, "fallback": True}
 
     def list_skills(self) -> List[str]:
         """List all available skills.

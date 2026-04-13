@@ -85,12 +85,18 @@ class WorkflowOrchestrator:
             dependencies = task_def.get("depends_on", task_def.get("dependencies", []))
 
             # 创建任务
+            # 创建任务
+            task_params = dict(task_def.get("params", {}))
+            mcp_route = task_def.get("_mcp_route")
+            if mcp_route:
+                task_params["_mcp_route"] = mcp_route
+
             task = Task(
                 task_id=task_id,
                 name=task_def.get("skill", task_id),
                 description=task_def.get("description", ""),
                 agent_type=task_def.get("skill", task_def.get("agent_type", "implementation")),
-                context=task_def.get("params", {}),
+                context=task_params,
                 priority=priority,
                 dependencies=dependencies,
             )

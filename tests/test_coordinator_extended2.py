@@ -165,7 +165,9 @@ class TestProcessTaskResultsEdgeCases:
         assert "t2" in processed
         assert "t1" in coord.completed_tasks
         assert "t2" in coord.failed_tasks
-        assert len(processed) == 2
+        assert len(processed) == 3
+        assert "unknown-2" in processed
+        assert "unknown-2" in coord.failed_tasks
 
 
 class TestListSkillsEdgeCases:
