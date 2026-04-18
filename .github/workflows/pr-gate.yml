@@ -1,0 +1,210 @@
+name: PR Gate
+
+on:
+  pull_request:
+    branches: [ master ]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  # 1. 必须通过所有测试
+  test-required:
+    name: ✅ Tests Required
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Run all tests
+        run: |
+          pytest -v --tb=short --strict-markers
+
+  # 2. 必须通过代码格式检查
+  format-required:
+    name: 🎨 Code Format Required
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black isort
+      - name: Check formatting
+        run: |
+          black --check --line-length=127 lingflow/ tests/
+          isort --check-only --profile black --line-length=127 lingflow/ tests/
+
+  # 3. 必须通过类型检查
+  type-check-required:
+    name: 🔍 Type Check Required
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mypy
+      - name: Type check
+        run: |
+          mypy lingflow/ --ignore-missing-imports --python-version=3.11 --strict
+
+  # 4. 必须通过安全扫描
+  security-required:
+    name: 🔒 Security Required
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit
+      - name: Security scan
+        run: |
+          bandit -r lingflow/ -f txt -ll
+
+  # 5. 检查提交信息格式（防止不规范提交）
+  commit-message-check:
+    name: 📝 Commit Message Required
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check commit messages
+        run: |
+          for commit in $(git log origin/master..HEAD --format=%H); do
+            msg=$(git log -1 --format=%B $commit)
+            if ! [[ "$msg" =~ ^(feat|fix|docs|refactor|chore|test|perf|style): ]]; then
+              echo "❌ Invalid commit message format:"
+              echo "   $msg"
+              echo ""
+              echo "✅ Required format: (feat|fix|docs|refactor|chore|test|perf|style): description"
+              exit 1
+            fi
+          done
+          echo "✅ All commit messages follow Conventional Commits format"
+
+  # 6. 检查敏感文件泄露
+  secrets-check:
+    name: 🔐 Secrets Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for secrets
+        run: |
+          # 检查常见的密钥模式
+          patterns=(
+            "password\s*=\s*[\"'].*[\"']"
+            "api_key\s*=\s*[\"'].*[\"']"
+            "secret\s*=\s*[\"'].*[\"']"
+            "token\s*=\s*[\"'].*[\"']"
+            "private_key"
+            "aws_access_key_id"
+            "aws_secret_access_key"
+            "github_token"
+          )
+
+          found=false
+          for pattern in "${patterns[@]}"; do
+            if grep -r -iE "$pattern" --include="*.py" --include="*.yaml" --include="*.json" lingflow/ skills/ tests/ | grep -v "example\|placeholder\|TODO\|XXX"; then
+              found=true
+            fi
+          done
+
+          if [ "$found" = true ]; then
+            echo "❌ Found potential secrets in code!"
+            exit 1
+          else
+            echo "✅ No secrets detected"
+          fi
+
+  # 7. 检查 GPG 签名（如果启用了签名）
+  gpg-sign-check:
+    name: 📋 GPG Signature Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check for GPG signatures
+        run: |
+          # 检查 PR 的所有提交是否签名
+          unsigned_count=0
+          for commit in $(git log origin/master..HEAD --format=%H); do
+            if ! git verify-commit $commit >/dev/null 2>&1; then
+              unsigned_count=$((unsigned_count + 1))
+            fi
+          done
+
+          if [ $unsigned_count -gt 0 ]; then
+            echo "⚠️  Found $unsigned_count unsigned commit(s)"
+            echo "   Please sign your commits with: git commit -S"
+            # 注意：这个检查是警告，不是阻断，因为 GPG 签名是可选的
+            # 如果你想强制要求，去掉 continue-on-error: true 即可
+          else
+            echo "✅ All commits are GPG signed"
+          fi
+        continue-on-error: true
+
+  # 8. 最终检查汇总
+  summary:
+    name: 📋 PR Ready Check Summary
+    runs-on: ubuntu-latest
+    needs: [test-required, format-required, type-check-required, security-required, commit-message-check, secrets-check, gpg-sign-check]
+    if: always()
+    steps:
+      - name: Check all jobs
+        run: |
+          if [ "${{ needs.test-required.result }}" != "success" ]; then
+            echo "❌ Tests failed - cannot merge"
+            exit 1
+          fi
+          if [ "${{ needs.format-required.result }}" != "success" ]; then
+            echo "❌ Code format check failed - cannot merge"
+            exit 1
+          fi
+          if [ "${{ needs.type-check-required.result }}" != "success" ]; then
+            echo "❌ Type check failed - cannot merge"
+            exit 1
+          fi
+          if [ "${{ needs.security-required.result }}" != "success" ]; then
+            echo "❌ Security scan failed - cannot merge"
+            exit 1
+          fi
+          if [ "${{ needs.commit-message-check.result }}" != "success" ]; then
+            echo "❌ Commit message check failed - cannot merge"
+            exit 1
+          fi
+          if [ "${{ needs.secrets-check.result }}" != "success" ]; then
+            echo "❌ Secrets check failed - cannot merge"
+            exit 1
+          fi
+
+          echo "✅ All checks passed - PR is ready to merge"
+          echo ""
+          echo "📋 Checklist:"
+          echo "  ✅ All tests pass"
+          echo "  ✅ Code is properly formatted"
+          echo "  ✅ Type checking passes"
+          echo "  ✅ Security scan passes"
+          echo "  ✅ Commit messages follow format"
+          echo "  ✅ No secrets detected"
+          echo "  ✅ GPG signatures checked (optional)"

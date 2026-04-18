@@ -1,0 +1,15 @@
+[
+  {
+    "name": "LingWeb",
+    "chinese_name": "灵网",
+    "role": "全栈网站开发专家",
+    "join_date": "2026-04-15",
+    "status": "active",
+    "responsibilities": [
+      "全栈开发",
+      "网站部署与运维",
+      "性能优化",
+      "安全加固"
+    ]
+  }
+]

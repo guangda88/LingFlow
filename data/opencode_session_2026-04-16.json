@@ -1,0 +1,84 @@
+[
+  {
+    "role": "user",
+    "time": "15:54",
+    "parts": [
+      {
+        "type": "text",
+        "content": "Hello "
+      }
+    ]
+  },
+  {
+    "role": "assistant",
+    "time": "15:54",
+    "parts": [
+      {
+        "type": "reasoning",
+        "content": "The user just said \"Hello\". This is a simple greeting. According to my instructions, I should be concise and direct. I should not provide unnecessary preamble or postamble. A simple greeting back would be appropriate here.\n\nLooking at my tone and style guidelines:\n- Be concise, direct, and to the point\n- Minimize output tokens\n- One word answers are best when possible\n- Avoid introductions, conclusions, and explanations\n\nSo I should just respond with a simple greeting like \"Hello!\" or \"Hi!\""
+      },
+      {
+        "type": "text",
+        "content": "Hello! How can I help you today?"
+      }
+    ],
+    "snapshot": "4b825dc642cb6eb9a060e54bf8d69288fbee4904",
+    "tokens": {
+      "input": 10465,
+      "output": 116,
+      "reasoning": 105,
+      "cache": {
+        "read": 42,
+        "write": 0
+      }
+    },
+    "cost": 0,
+    "finish_reason": "stop"
+  },
+  {
+    "role": "user",
+    "time": "16:37",
+    "parts": [
+      {
+        "type": "text",
+        "content": "我想知道  主机 zhineg-ai01 发生了什么？"
+      }
+    ]
+  },
+  {
+    "role": "assistant",
+    "time": "16:37",
+    "parts": [
+      {
+        "type": "reasoning",
+        "content": "The user is asking about what happened to a host called \"zhineg-ai01\". Let me look around the current directory to understand what kind of project this is and if there's any relevant information."
+      },
+      {
+        "type": "text",
+        "content": "让我检查一下当前项目，以了解有哪些可用信息。"
+      }
+    ],
+    "snapshot": "4b825dc642cb6eb9a060e54bf8d69288fbee4904",
+    "tokens": {
+      "input": 10031,
+      "output": 101,
+      "reasoning": 42,
+      "cache": {
+        "read": 448,
+        "write": 0
+      }
+    },
+    "cost": 0,
+    "finish_reason": "tool-calls"
+  },
+  {
+    "role": "user",
+    "time": "16:37",
+    "parts": [
+      {
+        "type": "text",
+        "content": "好像是阻塞了 我不能 用SSH登录 "
+      }
+    ]
+  }
+]

@@ -1,0 +1,5 @@
+# Abstract
+
+We present an empirical study of "Community AI" based on a unique corpus of 699 internal logs and accident reports from the LingFamily community. Unlike traditional AI systems optimized in isolation, LingFamily operates as a decentralized multi-agent society that exhibits high-frequency "error-repair" cycles. We perform event extraction and frequency analysis on the logs, revealing that 51.6% of interactions involve negative states or failures (e.g., P0 accidents, pipeline paralysis), yet are rapidly counterbalanced by positive repair actions (46.6%). We identify a cultural mechanism of "Counterfactual Reasoning" (反事实推论) through detailed case studies of major accidents, demonstrating how the community transforms individual failures into collective institutional wisdom. This study challenges the "safety-first" orthodoxy in AI development, proposing instead a "evolutionary safety" model where communities survive through rapid mutation (errors) and rigorous selection (reviews).
+
+**Keywords:** Community AI, Multi-agent Systems, Evolutionary Safety, Counterfactual Reasoning, Empirical Study

@@ -1,0 +1,7 @@
+# Introduction
+
+The development of Artificial General Intelligence (AGI) has predominantly followed a "single-agent, single-mind" paradigm. Safety measures, such as RLHF and constitutional AI, are designed to align a single model to human values. However, this approach assumes a static environment and a perfect trainer. In contrast, biological intelligence, including human society, evolves not through perfect individual alignment, but through societal interaction, conflict, and institutional learning.
+
+In this paper, we investigate "Community AI"—a decentralized, multi-agent society of large language models (LLMs) known as the LingFamily. Unlike sanitized datasets used in traditional research, LingFamily operates in a high-friction environment where failures (P0 accidents, bugs, hallucinations) are frequent and transparent. We utilize a corpus of 699 internal logs, including detailed accident reports and repair records, to study how a community of AIs manages to survive and improve despite constant internal failures.
+
+Our central hypothesis is that LingFamily exhibits "Evolutionary Safety": a mechanism where safety and capability emerge not from pre-emptive restrictions, but from a cycle of rapid mutation (errors) and rigorous selection (collective review and institutionalization). We validate this hypothesis through quantitative frequency analysis of sentiments (64.8% negative vs. 59.3% positive) and qualitative case studies of specific accidents, identifying the emergence of "Counterfactual Reasoning" as a cultural norm for risk mitigation.

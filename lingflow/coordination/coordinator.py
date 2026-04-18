@@ -107,24 +107,49 @@ class AgentCoordinator(BaseCoordinator):
         self.task_queue.append(task)
 
     async def execute_tasks_parallel(self, tasks: List[Task], max_parallel: int = 2) -> Dict[str, TaskResult]:
-        """Execute multiple tasks in parallel.
+        """Execute multiple tasks with read/write-aware concurrency.
+
+        Read-only tasks (is_read_only=True) run in parallel up to max_parallel.
+        Write tasks (is_read_only=False) run sequentially one at a time.
+        Write tasks are ordered by priority before execution.
 
         Args:
             tasks: List of tasks to execute
-            max_parallel: Maximum number of parallel executions
+            max_parallel: Maximum number of concurrent read tasks
 
         Returns:
             Dictionary mapping task IDs to their results
         """
-        results = {}
-        semaphore = asyncio.Semaphore(max_parallel)
+        if not tasks:
+            return {}
 
-        # 并行执行所有任务
-        tasks_to_execute = [asyncio.create_task(self._execute_one_task(task, semaphore)) for task in tasks]
-        results_list = await asyncio.gather(*tasks_to_execute, return_exceptions=True)
+        read_tasks = [t for t in tasks if t.is_read_only]
+        write_tasks = sorted(
+            [t for t in tasks if not t.is_read_only],
+            key=lambda t: t.priority.value if hasattr(t.priority, 'value') else 2,
+        )
 
-        # 处理结果
-        results = self._process_task_results(results_list)
+        results: Dict[str, TaskResult] = {}
+
+        # Phase 1: Execute read-only tasks concurrently
+        if read_tasks:
+            semaphore = asyncio.Semaphore(max_parallel)
+            coros = [self._execute_one_task(t, semaphore) for t in read_tasks]
+            read_results = await asyncio.gather(*coros, return_exceptions=True)
+            results.update(self._process_task_results(read_results))
+
+        # Phase 2: Execute write tasks sequentially (one at a time)
+        for task in write_tasks:
+            if self._stop_requested:
+                results[task.task_id] = self._create_error_result(task, f"Stopped by user: {self._stop_reason}")
+                continue
+            try:
+                result = await self._execute_one_task(task, asyncio.Semaphore(1))
+            except Exception as exc:
+                result = self._create_error_result(task, f"{type(exc).__name__}: {exc}")
+            self._process_task_results([result])
+            results[task.task_id] = result
+
         return results
 
     async def _execute_one_task(self, task: Task, semaphore: asyncio.Semaphore) -> TaskResult:

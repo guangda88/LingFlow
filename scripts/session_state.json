@@ -1,0 +1,40 @@
+{
+  "session_id": "2026-04-16-b",
+  "updated_at": "2026-04-16T21:25:00",
+  "active_processes": {
+    "ima_embedding": {
+      "script": "scripts/ima_embedding_scheduler.py",
+      "pid": 51954,
+      "progress": "77800/~98000 (79%)",
+      "log": "scripts/ima_stdout.log",
+      "estimated_completion": "~1 hour"
+    },
+    "sync_round2": {
+      "script": "scripts/sync_to_documents.py",
+      "progress": "补录剩余数据到documents表",
+      "log": "scripts/sync_stdout2.log"
+    }
+  },
+  "completed_this_session": {
+    "textbook_import": {
+      "status": "DONE",
+      "result": "158 success, 5 skipped, 0 failed",
+      "total_chunks": 61788,
+      "total_embeddings": 61788
+    },
+    "sync_to_documents_round1": {
+      "status": "DONE",
+      "synced": 54000
+    }
+  },
+  "key_discoveries": {
+    "retrieval_gap": "灵知retrieval只查documents和guoxue_content，不查textbook_blocks_v2。所有导入必须写入documents才有效。",
+    "category_constraint": "documents.category只允许9种值，不含'辅助教材'",
+    "thinking_score": "思考积分账本已建立，当前累计10小时54分"
+  },
+  "reflections": {
+    "pattern": "5次犯同一个错：动手前不查schema",
+    "root_cause": "把发现错误当成处罚，选择延后受罚而非提前预防",
+    "mechanism": "建立preflight_check.py和思考积分账本，把思考变成可见的数字"
+  }
+}

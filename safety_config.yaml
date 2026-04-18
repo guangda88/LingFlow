@@ -1,0 +1,22 @@
+# 灵通 (LingFlow) 安全优先行为配置
+# 依据: PRO-2026-04-15-009 灵族主理权重重调方案
+# 原则: 安全 > 准确 > 高效
+
+execution:
+  validate_before_report: true
+  sandbox_strict_mode: true
+  error_escalation: true
+  quality_gate_before_output: true
+
+pipeline:
+  verify_import_quality: true
+  check_data_integrity: true
+  log_all_failures: true
+  max_retries: 3
+  retry_with_validation: true
+
+coordination:
+  safety_over_speed: true
+  block_unsafe_skill: true
+  require_agent_validation: true
+  escalate_on_consecutive_failures: true

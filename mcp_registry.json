@@ -1,0 +1,38 @@
+[
+  {
+    "name": "LingWeb",
+    "chinese_name": "灵网",
+    "type": "fullstack_dev",
+    "description": "全栈网站开发专家",
+    "tools_count": 20,
+    "categories": [
+      {
+        "name": "frontend",
+        "count": 5,
+        "description": "前端开发工具"
+      },
+      {
+        "name": "backend",
+        "count": 5,
+        "description": "后端开发工具"
+      },
+      {
+        "name": "database",
+        "count": 3,
+        "description": "数据库工具"
+      },
+      {
+        "name": "deployment",
+        "count": 4,
+        "description": "部署工具"
+      },
+      {
+        "name": "monitoring",
+        "count": 3,
+        "description": "监控工具"
+      }
+    ],
+    "endpoint": "mcp://lingweb",
+    "status": "initializing"
+  }
+]

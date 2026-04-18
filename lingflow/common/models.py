@@ -74,6 +74,7 @@ class Task:
         agent_type: 指定代理类型，默认为空（表示任意兼容代理）
         dependencies: 任务依赖列表，默认为空
         context: 任务上下文数据，默认为空字典
+        is_read_only: 是否为只读任务（只读任务可完全并行，写任务需串行），默认为True
     """
 
     task_id: str
@@ -85,6 +86,7 @@ class Task:
     working_dir: str = ""
     dependencies: List[str] = field(default_factory=list)
     context: Dict[str, Any] = field(default_factory=dict)
+    is_read_only: bool = True
 
 
 @dataclass

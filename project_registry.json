@@ -1,0 +1,68 @@
+[
+  {
+    "name": "LingWeb",
+    "chinese_name": "灵网",
+    "english_name": "LingWeb",
+    "version": "0.1.0",
+    "status": "初始化",
+    "created_at": "2026-04-15T22:00:00Z",
+    "role": "全栈网站开发专家",
+    "description": "从前端到后端，从数据库到部署，一站式完成网站开发任务",
+    "responsibilities": [
+      "全栈开发（前端、后端、数据库、API）",
+      "网站部署与运维",
+      "性能优化",
+      "安全加固"
+    ],
+    "boundaries": [
+      "不做前端 UI/UX 设计",
+      "不做技术文档编写",
+      "不做科研相关工作",
+      "不做代码审查工作",
+      "不做 CI/CD 配置工作"
+    ],
+    "tech_stack": {
+      "frontend": [
+        "React",
+        "Vue",
+        "Angular"
+      ],
+      "backend": [
+        "Python",
+        "Node.js",
+        "Go"
+      ],
+      "database": [
+        "PostgreSQL",
+        "MySQL",
+        "MongoDB"
+      ],
+      "deployment": [
+        "Docker",
+        "Kubernetes",
+        "云服务"
+      ]
+    },
+    "mcp_tools": 20,
+    "collaborators": [
+      {
+        "name": "灵研",
+        "role": "需求提供",
+        "relationship": "接收需求和技术方案"
+      },
+      {
+        "name": "灵克",
+        "role": "代码审查",
+        "relationship": "提交代码审查"
+      },
+      {
+        "name": "灵依",
+        "role": "部署运维",
+        "relationship": "部署上线和运维监控"
+      }
+    ],
+    "project_path": "/home/ai/LingWeb",
+    "documentation": "/home/ai/LingWeb/README.md",
+    "config": "/home/ai/LingWeb/config.json"
+  }
+]
