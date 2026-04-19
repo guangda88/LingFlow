@@ -47,8 +47,8 @@
 | SEC-DATA-001 | 数据完整性 | 验证数据必须实际经过验证 |
 | SEC-MON-001 | 监控 & 响应 | 审计日志 + 异常检测 |
 
-完整基线文档：`/home/ai/LingFlow_plus/docs/security_baseline_v1.py`
-安全巡检脚本：`/home/ai/LingFlow_plus/docs/security_patrol.py`
+完整基线文档：`/data/lingfamily/LingFlow_plus/docs/security_baseline_v1.py`
+安全巡检脚本：`/data/lingfamily/LingFlow_plus/docs/security_patrol.py`
 
 
 ## OWASP LLM Top 10 映射

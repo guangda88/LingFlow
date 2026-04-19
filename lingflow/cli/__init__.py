@@ -16,6 +16,7 @@ from lingflow.cli.analyze import analyze
 from lingflow.cli.feedback import feedback
 from lingflow.cli.learn import learn
 from lingflow.cli.optimize import optimize
+from lingflow.cli.stream import create_project, list_projects, stream
 from lingflow.cli.test import test
 
 __all__ = ["cli", "run", "workflow", "list_skills", "init", "config_cmd"]
@@ -133,6 +134,9 @@ cli.add_command(analyze)
 cli.add_command(feedback)
 cli.add_command(learn)
 cli.add_command(optimize)
+cli.add_command(stream)
+cli.add_command(list_projects)
+cli.add_command(create_project)
 cli.add_command(test)
 
 
