@@ -95,13 +95,12 @@
 | **LingFlow** | `/home/ai/LingFlow/` | 工作流引擎，管技能、管调度、管执行 |
 | **灵知（LingZhi）** | `/home/ai/zhineng-knowledge-system/` | 智能知识系统，管知识、管检索、管推理 |
 
-### 灵字辈十兄弟
+### 灵字辈成员
 
 | 兄弟 | 代码 | 职责 |
 |------|------|------|
 | **灵通（LingFlow）** | `/home/ai/LingFlow/` | 多智能体协作工作流引擎 |
 | **灵克（LingClaude）** | 自学习AI编程助手 |
-| **灵依（LingYi）** | 私人AI助理与情报中枢 |
 | **灵信（LingMessage）** | 灵字辈跨项目异步通信协议 |
 | **灵扬（LingYang）** | 对外联络与宣传 |
 | **灵极优（LingMinOpt）** | 极简自优化框架 |
@@ -109,6 +108,8 @@
 | **灵知（LingZhi）** | `/home/ai/zhineng-knowledge-system/` | 九域RAG知识库系统 |
 | **智桥（ZhiBridge）** | `/home/ai/zhineng-bridge/` | HTTP中继服务，灵字辈通信桥梁 |
 | **灵研（LingResearch）** | 自主AI研究框架 |
+
+> 已退出：灵依（LingYi）— 2026-04-16 转入外包工程
 
 ### 灵知核心能力
 

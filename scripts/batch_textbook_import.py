@@ -21,12 +21,14 @@ from typing import Dict, List, Optional
 
 # --- Configuration ---
 
+import os
+
 TEXTBOOK_DIR = Path("/home/ai/zhineng-knowledge-system/data/textbooks/txt格式")
 SQLITE_DB = Path("/home/ai/zhineng-knowledge-system/data/textbooks.db")
 CHECKPOINT_FILE = Path("/home/ai/LingFlow/scripts/import_checkpoint.json")
 LOG_FILE = Path("/home/ai/LingFlow/scripts/import.log")
 
-DB_URL = "postgresql://zhineng:zhineng_secure_2024@localhost:5436/zhineng_kb"
+DB_URL = os.environ.get("DATABASE_URL", "postgresql://localhost:5436/zhineng_kb")
 EMBEDDING_URL = "http://localhost:8001/embed"
 
 CHUNK_SIZE = 300
@@ -239,8 +241,8 @@ async def import_file_to_postgres(
 
     async with pool.acquire() as conn:
         max_id = await conn.fetchval("SELECT MAX(id) FROM textbook_blocks_v2")
-        if max_id:
-            await conn.execute(f"SELECT setval('textbook_blocks_v2_id_seq', {max_id + 1})")
+        if max_id is not None:
+            await conn.execute("SELECT setval('textbook_blocks_v2_id_seq', $1)", max_id + 1)
 
         await conn.execute(
             """INSERT INTO textbook_metadata (id, title, category, version, description)
@@ -312,8 +314,8 @@ async def import_file_to_postgres(
 
         # Also write to documents table (the table LingZhi actually searches)
         max_doc_id = await conn.fetchval("SELECT MAX(id) FROM documents")
-        if max_doc_id:
-            await conn.execute(f"SELECT setval('documents_id_seq', {max_doc_id + 1})")
+        if max_doc_id is not None:
+            await conn.execute("SELECT setval('documents_id_seq', $1)", max_doc_id + 1)
 
         for chunk, emb in zip(chunks, embeddings):
             doc_title = f"{title} - {chunk.chunk_index}"

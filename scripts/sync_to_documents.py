@@ -5,10 +5,12 @@
 只查 documents 和 guoxue_content。这个脚本补录数据到 documents 表。
 """
 
+import os
+
 import asyncio
 import asyncpg
 
-DB_URL = "postgresql://zhineng:zhineng_secure_2024@localhost:5436/zhineng_kb"
+DB_URL = os.environ.get("DATABASE_URL", "postgresql://localhost:5436/zhineng_kb")
 BATCH_SIZE = 500
 
 

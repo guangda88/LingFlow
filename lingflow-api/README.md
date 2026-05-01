@@ -270,7 +270,6 @@ pytest tests/
 ## 📚 相关文档
 
 - [LingFlow 主文档](../README.md)
-- [MCP Server 文档](../mcp_server/README.md)
 - [API 完整文档](http://localhost:8000/docs)
 - [部署路线图](../docs/architecture/DEPLOYMENT_ROADMAP.md)
 

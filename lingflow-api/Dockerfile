@@ -59,22 +59,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 # ===========================
-# Stage 4: MCP Server 镜像
-# ===========================
-FROM base as mcp
-
-# 复制代码
-COPY mcp_server/ /app/mcp_server/
-COPY lingflow/ /app/lingflow/
-
-# 安装 LingFlow MCP Server
-RUN cd /app/mcp_server && pip install -e .
-
-# 启动命令
-CMD ["lingflow-mcp", "run"]
-
-# ===========================
-# Stage 5: 生产镜像（最小化）
+# Stage 4: 生产镜像（最小化）
 # ===========================
 FROM python:3.11-slim as production
 

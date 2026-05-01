@@ -436,6 +436,18 @@ class AgentCoordinator(BaseCoordinator):
 
             result = self._execute_skill_module(module, params)
 
+            # 结论验证 — 检查技能产出的结论是否有证伪证据
+            if isinstance(result, dict) and "conclusion" in result:
+                from lingflow.hooks.conclusion_verification_hook import get_conclusion_hook
+
+                conclusion_hook = get_conclusion_hook()
+                check = conclusion_hook.verify(
+                    conclusion=result["conclusion"],
+                    disprove_evidence=result.get("disprove_evidence"),
+                )
+                if not check.passed:
+                    logger.warning(f"Skill '{skill_name}' conclusion unverified: {result['conclusion'][:100]}")
+
             # 自动信任验证（如果启用）
             from lingflow.common.config import get_config
 

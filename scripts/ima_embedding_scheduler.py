@@ -11,6 +11,7 @@
 import asyncio
 import json
 import logging
+import os
 import time
 import urllib.request
 from pathlib import Path
@@ -26,7 +27,7 @@ logging.basicConfig(
 )
 log = logging.getLogger("ima_embedding")
 
-DB_URL = "postgresql://zhineng:zhineng_secure_2024@localhost:5436/zhineng_kb"
+DB_URL = os.environ.get("DATABASE_URL", "postgresql://localhost:5436/zhineng_kb")
 EMBEDDING_URL = "http://localhost:8001/embed"
 CHECKPOINT_FILE = Path("/home/ai/LingFlow/scripts/ima_embedding_checkpoint.json")
 BATCH_SIZE = 100

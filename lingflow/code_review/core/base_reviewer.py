@@ -163,6 +163,17 @@ class BaseCodeReviewer(ABC):
 
         logger.info(f"目录审查完成: {file_count} 个文件，总分: {result['overall_score']:.2f}")
 
+        # 结论验证 — 审查结论必须有可证伪证据
+        if "conclusion" in result:
+            from lingflow.hooks.conclusion_verification_hook import get_conclusion_hook
+
+            check = get_conclusion_hook().verify(
+                conclusion=result["conclusion"],
+                disprove_evidence=result.get("disprove_evidence"),
+            )
+            if not check.passed:
+                logger.warning(f"Code review conclusion unverified: {result['conclusion'][:100]}")
+
         return result
 
     def review_file(self, file_path: Path, **kwargs) -> Dict[str, Any]:

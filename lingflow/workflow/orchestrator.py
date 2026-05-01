@@ -187,6 +187,20 @@ class WorkflowOrchestrator:
             len(self.coordinator.failed_tasks),
         )
 
+        # 结论验证 — workflow整体结论
+        failed_count = len(self.coordinator.failed_tasks)
+        if failed_count > 0:
+            from lingflow.hooks.conclusion_verification_hook import get_conclusion_hook
+
+            conclusion_hook = get_conclusion_hook()
+            conclusion = f"Workflow completed with {failed_count} failed tasks"
+            check = conclusion_hook.verify(
+                conclusion=conclusion,
+                disprove_evidence=[f"Check task logs for {list(self.coordinator.failed_tasks)} to verify root cause"],
+            )
+            if not check.passed:
+                logger.warning("Workflow conclusion unverified: %s", conclusion)
+
         return results
 
     def _get_ready_tasks(self, all_tasks: List[Task]) -> List[Task]:

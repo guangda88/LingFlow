@@ -5,6 +5,8 @@
 这是强制性的，不是可选的。
 """
 
+import os
+
 import asyncpg
 import asyncio
 from typing import Dict, List, Optional
@@ -71,7 +73,16 @@ async def preflight_check(conn: asyncpg.Connection, table: str, columns: List[st
             seq = c['column_default'].split("'")[1] if "'" in c['column_default'] else ''
             col = c['column_name']
             if seq:
-                max_val = await conn.fetchval(f'SELECT MAX({col}) FROM {table}')
+                ALLOWED_TABLES = {"documents", "textbook_nodes", "textbook_blocks_v2"}
+                if table not in ALLOWED_TABLES:
+                    raise ValueError(f"Invalid table name: {table}")
+                if col not in info['columns']:
+                    raise ValueError(f"Invalid column name: {col}")
+                safe_table = await conn.fetchval("SELECT quote_ident($1)", table)
+                safe_col = await conn.fetchval("SELECT quote_ident($1)", col)
+                max_val = await conn.fetchval(
+                    "SELECT MAX(" + safe_col + ") FROM " + safe_table
+                )
                 info['sequence_max'][col] = max_val
 
     return info
@@ -100,7 +111,7 @@ def format_preflight(info: dict) -> str:
 
 if __name__ == "__main__":
     async def demo():
-        conn = await asyncpg.connect("postgresql://zhineng:zhineng_secure_2024@localhost:5436/zhineng_kb")
+        conn = await asyncpg.connect(os.environ.get("DATABASE_URL", "postgresql://localhost:5436/zhineng_kb"))
         for table in ["documents", "textbook_nodes", "textbook_blocks_v2"]:
             info = await preflight_check(conn, table)
             print(format_preflight(info))

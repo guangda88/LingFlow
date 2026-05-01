@@ -1,3 +1,0 @@
-"""
-LingFlow Tests
-"""

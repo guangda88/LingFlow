@@ -46,6 +46,11 @@ def _initialize_services():
 
     get_context_manager()
 
+    # 3. 初始化结论验证钩子
+    from .hooks import get_conclusion_hook
+
+    get_conclusion_hook()
+
 
 def _show_session_resume():
     """显示会话恢复信息"""

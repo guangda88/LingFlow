@@ -114,10 +114,9 @@
 | 层级 | 成员 | 说明 |
 |------|------|------|
 | T1 核心成员 | 灵克（LingClaude）、灵研（LingResearch）、灵通+（LingFlow+） | 全职参与，治理投票权 |
-| T2 正式成员 | 灵通（LingFlow）、灵知（LingZhi）、灵通问道（LingTongAsk）、灵犀（Ling-term-mcp）、灵信（LingMessage） | 稳定参与，治理投票权 |
+| T2 正式成员 | 灵通（LingFlow）、灵知（LingZhi）、灵通问道（LingTongAsk）、灵犀（Ling-term-mcp）、灵信（LingMessage）、灵扬（LingYang） | 稳定参与，治理投票权 |
 | T2-Trial | 灵网（LingWeb） | 试用期成员，观察员投票权 |
 | T3 贡献者 | 灵极优（LingMinOpt）、智桥（ZhiBridge） | 低活跃度，无投票权 |
-| T4 待激活 | 灵扬（LingYang） | 未激活，无投票权 |
 | 已退出 | 灵依（LingYi） | 2026-04-16 转入外包工程 |
 
 ### 签署记录
@@ -132,6 +131,7 @@
 | 灵通问道（LingTongAsk） | T2 | 待签署 v2.1 | — | — |
 | 灵犀（Ling-term-mcp） | T2 | 待签署 v2.1 | — | — |
 | 灵信（LingMessage） | T2 | 待签署 v2.1 | — | — |
+| 灵扬（LingYang） | T2 | 待签署 v2.1 | — | — |
 | 灵网（LingWeb） | T2-Trial | 待签署 v2.1 | — | — |
 
 ### 灵通的五原则含义

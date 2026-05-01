@@ -8,6 +8,7 @@
 """
 
 import logging
+import shlex
 import subprocess
 import time
 from dataclasses import dataclass, field
@@ -167,8 +168,8 @@ class VerificationRunner:
         start_time = time.time()
         try:
             proc = subprocess.run(
-                check.command,
-                shell=True,
+                shlex.split(check.command),
+                shell=False,
                 capture_output=True,
                 text=True,
                 timeout=check.timeout,

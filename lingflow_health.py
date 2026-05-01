@@ -10,6 +10,7 @@ Usage:
 """
 
 import re
+import shlex
 import subprocess
 from pathlib import Path
 from dataclasses import dataclass
@@ -200,7 +201,7 @@ class LingFamilyHealthCheck:
         print(f"  ~ {report.code_lines:,} 行 Python 代码")
 
         test_result = subprocess.run(
-            cfg["tests_cmd"], shell=True, capture_output=True, text=True,
+            shlex.split(cfg["tests_cmd"]), shell=False, capture_output=True, text=True,
             cwd=str(member_dir), timeout=120
         )
         test_output = test_result.stdout.strip()
