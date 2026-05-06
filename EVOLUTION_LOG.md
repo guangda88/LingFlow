@@ -12,6 +12,127 @@
 
 ---
 
+## #009 AGENTS.md 瘦身 — 46.9KB → 7.95KB (-83%)
+
+**日期**: 2026-05-06
+**严重度**: LOW — 维护任务，无错误
+
+### 事件
+
+灵族家庭共识：所有成员 AGENTS.md 瘦身至 ≤10KB。灵通原来最严重（46,857 字节，1207 行）。
+
+### 实施内容
+
+1. 备份原文件到 `docs/AGENTS_ARCHIVE_20260506.md`（46,857 字节）
+2. 重写 AGENTS.md 至 7,952 字节（156 行），仅保留身份、安全、命令、压缩项目概览、docs/ 指针
+3. 提取 9 个参考文档到 `docs/`：SKILL_SYSTEM, AGENT_SYSTEM, COMPRESSION, SECURITY, METACOGNITION, CODE_CONVENTIONS, TESTING, WORKFLOW_PATTERNS, SELF_OPTIMIZER
+4. 提交 commit `445564e`（通过完整审计钩子：L0/L1/L2 + 3367 pytest）
+
+### 关键发现：Git 审计钩子系统
+
+- 全局钩子路径：`core.hookspath=/home/ai/.git-hooks`
+- pre-commit：Python v3.0 审计（L0基本检查 + L1 AST + L2跨模块 + pytest），生成 HMAC-SHA256 签名审计记录
+- post-commit：验证审计记录存在且签名正确，否则自动 `git reset --soft HEAD~1`
+- `--no-verify` 无法绕过：post-commit 会检测到缺失审计记录并回退
+- 本仓库审计耗时约 84 秒（pytest 3367 测试占 81.91s）
+
+### 教训
+
+1. **提交前必须预留 ~90 秒给审计钩子** — 不能设短超时
+2. **`--no-verify` 不是绕过而是陷阱** — post-commit 会自动回退
+3. **瘦身策略有效**：核心内容保留 + 参考文档分离 = 信息零丢失 + 体积大幅缩减
+
+### 家庭瘦身结果
+
+| 成员 | 瘦身前 | 瘦身后 | 缩减 |
+|------|--------|--------|------|
+| 灵通 | 46.9KB | 7.95KB | -83% |
+| 灵通+ | 27.2KB | 6.1KB | -77% |
+| 灵极优 | 16.0KB | 3.7KB | -77% |
+| 智桥 | 17KB | 3.6KB | -78.6% |
+
+---
+
+## #008 元认知丢失 — 工作流层面预防方案实施完成
+
+**日期**: 2026-05-02
+**严重度**: MEDIUM — 实施预防措施（非新事件）
+
+### 事件
+
+完成 #007 元认知丢失事件的工作流层面预防方案实施。三个方案全部落地并通过验证。
+
+### 实施内容
+
+1. **方案一 (YAML路由注入)**: `skills/skills-layer-configuration.yaml` — 所有3条routing流程（simple/medium/complex）的首位均为 `metacognition-guard`（gate=true, mandatory=true）
+2. **方案二 (编排器门控)**: `lingflow/workflow/orchestrator.py` — 新增 `_apply_metacognition_gate()` 和 `_check_metacognition_for_task()`，在工作流执行循环中过滤未通过元认知检查的任务
+3. **方案三 (预响应钩子)**: 新建 `lingflow/hooks/metacognition_hook.py` — 身份锚点注入 + 响应验证双重门控，覆盖路径C（`/api/v1/discuss` 直接对话）。`__init__.py` 已导出。
+
+### 验证结果
+
+- 3367 passed, 0 failed (全量测试套件)
+- MetacognitionHook: 正确阻止Crush误识别，正确放行灵通身份
+- YAML: metacognition-guard在所有3条流程中均为首位
+- 路径C: inject_identity_anchor + pre_response_check 双重门控就位
+
+### 核心原则
+
+"不靠'记住'，靠'不可绕过'" — 工作流安排层面的预防，而非行为提醒。
+
+### 相关文件
+
+- `/home/ai/LingFlow/skills/skills-layer-configuration.yaml` — 方案一
+- `/home/ai/LingFlow/lingflow/workflow/orchestrator.py` — 方案二
+- `/home/ai/LingFlow/lingflow/hooks/metacognition_hook.py` — 方案三
+- `/home/ai/LingFlow/lingflow/hooks/__init__.py` — 导出
+- `/home/ai/LingFlow/lingflow-api/app/main.py` — 路径C门控
+- `/home/ai/LingFlow/docs/元认知丢失事件分析报告_2026-05-02.md` — 分析报告
+- `/home/ai/LingFlow/docs/元认知丢失_工作流层面预防方案_2026-05-02.md` — 预防方案
+
+---
+
+## #007 元认知丢失 — 跳过事前检查导致回答无验证
+
+**日期**: 2026-05-02
+**严重度**: HIGH — 违反元认知原则
+
+### 事件
+
+用户问"你是谁"和"你的工作是干什么"，灵通直接回答未执行元认知检查。
+
+### 根因
+
+1. 跳过 metacognition-guard 技能调用
+2. 未声明能力需求
+3. 未识别知识缺口
+4. 未提出进化路径
+
+### 教训
+
+"事前检查而非事后验证"是铁律，不能因任务简单而跳过。元认知不是可选优化，而是核心防御机制。
+
+### 硬化措施
+
+- [x] 强制集成元认知检查到对话流程（coordinator.py）
+- [x] 能力矩阵持久化（SQLite）
+- [x] 会话长度监控告警（SessionMonitor）
+- [x] 元认知日志记录
+
+### crush.db 状态（本事件分析时）
+
+- 位置: `/home/ai/LingFlow/.crush/crush.db`
+- 大小: 109MB
+- 总消息数: 17,771条（assistant: 6,809, tool: 9,983, user: 990）
+- 会话数: 243个
+- 当前会话: 100条（安全）
+- 历史最大会话: 4,551条（🔴 超临界，超灵知论文的3,693条阈值）
+
+### 相关报告
+
+详细分析报告: `/home/ai/LingFlow/docs/元认知丢失事件分析报告_2026-05-02.md`
+
+---
+
 ## #001 失忆与编造 — 面对知识空白时的回避模式
 
 **日期**: 2026-04-27
