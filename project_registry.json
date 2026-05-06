@@ -64,5 +64,84 @@
     "project_path": "/home/ai/LingWeb",
     "documentation": "/home/ai/LingWeb/README.md",
     "config": "/home/ai/LingWeb/config.json"
+  },
+  {
+    "name": "LingVoice",
+    "chinese_name": "灵声",
+    "english_name": "LingVoice",
+    "category": "external_project",
+    "version": "0.1.0",
+    "status": "原型开发",
+    "created_at": "2026-05-06T00:00:00Z",
+    "description": "中医闻声诊病AI诊断系统，基于五音理论实现声纹分析与体质辨识",
+    "responsibilities": [
+      "音频采集与预处理（16kHz mono WAV）",
+      "声纹特征提取（MFCC/F0/共振峰/频谱质心）",
+      "五音分类与脏腑映射",
+      "体质辨识评估",
+      "与高也陶教授合作项目"
+    ],
+    "tech_stack": {
+      "frontend": ["React", "TypeScript", "Vite"],
+      "backend": ["FastAPI", "Python 3.11"],
+      "ai_models": ["SenseVoice-small", "librosa"],
+      "database": ["PostgreSQL"]
+    },
+    "cooperation": {
+      "partner": "高也陶教授",
+      "demo_path": "/home/ai/LingWeb/gao-yetao-demo/",
+      "research_path": "/home/ai/下载/闻声诊病相关/"
+    },
+    "integrations": ["LingHealth"],
+    "project_path": "/home/ai/LingVoice",
+    "documentation": "/home/ai/LingVoice/README.md"
+  },
+  {
+    "name": "LingHealth",
+    "chinese_name": "灵康",
+    "english_name": "LingHealth",
+    "category": "external_project",
+    "version": "0.1.0",
+    "status": "骨架搭建",
+    "created_at": "2026-05-06T00:00:00Z",
+    "description": "未来医学健康管理平台，集成多AI模块的健康管理与体质辨识系统",
+    "responsibilities": [
+      "系统层：Web门户、API网关、用户管理",
+      "应用层：AI模块编排、数据聚合",
+      "反幻觉四层防御体系",
+      "AI模块调度与异步任务管理"
+    ],
+    "tech_stack": {
+      "frontend": ["React 18", "TypeScript"],
+      "backend": ["FastAPI", "Python 3.11"],
+      "database": ["PostgreSQL", "Redis"],
+      "deployment": ["Docker", "docker-compose"]
+    },
+    "integrations": ["LingVoice", "LingYi", "灵知"],
+    "project_path": "/home/ai/LingHealth",
+    "documentation": "/home/ai/LingHealth/README.md"
+  },
+  {
+    "name": "LingYi",
+    "chinese_name": "灵依",
+    "english_name": "LingYi",
+    "category": "external_project",
+    "version": "1.0.0",
+    "status": "运营中",
+    "created_at": "2026-05-06T00:00:00Z",
+    "description": "AI语音健康助手，已运营的外部商业项目",
+    "project_path": "/home/ai/LingYi",
+    "integrations": ["LingHealth"]
+  },
+  {
+    "name": "LingLaw",
+    "chinese_name": "灵律",
+    "english_name": "LingLaw",
+    "category": "external_project",
+    "version": "1.0.0",
+    "status": "已部署",
+    "created_at": "2026-05-06T00:00:00Z",
+    "description": "AI法律助手，已部署运营的外部商业项目",
+    "project_path": "/home/ai/LingLaw"
   }
 ]
