@@ -10,9 +10,9 @@ from typing import Any, Dict, List, Optional
 from lingflow.common.config import get_config
 from lingflow.common.models import AgentConfig, Task, TaskResult
 from lingflow.common.sandbox import SandboxError, SandboxTimeoutError, SkillSandbox
-from lingflow.compression.compressor import (
-    CompressionLevel,
-    ContextCompressor,
+from lingflow.compression.smart_compressor import (
+    CompressionConfig,
+    SmartContextCompressor,
 )
 from lingflow.context.budget import ContextBudgetManager
 from lingflow.coordination.agent import Agent
@@ -38,8 +38,8 @@ class AgentCoordinator(BaseCoordinator):
         self.task_queue: List[Task] = []
         self.completed_tasks: Dict[str, TaskResult] = {}
         self.failed_tasks: Dict[str, TaskResult] = {}
-        # 启用高级上下文压缩功能
-        self.compressor = ContextCompressor(target_tokens=4000, level=CompressionLevel.ADVANCED)
+        self.compressor = SmartContextCompressor(config=CompressionConfig(max_tokens=4000))
+        self._last_compression_result = None
         self.sandbox = SkillSandbox(timeout=30.0, memory_limit=256 * 1024 * 1024)  # 256MB
 
         # 上下文预算管理（基于 40% 安全线防止长上下文退化）
@@ -213,7 +213,19 @@ class AgentCoordinator(BaseCoordinator):
                     budget_status.level.value,
                 )
 
-            return self.compressor.compress(context)
+            # 将上下文字典转换为消息列表格式供 SmartContextCompressor 使用
+            messages = [{"role": "system", "content": context_str}]
+            result = self.compressor.compress(messages, target_tokens=4000)
+            self._last_compression_result = result
+
+            # 从压缩结果中提取上下文
+            if result.compressed_messages:
+                compressed_content = result.compressed_messages[0].get("content", context_str)
+                try:
+                    return json.loads(compressed_content)
+                except (json.JSONDecodeError, TypeError):
+                    return context
+            return context
         except (ValueError, KeyError, TypeError) as e:
             logger.warning("Context compression failed: %s", e)
             return context
@@ -342,6 +354,19 @@ class AgentCoordinator(BaseCoordinator):
         metrics["currently_stopped"] = self._stop_requested
         return metrics
 
+    def _get_compression_stats(self) -> Dict[str, Any]:
+        if self._last_compression_result is not None:
+            r = self._last_compression_result
+            return {
+                "original_tokens": r.original_tokens,
+                "compressed_tokens": r.compressed_tokens,
+                "compression_ratio": r.compression_ratio,
+                "tokens_saved": r.tokens_saved,
+                "strategy": r.strategy,
+                "tier": r.tier,
+            }
+        return {"status": "no_compression_yet"}
+
     def get_status(self) -> Dict[str, Any]:
         """Get the current status of the coordinator.
 
@@ -358,7 +383,7 @@ class AgentCoordinator(BaseCoordinator):
             "completed_tasks": len(self.completed_tasks),
             "failed_tasks": len(self.failed_tasks),
             "agents": len(self.registry.agents),
-            "compression_stats": self.compressor.get_stats(),
+            "compression_stats": self._get_compression_stats(),
             "budget": self._budget_manager.get_status(0),
             "stop_metrics": self.get_stop_metrics(),
         }

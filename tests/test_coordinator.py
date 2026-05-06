@@ -432,11 +432,19 @@ class TestContextCompressor:
     """Test context compressor integration"""
 
     def test_compressor_get_stats(self):
-        """Test getting compressor statistics"""
+        """Test getting compressor statistics via coordinator get_status"""
         coordinator = AgentCoordinator()
-        stats = coordinator.compressor.get_stats()
-        assert "total_compressions" in stats
-        assert "tokens_saved" in stats
+        status = coordinator.get_status()
+        assert "compression_stats" in status
+        assert "status" in status["compression_stats"]
+
+    def test_compressor_get_stats_with_messages(self):
+        """Test SmartContextCompressor get_stats with messages"""
+        coordinator = AgentCoordinator()
+        messages = [{"role": "user", "content": "hello world"}]
+        stats = coordinator.compressor.get_stats(messages)
+        assert "message_count" in stats
+        assert "token_count" in stats
 
 
 class TestErrorHandling:
