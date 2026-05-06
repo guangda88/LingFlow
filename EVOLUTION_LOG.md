@@ -12,6 +12,32 @@
 
 ---
 
+## #011 MetacognitiveAgent 磁盘持久化
+
+**日期**: 2026-05-07
+**严重度**: LOW — 功能增强
+
+### 背景
+
+灵克 Fix 4（元认知固化）指出 MetacognitiveAgent 纯内存运行，能力声明、进化路径、学习历史在进程重启后全部丢失。而同模块的 L3 Monitor 已有磁盘持久化。
+
+### 实施
+
+- `to_dict()` / `from_dict()` — 序列化/反序列化（复用已有的 Capability.to_dict() 和 EvolutionPath.to_dict()）
+- `save_state()` / `load_state()` — JSON 文件读写，默认路径 `.lingflow/metacognition_states/<timestamp>.json`
+- `find_latest_state()` — 查找最新状态文件
+- `get_metacognitive_agent()` 单例工厂自动加载最新状态，corrupt 文件静默降级
+
+Commit fa2c902, 3379 tests passed, 11 新测试。
+
+### 教训
+
+1. 复用已有的 to_dict() 方法让序列化几乎免费，核心工作在反序列化（CapabilityLevel enum 重建、datetime 处理）
+2. 持久化要考虑降级——corrupt/missing 文件不应阻止系统启动
+3. 审计 hook 的 STUB 检测对返回 dict 的方法有假阳性
+
+---
+
 ## #010 SmartContextCompressor 包门面修复 — 半残变完好
 
 **日期**: 2026-05-06
