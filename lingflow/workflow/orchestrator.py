@@ -157,9 +157,16 @@ class WorkflowOrchestrator:
 
             logger.debug("Iteration %d: Executing %d ready tasks", iteration, len(ready_tasks))
 
+            # 元认知门控 — 执行前过滤不满足元认知条件的任务
+            gated_tasks = self._apply_metacognition_gate(ready_tasks, results)
+            if not gated_tasks:
+                logger.debug("Iteration %d: All ready tasks blocked by metacognition gate", iteration)
+                await asyncio.sleep(SCHEDULING_DELAY)
+                continue
+
             # 并行执行准备好的任务
             try:
-                batch_results = await self.coordinator.execute_tasks_parallel(ready_tasks, max_parallel)
+                batch_results = await self.coordinator.execute_tasks_parallel(gated_tasks, max_parallel)
                 results.update(batch_results)
             except (RuntimeError, ValueError, asyncio.TimeoutError) as e:
                 logger.error("Failed to execute batch of tasks: %s", e)
@@ -267,6 +274,58 @@ class WorkflowOrchestrator:
         except (RuntimeError, ValueError, asyncio.TimeoutError) as e:
             logger.error("Workflow execution failed: %s", e)
             raise RuntimeError(f"Failed to execute workflow: {e}") from e
+
+    def _apply_metacognition_gate(
+        self, ready_tasks: List[Task], results: Dict[str, TaskResult]
+    ) -> List[Task]:
+        """元认知门控 — 执行前检查每个任务的元认知状态
+
+        过滤掉不满足元认知条件的任务，将其标记为失败。
+
+        Args:
+            ready_tasks: 准备执行的任务列表
+            results: 结果字典，被门控拒绝的任务会写入此处
+
+        Returns:
+            通过门控的任务列表
+        """
+        from lingflow.common.config import get_config
+
+        if not get_config("metacognition.enabled", default=True):
+            return ready_tasks
+
+        gated_tasks = []
+        for task in ready_tasks:
+            if self._check_metacognition_for_task(task):
+                gated_tasks.append(task)
+            else:
+                results[task.task_id] = TaskResult(
+                    task_id=task.task_id, success=False, error="Metacognition gate blocked execution"
+                )
+                self.coordinator.failed_tasks.add(task.task_id)
+                logger.warning("Task '%s' (%s) blocked by metacognition gate", task.name, task.task_id)
+
+        return gated_tasks
+
+    def _check_metacognition_for_task(self, task: Task) -> bool:
+        """检查单个任务是否满足元认知条件
+
+        委托给 coordinator 的元认知检查逻辑。
+
+        Args:
+            task: 待检查的任务
+
+        Returns:
+            True 表示通过检查，False 表示被拦截
+        """
+        try:
+            skill_name = task.agent_type or task.name
+            params = task.context or {}
+            metacognition_result = self.coordinator._check_metacognition(skill_name, params)
+            return metacognition_result.get("can_start", True)
+        except Exception as e:
+            logger.error("Metacognition gate check failed for task '%s': %s", task.task_id, e)
+            return True
 
     def _check_degradation(self, batch_results: Dict[str, TaskResult]) -> None:
         """检查工作流执行中的 LLM 退化信号

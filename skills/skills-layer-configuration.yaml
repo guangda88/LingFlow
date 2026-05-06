@@ -399,8 +399,13 @@ complexity_routing:
   simple:
     description: "简单任务 — 直接执行，跳过设计和规划阶段"
     flow:
+      - skill: "metacognition-guard"
+        role: "元认知门控"
+        gate: true
+        mandatory: true
       - skill: "task-runner"
         role: "执行"
+        depends_on: ["metacognition-guard"]
     bypass:
       - "brainstorming"
       - "writing-plans"
@@ -419,9 +424,14 @@ complexity_routing:
   medium:
     description: "中等任务 — 设计+执行+审查，标准开发流程"
     flow:
+      - skill: "metacognition-guard"
+        role: "元认知门控"
+        gate: true
+        mandatory: true
       - skill: "brainstorming"
         role: "设计"
         gate: true
+        depends_on: ["metacognition-guard"]
       - skill: "writing-plans"
         role: "规划"
         depends_on: ["brainstorming"]
@@ -447,9 +457,14 @@ complexity_routing:
   complex:
     description: "复杂任务 — 完整开发流程，含工作树和并行执行"
     flow:
+      - skill: "metacognition-guard"
+        role: "元认知门控"
+        gate: true
+        mandatory: true
       - skill: "brainstorming"
         role: "设计"
         gate: true
+        depends_on: ["metacognition-guard"]
       - skill: "writing-plans"
         role: "规划"
         depends_on: ["brainstorming"]

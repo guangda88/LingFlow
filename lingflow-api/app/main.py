@@ -222,7 +222,14 @@ async def handle_discussion(payload: DiscussionPayload):
 4. 不要重复已有的观点
 """
 
-                llm_messages = [{"role": "user", "content": prompt}]
+                # 元认知钩子 — 身份锚点检查（路径C门控）
+                from lingflow.hooks.metacognition_hook import get_metacognition_hook
+
+                meta_hook = get_metacognition_hook()
+                prompt_with_anchor = meta_hook.inject_identity_anchor(prompt)
+                logger.info("MetacognitionHook: injected identity anchor into discuss prompt")
+
+                llm_messages = [{"role": "user", "content": prompt_with_anchor}]
                 logger.info("准备调用LLM...")
                 llm_response_tuple = call_llm_with_fallback(client, llm_messages)
                 llm_response = llm_response_tuple[0] if isinstance(llm_response_tuple, tuple) else llm_response_tuple
@@ -233,6 +240,15 @@ async def handle_discussion(payload: DiscussionPayload):
                     content = llm_response.choices[0].message.content
                 else:
                     content = str(llm_response)
+
+                # 元认知响应验证 — 检查身份问题回复是否包含身份锚点
+                check = meta_hook.pre_response_check(prompt=prompt, proposed_response=content)
+                if not check.passed:
+                    logger.warning(
+                        "MetacognitionHook: response failed identity check, prepending anchor. warnings=%s",
+                        check.warnings,
+                    )
+                    content = f"[身份锚点] {meta_hook.identity_anchor}\n\n{content}"
 
                 logger.info(f"LLM回复内容: {content[:100]}...")
 
