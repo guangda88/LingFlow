@@ -8,6 +8,7 @@ Tests the ability of AI agents to:
 """
 
 from datetime import datetime
+from pathlib import Path
 
 import pytest
 
@@ -17,6 +18,7 @@ from lingflow.trust.metacognition import (
     EvolutionPath,
     MetacognitiveAgent,
     TaskRequirements,
+    _default_metacognitive_agent,
     get_metacognitive_agent,
 )
 
@@ -322,3 +324,136 @@ class TestSingleton:
 
         assert capability is not None
         assert capability.level == CapabilityLevel.MASTERED
+
+
+class TestPersistence:
+    """Test disk persistence for MetacognitiveAgent"""
+
+    def _populate_agent(self, agent: MetacognitiveAgent) -> None:
+        agent.declare_capability(
+            "Python", "programming", CapabilityLevel.MASTERED, notes="Core language"
+        )
+        agent.declare_capability(
+            "Rust", "programming", CapabilityLevel.FAMILIAR, evolution_steps=["Read the book", "Write a CLI tool"]
+        )
+        agent.propose_evolution("Rust", CapabilityLevel.PARTIAL, steps=["Build web server"])
+        agent.complete_evolution("Rust", CapabilityLevel.PARTIAL)
+
+    def test_to_dict_roundtrip(self, agent):
+        self._populate_agent(agent)
+        data = agent.to_dict()
+        restored = MetacognitiveAgent.from_dict(data)
+
+        assert set(restored.capabilities.keys()) == {"Python", "Rust"}
+        assert restored.capabilities["Python"].level == CapabilityLevel.MASTERED
+        assert restored.capabilities["Rust"].level == CapabilityLevel.PARTIAL
+        assert len(restored.learning_history) == 1
+        assert restored.learning_history[0]["capability"] == "Rust"
+
+    def test_to_dict_preserves_evolution_queue(self, agent):
+        agent.declare_capability("Go", "programming", CapabilityLevel.FAMILIAR)
+        agent.propose_evolution("Go", CapabilityLevel.MASTERED, steps=["Read docs", "Build project"])
+
+        data = agent.to_dict()
+        restored = MetacognitiveAgent.from_dict(data)
+
+        assert len(restored.evolution_queue) == 1
+        assert restored.evolution_queue[0].source_level == CapabilityLevel.FAMILIAR
+        assert restored.evolution_queue[0].target_level == CapabilityLevel.MASTERED
+        assert restored.evolution_queue[0].status == "planned"
+
+    def test_save_and_load_state(self, agent, tmp_path):
+        self._populate_agent(agent)
+        path = agent.save_state(tmp_path / "state.json")
+
+        assert path.exists()
+        loaded = MetacognitiveAgent.load_state(path)
+
+        assert set(loaded.capabilities.keys()) == {"Python", "Rust"}
+        assert loaded.capabilities["Python"].level == CapabilityLevel.MASTERED
+        assert len(loaded.learning_history) == 1
+
+    def test_save_state_default_dir(self, agent, tmp_path, monkeypatch):
+        monkeypatch.setattr(MetacognitiveAgent, "STATE_DIR", tmp_path / "meta_states")
+        self._populate_agent(agent)
+        path = agent.save_state()
+
+        assert path.exists()
+        assert path.parent == tmp_path / "meta_states"
+
+    def test_load_state_file_not_found(self, tmp_path):
+        with pytest.raises(FileNotFoundError):
+            MetacognitiveAgent.load_state(tmp_path / "nonexistent.json")
+
+    def test_find_latest_state_no_dir(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(MetacognitiveAgent, "STATE_DIR", tmp_path / "empty")
+        assert MetacognitiveAgent.find_latest_state() is None
+
+    def test_find_latest_state_picks_newest(self, tmp_path, monkeypatch):
+        state_dir = tmp_path / "states"
+        state_dir.mkdir()
+        monkeypatch.setattr(MetacognitiveAgent, "STATE_DIR", state_dir)
+
+        (state_dir / "20260101_000000.json").write_text("{}")
+        (state_dir / "20260601_120000.json").write_text("{}")
+        (state_dir / "20260301_060000.json").write_text("{}")
+
+        latest = MetacognitiveAgent.find_latest_state()
+        assert latest is not None
+        assert latest.name == "20260601_120000.json"
+
+    def test_singleton_auto_loads_persisted_state(self, tmp_path, monkeypatch):
+        import lingflow.trust.metacognition as mod
+
+        monkeypatch.setattr(MetacognitiveAgent, "STATE_DIR", tmp_path / "states")
+        tmp_path.mkdir(parents=True, exist_ok=True)
+        state_dir = tmp_path / "states"
+        state_dir.mkdir()
+
+        saved = MetacognitiveAgent()
+        saved.declare_capability("Kubernetes", "devops", CapabilityLevel.PARTIAL)
+        saved.save_state(state_dir / "20260507_120000.json")
+
+        monkeypatch.setattr(mod, "_default_metacognitive_agent", None)
+        agent = get_metacognitive_agent()
+
+        cap = agent.get_capability("Kubernetes")
+        assert cap is not None
+        assert cap.level == CapabilityLevel.PARTIAL
+
+        monkeypatch.setattr(mod, "_default_metacognitive_agent", None)
+
+    def test_singleton_falls_back_on_corrupt_state(self, tmp_path, monkeypatch):
+        import lingflow.trust.metacognition as mod
+
+        state_dir = tmp_path / "states"
+        state_dir.mkdir(parents=True, exist_ok=True)
+        (state_dir / "20260507_120000.json").write_text("NOT VALID JSON{{{")
+
+        monkeypatch.setattr(MetacognitiveAgent, "STATE_DIR", state_dir)
+        monkeypatch.setattr(mod, "_default_metacognitive_agent", None)
+
+        agent = get_metacognitive_agent()
+        assert isinstance(agent, MetacognitiveAgent)
+        assert len(agent.capabilities) == 0
+
+        monkeypatch.setattr(mod, "_default_metacognitive_agent", None)
+
+    def test_capability_datetime_roundtrip(self, agent):
+        now = datetime(2026, 5, 7, 12, 30, 0)
+        agent.capabilities["Test"] = Capability(
+            name="Test", category="test", level=CapabilityLevel.MASTERED, last_used=now
+        )
+
+        data = agent.to_dict()
+        restored = MetacognitiveAgent.from_dict(data)
+
+        assert restored.capabilities["Test"].last_used == now
+
+    def test_empty_agent_roundtrip(self, agent):
+        data = agent.to_dict()
+        restored = MetacognitiveAgent.from_dict(data)
+
+        assert len(restored.capabilities) == 0
+        assert len(restored.evolution_queue) == 0
+        assert len(restored.learning_history) == 0

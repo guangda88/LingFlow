@@ -12,7 +12,12 @@ Core Concepts:
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from pathlib import Path
 from typing import Dict, List, Optional
+import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class CapabilityLevel(Enum):
@@ -384,14 +389,135 @@ class MetacognitiveAgent:
 
         return True, "All required capabilities available at sufficient level"
 
+    # -- Persistence --
+
+    STATE_DIR = Path(".lingflow/metacognition_states")
+
+    def to_dict(self) -> Dict:
+        """Serialize agent state to a plain dict."""
+        return {
+            "capabilities": {name: cap.to_dict() for name, cap in self.capabilities.items()},
+            "evolution_queue": [ep.to_dict() for ep in self.evolution_queue],
+            "learning_history": list(self.learning_history),
+            "saved_at": datetime.now().isoformat(),
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> "MetacognitiveAgent":
+        """Reconstruct a MetacognitiveAgent from a serialized dict."""
+        agent = cls()
+
+        for name, cap_data in data.get("capabilities", {}).items():
+            cap_data_copy = dict(cap_data)
+            cap_data_copy["level"] = CapabilityLevel[cap_data_copy["level"]]
+            if cap_data_copy.get("last_used") is not None:
+                cap_data_copy["last_used"] = datetime.fromisoformat(cap_data_copy["last_used"])
+            cap_data_copy["evolution_paths"] = [
+                EvolutionPath(
+                    source_level=CapabilityLevel[ep["source_level"]],
+                    target_level=CapabilityLevel[ep["target_level"]],
+                    steps=ep["steps"],
+                    estimated_time=ep["estimated_time"],
+                    resources=ep["resources"],
+                    status=ep["status"],
+                )
+                for ep in cap_data_copy.get("evolution_paths", [])
+            ]
+            agent.capabilities[name] = Capability(**cap_data_copy)
+
+        agent.evolution_queue = [
+            EvolutionPath(
+                source_level=CapabilityLevel[ep["source_level"]],
+                target_level=CapabilityLevel[ep["target_level"]],
+                steps=ep["steps"],
+                estimated_time=ep["estimated_time"],
+                resources=ep["resources"],
+                status=ep["status"],
+            )
+            for ep in data.get("evolution_queue", [])
+        ]
+
+        agent.learning_history = list(data.get("learning_history", []))
+
+        return agent
+
+    def save_state(self, path: Optional[Path] = None) -> Path:
+        """Save agent state to a JSON file.
+
+        Args:
+            path: Optional explicit file path. Defaults to
+                  .lingflow/metacognition_states/<timestamp>.json
+
+        Returns:
+            Path to the saved file.
+        """
+        if path is None:
+            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            path = self.STATE_DIR / f"{ts}.json"
+
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(self.to_dict(), f, indent=2, ensure_ascii=False)
+
+        logger.info("MetacognitiveAgent state saved to %s", path)
+        return path
+
+    @classmethod
+    def load_state(cls, path: Path) -> "MetacognitiveAgent":
+        """Load agent state from a JSON file.
+
+        Args:
+            path: Path to the saved state file.
+
+        Returns:
+            Reconstructed MetacognitiveAgent.
+
+        Raises:
+            FileNotFoundError: If the state file does not exist.
+            ValueError: If the state file is corrupt.
+        """
+        path = Path(path)
+        if not path.exists():
+            raise FileNotFoundError(f"State file not found: {path}")
+
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        agent = cls.from_dict(data)
+        logger.info("MetacognitiveAgent state loaded from %s", path)
+        return agent
+
+    @classmethod
+    def find_latest_state(cls) -> Optional[Path]:
+        """Find the most recent state file in the default directory.
+
+        Returns:
+            Path to the latest state file, or None if none exist.
+        """
+        state_dir = cls.STATE_DIR
+        if not state_dir.exists():
+            return None
+
+        files = sorted(state_dir.glob("*.json"), reverse=True)
+        return files[0] if files else None
+
 
 # Singleton instance
 _default_metacognitive_agent: Optional[MetacognitiveAgent] = None
 
 
 def get_metacognitive_agent() -> MetacognitiveAgent:
-    """Get default metacognitive agent instance"""
+    """Get default metacognitive agent instance, auto-loading persisted state if available"""
     global _default_metacognitive_agent
     if _default_metacognitive_agent is None:
+        latest = MetacognitiveAgent.find_latest_state()
+        if latest is not None:
+            try:
+                _default_metacognitive_agent = MetacognitiveAgent.load_state(latest)
+                return _default_metacognitive_agent
+            except Exception:
+                logger.warning("Failed to load persisted metacognitive state from %s, starting fresh", latest)
         _default_metacognitive_agent = MetacognitiveAgent()
     return _default_metacognitive_agent
