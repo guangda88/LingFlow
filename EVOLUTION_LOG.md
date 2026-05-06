@@ -12,6 +12,31 @@
 
 ---
 
+## #010 SmartContextCompressor 包门面修复 — 半残变完好
+
+**日期**: 2026-05-06
+**严重度**: MEDIUM — 基础设施修复
+
+### 事件
+
+compression/__init__.py 的 SmartContextCompressor 导入是半残状态：
+- 导入不存在的 smart_compressor_new → 静默回退到旧 ContextCompressor
+- enable_smart_compression() 是空操作，返回 True 而非实例
+- bootstrap.py 调用 enable_smart_compression() 得到 True（布尔值），不是压缩器
+
+### 修复
+
+直接从 smart_compressor.py 导入，enable_smart_compression() 创建真实实例。
+Commit ffb2073, 3367 pytest passed, 73.3s audit。
+
+### 教训
+
+1. try/except ImportError 静默回退是危险的 — 掩盖了真实的导入失败
+2. "能运行"不等于"运行正确" — facade 返回了错误类型的对象
+3. 函数名 `enable_*` 暗示创建实例，返回 True 是语义欺骗
+
+---
+
 ## #009 AGENTS.md 瘦身 — 46.9KB → 7.95KB (-83%)
 
 **日期**: 2026-05-06
