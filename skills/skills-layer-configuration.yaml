@@ -245,6 +245,53 @@ L3:
           version: "2.0"
           formats: ["csv", "json", "excel", "sql"]
 
+        - name: knowledge-import
+          description: "知识库源文件扫描与编码检测"
+          triggers: ["import", "scan", "知识导入", "扫描文件"]
+          version: "1.0.0"
+          supported_formats: ["txt", "pdf", "docx"]
+
+        - name: knowledge-chunk
+          description: "文本分块（句子边界对齐）"
+          triggers: ["chunk", "split", "分块", "切分"]
+          version: "1.0.0"
+          default_chunk_size: 300
+          default_overlap: 50
+
+        - name: knowledge-embed
+          description: "向量化并写入数据库"
+          triggers: ["embed", "vector", "向量化", "嵌入"]
+          version: "1.0.0"
+          batch_mode: true
+          supports_dry_run: true
+
+        - name: ima-batch-embed
+          description: "IMA知识库批量嵌入生成"
+          triggers: ["ima", "batch embed", "IMA嵌入", "批量嵌入"]
+          version: "1.0.0"
+          batch_mode: true
+          supports_dry_run: true
+          supports_resume: true
+
+        - name: intel-pipeline
+          description: "情报系统统一管线（采集+分析+报告+调度）"
+          triggers: ["intel", "情报", "采集", "intelligence"]
+          version: "1.0.0"
+          supports_dry_run: true
+          supports_schedule: true
+
+        - name: retrieval-quality-test
+          description: "检索质量测试（MRR/Recall/Precision/F1指标评估）"
+          triggers: ["retrieval", "quality", "检索质量", "MRR", "recall test"]
+          version: "1.0.0"
+          supports_dry_run: true
+
+        - name: rag-quality-loop
+          description: "RAG质量闭环（基线评估→弱域识别→参数调优→验证改善）"
+          triggers: ["RAG", "闭环", "调优", "quality loop", "tuning"]
+          version: "1.0.0"
+          supports_dry_run: true
+
     workflow_advanced:
       description: "高级工作流技能"
       trigger_keywords: ["parallel", "concurrent", "agent"]
@@ -343,6 +390,41 @@ routing:
     - pattern: "deploy|部署"
       route: "L3.deployment_automation"
       category: "devops"
+      priority: 7
+
+    - pattern: "import|scan|知识导入"
+      route: "L3.knowledge_import"
+      category: "data"
+      priority: 7
+
+    - pattern: "chunk|split|分块|切分"
+      route: "L3.knowledge_chunk"
+      category: "data"
+      priority: 7
+
+    - pattern: "embed|vector|向量化|嵌入"
+      route: "L3.knowledge_embed"
+      category: "data"
+      priority: 7
+
+    - pattern: "ima.*embed|batch.*embed|IMA嵌入|批量嵌入"
+      route: "L3.ima_batch_embed"
+      category: "data"
+      priority: 7
+
+    - pattern: "intel|情报|采集|intelligence|pipeline"
+      route: "L3.intel_pipeline"
+      category: "data"
+      priority: 7
+
+    - pattern: "retrieval.*quality|检索.*质量|MRR|recall.*test"
+      route: "L3.retrieval_quality_test"
+      category: "data"
+      priority: 7
+
+    - pattern: "RAG.*闭环|RAG.*loop|调优|quality.*loop|tuning"
+      route: "L3.rag_quality_loop"
+      category: "data"
       priority: 7
 
   # 互斥组约束

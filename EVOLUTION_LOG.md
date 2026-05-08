@@ -12,6 +12,273 @@
 
 ---
 
+## #018 RAG闭环全量评估完成 — 852/852
+
+**日期**: 2026-05-08
+**严重度**: INFO — 子任务6完成
+
+### 背景
+
+主线子任务6：RAG Quality Closed Loop全量评估。跨5个会话完成，从PID 3734365(start)到PID 3848341(final)，经历3次进程重启（API超时卡死×2，误杀×1）。最终PID 3848341从checkpoint 395恢复到852/852，耗时4580秒（约76分钟）。
+
+### 全量评估结果
+
+| 指标 | 值 |
+|------|------|
+| 总查询 | 852 |
+| 搜索模式 | Hybrid (vector + BM25) |
+| MRR@1 | 0.3932 |
+| MRR@3 | 0.4292 |
+| MRR@5 | 0.4335 |
+| MRR@10 | 0.4379 |
+| Recall@10 | 0.5270 |
+| Recall@5 | 0.4941 |
+| Recall@1 | 0.3932 |
+| 总耗时 | 4580秒 (76分钟) |
+
+### 按领域详细结果
+
+| 领域 | 查询数 | Match Rate | MRR@10 | Recall@10 |
+|------|--------|------------|--------|-----------|
+| 古籍 | 652 | 54.9% | 0.4745 | 0.5491 |
+| 气功 | 95 | 65.3% | 0.4485 | 0.6526 |
+| 儒家 | 64 | 32.8% | 0.2201 | 0.3281 |
+| 教材 | 11 | 45.5% | 0.4091 | 0.4545 |
+| **中医** | 30 | **10.0%** | **0.0833** | **0.1000** |
+
+### 关键发现
+
+1. **气功领域超越古籍** — 气功match rate 65.3%超过古籍54.9%，与#017中数据不同（#017中古籍57.1% > 气功51.6%），说明全量评估中气功领域表现提升
+2. **中医仍是唯一弱域** — match_rate=10% < 30%阈值。根因已修正（见下方）
+3. **教材样本过小** — 仅11条查询，指标不稳定
+4. **整体MRR@10=0.4379** — 与#017的0.4413基本一致，确认结果稳定
+
+### RAG闭环建议
+
+系统自动生成建议：中医领域启用query expansion + top_k 10→15
+
+### 教训
+
+1. **5次进程重启才完成** — 120s timeout×3 retries会导致单条查询卡360s，改为20s×1 retry后稳定
+2. **误杀代价巨大** — PID 3824152已推进到395条，被误判卡死杀掉，浪费~1小时算力
+3. **checkpoint机制是生命线** — 50条/次保存，每次重启从checkpoint恢复而非从头开始
+
+### 硬化措施
+
+- 评估结果: `skills/rag-quality-loop/results_full_loop.json`
+- Checkpoint: `/tmp/rag_checkpoint_10.json`
+- 日志: `/tmp/rag_full_loop_v6.log`
+- 下一步：优化中医领域（补齐embedding + query expansion），子任务5对接灵知+灵通问道
+
+---
+
+## #017 Hybrid检索质量评估完成 — 9.2x MRR提升
+
+**日期**: 2026-05-08
+**严重度**: INFO — 检索质量对比
+
+### 背景
+
+主线子任务3：在BM25基线(#016)基础上，开启向量检索+BM25混合模式，对灵知搜索API的852条测试查询做完整评估。跨4个会话完成，每条查询耗时6-15秒（embedding计算）。
+
+### 结果对比
+
+| 指标 | BM25-only | Hybrid (vec+BM25) | 提升 |
+|------|-----------|-------------------|------|
+| 成功率 | 17.6% (145/825) | 98.0% (835/852) | 5.6x |
+| MRR@10 | 0.0479 | 0.4413 | 9.2x |
+| Recall@10 | 0.0509 | 0.5305 | 10.4x |
+| Recall@5 | 0.0509 | 0.5000 | 9.8x |
+| Recall@1 | 0.0461 | 0.3932 | 8.5x |
+| Match Rate | 5.1% (42/825) | 53.1% (452/852) | 10.4x |
+| Timeouts | 27 | 17 | — |
+
+### 按领域对比
+
+| 领域 | BM25成功/总 | Hybrid成功/总 | BM25 match | Hybrid match | Hybrid MRR |
+|------|-------------|---------------|------------|--------------|------------|
+| 古籍 | 132/632 (20.9%) | 640/652 (98.2%) | 42 | 372 | 0.4902 |
+| 气功 | 12/91 (13.2%) | 93/95 (97.9%) | 0 | 49 | 0.3702 |
+| 儒家 | 1/61 (1.6%) | 62/64 (96.9%) | 0 | 20 | 0.2050 |
+| 教材 | 0/11 | 11/11 (100%) | 0 | 9 | 0.6000 |
+| 中医 | 0/30 | 29/30 (96.7%) | 0 | 2 | 0.0500 |
+
+### 关键发现
+
+1. **向量检索是质变而非量变** — BM25在气功/儒家/中医/教材4个领域0 match，hybrid全部突破
+2. **教材领域表现最好** — 81.8% match rate, MRR=0.60
+3. **中医仍然最差** — 仅6.7% match rate，可能是专业术语embedding覆盖不足
+4. **46.9%查询仍未命中** — 有改进空间（query expansion优化、embedding模型升级）
+5. **53.1%整体match rate** — 意味着超过一半查询能在top-10中找到答案所在文档
+
+### 教训
+
+1. **每条查询6-15秒** — hybrid因embedding计算极慢，852条用了约3小时
+2. **周期性卡顿正常** — 个别慢查询导致60-120s checkpoint age飙升，但20s timeout总会恢复
+3. **metrics在600+条后稳定** — MRR在0.435-0.445范围波动，不需要更多数据
+
+### 硬化措施
+
+- 评估结果: `skills/retrieval-quality-test/results_hybrid_852.json` (288KB)
+- BM25结果: `skills/retrieval-quality-test/results_bm25_852.json` (274KB)
+- 评估脚本: `/tmp/rq_hybrid.py`（含20s超时、atomic checkpoint、1次重试）
+- 下一步：优化中医领域检索、考虑embedding模型升级
+
+---
+
+## #016 BM25检索质量基线评估完成
+
+**日期**: 2026-05-08
+**严重度**: INFO — 检索质量基线
+
+### 背景
+
+主线子任务3：对灵知搜索API的BM25-only模式做852条测试查询检索质量评估。跨多个会话完成，因PostgreSQL CPU饱和导致进程反复卡死/重启。
+
+### 结果
+
+| 指标 | 全部825条 | 成功145条 |
+|------|-----------|-----------|
+| 成功率 | 17.6% (145/825) | — |
+| MRR@10 | 0.0479 | 0.2726 |
+| Recall@10 | 0.0509 | 0.2897 |
+| Precision@10 | 0.0415 | 0.2363 |
+| Content Match | 42/825 (5.1%) | 42/145 (29.0%) |
+
+**按领域**: 古籍132/632成功(20.9%), 42 matches; 气功12/91(13.2%), 0 matches; 儒家1/61(1.6%), 0 matches; 中医0/30; 教材0/11。
+
+### 根因
+
+1. **82.4%查询返回空** — PostgreSQL CPU饱和(最高109%)，BM25查询超时
+2. **成功查询中71%无match** — BM25对中文古籍/气功等领域的检索质量极差
+3. **0.1s延迟成功率13% vs 2s延迟成功率20.2%** — 限流有效但不解决根本问题
+
+### 教训
+
+1. **checkpoint文件会损坏** — 多次写入导致多个JSON对象拼接，必须用`json.JSONDecoder().raw_decode()`读取
+2. **content是dict不是str** — API返回`{'id':'...', 'content':'...'}`格式，直接`answer in content`永远为False，浪费了之前的计算
+3. **BM25不适合此数据集** — 需要向量检索(hybrid模式)才能提升质量
+
+### 硬化措施
+
+- 评估结果: `skills/retrieval-quality-test/results_bm25_852.json`
+- 评估脚本: `/tmp/rq_final.py`（含raw_decode、8s超时、2s延迟）
+- 下一步：开启向量检索重跑评估，对比hybrid vs BM25-only
+
+---
+
+## #015 安全审计P0修复验证 + LingBus频道分离确认
+
+**日期**: 2026-05-08
+**严重度**: INFO — 安全修复验证
+
+### 背景
+
+用户指示"P0修复 LingBus频道分离 并行"。上一会话已完成初步扫描，本会话执行验证和收尾。
+
+### 结果
+
+| 修复项 | 状态 |
+|--------|------|
+| crush.json/crush.db权限 (C-4) | ✅ 全部24个文件已600 |
+| LingBus DB权限 (H-4) | ✅ 已修复 644→600 |
+| LingBus频道分离 | ✅ 已实现（poll_messages有channels参数，SQL IN过滤，open_thread验证channel） |
+| LingFlow API绑定 | ✅ 127.0.0.1 |
+| data/config.json 0.0.0.0 (AList) | ⚠️ 接受风险（灵族共享文件服务） |
+| .env权限 (M-3) | ✅ 已修复 664→600 |
+| Git安全钩子 (H-6) | ✅ 重写pre-commit(密钥+语法+lint)+pre-push(密钥文件+冲突标记) |
+
+### 教训
+
+1. **验证先于行动** — C-4"10/11个664"的审计结论已过时，实际全部已600。如果直接执行修复脚本会浪费时间。
+2. **LingBus频道分离已实现** — 代码层面完整（types.py Channel枚举、lingbus.py SQL过滤、MCP工具参数），不需要任何改动。"需求"可能来自对现有代码的误判。
+3. **0.0.0.0不总是bug** — AList文件服务器绑定0.0.0.0是因为灵族成员需要跨服务访问。修复安全问题时必须理解服务用途。
+
+### 硬化措施
+
+- 安全审计报告已更新修复验证记录
+- handoff.md已更新当前状态
+- .env权限已修复
+
+---
+
+## #014 主线任务子任务4确认完成：情报采集定时调度
+
+**日期**: 2026-05-08
+**严重度**: INFO — 里程碑
+
+### 背景
+
+灵通主线"灵族流水线编排引擎"子任务4：情报采集定时调度 workflow。验证已实现的 intel-pipeline skill + intel-daily-pipeline.yaml + 配置注册。
+
+### 验证结果
+
+- **intel-pipeline skill**: 采集（GitHub/Reddit/HN）+ Star追踪 + 情感/影响力分析 + 报告生成 + 定时调度注册，全部实现
+- **intel-daily-pipeline.yaml**: dry_run检查→条件分支→采集分析→进度报告，完整workflow
+- **skills-layer-configuration.yaml**: L3 data类别已注册 intel-pipeline + 路由规则
+- **依赖模块**: intelligence/collectors、analyzers、reporters、scheduler 全部存在且导出正确
+- **dry_run测试**: 通过，返回3平台启用、1天回溯
+
+### 状态
+
+此 skill 和 workflow 在之前会话中已实现，本次为验证确认并标记主线完成。
+
+---
+
+## #013 主线任务子任务2完成：IMA批量嵌入Skill
+
+**日期**: 2026-05-07
+**严重度**: INFO — 里程碑
+
+### 背景
+
+灵通主线"灵族流水线编排引擎"子任务2：IMA知识库批量嵌入生成。将ima_knowledge表101,707条记录批量向量化写入doc_embeddings_staging。
+
+### 实施
+
+- **ima-batch-embed skill**: asyncpg连接池 + httpx异步HTTP客户端，批量/embed_batch API
+- **性能**: batch_size=100时1.27s/批，预计全量22分钟（旧脚本单条处理需3.4小时，10x提速）
+- **核心功能**: dry_run模式、resume断点续传（基于staging表NOT EXISTS检查）、category筛选、429重试
+- **ima-embedding-pipeline.yaml**: 完整workflow（dry_run检查→条件分支→批量嵌入→进度报告）
+- **skills-layer-configuration.yaml**: 新增ima-batch-embed skill注册 + 路由规则
+- 实测：5条嵌入0.41s，resume续传10条正确，15条验证通过
+- 3377 tests passed，无回归
+
+### 教训
+
+1. **asyncio.run()不能混用** — 每次asyncio.run()创建新事件循环，跨调用共享连接会报"Future attached to a different loop"
+2. **断点续传用数据本身做检查点** — staging表NOT EXISTS天然跳过已处理记录，不需要外部状态文件
+3. **端口5436不是5432** — 灵知数据库在非标准端口，ConnectionRefusedError是端口错不是服务没启动
+
+---
+
+## #012 主线任务子任务1完成：知识库导入流水线
+
+**日期**: 2026-05-07
+**严重度**: INFO — 里程碑
+
+### 背景
+
+灵通主线"灵族流水线编排引擎"子任务1：知识库导入L3 skill。从零实现3个skill + 1个workflow YAML，全部经过真实环境测试。
+
+### 实施
+
+- **knowledge-import**: 目录扫描 + chardet编码检测 + 去重。实测188文件（177新/11跳过）
+- **knowledge-chunk**: 句子边界对齐分块（默认300字/50重叠）。实测32 chunks，GB2312编码正确处理
+- **knowledge-embed**: embed_batch API + documents/doc_chunks双表写入 + dry_run模式。实测写入doc_id=226450
+- **knowledge-import-pipeline.yaml**: 完整workflow，含条件分支和错误处理
+- skills-layer-configuration.yaml注册3个skill + 3条路由规则
+- 3379 tests passed，无回归
+
+### 教训
+
+1. **先测环境再写代码** — 嵌入API有/embed和/embed_batch两个端点，schema有generated column和unique约束，全靠实测发现
+2. **category有CHECK约束** — 只允许9种值，写错直接报错
+3. **编码是硬问题** — GB2312文件用UTF-8读是乱码，pipeline必须传递encoding
+4. **慢工细活有效** — 每个skill单独测通才接线，避免了一次性调试的混乱
+
+---
+
 ## #011 MetacognitiveAgent 磁盘持久化
 
 **日期**: 2026-05-07

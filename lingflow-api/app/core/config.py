@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     APP_DESCRIPTION: str = "AI-enhanced software engineering workflow system"
 
     # 服务器
-    HOST: str = "0.0.0.0"
+    HOST: str = "127.0.0.1"
     PORT: int = 8000
     DEBUG: bool = False
 
