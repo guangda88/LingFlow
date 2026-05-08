@@ -1,0 +1,90 @@
+name: RAG检索质量闭环管线
+description: 基线评估 → 弱域识别 → 参数调优 → 验证改善 → 通知报告
+
+tasks:
+  - id: dry_run_check
+    skill: rag-quality-loop
+    params:
+      dry_run: true
+      test_set_path: "{{params.test_set_path}}"
+      top_k: "{{params.top_k | default(10)}}"
+      use_vector: "{{params.use_vector | default(true)}}"
+      use_bm25: "{{params.use_bm25 | default(true)}}"
+      use_query_expansion: "{{params.use_query_expansion | default(true)}}"
+    metadata:
+      stage: planning
+      priority: high
+
+  - id: baseline_evaluation
+    skill: rag-quality-loop
+    params:
+      dry_run: false
+      test_set_path: "{{params.test_set_path}}"
+      top_k: "{{params.top_k | default(10)}}"
+      use_vector: "{{params.use_vector | default(true)}}"
+      use_bm25: "{{params.use_bm25 | default(true)}}"
+      use_query_expansion: "{{params.use_query_expansion | default(true)}}"
+      auto_tune: false
+      output_path: "{{params.output_path | default('skills/rag-quality-loop/results_baseline.json')}}"
+    depends_on: [dry_run_check]
+    metadata:
+      stage: evaluate
+      priority: high
+
+  - id: check_weak_domains
+    skill: conditional-branch
+    params:
+      condition: "{{tasks.baseline_evaluation.output.weak_domain_count}} > 0"
+      branches:
+        true:
+          - id: auto_tune
+            skill: rag-quality-loop
+            params:
+              dry_run: false
+              test_set_path: "{{params.test_set_path}}"
+              top_k: "{{params.top_k | default(10)}}"
+              use_vector: "{{params.use_vector | default(true)}}"
+              use_bm25: "{{params.use_bm25 | default(true)}}"
+              use_query_expansion: "{{params.use_query_expansion | default(true)}}"
+              auto_tune: true
+              output_path: "{{params.output_path | default('skills/rag-quality-loop/results_tuned.json')}}"
+        false:
+          - id: no_tuning_needed
+            skill: notification
+            params:
+              level: "info"
+              message: "所有领域指标均达标，无需调优"
+    depends_on: [baseline_evaluation]
+    metadata:
+      stage: tune
+      priority: medium
+
+  - id: final_report
+    skill: notification
+    params:
+      level: "info"
+      message: |
+        RAG质量闭环完成
+        - 测试集: {{tasks.baseline_evaluation.output.test_set_size}}条
+        - 领域数: {{tasks.baseline_evaluation.output.domains | length}}
+        - 弱域数: {{tasks.baseline_evaluation.output.weak_domain_count}}
+        - 基线MRR@10: {{tasks.baseline_evaluation.output.baseline.metrics.MRR@10}}
+        - 耗时: {{tasks.baseline_evaluation.output.elapsed_seconds}}秒
+    depends_on: [check_weak_domains]
+    metadata:
+      stage: reporting
+      priority: low
+
+success_criteria:
+  - dry_run_completed: true
+  - baseline_evaluated: true
+
+required_params:
+  - test_set_path: 测试集文件路径 (JSON/JSONL)
+
+optional_params:
+  - top_k: 检索返回数量 (默认 10)
+  - use_vector: 启用向量检索 (默认 true)
+  - use_bm25: 启用BM25检索 (默认 true)
+  - use_query_expansion: 启用查询扩展 (默认 true)
+  - output_path: 结果输出文件路径

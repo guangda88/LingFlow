@@ -1,0 +1,76 @@
+name: IMA知识库批量嵌入流水线
+description: 将IMA知识库数据批量向量化写入doc_embeddings_staging表
+
+tasks:
+  - id: dry_run_check
+    skill: ima-batch-embed
+    params:
+      dry_run: true
+      batch_size: "{{params.batch_size | default(100)}}"
+      category: "{{params.category | default('')}}"
+    metadata:
+      stage: planning
+      priority: high
+
+  - id: check_estimate
+    skill: conditional-branch
+    params:
+      condition: "{{tasks.dry_run_check.output.estimated_batches}} > 0"
+      branches:
+        true:
+          - id: proceed
+            skill: notification
+            params:
+              level: "info"
+              message: "IMA嵌入计划: {{tasks.dry_run_check.output.total_pending}}条待处理, 预计{{tasks.dry_run_check.output.estimated_time_seconds}}秒, {{tasks.dry_run_check.output.estimated_batches}}批次"
+        false:
+          - id: nothing_to_do
+            skill: notification
+            params:
+              level: "info"
+              message: "没有待处理的IMA记录"
+            halt: true
+    depends_on: [dry_run_check]
+    metadata:
+      stage: planning
+      priority: high
+
+  - id: batch_embed
+    skill: ima-batch-embed
+    params:
+      dry_run: false
+      batch_size: "{{params.batch_size | default(100)}}"
+      limit: "{{params.limit | default(0)}}"
+      category: "{{params.category | default('')}}"
+      resume: "{{params.resume | default(true)}}"
+    depends_on: [check_estimate]
+    metadata:
+      stage: embed
+      priority: high
+
+  - id: progress_report
+    skill: notification
+    params:
+      level: "info"
+      message: |
+        IMA批量嵌入完成
+        - 处理批次: {{tasks.batch_embed.output.batches_processed}}
+        - 成功嵌入: {{tasks.batch_embed.output.embedded}}
+        - 失败: {{tasks.batch_embed.output.failed}}
+        - 耗时: {{tasks.batch_embed.output.elapsed_seconds}}秒
+    depends_on: [batch_embed]
+    metadata:
+      stage: reporting
+      priority: low
+
+success_criteria:
+  - dry_run_completed: true
+  - embeddings_written: true
+
+required_params: []
+
+optional_params:
+  - batch_size: 每批处理数量 (默认 100)
+  - limit: 最大处理记录数 (0=全部)
+  - category: 按类别筛选 (中医/气功/儒家/太极)
+  - resume: 断点续传 (默认 true)

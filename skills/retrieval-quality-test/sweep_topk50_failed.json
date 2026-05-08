@@ -1,0 +1,2445 @@
+{
+  "phase": "topk50_sweep",
+  "timestamp": "2026-05-08 13:34:35",
+  "stats": {
+    "found_11_20": 19,
+    "found_21_50": 38,
+    "still_not_found": 305,
+    "timeout": 18,
+    "by_category": {
+      "古籍": {
+        "found_11_20": 12,
+        "found_21_50": 27,
+        "still_not_found": 226,
+        "timeout": 0
+      },
+      "中医": {
+        "found_11_20": 0,
+        "found_21_50": 0,
+        "still_not_found": 27,
+        "timeout": 0
+      },
+      "儒家": {
+        "found_11_20": 5,
+        "found_21_50": 9,
+        "still_not_found": 28,
+        "timeout": 0
+      },
+      "气功": {
+        "found_11_20": 2,
+        "found_21_50": 2,
+        "still_not_found": 22,
+        "timeout": 0
+      },
+      "教材": {
+        "found_11_20": 0,
+        "found_21_50": 0,
+        "still_not_found": 2,
+        "timeout": 0
+      }
+    },
+    "total": 400
+  },
+  "results": [
+    {
+      "query": "　　○答失八都鲁\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　○答失八都鲁\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明黃帝內經·靈樞第九卷",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解黃帝內經·靈樞第九卷",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲　　華亭徐孚遠闇公　陳子龍臥子　宋徵璧上木　彭賓燕又選輯\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　華亭徐孚遠闇公　陳子龍臥子　宋徵璧上木　彭賓燕又選輯\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲舆地志一",
+      "category": "古籍",
+      "rank_at_50": 34,
+      "success": true
+    },
+    {
+      "query": "　　劉弘\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 9,
+      "success": true
+    },
+    {
+      "query": "我想了解　　劉弘\r",
+      "category": "古籍",
+      "rank_at_50": 11,
+      "success": true
+    },
+    {
+      "query": "关于周禮·夏官司馬你知道什么",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下周禮·夏官司馬",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲黃帝內經·靈樞第五卷",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下黃帝內經·靈樞第五卷",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下　　（錄十八則）施鴻保著\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　（錄十八則）施鴻保著\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　趙汝談　趙汝讜　趙希錧　趙彥吶　趙善湘　趙與懽　趙必愿\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "《易纂言外翼 洛书说》\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "《易纂言外翼 洛书说》\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "易經·履的具体内容是什么",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "黃帝內經·素問第二十四卷的具体内容是什么",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明黃帝內經·素問第二十四卷",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "文献志讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下文献志",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下　　崔鉴兄孙伯谦崔辩孙士谦士谦子彭士谦弟说说子弘度崔挺子孝芬孙宣猷曾孙仲方仲方从叔昂挺从子季舒挺族孙",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　崔鉴兄孙伯谦崔辩孙士谦士谦子彭士谦弟说说子弘度崔挺子孝芬孙宣猷曾孙仲方仲方从叔昂挺从子季舒挺族孙讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "书    名：是什么",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明禮記·聘義",
+      "category": "儒家",
+      "rank_at_50": 15,
+      "success": true
+    },
+    {
+      "query": "我想了解禮記·聘義",
+      "category": "儒家",
+      "rank_at_50": 14,
+      "success": true
+    },
+    {
+      "query": "能否讲讲易經·大有",
+      "category": "儒家",
+      "rank_at_50": 10,
+      "success": true
+    },
+    {
+      "query": "请详细说明直腿松腰讲课材料",
+      "category": "气功",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "什么是有司昔者患不公，糊名誊书今故密。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "有司昔者患不公，糊名誊书今故密。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　〔一〕盧辯\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　〔一〕盧辯\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　九震论\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　九震论\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "黃帝內經·素問第二卷的具体内容是什么",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "黃帝內經·素問第二卷是什么",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "怎样练好捧气贯顶法（话本完整版的具体内容是什么",
+      "category": "气功",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "[[[●卷三十七]]]\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "[[[●卷三十七]]]\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是教练员班讲课",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　輿服三　　\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于備急千金要方·第二你知道什么",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "備急千金要方·第二的相关知识",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下气功学总论",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "曹滕亦据南面权，坐衙吏贴群趋先。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲曹滕亦据南面权，坐衙吏贴群趋先。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　張璁胡鐸　桂萼　方獻夫　夏言\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　張璁胡鐸　桂萼　方獻夫　夏言\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解诗曰：　　胡笳动处玉关秋，惊醒痴人梦里愁。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "诗曰：　　胡笳动处玉关秋，惊醒痴人梦里愁。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　在重庆，成都，昆明，西安和别的许多城市里，人们嚷呀，唱呀，高兴得流着眼泪；北平可冷冷清清。北平的讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下　　这是去年夏间的事情。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　这是去年夏间的事情。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　◎明宗\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　◎明宗\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "甲日卯月\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 40,
+      "success": true
+    },
+    {
+      "query": "我想了解甲日卯月\r",
+      "category": "古籍",
+      "rank_at_50": 20,
+      "success": true
+    },
+    {
+      "query": "关于“金砂入五内，雾散若风雨，熏蒸达四肢，颜色悦泽好，发白更生黑，齿落 出旧所，老翁复丁壮，耆妪成姹女，改形免世厄，号之曰真人。”你知道什么",
+      "category": "教材",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　孟秋字子成，号我疆，山东茌平人。隆庆辛未进士。知昌黎县。历大理评事、职方郎中，致仕。起刑部主事、讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲　　孟秋字子成，号我疆，山东茌平人。隆庆辛未进士。知昌黎县。历大理评事、职方郎中，致仕。起刑部主事、",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "笋改斋前路，蔬眠雨後畦。\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下六祖坛经庞明讲解",
+      "category": "气功",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "吉礼八讲了什么",
+      "category": "古籍",
+      "rank_at_50": 44,
+      "success": true
+    },
+    {
+      "query": "能否讲讲吉礼八",
+      "category": "古籍",
+      "rank_at_50": 39,
+      "success": true
+    },
+    {
+      "query": "我想了解　　【官制三】\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　【官制三】\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于刻苦练功你知道什么",
+      "category": "气功",
+      "rank_at_50": 2,
+      "success": true
+    },
+    {
+      "query": "　　訓門人八[[[雜訓諸門人者為此卷。]]]\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　訓門人八[[[雜訓諸門人者為此卷。]]]\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下话说薛刚因连日奔驰，滴酒不曾到口，见了酒杯，便杯杯干，又兼薛义殷勤相让，不觉开杯畅饮，不多时吃得酩酊",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "话说薛刚因连日奔驰，滴酒不曾到口，见了酒杯，便杯杯干，又兼薛义殷勤相让，不觉开杯畅饮，不多时吃得酩酊讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "破窗多穿风，冷烛无定焰。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下破窗多穿风，冷烛无定焰。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　倉庾三\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　倉庾三\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　本書（四冊七三六面四四一、六○○字）係選自「大清高宗純皇帝實錄」之集輯，為清乾隆朝對臺灣所作施之",
+      "category": "古籍",
+      "rank_at_50": 11,
+      "success": true
+    },
+    {
+      "query": "蕅益大师年谱\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "蕅益大师年谱\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 1,
+      "success": true
+    },
+    {
+      "query": "请介绍一下　　風俗志 \r",
+      "category": "古籍",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "请详细说明溫病條辨·原病篇",
+      "category": "中医",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "帮我解释一下直腿坐松腰法节选",
+      "category": "气功",
+      "rank_at_50": 13,
+      "success": true
+    },
+    {
+      "query": "请详细说明直腿坐松腰法节选",
+      "category": "气功",
+      "rank_at_50": 17,
+      "success": true
+    },
+    {
+      "query": "　　二质毕\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　二质毕\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　○錦囊記 \r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　○錦囊記 \r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "刑法略四的相关知识",
+      "category": "古籍",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "刑法略四讲了什么",
+      "category": "古籍",
+      "rank_at_50": 4,
+      "success": true
+    },
+    {
+      "query": "　　炎兴下帙一百三十四。\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　炎兴下帙一百三十四。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　○李文祥孙磐徐珪胡爟周时从王雄罗侨叶钊刘天麒戴冠黄巩陆震夏良胜万潮等何遵刘校等\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　○李文祥孙磐徐珪胡爟周时从王雄罗侨叶钊刘天麒戴冠黄巩陆震夏良胜万潮等何遵刘校等\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "黃帝內經·素問第十卷的具体内容是什么",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲黃帝內經·靈樞第二卷",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "黃帝內經·靈樞第二卷的具体内容是什么",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是著名气功学者庞明访谈录",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下著名气功学者庞明访谈录",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "禮記·喪大記是什么",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于禮記·喪大記你知道什么",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　史自遷、固，以迄晉、唐，其為書雄深浩博，讀者未能盡曉。於是裴駰、顏師古、李賢、何超、董衝諸儒，訓讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下　　史自遷、固，以迄晉、唐，其為書雄深浩博，讀者未能盡曉。於是裴駰、顏師古、李賢、何超、董衝諸儒，訓",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　讻境遍佛声著“读红楼梦劄记\"（载一九一七年三月\"说丛\"第一期）:相传旧本末卷作袭人嫁琪官后家道兴讲了什么",
+      "category": "古籍",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "　　周必大 留正 胡晋臣\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　周必大 留正 胡晋臣\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明“文字极有条理，极有格式。三纲领处，鸳鸯画出；八条目处，金针度人也。 世间种种学问无不包括，后来种种病痛无不扫除，真圣人之文也。”",
+      "category": "教材",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于气功科学概论辅导材料你知道什么",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下气功科学概论辅导材料",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下形神俱练益形神(上)——96级师资班形神庄练功体会集粹",
+      "category": "气功",
+      "rank_at_50": 1,
+      "success": true
+    },
+    {
+      "query": "　　烏程嚴可均校輯\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "山深入翠微，寺僻掩幽扉。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "山深入翠微，寺僻掩幽扉。\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下论智能气功之路",
+      "category": "气功",
+      "rank_at_50": 5,
+      "success": true
+    },
+    {
+      "query": "　　丹尼走后不到二个月，晨勉去了一趟英国看晨安。她十分想念丹尼，习惯性的想到他；她生活的岛上处处有他讲了什么",
+      "category": "古籍",
+      "rank_at_50": 16,
+      "success": true
+    },
+    {
+      "query": "什么是　　丹尼走后不到二个月，晨勉去了一趟英国看晨安。她十分想念丹尼，习惯性的想到他；她生活的岛上处处有他",
+      "category": "古籍",
+      "rank_at_50": 17,
+      "success": true
+    },
+    {
+      "query": "请介绍一下　　经筵日讲官太保兼太子太保保和殿大学士兼管吏部尚书翰林院掌院学士事世袭三等伯臣张廷玉等上言： 　　",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　经筵日讲官太保兼太子太保保和殿大学士兼管吏部尚书翰林院掌院学士事世袭三等伯臣张廷玉等上言： 　　讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "诗云： \r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下诗云： \r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于坚定信念,大胆实践,你知道什么",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "蚤岁曾从诸老游，温恭儒雅更风流。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是蚤岁曾从诸老游，温恭儒雅更风流。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明尚書·君陳",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲长虹斗起蛟龙穴，朱碧栏干夜明灭。\r",
+      "category": "古籍",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "帮我解释一下備急千金要方·第一",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲備急千金要方·第一",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "公案堆来高似山，人人沉着语言间。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下公案堆来高似山，人人沉着语言间。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　◎世家一\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解　　◎世家一\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下智能气功“三讲”教育学习资料",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "宋二的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "宋二讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　華亭徐孚遠闇公　陳子龍臥子　宋徵璧尚木　夏允彝瑗公選輯\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 10,
+      "success": true
+    },
+    {
+      "query": "我想了解淡水吴子光芸阁撰",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "淡水吴子光芸阁撰讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解　　··在命宫\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　··在命宫\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲　　成祖二　　\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　成祖二　　\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解　　天很热，而全国的人心都凉了，北平陷落！\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　天很热，而全国的人心都凉了，北平陷落！\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 30,
+      "success": true
+    },
+    {
+      "query": "　　炎兴下帙十九。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　炎兴下帙十九。\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": 37,
+      "success": true
+    },
+    {
+      "query": "　　（清）晋阳张邦畿　著\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下　　（清）晋阳张邦畿　著\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "智能气功与其它气功的区别的具体内容是什么",
+      "category": "气功",
+      "rank_at_50": 3,
+      "success": true
+    },
+    {
+      "query": "我想了解　　李特，字玄休，巴西宕渠人，其先廪君之苗裔也。昔武落钟离山崩，有石穴二所，其一赤如丹，一黑如漆。有",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　李特，字玄休，巴西宕渠人，其先廪君之苗裔也。昔武落钟离山崩，有石穴二所，其一赤如丹，一黑如漆。有讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解備急千金要方·第二十七",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "備急千金要方·第二十七的具体内容是什么",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲　　　　　地理二\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　　　　地理二\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　词曰：\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　宗室列傳第二\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": 13,
+      "success": true
+    },
+    {
+      "query": "帮我解释一下小议『功理学习』",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明智能气功的功力观",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下智能气功的功力观",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "禮記·曾子問的相关知识",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明禮記·曾子問",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "职官十讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下职官十",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲词曰： \r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解　　下经丰传卷六 丰\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　◎刘隗[[[（孙波）]]] 刁协[[[（子彝 彝子逵）]]] 戴若思[[[（弟邈 周顗）]]]\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　◎刘隗[[[（孙波）]]] 刁协[[[（子彝 彝子逵）]]] 戴若思[[[（弟邈 周顗）]]]\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲铁陈突万人，{上西下之}驾行九轨。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "铁陈突万人，{上西下之}驾行九轨。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明禮記·月令",
+      "category": "儒家",
+      "rank_at_50": 49,
+      "success": true
+    },
+    {
+      "query": "能否讲讲禮記·月令",
+      "category": "儒家",
+      "rank_at_50": 47,
+      "success": true
+    },
+    {
+      "query": "营造法式 宋 李诫\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "营造法式 宋 李诫\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　華亭徐孚遠闇公　陳子龍臥子　宋徵璧尚木　周立勳勒卣選輯\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 11,
+      "success": true
+    },
+    {
+      "query": "禮記·間傳的具体内容是什么",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于智能气功九大特点你知道什么",
+      "category": "气功",
+      "rank_at_50": 9,
+      "success": true
+    },
+    {
+      "query": "禮記·檀弓下的具体内容是什么",
+      "category": "儒家",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "禮記·檀弓下的相关知识",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "江阴陈鼎 撰讲了什么",
+      "category": "古籍",
+      "rank_at_50": 24,
+      "success": true
+    },
+    {
+      "query": "什么是江阴陈鼎 撰",
+      "category": "古籍",
+      "rank_at_50": 31,
+      "success": true
+    },
+    {
+      "query": "请详细说明处世不求无难，谋事不求易成",
+      "category": "气功",
+      "rank_at_50": 5,
+      "success": true
+    },
+    {
+      "query": "请详细说明備急千金要方·第二十九",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是備急千金要方·第二十九",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "禮記·王制的具体内容是什么",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "禮記·王制的相关知识",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于易經·繫辭上你知道什么",
+      "category": "儒家",
+      "rank_at_50": 37,
+      "success": true
+    },
+    {
+      "query": "易經·繫辭上的具体内容是什么",
+      "category": "儒家",
+      "rank_at_50": 5,
+      "success": true
+    },
+    {
+      "query": "请介绍一下　　选举三\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　选举三\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　◎儒林七\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲　　◎儒林七\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下尚書·顧命",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　冕冠 长冠 委貌冠 皮弁冠 爵弁冠 通天冠 远游冠\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是集训会一-1——提高对智能功的认识（上）",
+      "category": "气功",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "　　○总叙\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　○总叙\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下禮記·雜記上",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是禮記·雜記上",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解　　亲拜郊（正月祈谷）\r",
+      "category": "古籍",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "　　亲拜郊（正月祈谷）\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "◎论文讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲◎论文",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　宅外生杀论 vcd13 第33分钟 笔记\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "背嵬军马战无俦，压尽当年几列侯。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是背嵬军马战无俦，压尽当年几列侯。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "碑存溪石高嵯峨，汉字漫灭新镌讹，\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下碑存溪石高嵯峨，汉字漫灭新镌讹，\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　傅宗龙汪乔年（张国钦等）杨文岳（傅汝为等）孙传庭\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　央视国际 2005年03月21日 10：25\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 22,
+      "success": true
+    },
+    {
+      "query": "什么是　　央视国际 2005年03月21日 10：25\r",
+      "category": "古籍",
+      "rank_at_50": 23,
+      "success": true
+    },
+    {
+      "query": "学志讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下学志",
+      "category": "古籍",
+      "rank_at_50": 39,
+      "success": true
+    },
+    {
+      "query": "长山安翁者，性喜操农功。秋间荞熟，刈堆陇畔。时近村有盗稼者，因命佃人乘月辇运登场，俟其装载归，而自留讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "长山安翁者，性喜操农功。秋间荞熟，刈堆陇畔。时近村有盗稼者，因命佃人乘月辇运登场，俟其装载归，而自留的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下　　她将这世上最富行传奇性，也最浪漫的名字又吟了一遍，语声党仍是平淡助，像足丝毫不觉惊界，“楚留香”",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关征市赋縻贤俊，谁爱此官为吏隐。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关征市赋縻贤俊，谁爱此官为吏隐。\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下智能动功功法普及教材",
+      "category": "气功",
+      "rank_at_50": 4,
+      "success": true
+    },
+    {
+      "query": "什么是　　齊三楚王死楚王死〔一〕，太子在齊質〔二〕。蘇秦〔三〕謂薛公〔四〕曰〔五〕：「君何不留楚太子，以市",
+      "category": "古籍",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "　　◎律历二\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解　　◎律历二\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "州县役人 \r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 13,
+      "success": true
+    },
+    {
+      "query": "　　光耀飞离土窟间，天罡地杀降尘寰，说时豪气侵肌冷，讲处英风透胆寒。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　光耀飞离土窟间，天罡地杀降尘寰，说时豪气侵肌冷，讲处英风透胆寒。\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　（清）益都赵执信秋谷　撰\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　（清）益都赵执信秋谷　撰\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　王延德 常延信 程德玄 王延德 魏震 张质 杨允恭 秦羲 谢德权阎日新 靳怀德\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　王延德 常延信 程德玄 王延德 魏震 张质 杨允恭 秦羲 谢德权阎日新 靳怀德\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明诗歌 生命的不竭动力---智能气功",
+      "category": "气功",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "能否讲讲诗歌 生命的不竭动力---智能气功",
+      "category": "气功",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "关于论智能气功的健康发展（存目你知道什么",
+      "category": "气功",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "什么是其一",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "其一讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解　　灾异四\r",
+      "category": "古籍",
+      "rank_at_50": 31,
+      "success": true
+    },
+    {
+      "query": "　　灾异四\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 31,
+      "success": true
+    },
+    {
+      "query": "　　写过小说的人都知道，最难写的是有许多重要人物在场的场面，因为必须让这些人物都有话说有事做才行。所讲了什么",
+      "category": "古籍",
+      "rank_at_50": 29,
+      "success": true
+    },
+    {
+      "query": "能否讲讲　　写过小说的人都知道，最难写的是有许多重要人物在场的场面，因为必须让这些人物都有话说有事做才行。所",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解　　○陆贽\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　○陆贽\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下诗曰：",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解　　李斯者，楚上蔡人也。〔一〕年少時，為郡小吏，〔二〕見吏舍廁中鼠食不絜，近人犬，數驚恐之。斯入倉，",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "尚書·牧誓的具体内容是什么",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　會計\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 15,
+      "success": true
+    },
+    {
+      "query": "　　黄廷桂 鄂弥达 杨廷璋 庄有恭 李侍尧弟奉尧 伍弥泰官保\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　黄廷桂 鄂弥达 杨廷璋 庄有恭 李侍尧弟奉尧 伍弥泰官保\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明備急千金要方·第二十四",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "黃帝內經·素問第十四卷的具体内容是什么",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下尚書·費誓",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "《智能气功科学精义》的相关知识",
+      "category": "气功",
+      "rank_at_50": 2,
+      "success": true
+    },
+    {
+      "query": "能否讲讲断云： \r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于作者：庞明    章节来源：本站原创    点击数：80    更新时间：2008-8-19你知道什么",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "尚書·大誥的具体内容是什么",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "尚書·大誥是什么",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于禮記·大傳你知道什么",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是禮記·大傳",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明備急千金要方·第二十五",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于備急千金要方·第二十五你知道什么",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　时间：2005年7月28日上午在公司(rec01)\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲　　时间：2005年7月28日上午在公司(rec01)\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲　　◎满洲原起\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　高宗孝宣皇帝，讳顼，字绍世，小字师利，始兴昭烈王第二子也。梁中大通二年七月辛酉生，有赤光满室。少讲了什么",
+      "category": "古籍",
+      "rank_at_50": 3,
+      "success": true
+    },
+    {
+      "query": "能否讲讲　　○古豫州\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲　　上谕礼部，取霸州廪膳生员林佳荫充内官学汉文教习。旨曰：“教朕书林师之孙，其家甚贫”云云。故旧不遗",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "震下离上\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 35,
+      "success": true
+    },
+    {
+      "query": "能否讲讲震下离上\r",
+      "category": "古籍",
+      "rank_at_50": 21,
+      "success": true
+    },
+    {
+      "query": "交州记　　晋 刘欣期\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解交州记　　晋 刘欣期\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　「百年秋月與春花，　　展放眉頭莫自嗟，\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲　　「百年秋月與春花，　　展放眉頭莫自嗟，\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "晋江何乔远穉孝选是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "[[[●卷六]]]\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是[[[●卷六]]]\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明庞老师的一次外讲学活动",
+      "category": "气功",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "什么是　　○褚伯玉 明僧绍 顾欢 臧荣绪 何求 刘虬 庾易 宗测 杜京产 沈飗士 吴苞 徐伯珍\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲尚書·泰誓下",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　繫辭下\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　繫辭下\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　却说隗嚣雄据陇西，更始二年遣使征嚣及崔、义等。嚣初起兵，本欲以应汉，闻召将行，军师方望以为更始未是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "宫室讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下宫室",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "编纂书籍\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解编纂书籍\r",
+      "category": "古籍",
+      "rank_at_50": 43,
+      "success": true
+    },
+    {
+      "query": "　　谒贵求财章第六十九            \r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "请介绍一下　　谒贵求财章第六十九            \r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "玉皇阁小儿角力杏花村孤女完姻讲了什么",
+      "category": "古籍",
+      "rank_at_50": 30,
+      "success": true
+    },
+    {
+      "query": "玉皇阁小儿角力杏花村孤女完姻是什么",
+      "category": "古籍",
+      "rank_at_50": 30,
+      "success": true
+    },
+    {
+      "query": "帮我解释一下关于气功医疗（一",
+      "category": "气功",
+      "rank_at_50": 26,
+      "success": true
+    },
+    {
+      "query": "我想了解　　汪光復撰\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　汪光復撰\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　记得进了个伟大庄严的庙，先看见哼哈二将，后看见观音菩萨；战栗的恐怖到了菩萨面前才消失去，因之觉着讲了什么",
+      "category": "古籍",
+      "rank_at_50": 24,
+      "success": true
+    },
+    {
+      "query": "能否讲讲　　记得进了个伟大庄严的庙，先看见哼哈二将，后看见观音菩萨；战栗的恐怖到了菩萨面前才消失去，因之觉着",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "﻿智能气功科学基础的具体内容是什么",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下黃帝內經·素問第五卷",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "黃帝內經·素問第五卷的具体内容是什么",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于智能气功科学功法学你知道什么",
+      "category": "气功",
+      "rank_at_50": 4,
+      "success": true
+    },
+    {
+      "query": "能否讲讲智能气功科学功法学",
+      "category": "气功",
+      "rank_at_50": 22,
+      "success": true
+    },
+    {
+      "query": "能否讲讲此君尝识面，阅八载重来。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "此君尝识面，阅八载重来。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解庐阜冈势断，江流漭相通。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "庐阜冈势断，江流漭相通。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明禮記·明堂位",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于禮記·明堂位你知道什么",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "禮記·祭義的具体内容是什么",
+      "category": "儒家",
+      "rank_at_50": 43,
+      "success": true
+    },
+    {
+      "query": "什么是禮記·祭義",
+      "category": "儒家",
+      "rank_at_50": 47,
+      "success": true
+    },
+    {
+      "query": "什么是　　◎　元宗（十）\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　◎　元宗（十）\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下禮記·大學",
+      "category": "儒家",
+      "rank_at_50": 34,
+      "success": true
+    },
+    {
+      "query": "禮記·大學的具体内容是什么",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　钦定四库全书　　　　集部四\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解　钦定四库全书　　　　集部四\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲麦风生晓寒，梅潦蕴炎溽。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "麦风生晓寒，梅潦蕴炎溽。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下周禮·秋官司寇",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明周禮·秋官司寇",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解阴霜策策风呼虓，羌贼胆开凶{左凶右炎}豪。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "阴霜策策风呼虓，羌贼胆开凶{左凶右炎}豪。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　晋·孔晔　　 \r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　晋·孔晔　　 \r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "王继忠 傅潜（张昭允附） 戴兴 王汉忠 王能 张凝 魏能 陈兴许均 张进 李重贵 呼延赞 刘用 耿全讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解易經·說卦",
+      "category": "儒家",
+      "rank_at_50": 29,
+      "success": true
+    },
+    {
+      "query": "请详细说明易經·說卦",
+      "category": "儒家",
+      "rank_at_50": 22,
+      "success": true
+    },
+    {
+      "query": "「汉武清斋夜筑坛，自斟明水醮仙宫，讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下「汉武清斋夜筑坛，自斟明水醮仙宫，",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　玉輅　乘輿　金根　安車　立車　耕車　戎車　獵車　軿車　青蓋車　綠車　皁蓋車　夫人安車　大駕　法駕",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解日食\r",
+      "category": "古籍",
+      "rank_at_50": 12,
+      "success": true
+    },
+    {
+      "query": "能否讲讲何年商颢澄中秋，中光列籍稀校雠。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "何年商颢澄中秋，中光列籍稀校雠。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "优给★【优养附】☆的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于特色康复班--癌症及肿瘤患者的福音你知道什么",
+      "category": "气功",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "能否讲讲易經·遯",
+      "category": "儒家",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帮我解释一下给老功友讲的课       庞明",
+      "category": "气功",
+      "rank_at_50": 1,
+      "success": true
+    },
+    {
+      "query": "我想了解江从岷来触瞿唐，夏潦溃裂怒势张。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "庞老师讲开悟全集的具体内容是什么",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "太行回首望秦关，未卜家乡几日还。的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "太行回首望秦关，未卜家乡几日还。讲了什么",
+      "category": "古籍",
+      "rank_at_50": 30,
+      "success": true
+    },
+    {
+      "query": "　　○太学\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　○太学\r是什么",
+      "category": "古籍",
+      "rank_at_50": 10,
+      "success": true
+    },
+    {
+      "query": "能否讲讲　　昔賢稱益神智者兩端，首尚讀書，次唯遠遊。余謂遊不遠不壯，遊不險亦不奇也。身歷重洋，無怪弗接，可云",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明坚定信念,大胆实践",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲坚定信念,大胆实践",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请详细说明答疑",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于答疑你知道什么",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "易纬通卦验   汉   郑康成注\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　私访土豪恨最深，口称圣上不停音。\r",
+      "category": "古籍",
+      "rank_at_50": 27,
+      "success": true
+    },
+    {
+      "query": "　　私访土豪恨最深，口称圣上不停音。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 29,
+      "success": true
+    },
+    {
+      "query": "　　◎　崔融（二）\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　◎　崔融（二）\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下本书是按照智能气功大专生的教学需要撰著的系列教材之一，全书共分五",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　本書（一冊一九四面一一六、四○○字）係選自「大清仁宗睿皇帝實錄」之集輯，為清嘉慶朝對臺灣所作設施的相关知识",
+      "category": "古籍",
+      "rank_at_50": 4,
+      "success": true
+    },
+    {
+      "query": "帮我解释一下庞老师师资班讲课mp3下载  (2008-09-11)",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　明烈皇帝殉国之次年。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　明烈皇帝殉国之次年。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　華亭陳子龍臥子　宋徵璧尚木　徐孚遠闇公　周立勳勒??冂??選輯\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　華亭陳子龍臥子　宋徵璧尚木　徐孚遠闇公　周立勳勒??冂??選輯\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　吴书\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　吴书\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是大带深衣，缁冠素履。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "大带深衣，缁冠素履。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲[[[●卷十三下·尽心章句上]]]　\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "[[[●卷十三下·尽心章句上]]]　\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 16,
+      "success": true
+    },
+    {
+      "query": "我想了解帝鉴图说       八十一例   明   张居正\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "帝鉴图说       八十一例   明   张居正\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　汝昌前辈：\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 36,
+      "success": true
+    },
+    {
+      "query": "　　汝昌前辈：\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　烏程嚴可均校輯\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　先期三日，仪鸾司及内侍省官至国子监相视，八厢亦至学中搜检。次日，诸斋生员，尽行搬出学外安泊，各斋讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　王侯總敘\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　王侯總敘\r是什么",
+      "category": "古籍",
+      "rank_at_50": 27,
+      "success": true
+    },
+    {
+      "query": "能否讲讲虎头一生信痴绝，虚名误人可多窃。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "虎头一生信痴绝，虚名误人可多窃。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "加知府衔台湾府北路淡水同知，为遵札申覆事。讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　壬戌日第一局　干上亥\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "枯肠服气如寿龟，穷冬却扫百不知。\r的相关知识",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "枯肠服气如寿龟，穷冬却扫百不知。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下　　台湾省台北桃源县，地名慈湖者，中华民国故总统蒋介石厝于此，非葬墓也．其胍来自玉山，层峦?嶂，千峰",
+      "category": "古籍",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "关于黃帝內經·素問第四卷你知道什么",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲黃帝內經·素問第四卷",
+      "category": "中医",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解衡麓学案（黄宗羲原本黄百家纂辑全祖望补定）",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "衡麓学案（黄宗羲原本黄百家纂辑全祖望补定）讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　　当下继之对我说道：“你不要性急。因为我说那狗才穷的吃尽当光了，你以为我言过其实，我不能不将他们那讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "什么是　　当下继之对我说道：“你不要性急。因为我说那狗才穷的吃尽当光了，你以为我言过其实，我不能不将他们那",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "寿宁孙老画壁下，当日偶同君此行。\r是什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "寿宁孙老画壁下，当日偶同君此行。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "我想了解霖雨半月今夕晴，风堂人稀灯烛明。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "霖雨半月今夕晴，风堂人稀灯烛明。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲易經·謙",
+      "category": "儒家",
+      "rank_at_50": 10,
+      "success": true
+    },
+    {
+      "query": "踏到城隅路尽头，焌湘两水忽交流。\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下踏到城隅路尽头，焌湘两水忽交流。\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于易經·文言你知道什么",
+      "category": "儒家",
+      "rank_at_50": 11,
+      "success": true
+    },
+    {
+      "query": "请介绍一下易經·文言",
+      "category": "儒家",
+      "rank_at_50": 39,
+      "success": true
+    },
+    {
+      "query": "嘉靖初年，御用监供用库岁泊派黄蜡止八万五千斤，白蜡四千斤，末年黄蜡增至二十余万斤，白蜡不下十万斤。此是什么",
+      "category": "古籍",
+      "rank_at_50": 0,
+      "success": true
+    },
+    {
+      "query": "我想了解　钦定四库全书　　　　经部四\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "　钦定四库全书　　　　经部四\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "关于智能气功名词释疑（简本你知道什么",
+      "category": "气功",
+      "rank_at_50": 1,
+      "success": true
+    },
+    {
+      "query": "　　○世宗诸子\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": 23,
+      "success": true
+    },
+    {
+      "query": "帮我解释一下练功心路",
+      "category": "气功",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "龔自珍\r讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "能否讲讲龔自珍\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "请介绍一下旧京琐记 民国 夏仁虎\r",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    },
+    {
+      "query": "户口一讲了什么",
+      "category": "古籍",
+      "rank_at_50": -1,
+      "success": false
+    }
+  ]
+}

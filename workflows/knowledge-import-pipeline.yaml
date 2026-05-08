@@ -1,0 +1,123 @@
+name: 知识导入流水线
+description: 扫描知识库源文件，分块，向量化并写入数据库
+
+tasks:
+  - id: scan_files
+    skill: knowledge-import
+    params:
+      source_dir: "{{params.source_dir}}"
+      formats: ["txt"]
+      processed_dir: "{{params.processed_dir}}"
+      recursive: true
+    metadata:
+      stage: scan
+      priority: high
+
+  - id: check_scan_results
+    skill: conditional-branch
+    params:
+      condition: "{{tasks.scan_files.output.new}} > 0"
+      branches:
+        true:
+          - id: scan_ok
+            skill: notification
+            params:
+              level: "info"
+              message: "发现 {{tasks.scan_files.output.new}} 个新文件，跳过 {{tasks.scan_files.output.skipped}} 个已处理文件"
+        false:
+          - id: scan_empty
+            skill: notification
+            params:
+              level: "info"
+              message: "没有新文件需要处理"
+            halt: true
+    depends_on: [scan_files]
+    metadata:
+      stage: scan
+      priority: high
+
+  - id: chunk_file
+    skill: knowledge-chunk
+    params:
+      file_path: "{{params.file_path}}"
+      encoding: "{{params.encoding | default('utf-8')}}"
+      chunk_size: "{{params.chunk_size | default(300)}}"
+      overlap: "{{params.overlap | default(50)}}"
+    depends_on: [check_scan_results]
+    metadata:
+      stage: chunk
+      priority: high
+
+  - id: check_chunk_results
+    skill: conditional-branch
+    params:
+      condition: "{{tasks.chunk_file.output.total_chunks}} > 0"
+      branches:
+        true:
+          - id: chunk_ok
+            skill: notification
+            params:
+              level: "info"
+              message: "分块完成: {{tasks.chunk_file.output.total_chunks}} 个块"
+        false:
+          - id: chunk_empty
+            skill: notification
+            params:
+              level: "warning"
+              message: "文件分块为空，跳过嵌入"
+            halt: true
+    depends_on: [chunk_file]
+    metadata:
+      stage: chunk
+      priority: high
+
+  - id: embed_chunks
+    skill: knowledge-embed
+    params:
+      chunks: "{{tasks.chunk_file.output.chunks}}"
+      doc_title: "{{params.doc_title}}"
+      doc_content: "{{params.doc_content | default('')}}"
+      category: "{{params.category | default('气功')}}"
+      source_file: "{{params.source_file}}"
+      batch_size: "{{params.batch_size | default(16)}}"
+      dry_run: "{{params.dry_run | default(false)}}"
+    depends_on: [check_chunk_results]
+    metadata:
+      stage: embed
+      priority: high
+
+  - id: final_report
+    skill: notification
+    params:
+      level: "info"
+      message: |
+        知识导入完成
+        - 文件: {{params.doc_title}}
+        - 分块数: {{tasks.chunk_file.output.total_chunks}}
+        - 嵌入成功: {{tasks.embed_chunks.output.embedded}}
+        - 嵌入失败: {{tasks.embed_chunks.output.failed}}
+        - doc_id: {{tasks.embed_chunks.output.doc_id}}
+    depends_on: [embed_chunks]
+    metadata:
+      stage: reporting
+      priority: low
+
+success_criteria:
+  - scan_found_files: true
+  - chunks_created: true
+  - embeddings_written: true
+
+required_params:
+  - source_dir: 源文件目录
+  - file_path: 待处理文件完整路径
+  - doc_title: 文档标题
+  - source_file: 源文件名
+
+optional_params:
+  - encoding: 文件编码 (默认 utf-8)
+  - chunk_size: 分块大小 (默认 300)
+  - overlap: 重叠字符数 (默认 50)
+  - category: 文档分类 (默认 气功)
+  - batch_size: 嵌入批大小 (默认 16)
+  - dry_run: 仅验证不写入 (默认 false)
+  - processed_dir: 已处理文件目录

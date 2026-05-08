@@ -1,0 +1,87 @@
+name: 情报系统每日管线
+description: Star追踪 → 多平台采集 → 分析 → 报告生成全流程
+
+tasks:
+  - id: dry_run_check
+    skill: intel-pipeline
+    params:
+      dry_run: true
+      days: "{{params.days | default(1)}}"
+      enable_github: "{{params.enable_github | default(true)}}"
+      enable_reddit: "{{params.enable_reddit | default(true)}}"
+      enable_hn: "{{params.enable_hn | default(true)}}"
+      enable_stars: "{{params.enable_stars | default(true)}}"
+    metadata:
+      stage: planning
+      priority: high
+
+  - id: check_platforms
+    skill: conditional-branch
+    params:
+      condition: "{{tasks.dry_run_check.output.platforms | length}} > 0"
+      branches:
+        true:
+          - id: proceed
+            skill: notification
+            params:
+              level: "info"
+              message: "情报管线启动: 平台={{tasks.dry_run_check.output.platforms}}, 回溯{{tasks.dry_run_check.output.days}}天"
+        false:
+          - id: no_platforms
+            skill: notification
+            params:
+              level: "warn"
+              message: "未启用任何采集平台，跳过"
+            halt: true
+    depends_on: [dry_run_check]
+    metadata:
+      stage: planning
+      priority: high
+
+  - id: collect_and_analyze
+    skill: intel-pipeline
+    params:
+      dry_run: false
+      days: "{{params.days | default(1)}}"
+      enable_github: "{{params.enable_github | default(true)}}"
+      enable_reddit: "{{params.enable_reddit | default(true)}}"
+      enable_hn: "{{params.enable_hn | default(true)}}"
+      enable_stars: "{{params.enable_stars | default(true)}}"
+      collect_only: "{{params.collect_only | default(false)}}"
+      report_formats: "{{params.report_formats | default(['txt','json','markdown'])}}"
+    depends_on: [check_platforms]
+    metadata:
+      stage: execute
+      priority: high
+
+  - id: progress_report
+    skill: notification
+    params:
+      level: "info"
+      message: |
+        情报管线完成
+        - 采集数据: {{tasks.collect_and_analyze.output.mentions_count}}条
+        - Star数: {{tasks.collect_and_analyze.output.star_count}} (+{{tasks.collect_and_analyze.output.star_growth}})
+        - 阶段: {{tasks.collect_and_analyze.output.phase}}
+        - 报告: {{tasks.collect_and_analyze.output.reports | length}}份
+        - 耗时: {{tasks.collect_and_analyze.output.elapsed_seconds}}秒
+    depends_on: [collect_and_analyze]
+    metadata:
+      stage: reporting
+      priority: low
+
+success_criteria:
+  - dry_run_completed: true
+  - pipeline_executed: true
+
+required_params: []
+
+optional_params:
+  - days: 回溯天数 (默认 1)
+  - enable_github: 启用GitHub采集 (默认 true)
+  - enable_reddit: 启用Reddit采集 (默认 true)
+  - enable_hn: 启用HN采集 (默认 true)
+  - enable_stars: 启用Star追踪 (默认 true)
+  - collect_only: 仅采集不分析 (默认 false)
+  - report_formats: 报告格式列表
+  - schedule: 定时调度cron表达式 (如 "09:00")

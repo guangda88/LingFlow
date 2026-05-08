@@ -1,0 +1,106 @@
+name: 检索质量评估流水线
+description: 加载测试集，对灵知搜索API运行评估查询，计算MRR/Recall/F1指标并生成报告
+
+tasks:
+  - id: load_test_set
+    skill: retrieval-quality-test
+    params:
+      test_set_path: "{{params.test_set_path}}"
+      top_k: "{{params.top_k | default(10)}}"
+      search_api_url: "{{params.search_api_url | default('http://127.0.0.1:8765/api/v1/search')}}"
+      dry_run: true
+    metadata:
+      stage: validate
+      priority: high
+
+  - id: check_test_set
+    skill: conditional-branch
+    params:
+      condition: "{{tasks.load_test_set.output.success}} == true"
+      branches:
+        true:
+          - id: test_set_ok
+            skill: notification
+            params:
+              level: "info"
+              message: "测试集验证通过: {{tasks.load_test_set.output.test_set_size}} 条查询, 领域: {{tasks.load_test_set.output.domains}}"
+        false:
+          - id: test_set_fail
+            skill: notification
+            params:
+              level: "error"
+              message: "测试集验证失败: {{tasks.load_test_set.output.error}}"
+            halt: true
+    depends_on: [load_test_set]
+    metadata:
+      stage: validate
+      priority: high
+
+  - id: run_evaluation
+    skill: retrieval-quality-test
+    params:
+      test_set_path: "{{params.test_set_path}}"
+      top_k: "{{params.top_k | default(10)}}"
+      search_api_url: "{{params.search_api_url | default('http://127.0.0.1:8765/api/v1/search')}}"
+      dry_run: false
+      baseline: "{{params.baseline | default({})}}"
+    depends_on: [check_test_set]
+    metadata:
+      stage: evaluate
+      priority: high
+
+  - id: check_results
+    skill: conditional-branch
+    params:
+      condition: "{{tasks.run_evaluation.output.success}} == true"
+      branches:
+        true:
+          - id: eval_ok
+            skill: notification
+            params:
+              level: "info"
+              message: |
+                检索质量评估完成
+                - 查询数: {{tasks.run_evaluation.output.test_set_size}}
+                - MRR@10: {{tasks.run_evaluation.output.metrics.MRR@10}}
+                - Recall@5: {{tasks.run_evaluation.output.metrics.Recall@5}}
+                - F1@5: {{tasks.run_evaluation.output.metrics.F1@5}}
+                - 耗时: {{tasks.run_evaluation.output.elapsed_seconds}}s
+        false:
+          - id: eval_fail
+            skill: notification
+            params:
+              level: "error"
+              message: "评估执行失败"
+            halt: true
+    depends_on: [run_evaluation]
+    metadata:
+      stage: evaluate
+      priority: high
+
+  - id: final_report
+    skill: notification
+    params:
+      level: "info"
+      message: |
+        检索质量评估流水线完成
+        - 测试集: {{params.test_set_path}}
+        - top_k: {{params.top_k | default(10)}}
+        - 按领域细分: {{tasks.run_evaluation.output.metrics.by_domain}}
+        - 基线对比: {{tasks.run_evaluation.output.comparisons}}
+    depends_on: [check_results]
+    metadata:
+      stage: reporting
+      priority: low
+
+success_criteria:
+  - test_set_valid: true
+  - evaluation_complete: true
+
+required_params:
+  - test_set_path: 测试集JSON文件路径
+
+optional_params:
+  - top_k: 检索返回数量 (默认 10)
+  - search_api_url: 灵知搜索API地址
+  - baseline: 基线指标对比 (如 {"MRR@10": 0.876})
