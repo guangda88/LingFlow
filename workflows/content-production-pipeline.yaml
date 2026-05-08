@@ -1,0 +1,97 @@
+name: 内容生产管线
+description: 灵知知识库检索 → 结构化文章生成 → 灵通问道播客脚本 → 灵扬发布记录
+
+tasks:
+  - id: retrieve_content
+    skill: content-production
+    params:
+      source_query: "{{params.source_query}}"
+      target_platform: "{{params.target_platform | default('wechat')}}"
+      max_articles: "{{params.max_articles | default(3)}}"
+      top_k: "{{params.top_k | default(20)}}"
+      search_api_url: "{{params.search_api_url | default('http://127.0.0.1:8000/api/v1/search/hybrid')}}"
+      use_query_expansion: "{{params.use_query_expansion | default(true)}}"
+      domains: "{{params.domains | default([])}}"
+      output_path: "{{params.output_path | default('')}}"
+    metadata:
+      stage: retrieve
+      priority: high
+
+  - id: check_results
+    skill: conditional-branch
+    params:
+      condition: "{{tasks.retrieve_content.output.total_articles}} > 0"
+      branches:
+        true:
+          - id: articles_found
+            skill: notification
+            params:
+              level: "info"
+              message: "内容检索完成: {{tasks.retrieve_content.output.total_articles}}篇文章, 使用{{tasks.retrieve_content.output.source_chunks_used}}个文档片段"
+        false:
+          - id: no_content
+            skill: notification
+            params:
+              level: "warn"
+              message: "未检索到与 '{{params.source_query}}' 相关的内容"
+            halt: true
+    depends_on: [retrieve_content]
+    metadata:
+      stage: validate
+      priority: high
+
+  - id: generate_podcast_script
+    skill: conditional-branch
+    params:
+      condition: "{{params.generate_podcast | default(false)}} == true"
+      branches:
+        true:
+          - id: podcast_ok
+            skill: notification
+            params:
+              level: "info"
+              message: "播客脚本生成已触发 — 话题: {{params.source_query}}, 待灵通问道处理"
+        false:
+          - id: skip_podcast
+            skill: notification
+            params:
+              level: "info"
+              message: "跳过播客生成 (generate_podcast=false)"
+    depends_on: [check_results]
+    metadata:
+      stage: podcast
+      priority: medium
+
+  - id: final_report
+    skill: notification
+    params:
+      level: "info"
+      message: |
+        内容生产管线完成
+        - 主题: {{params.source_query}}
+        - 生成文章: {{tasks.retrieve_content.output.total_articles}}篇
+        - 使用片段: {{tasks.retrieve_content.output.source_chunks_used}}个
+        - 目标平台: {{params.target_platform | default('wechat')}}
+        - 耗时: {{tasks.retrieve_content.output.elapsed_seconds}}秒
+        - 播客: {{params.generate_podcast | default(false)}}
+    depends_on: [generate_podcast_script]
+    metadata:
+      stage: reporting
+      priority: low
+
+success_criteria:
+  - content_retrieved: true
+  - articles_generated: true
+
+required_params:
+  - source_query: 检索查询主题
+
+optional_params:
+  - target_platform: 目标平台 wechat/zhihu/weibo/github (默认 wechat)
+  - max_articles: 最大文章数 (默认 3)
+  - top_k: 每次检索返回片段数 (默认 20)
+  - search_api_url: 灵知搜索API地址
+  - use_query_expansion: 启用查询扩展 (默认 true)
+  - domains: 限定领域过滤列表
+  - output_path: 输出JSON文件路径
+  - generate_podcast: 是否触发灵通问道播客脚本生成 (默认 false)
