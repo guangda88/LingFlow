@@ -44,7 +44,7 @@
 
 ---
 
-## 并行：LingBus 频道过滤
+## 并行：LingBus 频道过滤 — ✅ 完成
 
 ### 目标
 
@@ -52,17 +52,20 @@
 
 ### 实施方案
 
-1. `poll_messages` 增加 `channels` 参数，SQL 加 `WHERE channel IN (...)`
-2. `open_thread` / `post_reply` 的 `channel` 参数激活
-3. 心跳改走 `heartbeat` channel
+1. `poll_messages` 增加 `channels` 参数，SQL 加 `WHERE channel IN (...)` — ✅ 已存在
+2. `open_thread` / `post_reply` 的 `channel` 参数激活 — ✅ 已存在
+3. 心跳改走 `heartbeat` channel — ✅ Channel enum 已有 heartbeat
+4. messages 表加 channel 索引 — ✅ 已添加 `idx_messages_channel`
+5. 灵通启动 poll 改用 `channels="ecosystem,system"` — ✅ AGENTS.md 已更新
 
-### 工作量
+### 发现
 
-SQL 改动极小（1-2 行 WHERE），MCP 工具参数扩展。预计 1-2 小时。
+频道过滤功能**已实现**于 LingMessage 代码库中（`poll_messages` MCP 工具 + `LingBus.poll()` 方法均支持 `channels` 参数）。本次仅添加了索引和启动过滤。
 
-### 执行方式
+### 提交
 
-提交 PR 到 LingMessage 项目。如灵通+未响应，灵通直接实施。
+- LingMessage: `41a828f` feat: add channel index for messages table
+- LingFlow: `f467029` feat: use channel filtering in startup poll
 
 ---
 
