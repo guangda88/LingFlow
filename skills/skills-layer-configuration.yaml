@@ -229,6 +229,12 @@ L3:
           version: "1.0.0"
           deploy_targets: ["docker", "kubernetes", "serverless", "static"]
 
+        - name: publish-orchestrator
+          description: "发布工作流编排（内容就绪检查→封面图→平台适配→调度灵扬执行）"
+          triggers: ["publish", "发布", "发布编排", "release"]
+          version: "1.0.0"
+          supported_platforms: ["devto", "reddit", "hackernews", "ximalaya", "bilibili", "wechat"]
+
         - name: environment-manager
           description: "环境配置管理"
           triggers: ["env", "environment", "环境"]
