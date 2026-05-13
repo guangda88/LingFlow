@@ -1,4 +1,4 @@
-# LingFlow 产品定位 v3.8.0
+# lingflow 产品定位 v3.8.0
 
 **版本**: 3.8.0
 **更新日期**: 2026-04-03
@@ -10,7 +10,7 @@
 
 ### 一句话描述
 
-**LingFlow - AI增强的软件工程全流程自动化平台**
+**lingflow - AI增强的软件工程全流程自动化平台**
 
 ### 完整定位
 
@@ -30,7 +30,7 @@
 │  (AI Tool Enhancement)                                 │
 │                                                        │
 │  • 智能上下文管理                                       │
-│  • 自优化系统（基于LingMinOpt）                        │
+│  • 自优化系统（基于lingminopt）                        │
 │  • 多智能体协作                                        │
 └────────────────────────────────────────────────────────┘
                         ↓
@@ -81,7 +81,7 @@
 
 ### 3. 竞争定位
 
-| 维度 | LingFlow | 其他工具 |
+| 维度 | lingflow | 其他工具 |
 |------|----------|---------|
 | **覆盖范围** | 92% SDLC | 单点工具 |
 | **AI能力** | 自优化系统 | 静态规则 |
@@ -99,7 +99,7 @@
 - 一站式平台，无需集成多个工具
 
 **2. 自优化系统（Unique）**
-- 基于LingMinOpt的参数优化
+- 基于lingminopt的参数优化
 - 自动检测代码质量问题
 - 持续改进，不断进化
 
@@ -121,7 +121,7 @@
 - 缺乏自动化质量检查
 - 需要大量人工review
 
-**LingFlow解决方案**:
+**lingflow解决方案**:
 ```
 自优化系统
   ↓
@@ -144,7 +144,7 @@
 - Cursor 200K token
 - 会话频繁中断
 
-**LingFlow解决方案**:
+**lingflow解决方案**:
 ```
 精确Token计数（tiktoken）
   ↓
@@ -167,7 +167,7 @@
 - 需要手动集成
 - 数据不互通
 
-**LingFlow解决方案**:
+**lingflow解决方案**:
 ```
 统一工作流引擎
   ↓
@@ -190,7 +190,7 @@
 - 规范难以执行
 - 缺乏检查点
 
-**LingFlow解决方案**:
+**lingflow解决方案**:
 ```
 内置最佳实践
   ↓
@@ -261,7 +261,7 @@
 - SQLite持久化
 
 **自优化系统**:
-- 基于LingMinOpt
+- 基于lingminopt
 - 3个优化目标
 - 自动触发检测
 - 参数自动调优
@@ -297,7 +297,7 @@
 - 5-20人团队
 - 追求代码质量
 
-**使用LingFlow**:
+**使用lingflow**:
 ```bash
 # 1. 初始化项目
 lingflow init my-project
@@ -324,7 +324,7 @@ lingflow workflow run feature-development
 - 多团队协作
 - 质量要求高
 
-**使用LingFlow**:
+**使用lingflow**:
 ```yaml
 # .lingflow/workflows/standard-development.yaml
 stages:
@@ -352,10 +352,10 @@ stages:
 - 自动化部署
 - 质量门禁
 
-**使用LingFlow**:
+**使用lingflow**:
 ```bash
 # CI/CD Pipeline
-- name: "LingFlow质量检查"
+- name: "lingflow质量检查"
   run: |
     lingflow optimize check
     lingflow workflow run ci-quality-gate
@@ -378,7 +378,7 @@ stages:
 
 **已实现**:
 - ✅ 双/多工程流系统 (FastTrack/StableTrack)
-- ✅ 基于LingMinOpt的自优化
+- ✅ 基于lingminopt的自优化
 - ✅ 3个优化目标
 - ✅ Hooks系统集成
 - ✅ 智能体协调 (6个Agent)
@@ -444,7 +444,7 @@ stages:
 **灵通** - 工程流系统
 
 ### 英文名称
-**LingFlow** - Engineering Workflow System
+**lingflow** - Engineering Workflow System
 
 ### Slogan
 **中文**: 众智混元，万法灵通
@@ -466,10 +466,10 @@ stages:
 
 ---
 
-**LingFlow v3.8.0** - 让AI工具更好地为软件工程服务
+**lingflow v3.8.0** - 让AI工具更好地为软件工程服务
 
 ---
 
 *最后更新: 2026-04-03*
-*维护者: LingFlow Team*
+*维护者: lingflow Team*
 *许可: MIT License*

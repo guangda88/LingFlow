@@ -1,10 +1,10 @@
 #!/bin/bash
-# LingFlow API systemd服务安装脚本
+# lingflow API systemd服务安装脚本
 # 需要sudo权限执行
 
 SERVICE_FILE="/etc/systemd/system/lingflow-api.service"
 
-echo "=== LingFlow API systemd服务安装 ==="
+echo "=== lingflow API systemd服务安装 ==="
 echo ""
 
 # 检查是否以root权限运行
@@ -17,13 +17,13 @@ fi
 # 创建服务文件
 cat > "$SERVICE_FILE" << 'EOF'
 [Unit]
-Description=LingFlow API Server - Workflow Engine
+Description=lingflow API Server - Workflow Engine
 After=network.target
 
 [Service]
 Type=simple
 User=ai
-WorkingDirectory=/home/ai/LingFlow/lingflow-api
+WorkingDirectory=/home/ai/lingflow/lingflow-api
 Environment="PATH=/home/ai/.local/bin:/usr/local/bin:/usr/bin:/bin"
 ExecStart=/usr/local/bin/python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8100
 Restart=on-failure
@@ -52,5 +52,5 @@ echo "  重启服务:   sudo systemctl restart lingflow-api"
 echo "  查看状态:   sudo systemctl status lingflow-api"
 echo "  查看日志:   sudo journalctl -u lingflow-api -f"
 echo ""
-echo "注意：当前正在运行的LingFlow服务（PID 1263695）不会自动停止"
+echo "注意：当前正在运行的lingflow服务（PID 1263695）不会自动停止"
 echo "如需切换到systemd管理，请先手动停止当前服务，然后使用systemd启动"

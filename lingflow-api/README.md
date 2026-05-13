@@ -1,4 +1,4 @@
-# LingFlow REST API - 快速启动包
+# lingflow REST API - 快速启动包
 
 **版本**: v1.0.0-alpha
 **状态**: 开发中
@@ -269,7 +269,7 @@ pytest tests/
 
 ## 📚 相关文档
 
-- [LingFlow 主文档](../README.md)
+- [lingflow 主文档](../README.md)
 - [API 完整文档](http://localhost:8000/docs)
 - [部署路线图](../docs/architecture/DEPLOYMENT_ROADMAP.md)
 
@@ -283,10 +283,10 @@ pytest tests/
 
 ## 📄 许可证
 
-MIT License - 与 LingFlow 主项目一致
+MIT License - 与 lingflow 主项目一致
 
 ---
 
 **"众智混元，万法灵通"**
 
-*LingFlow REST API - 让工程流能力触达更多开发者*
+*lingflow REST API - 让工程流能力触达更多开发者*

@@ -1,4 +1,4 @@
-# LingFlow - 项目总体开发规则
+# lingflow - 项目总体开发规则
 
 **版本**: 3.5.0
 **日期**: 2026-03-25
@@ -36,7 +36,7 @@ V4.0 (未来优化)
 | Result类型 | 强制全部使用 | 推荐，新代码使用 |
 | 异步支持 | 全面重写为异步 | 同步为主，异步可选 |
 | 技能基类 | 强制继承 | 推荐继承，函数式仍支持 |
-| 配置系统 | 强制LingFlowConfig | 推荐使用，字典仍支持 |
+| 配置系统 | 强制lingflowConfig | 推荐使用，字典仍支持 |
 | 实施周期 | 12周 | 4-6周 |
 | 风险等级 | 高 | 低 |
 
@@ -48,7 +48,7 @@ V4.0 (未来优化)
 
 ```
 lingflow/
-├── __init__.py             # 包入口，LingFlow类
+├── __init__.py             # 包入口，lingflow类
 ├── cli.py                  # CLI入口
 ├── common/                 # 公共模块
 │   ├── __init__.py
@@ -87,7 +87,7 @@ lingflow/
 ├── skills/               # 技能库
 │   └── <skill_name>/     # 技能目录
 │       ├── implementation.py  # 技能实现
-│       └── SKILL.md           # 技能文档（LingFlow标准）
+│       └── SKILL.md           # 技能文档（lingflow标准）
 ├── agents/               # Agent配置
 │   └── agents.json
 ├── hooks/                # 工作流钩子
@@ -107,7 +107,7 @@ lingflow/
 | 类型 | 规范 | 示例 |
 |------|------|------|
 | Python模块 | 小写+下划线 | `coordinator.py`, `skill_manager.py` |
-| 类名 | 大驼峰 | `AgentCoordinator`, `LingFlow` |
+| 类名 | 大驼峰 | `AgentCoordinator`, `lingflow` |
 | 函数名 | 小写+下划线 | `execute_skill`, `compress_context` |
 | 常量 | 大写+下划线 | `MAX_RETRIES`, `DEFAULT_TIMEOUT` |
 | 私有成员 | 前缀下划线 | `_internal_method`, `_config` |
@@ -169,7 +169,7 @@ def execute_skill(skill_name: str, params: Optional[Dict] = None) -> Dict[str, A
 
     Raises:
         ValueError: 当技能名称无效时
-        LingFlowError: 当执行失败时
+        lingflowError: 当执行失败时
 
     Example:
         >>> result = execute_skill("echo", {"message": "hello"})
@@ -285,15 +285,15 @@ def execute_skill_legacy(skill_name: str, params: Dict) -> Dict:
 
 **定义**（`lingflow/common/exceptions.py`已存在）：
 ```python
-class LingFlowError(Exception):
-    """LingFlow基础异常"""
+class lingflowError(Exception):
+    """lingflow基础异常"""
     pass
 
-class SkillNotFoundError(LingFlowError):
+class SkillNotFoundError(lingflowError):
     """技能未找到异常"""
     pass
 
-class ConfigurationError(LingFlowError):
+class ConfigurationError(lingflowError):
     """配置错误异常"""
     pass
 ```
@@ -533,27 +533,27 @@ config = {
     "max_parallel": 2,
     "agent_timeout": 300
 }
-lf = LingFlow(config)
+lf = lingflow(config)
 ```
 
 ### V3.5配置类（推荐）
 
 ```python
 # ✅ 配置类（V3.5新增）
-from lingflow.common.config import LingFlowConfig
+from lingflow.common.config import lingflowConfig
 
-config = LingFlowConfig(
+config = lingflowConfig(
     max_parallel=2,
     agent_timeout=300
 )
-lf = LingFlow(config)
+lf = lingflow(config)
 ```
 
 ### 配置验证
 
 ```python
 # V3.5新增配置验证
-config = LingFlowConfig(max_parallel=0)  # 无效值
+config = lingflowConfig(max_parallel=0)  # 无效值
 config.validate()  # 抛出 ConfigurationError
 ```
 

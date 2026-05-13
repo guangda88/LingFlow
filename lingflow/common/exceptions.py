@@ -1,10 +1,10 @@
-"""LingFlow 异常模块"""
+"""lingflow 异常模块"""
 
 from typing import Any, Dict, Optional
 
 
-class LingFlowError(Exception):
-    """LingFlow 基础异常
+class lingflowError(Exception):
+    """lingflow 基础异常
 
     支持错误码和详细信息。
     """
@@ -34,7 +34,7 @@ class LingFlowError(Exception):
         return f"[{self.code}] {self.message}"
 
 
-class SkillError(LingFlowError):
+class SkillError(lingflowError):
     """技能相关异常"""
 
 
@@ -50,7 +50,7 @@ class SkillExecutionError(SkillError):
     """技能执行异常"""
 
 
-class WorkflowError(LingFlowError):
+class WorkflowError(lingflowError):
     """工作流相关异常"""
 
 
@@ -62,7 +62,7 @@ class WorkflowExecutionError(WorkflowError):
     """工作流执行异常"""
 
 
-class AgentError(LingFlowError):
+class AgentError(lingflowError):
     """代理相关异常"""
 
 
@@ -74,13 +74,13 @@ class AgentExecutionError(AgentError):
     """代理执行异常"""
 
 
-class CompressionError(LingFlowError):
+class CompressionError(lingflowError):
     """压缩相关异常"""
 
 
-class ConfigurationError(LingFlowError):
+class ConfigurationError(lingflowError):
     """配置相关异常"""
 
 
-class ValidationError(LingFlowError):
+class ValidationError(lingflowError):
     """验证相关异常"""

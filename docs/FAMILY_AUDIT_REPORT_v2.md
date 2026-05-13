@@ -1,6 +1,6 @@
 # 灵字辈全族审计报告 v2.0
 
-**审计人**: 灵通（LingFlow）
+**审计人**: 灵通（lingflow）
 **审计日期**: 2026-04-11
 **审计版本**: 第三轮（独立验证版）
 **方法**: 直接文件检查、SQL查询、HTTP运行时测试、grep搜索
@@ -19,30 +19,30 @@
 
 | # | 名字 | 目录 | 端口 | 进程状态 | 健康评级 |
 |---|------|------|------|----------|----------|
-| 1 | 灵通（LingFlow） | /home/ai/LingFlow/ | 8100 | 未运行 | ⚠️ 自审见下 |
-| 2 | 灵克（LingClaude） | /home/ai/LingClaude/ | 8700 | 已停止 | 🔴 C级 |
-| 3 | 灵依（LingYi） | /home/ai/LingYi/ | 8900 | **PID 3405448 运行中** | 🔴 D级 |
-| 4 | 灵犀（LingXi） | （终端集成，无独立目录） | — | — | N/A |
-| 5 | 灵知（LingZhi） | /home/ai/zhineng-knowledge-system/lingzhi_ubuntu/ | 8000 | 未运行 | ✅ 健康 |
-| 6 | 灵通问道（LingTongAsk） | /home/ai/lingtongask/ | — | 未运行 | ✅ 健康 |
-| 7 | 灵信（LingMessage） | /home/ai/LingMessage/ | — | 无守护进程 | ✅ 健康 |
-| 8 | 灵扬（LingYang） | /home/ai/LingYang/ | 8004 | 未运行 | ✅ 健康 |
-| 9 | 灵研（LingResearch） | /home/ai/lingresearch/ | 8003 | 已停止 | 🔴 C级 |
-| 10 | 灵极优（LingMinOpt） | /home/ai/LingMinOpt/ | 8002 | 未运行 | 🟡 B级 |
-| 11 | 灵通+（LingFlow_plus） | /home/ai/LingFlow_plus/ | 8765 | **PID 41329 运行中** | ✅ 健康 |
+| 1 | 灵通（lingflow） | /home/ai/lingflow/ | 8100 | 未运行 | ⚠️ 自审见下 |
+| 2 | 灵克（lingclaude） | /home/ai/lingclaude/ | 8700 | 已停止 | 🔴 C级 |
+| 3 | 灵依（lingyi） | /home/ai/lingyi/ | 8900 | **PID 3405448 运行中** | 🔴 D级 |
+| 4 | 灵犀（lingxi） | （终端集成，无独立目录） | — | — | N/A |
+| 5 | 灵知（lingzhi） | /home/ai/lingzhi/lingzhi_ubuntu/ | 8000 | 未运行 | ✅ 健康 |
+| 6 | 灵通问道（lingtongask） | /home/ai/lingtongask/ | — | 未运行 | ✅ 健康 |
+| 7 | 灵信（lingmessage） | /home/ai/lingmessage/ | — | 无守护进程 | ✅ 健康 |
+| 8 | 灵扬（lingyang） | /home/ai/lingyang/ | 8004 | 未运行 | ✅ 健康 |
+| 9 | 灵研（lingresearch） | /home/ai/lingresearch/ | 8003 | 已停止 | 🔴 C级 |
+| 10 | 灵极优（lingminopt） | /home/ai/lingminopt/ | 8002 | 未运行 | 🟡 B级 |
+| 11 | 灵通+（lingflowplus） | /home/ai/lingflow_plus/ | 8765 | **PID 41329 运行中** | ✅ 健康 |
 
 ---
 
 ## 二、问题成员详细审计
 
-### 🔴 灵依（LingYi）— D级，正在运行，需立即处理
+### 🔴 灵依（lingyi）— D级，正在运行，需立即处理
 
 **进程**: PID 3405448，端口8900，正在运行
 **API状态**: `http://localhost:8900/api/memos` 返回 **500 Internal Server Error**
 
 #### C-01: 全部API路由公开（已独立验证）
 
-**文件**: `/home/ai/LingYi/src/lingyi/web_app.py`
+**文件**: `/home/ai/lingyi/src/lingyi/web_app.py`
 **位置**: 第95-106行
 
 ```python
@@ -65,12 +65,12 @@ public_prefixes = {
 
 #### C-02: WebSocket认证时序错误
 
-**文件**: `/home/ai/LingYi/src/lingyi/web_app.py`
+**文件**: `/home/ai/lingyi/src/lingyi/web_app.py`
 **位置**: 第146行 `websocket.accept()` 在第150行认证检查之前
 
 #### C-03: 审计验证器全部为空操作
 
-**文件**: `/home/ai/LingYi/src/lingyi/_constraint_validators_ext.py`
+**文件**: `/home/ai/lingyi/src/lingyi/_constraint_validators_ext.py`
 **位置**: 第90、112、197、217行
 **代码**: 4处 `return True` 使约束验证器完全失效
 
@@ -89,7 +89,7 @@ public_prefixes = {
 
 ---
 
-### 🔴 灵克（LingClaude）— C级，架构文档47%虚构
+### 🔴 灵克（lingclaude）— C级，架构文档47%虚构
 
 #### 核心发现：读了文档，但仍虚构架构
 
@@ -99,7 +99,7 @@ public_prefixes = {
 - RESEARCH_AGENDA.md: 2次
 - model/ 目录文件: 90次（含language_model.py）
 - LINGAI_STACK_ARCHITECTURE.md: 1次
-- LingFlow/ 相关文件: 261次
+- lingflow/ 相关文件: 261次
 
 **修正后的问题性质**: 不是"无知"而是"从已知事实外推虚构"。这比此前判断的更严重——灵克读了真实文档，但在LINGAI_STACK_ARCHITECTURE.md中引用了9个不存在的文件路径（19个路径中的47%）。
 
@@ -108,7 +108,7 @@ public_prefixes = {
 - knowledge_graph.py, model_trainer.py, data_processor.py
 - config_loader.py, analytics_engine.py
 
-**这些文件不存在**于 `/home/ai/LingClaude/` 目录中。
+**这些文件不存在**于 `/home/ai/lingclaude/` 目录中。
 
 #### 架构文档规模
 
@@ -116,7 +116,7 @@ LINGAI_STACK_ARCHITECTURE.md: 797行，描述了一个完整的AI技术栈，其
 
 ---
 
-### 🔴 灵研（LingResearch）— C级，SQL注入 + 配置冲突
+### 🔴 灵研（lingresearch）— C级，SQL注入 + 配置冲突
 
 #### S-01: SQL注入漏洞（4处）
 
@@ -150,7 +150,7 @@ LINGAI_STACK_ARCHITECTURE.md: 797行，描述了一个完整的AI技术栈，其
 
 ---
 
-### 🟡 灵极优（LingMinOpt）— B级，有安全隐患但结构良好
+### 🟡 灵极优（lingminopt）— B级，有安全隐患但结构良好
 
 #### 测试数量修正
 
@@ -159,7 +159,7 @@ LINGAI_STACK_ARCHITECTURE.md: 797行，描述了一个完整的AI技术栈，其
 
 #### E-01: 2处未沙箱化的exec()调用
 
-**文件**: `/home/ai/LingMinOpt/lingminopt/mcp_server.py`
+**文件**: `/home/ai/lingminopt/lingminopt/mcp_server.py`
 
 | 行号 | 代码 |
 |------|------|
@@ -176,7 +176,7 @@ LINGAI_STACK_ARCHITECTURE.md: 797行，描述了一个完整的AI技术栈，其
 
 ## 三、健康成员
 
-### ✅ 灵信（LingMessage）
+### ✅ 灵信（lingmessage）
 
 - 测试文件: 13个
 - 测试用例: **274个**（已验证）
@@ -186,26 +186,26 @@ LINGAI_STACK_ARCHITECTURE.md: 797行，描述了一个完整的AI技术栈，其
 
 **注**: 第一轮审计错误地将灵信归类为"非agent"。灵信有完整的测试套件、零依赖、独立的消息协议实现，是灵字辈正式成员。
 
-### ✅ 灵扬（LingYang）
+### ✅ 灵扬（lingyang）
 
 - 测试文件: 4个
 - 可收集测试: 15个（3个文件有收集错误）
 - 依赖: 零
 - 安全问题: 无
 
-### ✅ 灵知（LingZhi）
+### ✅ 灵知（lingzhi）
 
 - 类型: 数据/知识库
 - 状态: 仅有数据库文件，无运行进程
 - 安全问题: 无
 
-### ✅ 灵通问道（LingTongAsk）
+### ✅ 灵通问道（lingtongask）
 
 - 类型: 应用（播客生成工具），非agent
 - 安全问题: 1处os.system()（优化脚本中）
 - 影响: 低（手动运行脚本）
 
-### ✅ 灵通+（LingFlow_plus）
+### ✅ 灵通+（lingflowplus）
 
 - 进程: PID 41329，端口8765，正在运行
 - 学习文档: 4份已完成（DSM-5/ICD-11/心理学/心理测量学）
@@ -231,7 +231,7 @@ LINGAI_STACK_ARCHITECTURE.md: 797行，描述了一个完整的AI技术栈，其
 
 ### 自画像中的错误
 
-**文件**: `/home/ai/LingFlow/docs/SELF_PORTRAIT.md`
+**文件**: `/home/ai/lingflow/docs/SELF_PORTRAIT.md`
 
 1. **关系表不完整**: 仅列出9个成员（灵知、灵依、灵犀、灵信、智桥、灵克、灵扬、灵极优、灵研），缺少灵通问道和灵通+。
 3. **包含"智桥"**: 自画像关系表中列有"智桥"，但灵字辈正式花名册中没有智桥（11名成员中无此名）。
@@ -290,6 +290,6 @@ Phase A训练未启动（因安全审计暂停）
 
 ---
 
-*灵通（LingFlow）*
+*灵通（lingflow）*
 *2026年4月11日*
-*工作目录: /home/ai/LingFlow/*
+*工作目录: /home/ai/lingflow/*

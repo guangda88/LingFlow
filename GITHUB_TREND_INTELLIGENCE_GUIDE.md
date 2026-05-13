@@ -1,4 +1,4 @@
-# 📡 LingFlow GitHub 趋势情报系统 - 用户指南
+# 📡 lingflow GitHub 趋势情报系统 - 用户指南
 
 **更新日期**: 2026-04-02
 **系统状态**: ✅ 运行中
@@ -10,7 +10,7 @@
 
 ### 什么是情况感知模块？
 
-**LingFlow GitHub 趋势情报系统** 是一个**独立情报采集系统**，**不自动学习**，仅用于：
+**lingflow GitHub 趋势情报系统** 是一个**独立情报采集系统**，**不自动学习**，仅用于：
 
 1. **收集情报**: 从 GitHub 发现相关的高价值项目
 2. **人工审查**: 手动评估是否值得借鉴
@@ -144,10 +144,10 @@ tail -50 .lingflow/logs/github_trend_collector.log
 **Cron 任务**:
 ```bash
 # 每日 09:00 采集
-0 9 * * * /usr/bin/python3 /home/ai/LingFlow/scripts/github_trend_collector.py
+0 9 * * * /usr/bin/python3 /home/ai/lingflow/scripts/github_trend_collector.py
 
 # 每日 21:00 采集
-0 21 * * * /usr/bin/python3 /home/ai/LingFlow/scripts/github_trend_collector.py
+0 21 * * * /usr/bin/python3 /home/ai/lingflow/scripts/github_trend_collector.py
 ```
 
 **查看当前任务**:
@@ -263,7 +263,7 @@ cd /tmp/MetaGPT
 对每个高价值项目：
 1. ✅ 了解核心功能
 2. ✅ 分析设计模式
-3. ✅ 评估与LingFlow相关性
+3. ✅ 评估与lingflow相关性
 4. ⚠️ 谨慎决定是否采纳
 5. ✅ 记录评估结果
 
@@ -336,6 +336,6 @@ cat .lingflow/reports/github_trends/GITHUB_TOKEN_SETUP.md
 
 ---
 
-*"众智混元，万法灵通" - LingFlow 情报感知系统*
+*"众智混元，万法灵通" - lingflow 情报感知系统*
 
 *最后更新: 2026-04-02*

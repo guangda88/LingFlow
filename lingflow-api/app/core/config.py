@@ -5,7 +5,7 @@ import os
 from pydantic_settings import BaseSettings
 from typing import Optional
 
-# 尝试从 LingFlow 读取版本号
+# 尝试从 lingflow 读取版本号
 def _get_version() -> str:
     """获取版本号（优先从 lingflow 读取）"""
     try:
@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     """应用配置"""
 
     # 应用信息
-    APP_NAME: str = "LingFlow API"
+    APP_NAME: str = "lingflow API"
     APP_VERSION: str = _get_version()
     APP_DESCRIPTION: str = "AI-enhanced software engineering workflow system"
 
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     # API Keys
     API_KEYS: str = ""
 
-    # LingFlow
+    # lingflow
     WORK_DIR: str = "."
     LOG_LEVEL: str = "INFO"
 

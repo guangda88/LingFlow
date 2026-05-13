@@ -6,7 +6,7 @@ Usage:
     result = execute_skill({
         "source": "local",       # "local" | "github" | "raw"
         "output": "...",          # raw CI output (for "raw" source)
-        "repo": "LingFlow",      # repo name (for "github" source)
+        "repo": "lingflow",      # repo name (for "github" source)
     })
 """
 

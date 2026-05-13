@@ -1,5 +1,5 @@
 """
-LingFlow 简洁性评估器
+lingflow 简洁性评估器
 评估代码简洁性和重复度
 """
 
@@ -35,7 +35,7 @@ class SimplicityEvaluator:
         self.target_path = Path(target_path)
 
     def evaluate(self, params: Dict[str, Any]) -> float:
-        """评估简洁性（用于LingMinOpt）
+        """评估简洁性（用于lingminopt）
 
         Args:
             params: 优化参数
@@ -253,7 +253,7 @@ class SimplicityEvaluator:
 
 
 def fallback_evaluate(params: Dict[str, Any], target_path: str = ".") -> float:
-    """降级评估函数（无LingMinOpt时）
+    """降级评估函数（无lingminopt时）
 
     Args:
         params: 优化参数
@@ -268,7 +268,7 @@ def fallback_evaluate(params: Dict[str, Any], target_path: str = ".") -> float:
 
 if __name__ == "__main__":  # pragma: no cover
     # 测试
-    evaluator = SimplicityEvaluator("/home/ai/LingFlow/lingflow")
+    evaluator = SimplicityEvaluator("/home/ai/lingflow/lingflow")
 
     params = {"complexity_threshold": 10, "duplication_penalty": 1.0, "max_line_length": 100}
 

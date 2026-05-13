@@ -1,4 +1,4 @@
-"""LingFlow 用户反馈收集器
+"""lingflow 用户反馈收集器
 
 收集和管理用户反馈，包括问题报告、功能请求和使用体验。
 """
@@ -300,7 +300,7 @@ class FeedbackCollector:
         )
 
     def _get_lingflow_version(self) -> str:
-        """获取 LingFlow 版本"""
+        """获取 lingflow 版本"""
         try:
             from lingflow import __version__
 

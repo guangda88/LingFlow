@@ -1,11 +1,11 @@
-# LingMinOpt 快速启动指南
+# lingminopt 快速启动指南
 
-## 🎯 立即开始使用 LingMinOpt
+## 🎯 立即开始使用 lingminopt
 
 ### 方式1：运行演示程序
 
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 python demo_lingminopt.py
 ```
 
@@ -87,7 +87,7 @@ for point in pareto_front[:10]:
     print(f"目标: {point.objectives}")
 ```
 
-### 方式3：优化LingFlow代码结构
+### 方式3：优化lingflow代码结构
 
 ```python
 from lingflow.self_optimizer import quick_optimize
@@ -246,6 +246,6 @@ plt.show()
 
 ## 💬 获取帮助
 
-- GitHub Issues: https://github.com/guangda88/LingFlow/issues
+- GitHub Issues: https://github.com/guangda88/lingflow/issues
 - 文档: https://lingflow.readthedocs.io/
-- 社区讨论: https://github.com/guangda88/LingFlow/discussions
+- 社区讨论: https://github.com/guangda88/lingflow/discussions

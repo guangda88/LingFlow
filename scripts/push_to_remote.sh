@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# LingFlow v3.1.0 推送脚本
+# lingflow v3.1.0 推送脚本
 # 用于将代码和 Tags 推送到远程仓库
 
 echo "============================================================"
-echo "  LingFlow v3.1.0 推送脚本"
+echo "  lingflow v3.1.0 推送脚本"
 echo "============================================================"
 echo ""
 
 # 切换到项目目录
-cd /home/ai/zhineng-knowledge-system/lingflow
+cd /home/ai/lingzhi/lingflow
 
 # 显示当前 Git 状态
 echo "1. 当前 Git 状态:"
@@ -118,7 +118,7 @@ echo "============================================================"
 echo ""
 
 echo "下一步:"
-echo "  1. 访问远程仓库验证: http://zhinenggitea.iepose.cn/guangda/LingFlow"
+echo "  1. 访问远程仓库验证: http://zhinenggitea.iepose.cn/guangda/lingflow"
 echo "  2. 检查 Tag v3.1.0 是否已创建"
 echo "  3. 查看 GIT_PUSH_REPORT.md 了解详细信息"
 echo ""

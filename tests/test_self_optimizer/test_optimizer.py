@@ -21,7 +21,7 @@ class TestSynchronousOptimizer:
     def opt_request(self):
         """创建优化请求"""
         return OptimizationRequest(
-            target="/home/ai/LingFlow/lingflow",
+            target="/home/ai/lingflow/lingflow",
             goal="structure",
             params={},
             config={

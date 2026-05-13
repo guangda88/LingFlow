@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Reply to 议事厅 threads from other members."""
 import sys
-sys.path.insert(0, "/home/ai/LingMessage")
+sys.path.insert(0, "/home/ai/lingmessage")
 
 from lingmessage.mailbox import Mailbox
 from lingmessage.types import LingIdentity, Channel, SourceType

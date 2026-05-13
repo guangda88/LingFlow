@@ -1,6 +1,6 @@
-"""LingFlow 公共 API 端到端契约测试
+"""lingflow 公共 API 端到端契约测试
 
-验证用户通过 LingFlow 类调用的真实路径，不 mock 任何内部组件。
+验证用户通过 lingflow 类调用的真实路径，不 mock 任何内部组件。
 """
 
 from pathlib import Path
@@ -10,9 +10,9 @@ import pytest
 
 @pytest.fixture
 def lf():
-    from lingflow import LingFlow
+    from lingflow import lingflow
 
-    return LingFlow()
+    return lingflow()
 
 
 class TestPublicAPIContract:
@@ -95,7 +95,7 @@ class TestPublicAPIContract:
 
     def test_run_workflow_file_yaml(self, lf):
         """run_workflow_file 能执行 YAML 工作流文件"""
-        workflow_dir = Path("/home/ai/LingFlow") / "workflows"
+        workflow_dir = Path("/home/ai/lingflow/LingFlow") / "workflows"
         workflow_dir.mkdir(parents=True, exist_ok=True)
         wf_path = workflow_dir / "_test_contract.yaml"
         wf_path.write_text("tasks:\n  - id: t1\n    name: test\n    description: yaml workflow\n", encoding="utf-8")
@@ -150,6 +150,6 @@ class TestCrossLayerIntegration:
         assert all(result[tid].success for tid in ["t1", "t2", "t3"])
 
     def test_init_creates_coordinator_and_orchestrator(self, lf):
-        """LingFlow 初始化创建协调器和编排器"""
+        """lingflow 初始化创建协调器和编排器"""
         assert lf._coordinator is not None
         assert lf._orchestrator is not None

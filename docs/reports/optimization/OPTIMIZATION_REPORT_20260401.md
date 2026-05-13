@@ -1,4 +1,4 @@
-# LingFlow 轮次优化报告
+# lingflow 轮次优化报告
 
 > **优化日期**: 2026-04-01
 > **优化轮次**: 第3轮
@@ -78,8 +78,8 @@ class APIClient:
 
 **验证结果**:
 ```bash
-$ crontab -l | grep LingFlow
-0 2 * * 1 /home/ai/LingFlow/scripts/run_optimization_simple.sh
+$ crontab -l | grep lingflow
+0 2 * * 1 /home/ai/lingflow/scripts/run_optimization_simple.sh
 ```
 
 ### ✅ 本周任务
@@ -246,7 +246,7 @@ PromptRouter:
 
 ## 📈 代码质量改进
 
-### LingMinOpt优化结果
+### lingminopt优化结果
 
 **第3轮优化**:
 ```
@@ -448,7 +448,7 @@ class PromptRouter:
 **定期优化**:
 ```bash
 # Crontab配置
-0 2 * * 1 /home/ai/LingFlow/scripts/run_optimization_simple.sh
+0 2 * * 1 /home/ai/lingflow/scripts/run_optimization_simple.sh
 ```
 
 **优势**:
@@ -467,7 +467,7 @@ class PromptRouter:
 ✅ **Token追踪**: 内置统计，便于成本控制
 ✅ **配置驱动**: 灵活的配置系统
 
-### 2. LingMinOpt持续改进
+### 2. lingminopt持续改进
 
 | 轮次 | 违规数 | 改进 | 累计改进 |
 |------|--------|------|----------|
@@ -618,7 +618,7 @@ class PromptRouter:
 **当前违规数**: 6
 **目标违规数**: 10 (已超额完成！)
 **累计改进**: 90%
-**框架**: LingMinOpt + Claude Code设计
+**框架**: lingminopt + Claude Code设计
 **状态**: ✅ 生产就绪
 
-🎯 **LingFlow持续优化，持续改进！**
+🎯 **lingflow持续优化，持续改进！**

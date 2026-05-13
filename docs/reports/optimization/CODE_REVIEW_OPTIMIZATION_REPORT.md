@@ -1,8 +1,8 @@
-# LingFlow 项目深度代码审查与优化报告
+# lingflow 项目深度代码审查与优化报告
 
 ## 执行摘要
 
-本次对 LingFlow 项目进行了全面的代码审查与优化实施，重点解决了**安全隐患**、**性能瓶颈**和**代码质量问题**。所有优化均经过严格测试验证，确保不影响现有功能。
+本次对 lingflow 项目进行了全面的代码审查与优化实施，重点解决了**安全隐患**、**性能瓶颈**和**代码质量问题**。所有优化均经过严格测试验证，确保不影响现有功能。
 
 ### 优化成果
 
@@ -22,7 +22,7 @@
 
 **问题描述**
 ```python
-# /home/ai/LingFlow/lingflow/coordination/coordinator.py:250
+# /home/ai/lingflow/lingflow/coordination/coordinator.py:250
 spec.loader.exec_module(module)  # ❌ 无沙箱限制
 ```
 
@@ -108,7 +108,7 @@ def _validate_skill_module(self, module: Any, skill_name: str) -> None:
 
 **问题描述**
 ```python
-# /home/ai/LingFlow/lingflow/coordination/coordinator.py:223-236
+# /home/ai/lingflow/lingflow/coordination/coordinator.py:223-236
 if not skill_name or not re.match(r"^[a-zA-Z0-9_-]+$", skill_name):
     return None
 
@@ -182,7 +182,7 @@ def _get_skill_path(self, skill_name: str) -> Optional[str]:
 
 **问题描述**
 ```python
-# /home/ai/LingFlow/lingflow/core/constitution.py:390-403
+# /home/ai/lingflow/lingflow/core/constitution.py:390-403
 dangerous_patterns = [
     r'execute\s*\(\s*["\'].*\+\s*',  # ❌ 可能漏检
     r'query\s*\(\s*["\'].*\+\s*',    # ❌ 可能漏检
@@ -267,7 +267,7 @@ def _check_sql_injection(
 
 **问题描述**
 ```python
-# /home/ai/LingFlow/lingflow/core/constitution.py:400
+# /home/ai/lingflow/lingflow/core/constitution.py:400
 if re.search(pattern, line, re.IGNORECASE):  # ❌ 每次都编译
 ```
 
@@ -304,7 +304,7 @@ class Constitution:
 
 **问题描述**
 ```python
-# /home/ai/LingFlow/lingflow/code_review/core/rule_engine.py:520-544
+# /home/ai/lingflow/lingflow/code_review/core/rule_engine.py:520-544
 @staticmethod
 def _check_nested_loops(content: str, tree: ast.AST, file_path: Path) -> Optional[str]:
     max_depth = 0
@@ -375,7 +375,7 @@ def _check_nested_loops(content: str, tree: ast.AST, file_path: Path) -> Optiona
 
 **问题描述**
 ```python
-# /home/ai/LingFlow/lingflow/common/skill_manager.py:17
+# /home/ai/lingflow/lingflow/common/skill_manager.py:17
 self.skills_cache: Dict[str, Any] = {}  # ❌ 无大小限制
 ```
 
@@ -430,7 +430,7 @@ class SkillManager:
 
 **问题描述**
 ```python
-# /home/ai/LingFlow/lingflow/coordination/coordinator.py:125
+# /home/ai/lingflow/lingflow/coordination/coordinator.py:125
 def _compress_context(self, context: Dict[str, Any]) -> Dict[str, Any]:
     try:
         return self.compressor.compress(context)
@@ -468,10 +468,10 @@ def _compress_context(self, context: Dict[str, Any]) -> Dict[str, Any]:
 
 **问题描述**
 ```python
-# /home/ai/LingFlow/lingflow/common/config.py:78
+# /home/ai/lingflow/lingflow/common/config.py:78
 print(f"加载配置文件失败: {str(e)}")  # ❌ 应使用 logging
 
-# /home/ai/LingFlow/lingflow/common/skill_manager.py:40
+# /home/ai/lingflow/lingflow/common/skill_manager.py:40
 print(f"加载技能 {skill_name} 的元数据失败: {str(e)}")  # ❌ 应使用 logging
 ```
 
@@ -693,7 +693,7 @@ TOTAL                                                 1992    446    78%
 
 ### 项目状态
 
-**版本**: LingFlow v3.3.0+  
+**版本**: lingflow v3.3.0+  
 **状态**: ✅ 生产就绪  
 **质量评分**: ⭐⭐⭐⭐ (4.2/5)  
 **推荐**: ✅ 可以部署到生产环境
@@ -722,7 +722,7 @@ TOTAL                                                 1992    446    78%
 - **文件**: `setup.py:5`
 
 ### 9.2 异常定义统一 ✅
-- **问题**: `exceptions.py` 和 `types.py` 都定义了 `LingFlowError`
+- **问题**: `exceptions.py` 和 `types.py` 都定义了 `lingflowError`
 - **修复**: 统一从 `lingflow.common.exceptions` 导入
 - **文件**: `lingflow/core/types.py`, `lingflow/core/__init__.py`
 

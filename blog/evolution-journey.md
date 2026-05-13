@@ -1,6 +1,6 @@
-# 从本地工具到 AI 生态：LingFlow 的演进之路
+# 从本地工具到 AI 生态：lingflow 的演进之路
 
-**作者**: LingFlow Team
+**作者**: lingflow Team
 **发布日期**: 2026-04-02
 **阅读时间**: 8 分钟
 
@@ -8,13 +8,13 @@
 
 ## 摘要
 
-LingFlow 从一个本地命令行工具，演变为拥有 4 种使用方式的开发者生态平台。本文将分享我们的架构演进、技术选型和经验教训。
+lingflow 从一个本地命令行工具，演变为拥有 4 种使用方式的开发者生态平台。本文将分享我们的架构演进、技术选型和经验教训。
 
 ---
 
 ## 引言
 
-3 个月前，LingFlow 还只是一个本地的 Python CLI 工具。今天，它已成为拥有 **4 种使用方式**、**21 个 MCP 工具**、**33 个技能**的 AI 工程化生态系统。
+3 个月前，lingflow 还只是一个本地的 Python CLI 工具。今天，它已成为拥有 **4 种使用方式**、**21 个 MCP 工具**、**33 个技能**的 AI 工程化生态系统。
 
 这个转变并非偶然，而是基于清晰的架构规划和务实的执行策略。本文将分享我们的演进历程。
 
@@ -94,7 +94,7 @@ CI/CD 是开发者最高频的场景，我们将其作为**优先级 P0**。
 
 **实现**：
 ```yaml
-- uses: guangda88/LingFlow/actions/quality-gate@v1
+- uses: guangda88/lingflow/actions/quality-gate@v1
   with:
     command: review
     path: ./src
@@ -291,7 +291,7 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
 
 ## 结论
 
-LingFlow 的演进证明了：
+lingflow 的演进证明了：
 
 > **务实的优先级 + 聚焦的执行 = 快速的交付**
 
@@ -314,6 +314,6 @@ LingFlow 的演进证明了：
 ---
 
 **相关链接**:
-- [LingFlow GitHub](https://github.com/guangda88/LingFlow)
+- [lingflow GitHub](https://github.com/guangda88/lingflow)
 - [API 文档](https://lingflow-api.up.railway.app/docs)
 - [技能市场](https://github.com/lingflow/skills-index)

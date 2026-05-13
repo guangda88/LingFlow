@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-This document synthesizes insights from three research papers focused on AI-assisted coding security and best practices, with specific recommendations for LingFlow v3.3.0 optimization.
+This document synthesizes insights from three research papers focused on AI-assisted coding security and best practices, with specific recommendations for lingflow v3.3.0 optimization.
 
 ### Key Findings
 
@@ -329,7 +329,7 @@ Ten practical rules balancing AI capabilities with **scientific and methodologic
 
 ---
 
-## Synthesis: Key Insights for LingFlow
+## Synthesis: Key Insights for lingflow
 
 ### 1. Security-by-Construction > Post-Hoc Detection
 
@@ -340,7 +340,7 @@ Ten practical rules balancing AI capabilities with **scientific and methodologic
 - Paper 2: 97.8% prevention rate vs. 86.4% detection rate
 - Paper 3: Emphasis on test-driven development and human oversight
 
-**Implication for LingFlow**:
+**Implication for lingflow**:
 - Integrate constitutional constraints into workflow definitions
 - Pre-validate AI-generated code before deployment
 - Implement guardrails at skill invocation level
@@ -354,7 +354,7 @@ Ten practical rules balancing AI capabilities with **scientific and methodologic
 - Paper 2: "AI-generated configurations can be syntactally correct and logically organized yet break security best practices"
 - Paper 3: "You can't effectively guide or review what you don't understand"
 
-**Implication for LingFlow**:
+**Implication for lingflow**:
 - Maintain human-in-the-loop architecture
 - Provide context management for domain knowledge
 - Require approval for critical operations
@@ -368,7 +368,7 @@ Ten practical rules balancing AI capabilities with **scientific and methodologic
 - Paper 1: "Inconsistency, Incompleteness, Drift, Unverifiability" without persistent constraints
 - Paper 3: "Context (working memory) is everything in AI-assisted coding"
 
-**Implication for LingFlow**:
+**Implication for lingflow**:
 - Implement context compression and management
 - Support externally-managed context files
 - Track progress and decisions across sessions
@@ -382,7 +382,7 @@ Ten practical rules balancing AI capabilities with **scientific and methodologic
 - Paper 1: "Testing becomes even more critical when AI generates implementation code"
 - Paper 3: "Frame your test requirements as behavioral specifications before requesting implementation code"
 
-**Implication for LingFlow**:
+**Implication for lingflow**:
 - Enforce TDD in workflow definitions
 - Require tests before implementation approval
 - Support test-first development phases
@@ -396,7 +396,7 @@ Ten practical rules balancing AI capabilities with **scientific and methodologic
 - Paper 2: "Layered validation mechanism enhances coverage"
 - Paper 2 results: AGCEF (multi-layer) > AE-XGB (single-layer)
 
-**Implication for LingFlow**:
+**Implication for lingflow**:
 - Implement layered validation: syntax → policy → semantics → risk
 - Use quantitative risk scoring for deployment gates
 - Support continuous learning feedback loops
@@ -404,7 +404,7 @@ Ten practical rules balancing AI capabilities with **scientific and methodologic
 
 ---
 
-## Recommendations for LingFlow v3.3.0
+## Recommendations for lingflow v3.3.0
 
 ### Priority 1: Constitutional Constraint System
 
@@ -487,7 +487,7 @@ The three papers collectively establish a clear direction for AI-assisted develo
 4. **Context management and TDD** are non-negotiable best practices
 5. **Multi-layer validation** (policy + semantic + risk) outperforms single-layer approaches
 
-LingFlow v3.3.0 should integrate these insights to provide a framework that balances AI productivity acceleration with robust security, quality, and methodological rigor.
+lingflow v3.3.0 should integrate these insights to provide a framework that balances AI productivity acceleration with robust security, quality, and methodological rigor.
 
 ---
 
@@ -503,4 +503,4 @@ LingFlow v3.3.0 should integrate these insights to provide a framework that bala
 
 **Document Version**: v3.3.0
 **Last Updated**: March 23, 2026
-**Prepared for**: LingFlow v3.3.0 Development
+**Prepared for**: lingflow v3.3.0 Development

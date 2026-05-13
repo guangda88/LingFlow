@@ -1,4 +1,4 @@
-"""LingFlow 技能管理模块"""
+"""lingflow 技能管理模块"""
 
 import importlib.util
 import logging

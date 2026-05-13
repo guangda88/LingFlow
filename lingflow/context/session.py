@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LingFlow 会话恢复工具
+"""lingflow 会话恢复工具
 
 在对话因 token 限制中断后，用于在新会话中快速恢复上下文。
 """

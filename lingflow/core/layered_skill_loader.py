@@ -1,4 +1,4 @@
-"""LingFlow Layered Skill Loader
+"""lingflow Layered Skill Loader
 
 Implements the three-layer architecture for skill loading:
 - L1: Core scheduling (5 skills) - Never unload

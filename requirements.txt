@@ -1,4 +1,4 @@
-# LingFlow Requirements
+# lingflow Requirements
 
 # Core dependencies
 tiktoken>=0.5.0

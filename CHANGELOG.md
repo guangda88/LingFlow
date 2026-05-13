@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to LingFlow Engineering Flow will be documented in this file.
+All notable changes to lingflow Engineering Flow will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -158,8 +158,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 品牌升级 - 工程流系统
 
 **品牌定位**
-- 中文名称：**灵通 工程流系统** (LingFlow Engineering Flow)
-- 英文定位：LingFlow Engineering Workflow System
+- 中文名称：**灵通 工程流系统** (lingflow Engineering Flow)
+- 英文定位：lingflow Engineering Workflow System
 - Slogan：众智混元，万法灵通
 
 ### Added
@@ -324,7 +324,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Bug Analysis: Runtime errors, unused variables, edge cases
 - **Dual Repository Sync**: GitHub + Gitea synchronization support
   - `git pushall` alias for simultaneous pushing
-  - Applied to both LingFlow and lingresearch projects
+  - Applied to both lingflow and lingresearch projects
 - **AST-Based Code Analysis**: Enhanced code review using Python AST
 - **Severity Grading System**: Critical, High, Medium, Low priority levels
 - **Structured Review Reports**: Emoji-enhanced, easy-to-read reports
@@ -542,4 +542,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-**Maintained by**: LingFlow Development Team
+**Maintained by**: lingflow Development Team

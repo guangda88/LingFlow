@@ -1,6 +1,6 @@
 #!/bin/bash
-# LingFlow CLI Wrapper Script
-# Used by LingFlowAdapter in LingMessage
+# lingflow CLI Wrapper Script
+# Used by lingflowAdapter in lingmessage
 
 set -e
 

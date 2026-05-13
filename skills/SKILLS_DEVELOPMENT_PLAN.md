@@ -1,7 +1,7 @@
-# LingFlow Skills 开发建议
+# lingflow Skills 开发建议
 
 **分析日期**: 2026-03-25
-**目标**: 提高 LingFlow 与通用工程流程的对齐度
+**目标**: 提高 lingflow 与通用工程流程的对齐度
 **当前对齐度**: 72%
 **目标对齐度**: 85%+
 
@@ -594,7 +594,7 @@ skills/
 ```
 skill-name/
 ├── implementation.py       # 技能实现
-├── SKILL.md               # 技能文档 (LingFlow 标准)
+├── SKILL.md               # 技能文档 (lingflow 标准)
 ├── config.yaml            # 配置文件 (可选)
 ├── templates/             # 模板文件 (可选)
 ├── tests/                 # 测试文件 (可选)
@@ -609,7 +609,7 @@ skill-name/
 ## 技能概述
 - **技能名称**: xxx
 - **版本**: 1.0.0
-- **作者**: LingFlow Team
+- **作者**: lingflow Team
 - **许可**: MIT
 
 ## 功能描述

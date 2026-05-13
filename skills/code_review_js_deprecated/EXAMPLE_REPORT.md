@@ -3,8 +3,8 @@
 ## 📊 审查摘要
 
 **审查时间：** 2026-03-23 18:45:00
-**审查范围：** /home/ai/zhineng-bridge
-**审查工具：** LingFlow V3.3.0 code-review-js 技能
+**审查范围：** /home/ai/zhibridge
+**审查工具：** lingflow V3.3.0 code-review-js 技能
 
 ### 代码规模
 
@@ -369,5 +369,5 @@
 ---
 
 **报告生成时间：** 2026-03-23 18:45:00
-**审查人员：** LingFlow V3.3.0 code-review-js
+**审查人员：** lingflow V3.3.0 code-review-js
 **报告版本：** 1.0

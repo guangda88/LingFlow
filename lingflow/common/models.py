@@ -1,4 +1,4 @@
-"""LingFlow 数据模型"""
+"""lingflow 数据模型"""
 
 from dataclasses import dataclass, field
 from enum import Enum

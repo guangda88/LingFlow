@@ -72,5 +72,5 @@
 python -m pytest -q --tb=line          # 1360 passed
 lingflow --version                      # 3.8.0
 python -c "from lingflow import track_context; print('OK')"
-python -c "from lingflow.ai_friendly import AIFriendlyLingFlow; AIFriendlyLingFlow(); print('OK')"
+python -c "from lingflow.ai_friendly import AIFriendlylingflow; AIFriendlylingflow(); print('OK')"
 ```

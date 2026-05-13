@@ -1,8 +1,8 @@
 #!/bin/bash
-# 📡 LingFlow 情报系统 - 快速查看命令
+# 📡 lingflow 情报系统 - 快速查看命令
 # 使用方法: source INTELLIGENCE_QUICK_VIEW.sh 或直接复制命令
 
-echo "🔍 LingFlow GitHub 趋势情报 - 快速查看"
+echo "🔍 lingflow GitHub 趋势情报 - 快速查看"
 echo "=========================================="
 
 # 1. 查看最新综合报告

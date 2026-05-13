@@ -1,5 +1,5 @@
 """
-示例 2: cURL 使用 LingFlow API
+示例 2: cURL 使用 lingflow API
 """
 
 API_BASE="http://localhost:8000"

@@ -1,5 +1,5 @@
 #!/bin/bash
-# LingFlow 定期自优化脚本 - 简化版
+# lingflow 定期自优化脚本 - 简化版
 # 建议通过cron定期运行
 
 set -e
@@ -23,7 +23,7 @@ log() {
 }
 
 log "========================================"
-log "LingFlow 定期自优化"
+log "lingflow 定期自优化"
 log "开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
 log "========================================"
 
@@ -38,7 +38,7 @@ cd "$PROJECT_DIR"
 
 # 运行优化
 log ""
-log "运行LingMinOpt优化..."
+log "运行lingminopt优化..."
 log "目标: $PROJECT_DIR/lingflow"
 
 # 使用Python直接运行优化，避免shell变量问题

@@ -1,4 +1,4 @@
-# LingFlow 自优化系统启用完成
+# lingflow 自优化系统启用完成
 
 **启用日期**: 2026-03-31
 **状态**: ✅ 已启用并验证
@@ -93,7 +93,7 @@ $ python test_hooks_integration.py
 
 ### 启动流程
 
-LingFlow启动时现在会自动初始化hooks系统：
+lingflow启动时现在会自动初始化hooks系统：
 
 1. 版本信息加载
 2. 日志系统初始化
@@ -209,7 +209,7 @@ hook.cancel_optimization()
 ```python
 from lingflow.bootstrap import bootstrap
 
-# 启动LingFlow（hooks默认启用）
+# 启动lingflow（hooks默认启用）
 status = bootstrap()
 
 # 钩子已就绪
@@ -233,7 +233,7 @@ hook.on_code_review_complete({"overall_score": 65})
 
 ---
 
-**LingFlow 自优化系统现已启用！** ✅
+**lingflow 自优化系统现已启用！** ✅
 
 让代码质量持续自动改进。
 

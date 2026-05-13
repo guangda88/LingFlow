@@ -221,7 +221,7 @@ class MultiWorkflowCoordinator:
 ### 1. 双工程流配置 (dual_workflow.yaml)
 
 ```yaml
-name: LingFlow 双工程流系统
+name: lingflow 双工程流系统
 description: 快速工程流 + 稳定工程流
 version: "1.0"
 
@@ -405,7 +405,7 @@ collaboration:
 ### 2. 多工程流配置 (multi_workflow.yaml)
 
 ```yaml
-name: LingFlow 多工程流系统
+name: lingflow 多工程流系统
 description: 专业工程流分工协作
 version: "1.0"
 

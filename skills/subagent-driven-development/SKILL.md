@@ -217,8 +217,8 @@ The plan provides complete code for this task. Use it exactly as written.
 - Run all steps in order
 - Verify each step before moving to next
 
-### LingFlow Integration
-Use LingFlow's test engine for testing:
+### lingflow Integration
+Use lingflow's test engine for testing:
 ```bash
 python comprehensive_test_runner.py --dimensions functionality
 ```
@@ -287,9 +287,9 @@ Code quality is excellent. Follows best practices, well-documented, clean.
 ✅ Ready for next task
 ```
 
-## LingFlow Integration
+## lingflow Integration
 
-This skill integrates with LingFlow's capabilities:
+This skill integrates with lingflow's capabilities:
 
 ### Comprehensive Testing
 
@@ -314,7 +314,7 @@ if not report.all_passed:
 
 ### Code Analysis
 
-Use LingFlow's code analyzer for quality review:
+Use lingflow's code analyzer for quality review:
 
 ```python
 from lingflow.code_analyzer import CodeAnalyzer
@@ -474,7 +474,7 @@ Each task has clear completion criteria and review history.
 ## Example Session
 
 ```
-LingFlow: Loading implementation plan...
+lingflow: Loading implementation plan...
 
 [Plan loaded: User Authentication - 8 tasks]
 
@@ -515,7 +515,7 @@ LingFlow: Loading implementation plan...
 - Average iterations per task: 1.25
 
 **Final Verification**:
-Running LingFlow comprehensive tests...
+Running lingflow comprehensive tests...
 ✅ All dimensions pass
 ✅ No regressions
 ✅ Implementation complete!
@@ -523,7 +523,7 @@ Running LingFlow comprehensive tests...
 
 ## Resources
 
-- LingFlow comprehensive test architecture: `COMPREHENSIVE_TEST_ARCHITECTURE.md`
+- lingflow comprehensive test architecture: `COMPREHENSIVE_TEST_ARCHITECTURE.md`
 - Comprehensive test runner: `comprehensive_test_runner.py`
 - Code analyzer: `skills/subagent-driven-development/code-quality-reviewer-prompt.md`
 - Spec reviewer: `skills/subagent-driven-development/spec-reviewer-prompt.md`

@@ -28,7 +28,7 @@ class GitHubTrendCollector:
         """
         self.token = token or os.getenv('GITHUB_TOKEN', '')
 
-        # 关注的关键词（谨慎选择，聚焦LingFlow相关）
+        # 关注的关键词（谨慎选择，聚焦lingflow相关）
         # 第一轮审查后优化（2026-04-01）
         self.keywords = [
             "llm",                    # ✅ LLM框架和工具
@@ -147,8 +147,8 @@ class GitHubTrendCollector:
         return all_repos
 
 
-class LingFlowRelevanceAnalyzer:
-    """LingFlow相关性分析器"""
+class lingflowRelevanceAnalyzer:
+    """lingflow相关性分析器"""
 
     def __init__(self):
         # 核心关键词（高权重）
@@ -355,7 +355,7 @@ def main():
     print()
     print("⚠️  谨慎实施原则:")
     print("  • 只采集Python语言的高质量项目")
-    print("  • 聚焦LingFlow相关的技术领域")
+    print("  • 聚焦lingflow相关的技术领域")
     print("  • 提供分析和建议，不自动应用")
     print("  • 随时可以停止或调整")
     print()
@@ -374,8 +374,8 @@ def main():
         return
 
     # 分析相关性
-    print(f"\n🔍 分析LingFlow相关性...")
-    analyzer = LingFlowRelevanceAnalyzer()
+    print(f"\n🔍 分析lingflow相关性...")
+    analyzer = lingflowRelevanceAnalyzer()
 
     analysis = {
         'high_value': [],

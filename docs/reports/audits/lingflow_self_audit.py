@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LingFlow 自我审查和优化脚本
+lingflow 自我审查和优化脚本
 
 执行步骤：
 1. 运行完整测试套件
@@ -22,16 +22,16 @@ from datetime import datetime
 # 添加项目根目录到路径
 sys.path.insert(0, str(Path(__file__).parent))
 
-from lingflow import LingFlow
+from lingflow import lingflow
 from lingflow.core.constitution import Constitution
 from lingflow.common.security_analyzer import analyze_code_security, get_security_report
 
 
 class SelfAuditor:
-    """LingFlow 自我审查器"""
+    """lingflow 自我审查器"""
 
     def __init__(self):
-        self.lf = LingFlow()
+        self.lf = lingflow()
         self.report = {
             "timestamp": datetime.now().isoformat(),
             "version": "V4.0.1",
@@ -343,7 +343,7 @@ class SelfAuditor:
 
     def _generate_markdown_report(self) -> str:
         """生成Markdown格式的报告"""
-        md = f"""# LingFlow 自我审查报告
+        md = f"""# lingflow 自我审查报告
 
 **版本**: V4.0.1
 **时间**: {self.report['timestamp']}
@@ -448,7 +448,7 @@ class SelfAuditor:
 
 ## 结论
 
-LingFlow V4.0.1 自我审查完成。
+lingflow V4.0.1 自我审查完成。
 
 **关键发现**:
 1. 测试套件: {'✅ 稳定' if test_results.get('success') else '❌ 不稳定'}
@@ -470,7 +470,7 @@ LingFlow V4.0.1 自我审查完成。
     def run_full_audit(self) -> Dict[str, Any]:
         """运行完整审查流程"""
         print("\n" + "="*70)
-        print("  LingFlow V4.0.1 自我审查和优化")
+        print("  lingflow V4.0.1 自我审查和优化")
         print("="*70)
 
         # 执行所有步骤

@@ -1,4 +1,4 @@
-"""LingFlow Configuration Module
+"""lingflow Configuration Module
 
 .. deprecated::
     Use ``lingflow.common.config.ConfigManager`` instead.
@@ -11,8 +11,8 @@ from typing import Any, Dict
 
 
 @dataclass
-class LingFlowConfig:
-    """LingFlow configuration class (type-safe).
+class lingflowConfig:
+    """lingflow configuration class (type-safe).
 
     .. deprecated::
         Use ``lingflow.common.config.ConfigManager`` for new code.
@@ -58,7 +58,7 @@ class LingFlowConfig:
 
     def __post_init__(self) -> None:
         warnings.warn(
-            "LingFlowConfig is deprecated. Use lingflow.common.config.ConfigManager instead.",
+            "lingflowConfig is deprecated. Use lingflow.common.config.ConfigManager instead.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -87,7 +87,7 @@ class LingFlowConfig:
             raise ValueError(f"log_level must be one of DEBUG, INFO, WARNING, ERROR, CRITICAL, got {self.log_level}")
 
     @classmethod
-    def from_dict(cls, config: Dict[str, Any]) -> "LingFlowConfig":
+    def from_dict(cls, config: Dict[str, Any]) -> "lingflowConfig":
         """Create configuration from dictionary (backward compatibility).
 
         Filters out unknown keys to maintain compatibility with old configs.
@@ -96,11 +96,11 @@ class LingFlowConfig:
             config: Configuration dictionary
 
         Returns:
-            LingFlowConfig instance
+            lingflowConfig instance
 
         Example:
             >>> config_dict = {"max_parallel": 4, "skill_timeout": 60.0}
-            >>> config = LingFlowConfig.from_dict(config_dict)
+            >>> config = lingflowConfig.from_dict(config_dict)
         """
         # Filter unknown keys
         valid_keys = set(cls.__dataclass_fields__.keys())
@@ -116,7 +116,7 @@ class LingFlowConfig:
             Dictionary representation of configuration
 
         Example:
-            >>> config = LingFlowConfig(max_parallel=4)
+            >>> config = lingflowConfig(max_parallel=4)
             >>> config_dict = config.to_dict()
             >>> config_dict["max_parallel"]
             4

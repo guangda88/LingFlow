@@ -1,4 +1,4 @@
-# LingFlow 封装与仓库清单
+# lingflow 封装与仓库清单
 
 **更新日期**: 2026-04-03
 **版本**: v3.8.0
@@ -10,8 +10,8 @@
 
 | 远程名 | 地址 | 用途 |
 |--------|------|------|
-| **github** | `git@github.com:guangda88/LingFlow.git` | 主仓库（SSH） |
-| **origin** | `http://zhinenggitea.iepose.cn/guangda/LingFlow.git` | 内部Gitea镜像 |
+| **github** | `git@github.com:guangda88/lingflow.git` | 主仓库（SSH） |
+| **origin** | `http://zhinenggitea.iepose.cn/guangda/lingflow.git` | 内部Gitea镜像 |
 
 **分支状态**:
 - 当前分支: `master`
@@ -267,7 +267,7 @@ actions/quality-gate/
 ### 使用方式
 
 ```yaml
-name: LingFlow Quality Gate
+name: lingflow Quality Gate
 
 on:
   pull_request:
@@ -279,7 +279,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run LingFlow Review
+      - name: Run lingflow Review
         uses: lingflow/actions/quality-gate@v1
         with:
           command: review
@@ -291,10 +291,10 @@ jobs:
 
 | 参数 | 必需 | 默认值 | 说明 |
 |------|------|--------|------|
-| `command` | 否 | `review` | LingFlow 命令 |
+| `command` | 否 | `review` | lingflow 命令 |
 | `path` | 否 | `.` | 目标路径 |
 | `github_token` | 是 | `${{ github.token }}` | GitHub Token |
-| `api_key` | 否 | - | LingFlow API Key |
+| `api_key` | 否 | - | lingflow API Key |
 | `fail_on_error` | 否 | `false` | 发现问题是否失败 |
 | `output_format` | 否 | `markdown` | 输出格式 |
 
@@ -345,7 +345,7 @@ c1465ee test: long session validation of degradation detection
 88d619c fix: lint cleanup for degradation mitigation modules
 6566a50 feat: long-context degradation mitigation system
 13ac7bc release: v3.8.0 - AI 生态平台
-8c725ab feat: LingFlow MCP Server v1.3.0 - 完整实现与发布
+8c725ab feat: lingflow MCP Server v1.3.0 - 完整实现与发布
 2769cbe feat: PyPI publishing setup for v3.7.0
 ```
 
@@ -384,14 +384,14 @@ git push github v3.9.0
 
 ## 🔗 相关链接
 
-- **GitHub**: https://github.com/guangda88/LingFlow
-- **Issues**: https://github.com/guangda88/LingFlow/issues
-- **Discussions**: https://github.com/guangda88/LingFlow/discussions
-- **内部 Gitea**: http://zhinenggitea.iepose.cn/guangda/LingFlow
+- **GitHub**: https://github.com/guangda88/lingflow
+- **Issues**: https://github.com/guangda88/lingflow/issues
+- **Discussions**: https://github.com/guangda88/lingflow/discussions
+- **内部 Gitea**: http://zhinenggitea.iepose.cn/guangda/lingflow
 
 ---
 
 **文档维护**: 请在新增封装或版本更新时同步更新此文档
 
 **最后更新**: 2026-04-03
-**维护者**: LingFlow Team
+**维护者**: lingflow Team

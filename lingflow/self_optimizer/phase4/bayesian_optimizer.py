@@ -1,5 +1,5 @@
 """
-LingFlow Phase 4: 贝叶斯优化器实现
+lingflow Phase 4: 贝叶斯优化器实现
 
 使用Optuna的TPE (Tree-structured Parzen Estimator) 算法
 实现高效的参数搜索，相比网格搜索可减少50%以上的评估次数。

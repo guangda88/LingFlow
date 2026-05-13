@@ -1,8 +1,8 @@
-"""LingFlow Core Module"""
+"""lingflow Core Module"""
 
-from lingflow.common.exceptions import LingFlowError
+from lingflow.common.exceptions import lingflowError
 from lingflow.core.compliance_matrix import ComplianceMatrix
-from lingflow.core.config import LingFlowConfig
+from lingflow.core.config import lingflowConfig
 from lingflow.core.constitution import (
     ComplianceReport,
     Constitution,
@@ -59,8 +59,8 @@ __all__ = [
     "ConstitutionalPrinciple",
     "ComplianceReport",
     "ComplianceMatrix",
-    "LingFlowConfig",
-    "LingFlowError",
+    "lingflowConfig",
+    "lingflowError",
     "Result",
     # Skill system
     "BaseSkill",

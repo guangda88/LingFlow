@@ -1,8 +1,8 @@
-# LingFlow SQLite 上下文管理设计
+# lingflow SQLite 上下文管理设计
 
 **日期**: 2026-03-30
 **灵感来源**: Crush 上下文管理的 SQLite 实现
-**目标**: 借鉴成熟设计，增强 LingFlow 的上下文管理能力
+**目标**: 借鉴成熟设计，增强 lingflow 的上下文管理能力
 
 ---
 
@@ -130,7 +130,7 @@ CREATE INDEX idx_scoring_history_created_at ON scoring_history(created_at);
 
 ```python
 """
-LingFlow SQLite 上下文管理器
+lingflow SQLite 上下文管理器
 
 借鉴 Crush 的成熟设计，提供高性能的上下文管理
 """
@@ -937,12 +937,12 @@ class CachedSQLiteContextManager(SQLiteContextManager):
   - 跨平台
 ```
 
-### 与 LingFlow 的整合
+### 与 lingflow 的整合
 
 ```python
-# 在 LingFlow 中使用 SQLite 上下文管理
-class LingFlowContextManager:
-    """LingFlow 上下文管理器"""
+# 在 lingflow 中使用 SQLite 上下文管理
+class lingflowContextManager:
+    """lingflow 上下文管理器"""
 
     def __init__(self, db_path: str = ":memory:"):
         self.sqlite_manager = SQLiteContextManager(db_path)

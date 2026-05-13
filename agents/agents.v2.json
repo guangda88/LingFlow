@@ -1,7 +1,7 @@
 {
   "$schema": "./agent-schema-v2.json",
   "version": "2.0",
-  "description": "LingFlow Agent Configuration v2.0 - Capability-based agent definitions",
+  "description": "lingflow Agent Configuration v2.0 - Capability-based agent definitions",
   "agents": [
     {
       "name": "implementation",

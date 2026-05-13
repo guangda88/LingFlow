@@ -1,11 +1,11 @@
 #!/bin/bash
-# LingFlow Demo 视频录制脚本
+# lingflow Demo 视频录制脚本
 # 使用工具: asciinema + 示例代码
 
 set -e
 
 echo "=========================================="
-echo "  LingFlow Demo 视频录制"
+echo "  lingflow Demo 视频录制"
 echo "=========================================="
 echo ""
 
@@ -38,10 +38,10 @@ echo ""
 # 创建 asciinema 录制
 asciinema rec lingflow-demo.cast
 
-echo "开始录制 LingFlow Demo..."
+echo "开始录制 lingflow Demo..."
 
 sleep 2
-echo "欢迎来到 LingFlow Demo！"
+echo "欢迎来到 lingflow Demo！"
 sleep 1
 echo ""
 echo "今天演示 3 种使用方式："
@@ -58,7 +58,7 @@ echo ""
 echo "在项目的 .github/workflows/ 目录下创建："
 echo ""
 cat << 'EOF'
-name: LingFlow Quality Gate
+name: lingflow Quality Gate
 
 on:
   pull_request:
@@ -69,7 +69,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: guangda88/LingFlow/actions/quality-gate@v1
+      - uses: guangda88/lingflow/actions/quality-gate@v1
         with:
           command: review
           path: ./src
@@ -77,7 +77,7 @@ jobs:
 EOF
 
 echo ""
-echo "推送到 GitHub 后，LingFlow 会自动："
+echo "推送到 GitHub 后，lingflow 会自动："
 echo "✅ 审查代码"
 echo "✅ 发布 PR 评论"
 echo "✅ 显示在 Actions Summary"
@@ -135,7 +135,7 @@ echo "=========================================="
 echo "总结"
 echo "=========================================="
 echo ""
-echo "LingFlow 的 4 种使用方式："
+echo "lingflow 的 4 种使用方式："
 echo ""
 echo "1. CLI 工具      - pip install lingflow-core"
 echo "2. Python SDK   - pip install lingflow-sdk"
@@ -144,7 +144,7 @@ echo "4. GitHub Actions - Marketplace: @lingflow/actions"
 echo ""
 echo "开始使用："
 echo ""
-echo "  📖 文档: https://github.com/guangda88/LingFlow"
+echo "  📖 文档: https://github.com/guangda88/lingflow"
 echo "  🌐 API:  https://lingflow-api.up.railway.app"
 echo "  🛠️ 技能: https://github.com/lingflow/skills-index"
 echo ""

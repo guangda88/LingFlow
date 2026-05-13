@@ -1,4 +1,4 @@
-# LingFlow 自优化系统 - Phase 1 实现完成报告
+# lingflow 自优化系统 - Phase 1 实现完成报告
 
 **日期**: 2026-03-30
 **版本**: v0.1.0
@@ -9,7 +9,7 @@
 ## 📊 实现概览
 
 ### 核心目标
-实现基于LingMinOpt的LingFlow自优化系统Phase 1，专注于**结构优化**。
+实现基于lingminopt的lingflow自优化系统Phase 1，专注于**结构优化**。
 
 ### 关键特性
 - ✅ 扩展的触发条件检测（质量/结构/性能/规模/技术债务/时间）
@@ -101,7 +101,7 @@ if should_trigger:
 - 平均方法数
 - 耦合度
 
-**评估函数**（用于LingMinOpt）:
+**评估函数**（用于lingminopt）:
 ```python
 def evaluate(params: Dict[str, Any]) -> float:
     """评估结构质量（越低越好）"""
@@ -138,7 +138,7 @@ result = optimizer.optimize(request)  # 阻塞
 }
 ```
 
-**降级策略**: 无LingMinOpt时自动降级到简单网格搜索。
+**降级策略**: 无lingminopt时自动降级到简单网格搜索。
 
 ### 5. 报告生成器 (`advisor.py`)
 
@@ -155,7 +155,7 @@ result = optimizer.optimize(request)  # 阻塞
 
 **示例报告**:
 ```markdown
-# LingFlow 自优化建议报告
+# lingflow 自优化建议报告
 
 生成时间: 2026-03-30 14:30:00
 优化目标: 结构优化
@@ -427,9 +427,9 @@ $ lingflow optimize cancel
 
 ---
 
-## 🔌 LingMinOpt集成
+## 🔌 lingminopt集成
 
-### 有LingMinOpt时
+### 有lingminopt时
 ```python
 from lingminopt import MinimalOptimizer, SearchSpace, ExperimentConfig
 
@@ -441,7 +441,7 @@ optimizer = MinimalOptimizer(evaluate, search_space, config)
 result = optimizer.run()
 ```
 
-### 无LingMinOpt时（降级）
+### 无lingminopt时（降级）
 ```python
 # 自动降级到简单网格搜索
 def fallback_evaluate(params, target_path):
@@ -523,12 +523,12 @@ structure_optimization:
 
 ## 🙏 致谢
 
-- **LingMinOpt**: 灵极优自优化框架
+- **lingminopt**: 灵极优自优化框架
 - **Python AST**: 代码分析基础设施
 - **Click**: CLI框架
 
 ---
 
-**LingFlow 自优化系统 v0.1.0** - 让AI工具生成更高质量的代码
+**lingflow 自优化系统 v0.1.0** - 让AI工具生成更高质量的代码
 
-© 2026 LingFlow Team
+© 2026 lingflow Team

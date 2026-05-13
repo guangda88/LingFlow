@@ -1,6 +1,6 @@
 # 自定义Agent示例
 
-本文档展示如何创建和定制LingFlow Agent。
+本文档展示如何创建和定制lingflow Agent。
 
 ## 目录
 
@@ -49,14 +49,14 @@ class SimpleAgent(BaseAgent):
 
 ```python
 from lingflow.coordination import AgentRegistry
-from lingflow import LingFlow
+from lingflow import lingflow
 
 # 注册自定义Agent
 registry = AgentRegistry()
 registry.register("simple", SimpleAgent)
 
 # 使用自定义Agent
-lf = LingFlow()
+lf = lingflow()
 result = lf.run_skill("hello", {"name": "用户"})
 print(result)  # {'status': 'success', 'message': '你好，用户！'}
 ```
@@ -768,7 +768,7 @@ class DataAnalysisAgent(BaseAgent):
 ### 使用自定义Agent
 
 ```python
-from lingflow import LingFlow
+from lingflow import lingflow
 from lingflow.coordination import AgentRegistry
 
 # 注册自定义Agent
@@ -776,7 +776,7 @@ registry = AgentRegistry()
 registry.register("data_analyst", DataAnalysisAgent)
 
 # 使用Agent
-lf = LingFlow()
+lf = lingflow()
 
 # 加载数据
 result = lf.run_skill("load_data", {

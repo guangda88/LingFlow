@@ -1,4 +1,4 @@
-# Changelog - LingFlow v3.8.0
+# Changelog - lingflow v3.8.0
 
 **发布日期**: 2026-04-02
 
@@ -122,7 +122,7 @@
 ### 新增部署方式
 - Docker Hub: `guangda88/lingflow-api:latest`
 - Railway: https://lingflow-api.up.railway.app
-- GitHub Marketplace: LingFlow Actions
+- GitHub Marketplace: lingflow Actions
 
 ---
 
@@ -159,7 +159,7 @@
 
 ## 🙏 致谢
 
-特别感谢企业级架构师的专业指导，帮助 LingFlow 实现了：
+特别感谢企业级架构师的专业指导，帮助 lingflow 实现了：
 - 务实的优先级（API First）
 - 轻量级启动（GitHub 索引）
 - 渐进式演进（分阶段实现）
@@ -171,6 +171,6 @@
 
 ## 📞 支持
 
-- GitHub: https://github.com/guangda88/LingFlow
-- Issues: https://github.com/guangda88/LingFlow/issues
-- Discussions: https://github.com/guangda88/LingFlow/discussions
+- GitHub: https://github.com/guangda88/lingflow
+- Issues: https://github.com/guangda88/lingflow/issues
+- Discussions: https://github.com/guangda88/lingflow/discussions

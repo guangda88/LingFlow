@@ -542,8 +542,8 @@ tasks:
         """)
 
         # 3. 执行工作流
-        from lingflow import LingFlow
-        lf = LingFlow()
+        from lingflow import lingflow
+        lf = lingflow()
         result = lf.run_workflow_file(str(workflow_file))
 
         # 4. 验证结果

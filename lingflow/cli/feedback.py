@@ -4,14 +4,14 @@ import sys
 
 import click
 
-from lingflow import LingFlow
+from lingflow import lingflow
 from lingflow.feedback import (
     FeedbackCategory,
     FeedbackSeverity,
     get_feedback_collector,
 )
 
-lf = LingFlow()
+lf = lingflow()
 
 
 @click.group()

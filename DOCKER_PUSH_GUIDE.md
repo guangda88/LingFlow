@@ -28,7 +28,7 @@ docker login
 ### 2. 标记镜像
 
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 
 # API 镜像
 docker tag lingflow-api:test guangda88/lingflow-api:latest
@@ -65,7 +65,7 @@ docker push guangda88/lingflow-action:quality-gate:v1.0.0
 ## 🔗 相关链接
 
 - Docker Hub: https://hub.docker.com/r/guangda88/lingflow-api
-- 项目仓库: https://github.com/guangda88/LingFlow
+- 项目仓库: https://github.com/guangda88/lingflow
 
 ---
 

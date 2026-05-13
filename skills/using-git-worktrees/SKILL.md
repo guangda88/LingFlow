@@ -150,7 +150,7 @@ npm test
 # or
 pytest
 
-# Run LingFlow comprehensive tests
+# Run lingflow comprehensive tests
 python comprehensive_test_runner.py
 
 # Verify no issues
@@ -174,9 +174,9 @@ git worktree list
 
 Example output:
 ```
-/home/ai/zhineng-knowledge-system/lingflow        1a2b3c4 [main]
-/home/ai/zhineng-knowledge-system/lingflow-auth  5d6e7f8 [feature/user-authentication]
-/home/ai/zhineng-knowledge-system/lingflow-api   9a0b1c2 [feature/api-v2]
+/home/ai/lingzhi/lingflow        1a2b3c4 [main]
+/home/ai/lingzhi/lingflow-auth  5d6e7f8 [feature/user-authentication]
+/home/ai/lingzhi/lingflow-api   9a0b1c2 [feature/api-v2]
 ```
 
 ### Remove Worktree
@@ -226,11 +226,11 @@ git worktree move <old-path> <new-path>
 - Skip baseline verification
 - Leave old worktrees around
 
-## LingFlow Integration
+## lingflow Integration
 
-### Worktree with LingFlow Skills
+### Worktree with lingflow Skills
 
-Worktrees integrate seamlessly with LingFlow's skill system:
+Worktrees integrate seamlessly with lingflow's skill system:
 
 ```
 [brainstorming skill]
@@ -314,7 +314,7 @@ git worktree remove <worktree-path>
 ```
 Developer: "I want to work on user authentication feature"
 
-LingFlow (using-git-worktrees):
+lingflow (using-git-worktrees):
 "Setting up isolated workspace for user authentication...
 
 Step 1: Creating feature branch
@@ -322,7 +322,7 @@ Step 1: Creating feature branch
 
 Step 2: Creating worktree
 ✓ Created worktree: ../lingflow-auth
-  Location: /home/ai/zhineng-knowledge-system/lingflow-auth
+  Location: /home/ai/lingzhi/lingflow-auth
   Branch: feature/user-authentication
 
 Step 3: Setting up project
@@ -334,7 +334,7 @@ Step 4: Verifying clean baseline
 Running tests...
 ✓ Unit tests: 142 passed, 0 failed
 ✓ Integration tests: 89 passed, 0 failed
-✓ LingFlow comprehensive tests: All dimensions pass
+✓ lingflow comprehensive tests: All dimensions pass
 ✓ Clean baseline confirmed
 
 ✅ Workspace ready!
@@ -363,4 +363,4 @@ git branch -d feature/user-authentication
 ## Resources
 
 - Git Worktrees Documentation: https://git-scm.com/docs/git-worktree
-- LingFlow comprehensive test architecture: `COMPREHENSIVE_TEST_ARCHITECTURE.md`
+- lingflow comprehensive test architecture: `COMPREHENSIVE_TEST_ARCHITECTURE.md`

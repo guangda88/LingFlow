@@ -43,7 +43,7 @@ nodes:
       - Prometheus
       - Grafana
       - SafeLine WAF
-    notes: 主力开发机，当前运行 LingFlow
+    notes: 主力开发机，当前运行 lingflow
 
   - name: zhineng-ai01
     role: distributed_compute

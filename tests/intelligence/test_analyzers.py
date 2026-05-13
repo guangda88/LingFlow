@@ -34,7 +34,7 @@ class TestSentimentAnalyzer:
         """测试分析正面文本"""
         analyzer = SentimentAnalyzer()
 
-        result = analyzer.analyze("LingFlow is awesome! Great work!")
+        result = analyzer.analyze("lingflow is awesome! Great work!")
 
         assert result.label == "positive"
         assert result.score > 0

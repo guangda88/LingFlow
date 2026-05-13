@@ -1,4 +1,4 @@
-# LingFlow MVP 优化建议
+# lingflow MVP 优化建议
 
 **日期**: 2026-03-30
 **基于**: v0.1.0 测试结果
@@ -91,14 +91,14 @@
   提供详细的错误信息和恢复建议
 
 实现:
-  class LingFlowError(Exception):
+  class lingflowError(Exception):
       def __init__(self, message: str, recovery: str):
           self.message = message
           self.recovery = recovery
           super().__init__(f"{message}\n\nRecovery: {recovery}")
 
 使用:
-  raise LingFlowError(
+  raise lingflowError(
       "Failed to compress messages",
       "Try using a less aggressive compression strategy"
   )

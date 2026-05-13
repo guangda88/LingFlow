@@ -1,4 +1,4 @@
-# LingFlow 自我审计发现的问题与修复
+# lingflow 自我审计发现的问题与修复
 
 **审计时间**: 2026-03-31 18:50
 **状态**: ✅ 审计完成，⚠️ 发现P0问题并修复
@@ -139,7 +139,7 @@ $ python3 -m lingflow.cli learn run-learn --target ./lingflow --tools ruff
 ### 已完成的优化
 
 1. ✅ **审计系统运行**
-   - 使用LingFlow自身分析能力
+   - 使用lingflow自身分析能力
    - 发现代码质量问题
    - 识别优化机会
 
@@ -204,8 +204,8 @@ $ python3 -m lingflow.cli learn run-learn --target ./lingflow --tools ruff
 
 ---
 
-**审计执行**: LingFlow自优化系统
-**修复执行**: Claude Code + LingFlow工程流
+**审计执行**: lingflow自优化系统
+**修复执行**: Claude Code + lingflow工程流
 **验证状态**: ✅ 通过
 
 **众智混元，万法灵通** ⚡🚀

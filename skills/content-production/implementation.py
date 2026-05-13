@@ -17,7 +17,7 @@ from typing import Any
 
 log = logging.getLogger("content-production")
 
-DEFAULT_SEARCH_API = "http://127.0.0.1:8000/api/v1/search/hybrid"
+DEFAULT_SEARCH_API = "http://127.0.0.1:8001/api/v1/search/hybrid"
 
 PLATFORM_TAG_MAP = {
     "wechat": "微信公众号",

@@ -2,7 +2,7 @@
 """
 demo-01: 基础智能体示例
 
-展示 LingFlow 核心能力的完整示例
+展示 lingflow 核心能力的完整示例
 按照 VibeCoding 三轮开发法构建
 """
 
@@ -50,7 +50,7 @@ class BasicAgentExample:
         """
         第二步: 创建任务
 
-        任务是 LingFlow 的基本执行单元
+        任务是 lingflow 的基本执行单元
         """
         from lingflow import Task, TaskPriority
 
@@ -139,7 +139,7 @@ class BasicAgentExample:
         """
         展示技能链的使用
 
-        LingFlow 的强大之处在于技能的组合使用
+        lingflow 的强大之处在于技能的组合使用
         """
         logger.info("演示技能链: brainstorming → writing-plans → test-driven-development")
 
@@ -209,7 +209,7 @@ class BasicAgentExample:
 async def main():
     """主函数"""
     print("\n" + "=" * 60)
-    print("LingFlow 基础智能体示例")
+    print("lingflow 基础智能体示例")
     print("=" * 60 + "\n")
 
     # 创建示例实例
@@ -257,7 +257,7 @@ async def main():
 def run_simple_example():
     """运行简化版示例"""
     print("\n" + "=" * 60)
-    print("LingFlow 简化示例")
+    print("lingflow 简化示例")
     print("=" * 60 + "\n")
 
     # 最简单的使用方式

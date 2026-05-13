@@ -1,8 +1,8 @@
-# LingFlow 情报系统扩展设计方案
+# lingflow 情报系统扩展设计方案
 
 **版本**: v1.0
 **日期**: 2026-04-03
-**目标**: 增加情报收集节点 + 收集网络对LingFlow的评价
+**目标**: 增加情报收集节点 + 收集网络对lingflow的评价
 
 ---
 
@@ -34,15 +34,15 @@
 ```
 现有关注: 竞品/相关项目技术信息
 ↓ 扩展
-新增关注: LingFlow自身的网络评价与讨论
+新增关注: lingflow自身的网络评价与讨论
 ```
 
 ### 2.2 核心需求
 
 | 需求 | 优先级 | 说明 |
 |------|--------|------|
-| **GitHub Issues监控** | P0 | 收集github.com/guangda88/LingFlow的Issues |
-| **GitHub Discussions** | P0 | 收集LingFlow相关 Discussions |
+| **GitHub Issues监控** | P0 | 收集github.com/guangda88/lingflow的Issues |
+| **GitHub Discussions** | P0 | 收集lingflow相关 Discussions |
 | **Reddit 讨论** | P1 | r/Python, r/LocalLLaMA 等社区 |
 | **Hacker News** | P1 | HN上的讨论和评价 |
 | **中文社区** | P2 | 掘金、知乎、V2EX等 |
@@ -60,7 +60,7 @@ lingflow/intelligence/
 │   ├── __init__.py
 │   ├── base.py              # 基础采集器
 │   ├── github_trends.py     # 现有: GitHub项目趋势
-│   ├── lingflow_monitor.py  # 🆕 LingFlow自身监控
+│   ├── lingflow_monitor.py  # 🆕 lingflow自身监控
 │   ├── social_media.py      # 🆕 社交媒体采集
 │   └── star_tracker.py      # 🆕 Star增长追踪
 ├── analyzers/
@@ -71,7 +71,7 @@ lingflow/intelligence/
 ├── reporters/
 │   ├── __init__.py
 │   ├── trends.py            # 现有: 趋势报告
-│   ├── lingflow_reputation.py # 🆕 LingFlow声誉报告
+│   ├── lingflow_reputation.py # 🆕 lingflow声誉报告
 │   └── summary.py           # 🆕 每日汇总
 └── storage/
     ├── __init__.py
@@ -116,15 +116,15 @@ class ReputationMetrics:
 
 ## 四、具体实现
 
-### 4.1 LingFlow 自身监控
+### 4.1 lingflow 自身监控
 
 #### GitHub Issues/Discussions 采集
 
 ```python
-class LingFlowMonitor:
-    """LingFlow项目监控器"""
+class lingflowMonitor:
+    """lingflow项目监控器"""
 
-    def __init__(self, repo: str = "guangda88/LingFlow"):
+    def __init__(self, repo: str = "guangda88/lingflow"):
         self.repo = repo
         self.token = os.getenv('GITHUB_TOKEN')
 
@@ -162,8 +162,8 @@ class RedditCollector:
         # 使用 Reddit API (无需认证只读)
         self.subreddits = ["Python", "LocalLLaMA", "learnprogramming"]
 
-    def search_mentions(self, keyword: str = "LingFlow") -> List[Post]:
-        """搜索提及LingFlow的帖子"""
+    def search_mentions(self, keyword: str = "lingflow") -> List[Post]:
+        """搜索提及lingflow的帖子"""
         # 使用Reddit搜索API或rss2json
 ```
 
@@ -173,8 +173,8 @@ class RedditCollector:
 class HNCollector:
     """Hacker News采集器"""
 
-    def search_mentions(self, keyword: str = "LingFlow") -> List[Post]:
-        """搜索提及LingFlow的帖子"""
+    def search_mentions(self, keyword: str = "lingflow") -> List[Post]:
+        """搜索提及lingflow的帖子"""
         # 使用 Algolia API (HN搜索)
         # https://hn.algolia.com/api/v1/search
 ```
@@ -202,7 +202,7 @@ class SentimentAnalyzer:
 | # | 任务 | 产出 |
 |---|------|------|
 | 1.1 | 创建 `lingflow/intelligence/` 目录 | 基础架构 |
-| 1.2 | 实现 `LingFlowMonitor` | GitHub Issues/Discussions采集 |
+| 1.2 | 实现 `lingflowMonitor` | GitHub Issues/Discussions采集 |
 | 1.3 | 实现 `StarTracker` | Star增长追踪 |
 | 1.4 | 每日报告脚本 | crontab 定时运行 |
 
@@ -219,7 +219,7 @@ class SentimentAnalyzer:
 
 | # | 任务 | 产出 |
 |---|------|------|
-| 3.1 | `LingFlowReputationReport` | 声誉报告生成 |
+| 3.1 | `lingflowReputationReport` | 声誉报告生成 |
 | 3.2 | 趋势图表 | Star/提及/情感趋势 |
 | 3.3 | MCP 工具集成 | 灵探增强 |
 
@@ -231,7 +231,7 @@ class SentimentAnalyzer:
 
 | 中文名 | 工具名称 | 功能 |
 |--------|----------|------|
-| 灵听 | `get_lingflow_mentions` | 获取关于LingFlow的提及 |
+| 灵听 | `get_lingflow_mentions` | 获取关于lingflow的提及 |
 | 灵誉 | `get_reputation_metrics` | 获取声誉指标 |
 | 灵感 | `analyze_sentiment` | 分析讨论情感 |
 | 灵脉 | `get_star_trends` | 获取Star趋势 |
@@ -272,7 +272,7 @@ class SentimentAnalyzer:
 ### 8.1 每日情报
 
 ```
-📊 LingFlow 情报简报 - 2026-04-03
+📊 lingflow 情报简报 - 2026-04-03
 
 📈 今日统计:
   - GitHub Issues: 3 个新增
@@ -287,7 +287,7 @@ class SentimentAnalyzer:
   - 负面: 5%
 
 🔥 热门议题:
-  1. "LingFlow 与 Cursor 对比"
+  1. "lingflow 与 Cursor 对比"
   2. "自优化系统效果如何?"
   3. "MCP 集成教程请求"
 ```

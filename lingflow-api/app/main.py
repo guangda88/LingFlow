@@ -1,5 +1,5 @@
 """
-LingFlow REST API 服务
+lingflow REST API 服务
 快速启动模板
 """
 from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 # ===== 应用初始化 =====
 app = FastAPI(
-    title="LingFlow API",
+    title="lingflow API",
     description="AI增强的软件工程流系统 - REST API",
     version=settings.APP_VERSION,
     docs_url="/docs",
@@ -117,7 +117,7 @@ class DiscussionPayload(BaseModel):
 async def root():
     """根路径"""
     return {
-        "name": "LingFlow API",
+        "name": "lingflow API",
         "version": settings.APP_VERSION,
         "status": "running",
         "docs": "/docs"
@@ -133,10 +133,10 @@ async def health_check():
 
 @app.get("/council/health")
 async def council_health():
-    """议事厅健康检查 - 用于LingYi council唤醒"""
+    """议事厅健康检查 - 用于lingyi council唤醒"""
     return {
         "status": "ok",
-        "service": "LingFlow",
+        "service": "lingflow",
         "member_id": "lingtong",
         "member_name": "灵通",
         "version": settings.APP_VERSION,
@@ -151,13 +151,13 @@ async def test_post(test: str = None):
 
 @app.post("/api/v1/discuss")
 async def handle_discussion(payload: DiscussionPayload):
-    """接收LingYi council讨论请求 - 灵通自动回复"""
+    """接收lingyi council讨论请求 - 灵通自动回复"""
     import sys
     import traceback
     import os
     lingyi_src = os.environ.get(
         "LINGYI_SRC_PATH",
-        "/home/ai/LingYi/src",
+        "/home/ai/lingyi/src",
     )
     sys.path.insert(0, lingyi_src)
 
@@ -173,7 +173,7 @@ async def handle_discussion(payload: DiscussionPayload):
                 from lingyi.llm_utils import create_client, call_llm_with_fallback
                 from lingyi.lingmessage import send_message, read_discussion
             except Exception as e:
-                error_msg = f"导入LingYi模块失败: {e}"
+                error_msg = f"导入lingyi模块失败: {e}"
                 logger.error(error_msg)
                 logger.error(f"Traceback: {traceback.format_exc()}")
                 return {"status": "error", "message": error_msg, "traceback": traceback.format_exc()}
@@ -208,7 +208,7 @@ async def handle_discussion(payload: DiscussionPayload):
 
                 # 调用LLM生成回复
                 client = create_client()
-                prompt = f"""你是灵通（LingFlow），工作流编排专家。
+                prompt = f"""你是灵通（lingflow），工作流编排专家。
 
 讨论主题：{topic}
 

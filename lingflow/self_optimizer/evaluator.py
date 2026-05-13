@@ -1,5 +1,5 @@
 """
-LingFlow 自优化评估器
+lingflow 自优化评估器
 评估代码结构质量
 """
 
@@ -52,7 +52,7 @@ class StructureEvaluator:
         self.target_path = Path(target_path)
 
     def evaluate(self, params: Dict[str, Any]) -> float:
-        """评估结构质量（用于LingMinOpt）
+        """评估结构质量（用于lingminopt）
 
         Args:
             params: 优化参数
@@ -215,7 +215,7 @@ class StructureEvaluator:
 
 
 def fallback_evaluate(params: Dict[str, Any], target_path: str = ".") -> float:
-    """降级评估函数（无LingMinOpt时的网格搜索）
+    """降级评估函数（无lingminopt时的网格搜索）
 
     Args:
         params: 优化参数
@@ -230,7 +230,7 @@ def fallback_evaluate(params: Dict[str, Any], target_path: str = ".") -> float:
 
 if __name__ == "__main__":  # pragma: no cover
     # 测试
-    evaluator = StructureEvaluator("/home/ai/LingFlow")
+    evaluator = StructureEvaluator("/home/ai/lingflow")
 
     params = {
         "max_class_size": 200,

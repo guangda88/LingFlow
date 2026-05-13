@@ -1,4 +1,4 @@
-# LingFlow v3.3.0 质量控制框架
+# lingflow v3.3.0 质量控制框架
 
 > 版本: v3.3.0
 > 日期: 2026-03-23
@@ -1142,12 +1142,12 @@ def test_calculate_with_boundary_values():
 **示例**:
 ```markdown
 # ❌ 错误: 版本号不一致
-## LingFlow v3.3.0 工作流程
+## lingflow v3.3.0 工作流程
 
 ... 参见 docs/V1.1.0_FINAL_SUMMARY.md ...
 
 # ✅ 正确: 版本号一致
-## LingFlow v3.3.0 工作流程
+## lingflow v3.3.0 工作流程
 
 ... 参见 docs/V3.3.0_FINAL_SUMMARY.md ...
 ```
@@ -1679,7 +1679,7 @@ print(report.to_html())
 
 ## 总结
 
-LingFlow v3.3.0 质量控制框架建立了全面、严格的质量标准:
+lingflow v3.3.0 质量控制框架建立了全面、严格的质量标准:
 
 ### 质量控制维度
 

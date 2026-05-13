@@ -1,4 +1,4 @@
-# Hooks 系统 v1.2.0 对 LingFlow 项目的意义分析
+# Hooks 系统 v1.2.0 对 lingflow 项目的意义分析
 
 ## 📋 背景
 
@@ -20,7 +20,7 @@
 
 ---
 
-## 📊 对 LingFlow 的具体意义
+## 📊 对 lingflow 的具体意义
 
 ### 1. 项目治理规范化
 
@@ -33,7 +33,7 @@
 
 ### 2. AI 辅助开发质量提升
 
-**当前 LingFlow 开发场景**：
+**当前 lingflow 开发场景**：
 - ✅ 多智能体协调开发
 - ✅ 复杂的代理系统
 - ✅ 性能基准测试
@@ -53,7 +53,7 @@ pre-commit Hook 自动触发
 
 ### 3. 开发流程标准化
 
-**LingFlow 特有的开发场景**：
+**lingflow 特有的开发场景**：
 
 | 场景 | 需要 Hooks 检查 |
 |------|----------------|
@@ -70,7 +70,7 @@ pre-commit Hook 自动触发
 - ❌ 代码审查流于形式
 - ❌ 数据库操作缺少验证
 
-**LingFlow 可以避免**：
+**lingflow 可以避免**：
 ```
 AI 提交性能优化代码
   ↓
@@ -87,7 +87,7 @@ YES → 允许提交
 
 ### 场景1：智能体开发规范
 
-**当前 LingFlow**：
+**当前 lingflow**：
 ```python
 # AI 可能直接创建新智能体
 class NewAgent:
@@ -107,7 +107,7 @@ git commit -m "feat: 添加新智能体"
 
 ### 场景2：性能优化验证
 
-**当前 LingFlow**：
+**当前 lingflow**：
 ```python
 # AI 可能声称优化了性能
 def optimized_function():
@@ -124,9 +124,9 @@ git commit -m "perf: 优化协调器性能"
 
 ### 场景3：多仓库一致性
 
-**LingFlow 双仓库**：
-- GitHub: `git@github.com:guangda88/LingFlow.git`
-- Gitea: `http://zhinenggitea.iepose.cn/guangda/LingFlow.git`
+**lingflow 双仓库**：
+- GitHub: `git@github.com:guangda88/lingflow.git`
+- Gitea: `http://zhinenggitea.iepose.cn/guangda/lingflow.git`
 
 **应用 Hooks**：
 ```bash
@@ -201,7 +201,7 @@ pre-push:
 
 ### 可复用组件
 
-| 资源 | 智能知识系统 | LingFlow | 共享方式 |
+| 资源 | 智能知识系统 | lingflow | 共享方式 |
 |------|------------|----------|---------|
 | Hooks 框架 | ✅ 已实施 | 🔄 可复用 | 全局 Hooks |
 | 规则文档 | ✅ V4.0 | 🔄 可适配 | 定制化 |
@@ -215,7 +215,7 @@ pre-push:
       ↓
    提取经验
       ↓
-LingFlow 应用（避免重复踩坑）
+lingflow 应用（避免重复踩坑）
       ↓
   反馈改进
       ↓
@@ -226,7 +226,7 @@ LingFlow 应用（避免重复踩坑）
 
 ## 💡 核心洞察
 
-### 为什么对 LingFlow 特别重要？
+### 为什么对 lingflow 特别重要？
 
 1. **多智能体复杂系统**
    - 更需要规范化
@@ -272,13 +272,13 @@ LingFlow 应用（避免重复踩坑）
 3. **开始试点**
    ```bash
    # 复制智能知识系统的 Hooks 框架
-   cp ~/.git-hooks/pre-commit ~/LingFlow/.git/hooks/
-   # 根据 LingFlow 特点定制
+   cp ~/.git-hooks/pre-commit ~/lingflow/.git/hooks/
+   # 根据 lingflow 特点定制
    ```
 
 ### 中期规划
 
-1. **建立 LingFlow 规则文档**
+1. **建立 lingflow 规则文档**
    ```markdown
    # LINGFLOW_DEVELOPMENT_RULES.md
    ## 智能体开发规范
@@ -304,7 +304,7 @@ LingFlow 应用（避免重复踩坑）
 
 ## 🎉 总结
 
-**Hooks 系统 v1.2.0 对 LingFlow 的核心意义**：
+**Hooks 系统 v1.2.0 对 lingflow 的核心意义**：
 
 1. **治理升级**：从人工管理到自动化规则执行
 2. **质量保障**：AI 开发也有"质量守门员"
@@ -313,10 +313,10 @@ LingFlow 应用（避免重复踩坑）
 5. **可持续发展**：建立长期可维护的开发流程
 
 **一句话总结**：
-> Hooks 系统让 LingFlow 的 AI 辅助开发从"依赖人工记忆"升级为"规则自动执行"，确保项目长期健康发展。
+> Hooks 系统让 lingflow 的 AI 辅助开发从"依赖人工记忆"升级为"规则自动执行"，确保项目长期健康发展。
 
 ---
 
 **文档生成时间**: 2026-03-29
 **参考**: 智能知识系统 Hooks 系统 v1.2.0
-**适用项目**: LingFlow - 多智能体协调系统
+**适用项目**: lingflow - 多智能体协调系统

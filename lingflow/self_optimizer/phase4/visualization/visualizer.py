@@ -1,5 +1,5 @@
 """
-LingFlow Phase 4: 主可视化类
+lingflow Phase 4: 主可视化类
 
 协调数据处理器和图表生成器，提供统一的可视化接口。
 """

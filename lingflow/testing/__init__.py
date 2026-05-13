@@ -1,5 +1,5 @@
 """
-LingFlow Testing Framework
+lingflow Testing Framework
 
 简化的测试框架，移除过度抽象。
 """

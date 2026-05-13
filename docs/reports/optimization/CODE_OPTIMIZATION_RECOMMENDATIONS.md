@@ -1,4 +1,4 @@
-# LingFlow 代码优化建议报告
+# lingflow 代码优化建议报告
 
 **生成日期**: 2026-03-29
 **项目版本**: 3.5.7
@@ -8,7 +8,7 @@
 
 ## 执行摘要
 
-本报告基于对 LingFlow 项目的全面代码审查，提供了结构化的优化建议。当前项目整体代码质量良好，但存在一些可以改进的领域。
+本报告基于对 lingflow 项目的全面代码审查，提供了结构化的优化建议。当前项目整体代码质量良好，但存在一些可以改进的领域。
 
 ### 关键指标
 
@@ -252,15 +252,15 @@ def get_config(
 **建议：**
 ```python
 # 统一错误处理基类
-class LingFlowError(Exception):
-    """LingFlow 基础异常"""
+class lingflowError(Exception):
+    """lingflow 基础异常"""
     def __init__(self, message: str, code: str = "LF_ERROR"):
         self.message = message
         self.code = code
         super().__init__(f"[{code}] {message}")
 
 # 特定错误类型
-class SkillLoadError(LingFlowError):
+class SkillLoadError(lingflowError):
     """技能加载错误"""
     def __init__(self, skill_name: str, reason: str):
         super().__init__(
@@ -268,7 +268,7 @@ class SkillLoadError(LingFlowError):
             code="SKILL_LOAD_ERROR"
         )
 
-class WorkflowExecutionError(LingFlowError):
+class WorkflowExecutionError(lingflowError):
     """工作流执行错误"""
     pass
 ```
@@ -532,7 +532,7 @@ class SkillRegistry:
 
 ## 9. 结论
 
-LingFlow 项目整体代码质量良好，已在 v3.5.7 版本完成了重要的性能优化（配置缓存）。当前主要的改进空间在于：
+lingflow 项目整体代码质量良好，已在 v3.5.7 版本完成了重要的性能优化（配置缓存）。当前主要的改进空间在于：
 
 1. **代码复杂度控制** - 需要拆分大文件和重构高复杂度函数
 2. **测试覆盖率** - 需要测量并提升到 80% 以上
@@ -545,4 +545,4 @@ LingFlow 项目整体代码质量良好，已在 v3.5.7 版本完成了重要的
 
 **报告生成：** 2026-03-29
 **下次审查：** 实施完成后（约 4-6 周）
-**联系方式：** LingFlow 开发团队
+**联系方式：** lingflow 开发团队

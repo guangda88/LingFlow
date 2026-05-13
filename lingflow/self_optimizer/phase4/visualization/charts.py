@@ -1,5 +1,5 @@
 """
-LingFlow Phase 4: 图表生成器
+lingflow Phase 4: 图表生成器
 
 负责生成HTML和Chart.js图表。
 """
@@ -63,7 +63,7 @@ class ChartGenerator:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LingFlow 参数优化报告</title>
+    <title>lingflow 参数优化报告</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         body {{
@@ -160,7 +160,7 @@ class ChartGenerator:
 </head>
 <body>
     <div class="container">
-        <h1>🚀 LingFlow 参数优化报告</h1>
+        <h1>🚀 lingflow 参数优化报告</h1>
 
         <div class="summary">
             <div class="metric">

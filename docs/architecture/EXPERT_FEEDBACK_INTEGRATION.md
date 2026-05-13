@@ -199,7 +199,7 @@ X-API-Key: sk_live_xxx
 
 **活动方案**:
 ```yaml
-活动名称: LingFlow 30 天技能挑战赛
+活动名称: lingflow 30 天技能挑战赛
 
 时间: v3.8.0 发布后 30 天
 
@@ -209,7 +209,7 @@ X-API-Key: sk_live_xxx
   - 获得社区审核通过
 
 奖励:
-  - 前 10 名: 官方认证 🏆 + LingFlow T 恤 + 官方展示
+  - 前 10 名: 官方认证 🏆 + lingflow T 恤 + 官方展示
   - 前 30 名: 官方徽章 🌟 + 社区推荐
   - 所有参与者: 电子证书 📜
 
@@ -361,4 +361,4 @@ X-API-Key: sk_live_xxx
 
 ---
 
-*LingFlow - 众智混元，万法灵通*
+*lingflow - 众智混元，万法灵通*

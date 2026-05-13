@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: "4-phase root cause process: Observe, Isolate, Hypothesize, Verify. Integrates with LingFlow's code analysis capabilities."
+description: "4-phase root cause process: Observe, Isolate, Hypothesize, Verify. Integrates with lingflow's code analysis capabilities."
 ---
 
 # Systematic Debugging
@@ -61,7 +61,7 @@ Gather accurate, detailed information about the problem.
 - Record log output
 - Take screenshots if relevant
 
-**3. Use LingFlow Code Analysis**
+**3. Use lingflow Code Analysis**
 ```bash
 # Analyze the codebase for clues
 python -c "
@@ -202,17 +202,17 @@ python reproduce_bug.py
 # Run full test suite
 python -m pytest
 
-# Use LingFlow test engine
+# Use lingflow test engine
 python comprehensive_test_runner.py
 ```
 
-## LingFlow Integration
+## lingflow Integration
 
-This skill integrates with LingFlow's existing capabilities:
+This skill integrates with lingflow's existing capabilities:
 
 ### Code Analysis
 
-Use LingFlow's code analyzer to understand the codebase:
+Use lingflow's code analyzer to understand the codebase:
 
 ```python
 from lingflow.code_analyzer import CodeAnalyzer
@@ -227,7 +227,7 @@ report = analyzer.analyze_dimensions([
 
 ### Comprehensive Testing
 
-After fixing, run LingFlow's comprehensive test suite:
+After fixing, run lingflow's comprehensive test suite:
 
 ```bash
 # Full test suite
@@ -242,7 +242,7 @@ python 12_seconds_test_engine_demo.py
 
 ### Root Cause Analysis
 
-LingFlow provides advanced debugging capabilities:
+lingflow provides advanced debugging capabilities:
 
 ```python
 from lingflow.debugger import RootCauseTracer
@@ -308,7 +308,7 @@ def trace_error():
     exc_info = sys.exc_info()
     traceback.print_exception(*exc_info)
 
-    # Or use LingFlow's tracer
+    # Or use lingflow's tracer
     from lingflow.debugger import RootCauseTracer
     tracer = RootCauseTracer()
     tracer.trace(exc_info)
@@ -407,7 +407,7 @@ After fixing, ALWAYS verify:
 ```
 Developer: "The login function sometimes fails with a timeout"
 
-LingFlow (systematic-debugging):
+lingflow (systematic-debugging):
 "Let me follow the 4-phase process.
 
 Phase 1: Observe
@@ -444,7 +444,7 @@ Applying fix:
 Verifying fix...
 [Runs tests, confirms no timeout]
 [Runs regression tests, no issues]
-[Runs LingFlow comprehensive tests, all pass]
+[Runs lingflow comprehensive tests, all pass]
 
 Bug fixed! Root cause was connection pool exhaustion.
 The fix prevents recurrence."
@@ -452,7 +452,7 @@ The fix prevents recurrence."
 
 ## Resources
 
-- LingFlow comprehensive test architecture: `COMPREHENSIVE_TEST_ARCHITECTURE.md`
+- lingflow comprehensive test architecture: `COMPREHENSIVE_TEST_ARCHITECTURE.md`
 - Root cause tracing: `skills/systematic-debugging/root-cause-tracing.md`
 - Defense in depth: `skills/systematic-debugging/defense-in-depth.md`
 - Condition-based waiting: `skills/systematic-debugging/condition-based-waiting.md`

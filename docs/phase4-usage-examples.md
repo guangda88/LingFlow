@@ -1,6 +1,6 @@
 # Phase 4 参数优化使用示例
 
-本文档展示如何使用LingFlow Phase 4的参数优化功能。
+本文档展示如何使用lingflow Phase 4的参数优化功能。
 
 ## 快速开始
 

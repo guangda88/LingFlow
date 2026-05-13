@@ -1,4 +1,4 @@
-# LingFlow 自优化系统 - 实时进度仪表板
+# lingflow 自优化系统 - 实时进度仪表板
 
 **更新时间**: 2026-03-31 01:30
 **系统版本**: v3.6.0
@@ -260,7 +260,7 @@ cat LINGFLOW_OPTIMIZATION_VALIDATION_*.md | tail -30
 
 ---
 
-**LingFlow 自优化系统** - 让代码质量持续自动改进！⚡
+**lingflow 自优化系统** - 让代码质量持续自动改进！⚡
 
 ---
 

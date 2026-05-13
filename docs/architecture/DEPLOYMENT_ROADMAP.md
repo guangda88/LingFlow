@@ -1,4 +1,4 @@
-# LingFlow 发布形态演进路线图
+# lingflow 发布形态演进路线图
 
 **版本**: v1.0.0
 **日期**: 2026-04-02
@@ -8,7 +8,7 @@
 
 ## 📋 执行摘要
 
-本文档基于 LingFlow 当前的发布形态（CLI、Python SDK、MCP Server），规划了**6 种新的发布形态**，以覆盖不同用户群体和使用场景。
+本文档基于 lingflow 当前的发布形态（CLI、Python SDK、MCP Server），规划了**6 种新的发布形态**，以覆盖不同用户群体和使用场景。
 
 ### 现有形态 ✅
 
@@ -78,7 +78,7 @@
 **技术方案**:
 ```python
 # SDK 设计
-class LingFlowSkillsClient:
+class lingflowSkillsClient:
     def list_skills(self, category: str = None) -> List[Skill]
     def execute_skill(self, name: str, **kwargs) -> SkillResult
     def execute_batch(self, tasks: List[Task]) -> List[SkillResult]
@@ -103,7 +103,7 @@ POST   /api/v1/skills/batch        # 批量执行
 **技术方案**:
 ```python
 # SDK 设计
-class LingFlowWorkflowsClient:
+class lingflowWorkflowsClient:
     def list_workflows(self, type_filter: str = None) -> List[Workflow]
     def run_workflow(self, id: str, params: dict, async: bool = True)
     def get_status(self, task_id: str) -> WorkflowStatus
@@ -116,7 +116,7 @@ GET    /api/v1/tasks/{task_id}     # 查询任务状态
 POST   /api/v1/workflows           # 创建自定义工作流
 ```
 
-### 3️⃣ 自优化系统（LingMinOpt）
+### 3️⃣ 自优化系统（lingminopt）
 
 **最适合**: IDE 插件、REST API
 
@@ -128,14 +128,14 @@ POST   /api/v1/workflows           # 创建自定义工作流
 **技术方案**:
 ```python
 # SDK 设计
-class LingFlowOptimizerClient:
+class lingflowOptimizerClient:
     def check_optimization_needed(self, target: str) -> OptimizationReport
     def run_optimization(self, target: str, mode: str) -> OptimizationResult
     def get_suggestions(self, file_path: str) -> List[Suggestion]
 
 # IDE 插件集成
 # 在 VSCode 中显示问题建议（Code Lens）
-# 提供 "Fix with LingFlow" 快捷操作
+# 提供 "Fix with lingflow" 快捷操作
 ```
 
 ### 4️⃣ 情报系统（GitHub/npm Trends）
@@ -151,7 +151,7 @@ class LingFlowOptimizerClient:
 **技术方案**:
 ```python
 # SDK 设计
-class LingFlowIntelligenceClient:
+class lingflowIntelligenceClient:
     def get_github_trends(self, keywords: List[str]) -> List[Repo]
     def get_npm_trends(self, keywords: List[str]) -> List[Package]
     def subscribe_report(self, frequency: str, webhook: str)
@@ -174,7 +174,7 @@ POST   /api/v1/intelligence/subscribe  # 订阅报告
 **技术方案**:
 ```python
 # SDK 设计
-class LingFlowRequirementsClient:
+class lingflowRequirementsClient:
     def create_requirement(self, **kwargs) -> Requirement
     def get_requirement(self, id: str) -> Requirement
     def update_requirement(self, id: str, **kwargs)
@@ -217,7 +217,7 @@ class LingFlowRequirementsClient:
 **技术方案**:
 ```yaml
 # GitHub Action 示例
-- name: LingFlow 测试
+- name: lingflow 测试
   uses: guangda88/lingflow-action@v1
   with:
     test-type: 'all'
@@ -349,15 +349,15 @@ CMD ["lingflow-mcp", "run"]
 ```python
 # lingflow-sdk/package.py
 """
-LingFlow Python SDK
+lingflow Python SDK
 
-轻量级客户端，简化 LingFlow 功能调用。
+轻量级客户端，简化 lingflow 功能调用。
 """
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 
-class LingFlowClient:
-    """LingFlow 客户端
+class lingflowClient:
+    """lingflow 客户端
 
     支持两种模式：
     - 本地模式：直接调用 lingflow 库
@@ -412,14 +412,14 @@ class LingFlowClient:
             return self._local_call(method, endpoint, **kwargs)
 
 # 使用示例
-from lingflow_sdk import LingFlowClient
+from lingflow_sdk import lingflowClient
 
 # 本地模式
-client = LingFlowClient(work_dir="./my-project")
+client = lingflowClient(work_dir="./my-project")
 result = client.skills.execute("code-generation", prompt="...")
 
 # 远程模式
-client = LingFlowClient(
+client = lingflowClient(
     api_key="sk-xxx",
     base_url="https://api.lingflow.dev"
 )
@@ -437,7 +437,7 @@ twine upload dist/*
 ### 🟡 Phase 2: 用户体验增强（7 周）
 
 #### Week 5-7: VSCode 插件
-**目标**: 将 LingFlow 集成到编辑器
+**目标**: 将 lingflow 集成到编辑器
 
 **技术栈**:
 - TypeScript + VSCode Extension API
@@ -483,7 +483,7 @@ export function activate(context: vscode.ExtensionContext) {
             const filePath = editor.document.uri.fsPath;
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
-                title: 'Running LingFlow code review...'
+                title: 'Running lingflow code review...'
             }, async () => {
                 // 调用 API 或 CLI
                 const result = await reviewCode(filePath);
@@ -498,7 +498,7 @@ export function activate(context: vscode.ExtensionContext) {
         provideCodeActions(document, range) {
             const actions = [];
             actions.push({
-                title: 'Fix with LingFlow',
+                title: 'Fix with lingflow',
                 command: 'lingflow.fixIssue'
             });
             return actions;
@@ -678,4 +678,4 @@ lingflow marketplace publish ./my-skill
 
 ---
 
-**"众智混元，万法灵通"** - 让 LingFlow 的工程流能力触达每一位开发者
+**"众智混元，万法灵通"** - 让 lingflow 的工程流能力触达每一位开发者

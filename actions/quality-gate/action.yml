@@ -1,12 +1,12 @@
-name: 'LingFlow Quality Gate'
-description: 'AI-powered code review and quality gate for LingFlow'
+name: 'lingflow Quality Gate'
+description: 'AI-powered code review and quality gate for lingflow'
 branding:
   icon: 'check-circle'
   color: 'blue'
 
 inputs:
   command:
-    description: 'LingFlow command to run'
+    description: 'lingflow command to run'
     required: false
     default: 'review'
 
@@ -21,7 +21,7 @@ inputs:
     default: ${{ github.token }}
 
   api_key:
-    description: 'LingFlow API Key (optional, for advanced features)'
+    description: 'lingflow API Key (optional, for advanced features)'
     required: false
 
   fail_on_error:

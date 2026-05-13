@@ -1,10 +1,10 @@
 #!/bin/bash
-# LingFlow CLI 快速演示脚本
+# lingflow CLI 快速演示脚本
 
 set -e
 
 echo "================================"
-echo "LingFlow CLI 快速演示"
+echo "lingflow CLI 快速演示"
 echo "================================"
 echo ""
 

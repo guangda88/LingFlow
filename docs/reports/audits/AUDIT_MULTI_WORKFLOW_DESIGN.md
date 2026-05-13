@@ -1,4 +1,4 @@
-# LingFlow 多工程流系统设计审计
+# lingflow 多工程流系统设计审计
 
 **审计时间**: 2026-03-31
 **版本**: v3.8.0
@@ -483,7 +483,7 @@ def execute_workflow(self, tasks: List[Task]) -> Dict[str, WorkflowResult]:
 ### 审计信息
 
 ```
-审计员: LingFlow 架构审计系统
+审计员: lingflow 架构审计系统
 审计时间: 2026-03-31 23:00
 审计范围: 多工程流系统设计
 审计类型: 设计架构审计
@@ -515,5 +515,5 @@ def execute_workflow(self, tasks: List[Task]) -> Dict[str, WorkflowResult]:
 ---
 
 *审计完成时间: 2026-03-31*
-*审计工具: LingFlow Design Auditor*
+*审计工具: lingflow Design Auditor*
 *系统版本: v3.8.0*

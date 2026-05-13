@@ -700,4 +700,4 @@ lingflow optimize export --goal structure -o config.yaml
 
 **文档版本**: v1.0
 **最后更新**: 2026-03-31
-**负责人**: LingFlow架构团队
+**负责人**: lingflow架构团队

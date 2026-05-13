@@ -1,4 +1,4 @@
-# LingFlow V4.0 方案严格审查报告
+# lingflow V4.0 方案严格审查报告
 
 **版本**: V4.0.0
 **日期**: 2026-03-25
@@ -10,7 +10,7 @@
 
 ## 执行摘要
 
-经过严格审查，发现 LingFlow V4.0 方案存在 **37 个问题**，分为：
+经过严格审查，发现 lingflow V4.0 方案存在 **37 个问题**，分为：
 
 | 严重程度 | 数量 | 说明 |
 |---------|------|------|
@@ -168,7 +168,7 @@ class Result(Generic[T]):
     def data(self) -> T:  # ✅ 返回类型是 T，不是 Optional[T]
         """获取数据，失败时抛出异常"""
         if self.is_error:
-            raise LingFlowError(
+            raise lingflowError(
                 self.error or "Cannot access data of failed result",
                 code=self.code,
                 details=self.details
@@ -265,7 +265,7 @@ class Result(Generic[T]):
         if self.is_error:
             if default is not None:
                 return default
-            raise LingFlowError(
+            raise lingflowError(
                 self.error or "Cannot access data of failed result",
                 code=self.code
             )
@@ -295,7 +295,7 @@ AsyncSkillService 使用线程池伪装异步，这不是真正的异步。
 **问题代码**：
 ```python
 class AsyncSkillService:
-    def __init__(self, config: LingFlowConfig, cache_manager: Optional['CacheManager'] = None):
+    def __init__(self, config: lingflowConfig, cache_manager: Optional['CacheManager'] = None):
         self._sync_service = SkillService(config, cache_manager)
         self._executor = ThreadPoolExecutor(max_workers=config.thread_pool_size)
 
@@ -345,7 +345,7 @@ async def test():
 class AsyncSkillService:
     """技能服务（真正的异步实现）"""
 
-    def __init__(self, config: LingFlowConfig, cache_manager: Optional['AsyncCacheManager'] = None):
+    def __init__(self, config: lingflowConfig, cache_manager: Optional['AsyncCacheManager'] = None):
         self._config = config
         self._cache_manager = cache_manager
         self._skills: Dict[str, BaseSkill] = {}
@@ -441,7 +441,7 @@ class AsyncSkillService:
 class HybridSkillService:
     """混合技能服务（支持同步和异步技能）"""
 
-    def __init__(self, config: LingFlowConfig, cache_manager: Optional['AsyncCacheManager'] = None):
+    def __init__(self, config: lingflowConfig, cache_manager: Optional['AsyncCacheManager'] = None):
         self._config = config
         self._cache_manager = cache_manager
         self._skills: Dict[str, BaseSkill] = {}
@@ -564,7 +564,7 @@ import asyncio
 class AsyncCacheManager:
     """异步缓存管理器"""
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
         self._cache: OrderedDict[str, Dict[str, Any]] = OrderedDict()
         self._stats = {
@@ -668,7 +668,7 @@ Monitor 类在异步环境中使用 threading.RLock，这是错误的。
 **问题代码**：
 ```python
 class Monitor:
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._lock = threading.RLock()  # ❌ 在异步环境中不应该使用线程锁
 
     def increment_counter(self, name: str, value: int = 1):
@@ -712,7 +712,7 @@ await asyncio.gather(task1(), task2())
 class AsyncMonitor:
     """异步监控器"""
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
         self._counters: Dict[str, int] = defaultdict(int)
         self._timers: Dict[str, List[float]] = defaultdict(list)
@@ -809,7 +809,7 @@ await asyncio.gather(*[task() for _ in range(10)])
 class CacheManagerV2:
     """缓存管理器（使用分段锁）"""
 
-    def __init__(self, config: LingFlowConfig, num_shards: int = 16):
+    def __init__(self, config: lingflowConfig, num_shards: int = 16):
         self._config = config
         self._num_shards = num_shards
         # ✅ 使用多个锁，每个 shard 一个锁
@@ -882,7 +882,7 @@ class CacheManagerV2:
 class LockFreeCacheManager:
     """无锁缓存管理器（使用读写锁）"""
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
         self._cache: Dict[str, Dict[str, Any]] = {}
         self._lock = threading.RWLock()  # ✅ 使用读写锁（需要第三方库）
@@ -930,7 +930,7 @@ CacheManager 只限制了条目数量，没有限制实际内存使用。
 **问题代码**：
 ```python
 class CacheManager:
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
         self._cache: OrderedDict[str, Dict[str, Any]] = OrderedDict()
         self._stats = {"total_size": 0}
@@ -962,7 +962,7 @@ class CacheManager:
 **实际影响**：
 ```python
 # 场景：缓存一个大对象
-cache = CacheManager(LingFlowConfig(cache_max_size=1000))
+cache = CacheManager(lingflowConfig(cache_max_size=1000))
 
 # 缓存一个 100MB 的对象
 large_data = {"big_list": list(range(10000000))}
@@ -979,7 +979,7 @@ import sys
 class CacheManagerV3:
     """缓存管理器（支持内存限制）"""
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
         self._cache: OrderedDict[str, Dict[str, Any]] = OrderedDict()
         self._lock = threading.RLock()
@@ -1126,7 +1126,7 @@ from collections import deque
 class MonitorV2:
     """监控器（支持数据持久化）"""
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
         self._counters: Dict[str, int] = defaultdict(int)
         self._timers: Dict[str, TimerData] = {}
@@ -1306,7 +1306,7 @@ def validate(self) -> Result[None]:
 **实际影响**：
 ```python
 # 场景：无效配置
-config = LingFlowConfig()
+config = lingflowConfig()
 config.max_parallel = 1000000  # ❌ 可能导致系统崩溃
 config.cache_max_size = 1000000000  # ❌ 可能导致内存耗尽
 
@@ -1316,8 +1316,8 @@ config.validate()  # ❌ 验证通过，但配置是无效的
 **修复方案**：
 ```python
 @dataclass
-class LingFlowConfigV2:
-    """LingFlow 配置类（严格验证）"""
+class lingflowConfigV2:
+    """lingflow 配置类（严格验证）"""
 
     # 工作流配置
     max_parallel: int = 2
@@ -1434,7 +1434,7 @@ class PluginService:
 class SecurePluginService:
     """安全的插件服务（带沙箱）"""
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
         self._plugins: Dict[str, BasePlugin] = {}
         self._skill_plugins: Dict[str, List[SkillPlugin]] = {}
@@ -1623,7 +1623,7 @@ import logging
 class SkillServiceV2:
     """技能服务（带日志）"""
 
-    def __init__(self, config: LingFlowConfig, cache_manager: Optional['CacheManager'] = None):
+    def __init__(self, config: lingflowConfig, cache_manager: Optional['CacheManager'] = None):
         self._config = config
         self._cache_manager = cache_manager
         self._skills: Dict[str, BaseSkill] = {}

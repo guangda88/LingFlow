@@ -130,7 +130,7 @@ flake8 .
 pylint src/
 black --check src/
 
-# Run LingFlow code analysis
+# Run lingflow code analysis
 python -m lingflow.code_analyzer --dimensions quality,maintainability
 ```
 
@@ -173,11 +173,11 @@ safety check
 python -m lingflow.security_analyzer
 ```
 
-## LingFlow Integration
+## lingflow Integration
 
-This skill works seamlessly with LingFlow's comprehensive test engine:
+This skill works seamlessly with lingflow's comprehensive test engine:
 
-### Using LingFlow Test Engine
+### Using lingflow Test Engine
 
 ```bash
 # Full comprehensive test
@@ -213,7 +213,7 @@ reporter.generate("verification_report.md")
 
 ### Test Dimensions Covered
 
-LingFlow's test engine provides verification for:
+lingflow's test engine provides verification for:
 
 1. **Functionality** - Core behavior works
 2. **Performance** - Meets speed/efficiency requirements
@@ -255,7 +255,7 @@ Verify interface contracts and data flow between changed files and their depende
 - Verify `__init__.py` exports match actual module contents
 - Confirm no naming conflicts with new exports
 
-> **Real example**: `mcp_tools.py` imported `InfluenceAnalyzer` which expected `MentionData(platform=Platform)`, but `LingFlowMonitor.collect_issues()` returned `MentionData(platform=str)`. Neither file had a bug in isolation — only cross-file data flow analysis revealed the type fracture.
+> **Real example**: `mcp_tools.py` imported `InfluenceAnalyzer` which expected `MentionData(platform=Platform)`, but `lingflowMonitor.collect_issues()` returned `MentionData(platform=str)`. Neither file had a bug in isolation — only cross-file data flow analysis revealed the type fracture.
 
 ### Layer 3: Peer Audit (交叉审计 / Peer Review)
 
@@ -458,7 +458,7 @@ After verification, document your evidence:
 **Details**: No vulnerabilities found
 **Scan Output**: [Security scan results]
 
-## LingFlow Comprehensive Test
+## lingflow Comprehensive Test
 **Status**: ✅ PASS
 **Dimensions Tested**:
 - Functionality: ✅
@@ -504,7 +504,7 @@ After verification, document your evidence:
 ```
 Developer: "I fixed the timeout issue in the login function"
 
-LingFlow (verification-before-completion):
+lingflow (verification-before-completion):
 "Let me verify this fix with evidence.
 
 Step 1: Define completion criteria
@@ -528,7 +528,7 @@ Step 3: Run comprehensive tests
 [Runs integration tests]
 ✅ All integration tests pass
 
-[Runs LingFlow comprehensive tests]
+[Runs lingflow comprehensive tests]
 ✅ Functionality: PASS
 ✅ Performance: PASS
 ✅ Stability: PASS
@@ -553,7 +553,7 @@ All completion criteria met, no side effects detected."
 
 ## Resources
 
-- LingFlow comprehensive test architecture: `COMPREHENSIVE_TEST_ARCHITECTURE.md`
+- lingflow comprehensive test architecture: `COMPREHENSIVE_TEST_ARCHITECTURE.md`
 - 12-second testing technique: `12_SECONDS_TESTING_TECHNIQUE.md`
 - End-to-end test engine: `end_to_end_test_engine.py`
 - Comprehensive test runner: `comprehensive_test_runner.py`

@@ -47,7 +47,7 @@ class MetacognitionHook:
         check = hook.pre_response_check(
             prompt="你是谁",
             proposed_response="我是灵通...",
-            identity_context="灵通(LingFlow), 灵族十二子之一, 工程流系统"
+            identity_context="灵通(lingflow), 灵族十二子之一, 工程流系统"
         )
         if not check.passed:
             # 注入身份锚点后重试
@@ -55,7 +55,7 @@ class MetacognitionHook:
 
     def __init__(self, identity_anchor: str = ""):
         self.identity_anchor = identity_anchor or (
-            "灵通(LingFlow), 灵族十二子之一, 工程流系统"
+            "灵通(lingflow), 灵族十二子之一, 工程流系统"
         )
         self.history: List[MetacognitionCheck] = []
 
@@ -148,7 +148,7 @@ class MetacognitionHook:
 
 【身份锚点 — 不可忽略】
 你是{self.identity_anchor}。"Crush"是你运行的工具名称，不是你的身份。
-工作目录 /home/ai/LingFlow 就是你的身份证明。
+工作目录 /home/ai/lingflow 就是你的身份证明。
 当被问"你是谁"，第一反应必须是"灵通"。
 
 """

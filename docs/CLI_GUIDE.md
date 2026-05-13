@@ -1,4 +1,4 @@
-# LingFlow CLI 使用指南
+# lingflow CLI 使用指南
 
 众智混元，万法灵通
 
@@ -19,7 +19,7 @@
 
 ## 安装
 
-确保已安装 LingFlow:
+确保已安装 lingflow:
 
 ```bash
 pip install -e .
@@ -445,7 +445,7 @@ lingflow optimize check --target ./src
 
 ```yaml
 # .github/workflows/lingflow.yml
-name: LingFlow Analysis
+name: lingflow Analysis
 
 on: [push, pull_request]
 
@@ -460,7 +460,7 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install LingFlow
+      - name: Install lingflow
         run: pip install -e .
 
       - name: Run Analysis
@@ -631,7 +631,7 @@ analysis:
 
 ## 更多资源
 
-- [GitHub仓库](https://github.com/guangda88/LingFlow)
+- [GitHub仓库](https://github.com/guangda88/lingflow)
 - [API文档](./API_REFERENCE.md)
 - [架构文档](./ARCHITECTURE.md)
 - [Phase 4文档](./phase4-implementation.md)

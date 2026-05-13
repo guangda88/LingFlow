@@ -1,4 +1,4 @@
-# 基于最新研究的 LingFlow 优化方向
+# 基于最新研究的 lingflow 优化方向
 
 **日期**: 2026-03-22
 **参考来源**:
@@ -148,12 +148,12 @@ design_system:
 
 ---
 
-## 🎯 对 LingFlow 的核心启示
+## 🎯 对 lingflow 的核心启示
 
 ### 启示 1：必须支持 Spec Coding 模式
 
 **现状**：
-- LingFlow 有技能系统（`brainstorming`, `writing-plans`）
+- lingflow 有技能系统（`brainstorming`, `writing-plans`）
 - 但缺少结构化的规格书生成和验证能力
 
 **优化方向**：
@@ -542,7 +542,7 @@ class IterativeOptimizer:
 
 ---
 
-## 🚀 LingFlow v3.3.0 优化路线图
+## 🚀 lingflow v3.3.0 优化路线图
 
 ### 第一阶段：Spec Coding 核心功能（2-3 周）
 
@@ -711,7 +711,7 @@ lingflow quality report --code="./src" --output="report.md"
 ### 当前架构（v3.2.0）
 
 ```
-LingFlow v3.2.0
+lingflow v3.2.0
 ├── 技能系统（22+ 技能）
 ├── 工作流系统（YAML 定义）
 ├── 多代理协调（并行执行）
@@ -723,7 +723,7 @@ LingFlow v3.2.0
 ### 优化后架构（v3.3.0 目标）
 
 ```
-LingFlow v3.3.0
+lingflow v3.3.0
 ├── 📝 Spec Coding 核心
 │   ├── 规格书生成器（三层规范体系）
 │   ├── Spec 驱动代码生成器
@@ -868,7 +868,7 @@ LingFlow v3.3.0
 
 ### 与现有工具的对比
 
-| 特性 | Cursor | Claude Code | LingFlow v3.2.0 | LingFlow v3.3.0 |
+| 特性 | Cursor | Claude Code | lingflow v3.2.0 | lingflow v3.3.0 |
 |------|--------|-------------|-------------------|-------------------|
 | **Spec Coding** | ⚠️ 部分支持 | ✅ 支持 | ❌ 不支持 | ✅ 完整支持 |
 | **三层规范** | ❌ | ⚠️ 手动配置 | ❌ | ✅ 自动化 |
@@ -958,7 +958,7 @@ LingFlow v3.3.0
 
 ## 🎯 总结
 
-基于 Anthropic 和 CSDN 的研究，LingFlow 的核心优化方向是：
+基于 Anthropic 和 CSDN 的研究，lingflow 的核心优化方向是：
 
 1. **实施 Spec Coding**：从 "Vibe Coding" 转向 "Spec Coding"，通过三层规范体系（约束、示例、视觉）确保代码质量和一致性
 
@@ -975,5 +975,5 @@ LingFlow v3.3.0
 ---
 
 **文档版本**: v1.0
-**LingFlow 目标版本**: v3.3.0
+**lingflow 目标版本**: v3.3.0
 **预计完成时间**: 2026-06-01

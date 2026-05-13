@@ -1,5 +1,5 @@
 #!/bin/bash
-# LingFlow Hooks 测试脚本 v1.0
+# lingflow Hooks 测试脚本 v1.0
 # 功能: 验证 Hooks 系统正确安装和运行
 
 set -euo pipefail
@@ -209,7 +209,7 @@ test_deployment_guide_exist() {
 main() {
     echo ""
     echo -e "${BLUE}========================================${NC}"
-    echo -e "${BLUE}  LingFlow Hooks 系统测试 v1.0${NC}"
+    echo -e "${BLUE}  lingflow Hooks 系统测试 v1.0${NC}"
     echo -e "${BLUE}========================================${NC}"
     echo ""
 
@@ -217,7 +217,7 @@ main() {
     if [ -f "pyproject.toml" ]; then
         log_info "当前目录: $(pwd)"
     else
-        log_fail "请在 LingFlow 项目根目录运行此脚本"
+        log_fail "请在 lingflow 项目根目录运行此脚本"
         exit 1
     fi
 

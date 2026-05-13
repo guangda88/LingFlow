@@ -1,4 +1,4 @@
-# 🎉 LingMinOpt 实施完成总结
+# 🎉 lingminopt 实施完成总结
 
 > **日期**: 2026-04-01
 > **状态**: ✅ 核心框架已完成并可用
@@ -113,7 +113,7 @@ print(f"Pareto前沿: {len(result.pareto_front)} 个解")
 ## 📊 技术架构
 
 ```
-LingMinOpt 灵极优框架
+lingminopt 灵极优框架
 │
 ├── 搜索空间 (SearchSpace)
 │   ├── 离散参数 (Discrete)
@@ -147,7 +147,7 @@ LingMinOpt 灵极优框架
 
 ## 📈 预期效果
 
-| 指标 | 当前 | 使用LingMinOpt后 | 提升 |
+| 指标 | 当前 | 使用lingminopt后 | 提升 |
 |------|------|-----------------|------|
 | 参数搜索次数 | 100（网格） | 30（贝叶斯） | **70%↓** |
 | 优化时间 | 10分钟 | 3分钟 | **70%↓** |
@@ -261,7 +261,7 @@ for point in result.pareto_front:
 
 ### 本周计划
 
-- [ ] 在实际项目中试用LingMinOpt
+- [ ] 在实际项目中试用lingminopt
 - [ ] 收集优化结果和反馈
 - [ ] 调整搜索空间和评估函数
 - [ ] 记录优化效果
@@ -330,8 +330,8 @@ for point in result.pareto_front:
 
 ### 社区
 
-- 🐛 问题反馈: https://github.com/guangda88/LingFlow/issues
-- 💬 讨论交流: https://github.com/guangda88/LingFlow/discussions
+- 🐛 问题反馈: https://github.com/guangda88/lingflow/issues
+- 💬 讨论交流: https://github.com/guangda88/lingflow/discussions
 - 📚 文档站点: https://lingflow.readthedocs.io/
 
 ---
@@ -340,7 +340,7 @@ for point in result.pareto_front:
 
 ### 核心成就
 
-1. ✅ **完整的LingMinOpt框架** - 从设计到实现
+1. ✅ **完整的lingminopt框架** - 从设计到实现
 2. ✅ **灵活的搜索空间** - 支持3种参数类型
 3. ✅ **高效的优化算法** - 贝叶斯优化 + 多目标优化
 4. ✅ **完善的文档** - 3份核心文档 + 示例代码
@@ -360,7 +360,7 @@ python -c "from lingflow.self_optimizer import quick_optimize; quick_optimize('y
 
 **版本**: v1.0.0
 **日期**: 2026-04-01
-**维护者**: LingFlow Team
+**维护者**: lingflow Team
 **许可**: MIT License
 
-🎉 **LingMinOpt灵极优框架已完全就绪，祝您优化愉快！**
+🎉 **lingminopt灵极优框架已完全就绪，祝您优化愉快！**

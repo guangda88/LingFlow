@@ -12,7 +12,7 @@ from .implementation import (
 )
 
 __version__ = "1.0.0"
-__author__ = "LingFlow Team"
+__author__ = "lingflow Team"
 
 __all__ = [
     "JavaScriptCodeReviewSkill",

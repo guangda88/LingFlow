@@ -280,7 +280,7 @@ class TestCompressNow:
     def test_compress_without_messages(self, cm):
         summary = cm.compress_now()
         assert isinstance(summary, str)
-        assert "LingFlow" in summary
+        assert "lingflow" in summary
 
 
 class TestGetRecoverySummary:

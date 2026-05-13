@@ -1,4 +1,4 @@
-# 🚀 LingFlow v3.8.0 - Quick Release Completion
+# 🚀 lingflow v3.8.0 - Quick Release Completion
 
 **Automated Steps**: ✅ Complete (Steps 1-3)
 **Manual Steps**: ⏳ Pending (Steps 4-5)
@@ -31,7 +31,7 @@ docker pull guangda88/lingflow-api:latest
 ### Step 5: Create GitHub Release (3 min)
 
 **Option A: Web Interface**
-1. Visit: https://github.com/guangda88/LingFlow/releases/new
+1. Visit: https://github.com/guangda88/lingflow/releases/new
 2. Tag: `v3.8.0`
 3. Title: `🎉 v3.8.0 - AI生态平台`
 4. Description: Copy from `RELEASE_v3.8.0.md`
@@ -65,7 +65,7 @@ gh release create v3.8.0 \
 
 - **PyPI**: https://pypi.org/project/lingflow-core/
 - **Docker Hub**: https://hub.docker.com/r/guangda88/lingflow-api (after push)
-- **GitHub Release**: https://github.com/guangda88/LingFlow/releases (after creation)
+- **GitHub Release**: https://github.com/guangda88/lingflow/releases (after creation)
 
 ---
 

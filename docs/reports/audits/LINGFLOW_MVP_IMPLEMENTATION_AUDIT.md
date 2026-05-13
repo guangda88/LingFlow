@@ -1,4 +1,4 @@
-# LingFlow MVP 实施前严格自我审查
+# lingflow MVP 实施前严格自我审查
 
 **日期**: 2026-03-30
 **审查对象**: MVP 实施计划和初始代码
@@ -15,7 +15,7 @@
 ⚠️ 审查未通过
 
 原因:
-  1. ❌ 项目定位混乱（当前在 /home/ai/LingFlow，但这是新项目）
+  1. ❌ 项目定位混乱（当前在 /home/ai/lingflow，但这是新项目）
   2. ❌ 未充分验证技术可行性
   3. ❌ 缺少用户需求验证
   4. ⚠️ SQLite 设计未充分测试
@@ -32,11 +32,11 @@
 
 ```python
 # 当前状态
-项目路径: /home/ai/LingFlow
-主项目: /home/ai/zhineng-knowledge-system
+项目路径: /home/ai/lingflow
+主项目: /home/ai/lingzhi
 
 问题:
-  1. LingFlow 是独立项目还是子项目？
+  1. lingflow 是独立项目还是子项目？
   2. 与智能知识系统的关系是什么？
   3. 是否应该在智能知识系统内实施？
   4. 项目边界在哪里？
@@ -48,23 +48,23 @@
 ❌ 核心矛盾:
 
 价值创造分析说:
-  "LingFlow 作为 AI Coding Tools 的增强组件"
+  "lingflow 作为 AI Coding Tools 的增强组件"
 
 但实际行为:
-  在 /home/ai/LingFlow 创建独立项目
+  在 /home/ai/lingflow 创建独立项目
 
 矛盾:
   如果是增强组件，为什么创建独立项目？
   如果是独立项目，为什么说不是平台？
 
 问题根源:
-  未明确 LingFlow 的产品形态
+  未明确 lingflow 的产品形态
 ```
 
 ### 1.3 需要明确的问题
 
 ```
-1. LingFlow 是什么？
+1. lingflow 是什么？
    a. Python 库（可 pip install）？
    b. 独立服务（需要部署）？
    c. 插件（集成到现有工具）？
@@ -88,7 +88,7 @@
 ❌ 项目定位不清晰，无法继续实施
 
 必须先明确:
-  1. LingFlow 的产品形态
+  1. lingflow 的产品形态
   2. 与主项目的关系
   3. 实施路径
 ```
@@ -465,7 +465,7 @@ Week 7-8: 测试、文档、Beta
 
 ```
 ✅ 明确产品定位
-   任务: 确定 LingFlow 的产品形态
+   任务: 确定 lingflow 的产品形态
    输出: 产品定位文档
    时间: 1 天
 

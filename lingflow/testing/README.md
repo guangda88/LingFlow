@@ -1,4 +1,4 @@
-# LingFlow 现代化测试框架
+# lingflow 现代化测试框架
 
 ## 目录结构
 
@@ -174,4 +174,4 @@ python -m pytest --cov=lingflow/testing --cov-report=html
 
 - Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - 测试实施计划: TESTING_FRAMEWORK_IMPLEMENTATION_PLAN.md
-- LingMinOpt 架构: LINGFLOW_OPTIMIZATION_REPORT.md
+- lingminopt 架构: LINGFLOW_OPTIMIZATION_REPORT.md

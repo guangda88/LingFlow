@@ -1,4 +1,4 @@
-# LingFlow 自优化系统 API 文档
+# lingflow 自优化系统 API 文档
 
 版本: 3.6.0
 更新日期: 2026-03-31
@@ -31,7 +31,7 @@
 
 ## 自优化系统 (self_optimizer)
 
-LingFlow 的核心自优化能力，基于 LingMinOpt 架构。
+lingflow 的核心自优化能力，基于 lingminopt 架构。
 
 ### 配置管理
 
@@ -939,4 +939,4 @@ feedback = adapter.scan("./my_project")
 
 ## 许可证
 
-© 2026 LingFlow Team. All rights reserved.
+© 2026 lingflow Team. All rights reserved.

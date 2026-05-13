@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LingFlow 优化趋势分析工具"""
+"""lingflow 优化趋势分析工具"""
 
 import json
 from pathlib import Path
@@ -25,7 +25,7 @@ def load_reports():
 def print_summary(reports):
     """打印优化摘要"""
     print("\n" + "=" * 70)
-    print("📊 LingFlow 优化历史摘要")
+    print("📊 lingflow 优化历史摘要")
     print("=" * 70)
 
     if not reports:
@@ -188,7 +188,7 @@ def generate_recommendations(reports):
 def main():
     """主函数"""
     print("=" * 70)
-    print("🔍 LingFlow 优化趋势分析")
+    print("🔍 lingflow 优化趋势分析")
     print("=" * 70)
 
     # 加载报告
@@ -197,7 +197,7 @@ def main():
     if not reports:
         print("\n❌ 没有找到优化报告")
         print("\n提示: 运行优化以生成报告")
-        print("  /home/ai/LingFlow/scripts/run_optimization_simple.sh")
+        print("  /home/ai/lingflow/scripts/run_optimization_simple.sh")
         return
 
     # 打印摘要

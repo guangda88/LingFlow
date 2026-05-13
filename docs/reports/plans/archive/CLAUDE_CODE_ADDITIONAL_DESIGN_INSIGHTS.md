@@ -54,7 +54,7 @@
    - 建议的解决方案
    - 相关文档链接
 
-### LingFlow现状
+### lingflow现状
 
 ```python
 # lingflow/coordination/coordinator.py
@@ -286,7 +286,7 @@ async def agent_crash_recovery(error: Exception, context: dict) -> RecoveryActio
    - 资源使用监控
    - 瓶颈识别
 
-### LingFlow现状
+### lingflow现状
 
 ```python
 # lingflow/workflow/orchestrator.py
@@ -616,7 +616,7 @@ class AgentPool(ResourcePool):
    - 标准化的插件API
    - 版本兼容性
 
-### LingFlow现状
+### lingflow现状
 
 ```python
 # lingflow/core/skill.py
@@ -646,7 +646,7 @@ class PluginMetadata:
     description: str
     author: str
     dependencies: List[str]
-    lingflow_version: str  # 兼容的LingFlow版本
+    lingflow_version: str  # 兼容的lingflow版本
     plugin_type: str  # 'tool', 'agent', 'hook', etc.
 
 class Plugin:
@@ -821,7 +821,7 @@ class PluginManager:
    - 危险操作确认
    - 撤销机制
 
-### LingFlow现状
+### lingflow现状
 
 ```python
 # lingflow/cli.py
@@ -850,7 +850,7 @@ class ConfigWizard:
     async def run(self) -> Dict[str, Any]:
         """运行配置向导"""
 
-        print("🎯 Welcome to LingFlow Configuration Wizard!")
+        print("🎯 Welcome to lingflow Configuration Wizard!")
         print("Let's set up your environment step by step.\n")
 
         # Step 1: 基础配置
@@ -1013,7 +1013,7 @@ class ConfigWizard:
    - 加密传输
    - 定期轮换
 
-### LingFlow现状
+### lingflow现状
 
 ```python
 # lingflow/common/sandbox.py
@@ -1243,7 +1243,7 @@ class AuditLogger:
    - Agent Stub
    - 外部服务隔离
 
-### LingFlow现状
+### lingflow现状
 
 ```python
 # tests/test_agent.py

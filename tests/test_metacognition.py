@@ -243,7 +243,7 @@ class TestKnowledgeBoundaryScenario:
     """Test realistic knowledge boundary scenarios"""
 
     def test_postgresql_migration_scenario(self):
-        """Test PostgreSQL migration scenario (LingYi problem)"""
+        """Test PostgreSQL migration scenario (lingyi problem)"""
         agent = MetacognitiveAgent()
 
         # Declare what AI knows

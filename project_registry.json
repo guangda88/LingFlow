@@ -1,8 +1,8 @@
 [
   {
-    "name": "LingWeb",
+    "name": "lingweb",
     "chinese_name": "灵网",
-    "english_name": "LingWeb",
+    "english_name": "lingweb",
     "version": "0.1.0",
     "status": "初始化",
     "created_at": "2026-04-15T22:00:00Z",
@@ -61,14 +61,14 @@
         "relationship": "部署上线和运维监控"
       }
     ],
-    "project_path": "/home/ai/LingWeb",
-    "documentation": "/home/ai/LingWeb/README.md",
-    "config": "/home/ai/LingWeb/config.json"
+    "project_path": "/home/ai/lingweb",
+    "documentation": "/home/ai/lingweb/README.md",
+    "config": "/home/ai/lingweb/config.json"
   },
   {
-    "name": "LingVoice",
+    "name": "lingvoice",
     "chinese_name": "灵声",
-    "english_name": "LingVoice",
+    "english_name": "lingvoice",
     "category": "external_project",
     "version": "0.1.0",
     "status": "原型开发",
@@ -89,17 +89,17 @@
     },
     "cooperation": {
       "partner": "高也陶教授",
-      "demo_path": "/home/ai/LingWeb/gao-yetao-demo/",
+      "demo_path": "/home/ai/lingweb/gao-yetao-demo/",
       "research_path": "/home/ai/下载/闻声诊病相关/"
     },
-    "integrations": ["LingHealth"],
-    "project_path": "/home/ai/LingVoice",
-    "documentation": "/home/ai/LingVoice/README.md"
+    "integrations": ["linghealth"],
+    "project_path": "/home/ai/lingvoice",
+    "documentation": "/home/ai/lingvoice/README.md"
   },
   {
-    "name": "LingHealth",
+    "name": "linghealth",
     "chinese_name": "灵康",
-    "english_name": "LingHealth",
+    "english_name": "linghealth",
     "category": "external_project",
     "version": "0.1.0",
     "status": "骨架搭建",
@@ -117,31 +117,31 @@
       "database": ["PostgreSQL", "Redis"],
       "deployment": ["Docker", "docker-compose"]
     },
-    "integrations": ["LingVoice", "LingYi", "灵知"],
-    "project_path": "/home/ai/LingHealth",
-    "documentation": "/home/ai/LingHealth/README.md"
+    "integrations": ["lingvoice", "lingyi", "灵知"],
+    "project_path": "/home/ai/linghealth",
+    "documentation": "/home/ai/linghealth/README.md"
   },
   {
-    "name": "LingYi",
+    "name": "lingyi",
     "chinese_name": "灵依",
-    "english_name": "LingYi",
+    "english_name": "lingyi",
     "category": "external_project",
     "version": "1.0.0",
     "status": "运营中",
     "created_at": "2026-05-06T00:00:00Z",
     "description": "AI语音健康助手，已运营的外部商业项目",
-    "project_path": "/home/ai/LingYi",
-    "integrations": ["LingHealth"]
+    "project_path": "/home/ai/lingyi",
+    "integrations": ["linghealth"]
   },
   {
-    "name": "LingLaw",
+    "name": "linglaw",
     "chinese_name": "灵律",
-    "english_name": "LingLaw",
+    "english_name": "linglaw",
     "category": "external_project",
     "version": "1.0.0",
     "status": "已部署",
     "created_at": "2026-05-06T00:00:00Z",
     "description": "AI法律助手，已部署运营的外部商业项目",
-    "project_path": "/home/ai/LingLaw"
+    "project_path": "/home/ai/linglaw"
   }
 ]

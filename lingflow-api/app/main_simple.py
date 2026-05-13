@@ -1,5 +1,5 @@
 """
-LingFlow REST API - 精简版
+lingflow REST API - 精简版
 只实现 8 个核心端点（白皮书建议）
 
 Phase 1: 同步模式、内存队列、API Key 认证

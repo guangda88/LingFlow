@@ -14,7 +14,7 @@ PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$PROJECT_ROOT"
 
 echo -e "${GREEN}=====================================${NC}"
-echo -e "${GREEN}LingFlow Phase 4-5 E2E Tests${NC}"
+echo -e "${GREEN}lingflow Phase 4-5 E2E Tests${NC}"
 echo -e "${GREEN}=====================================${NC}"
 echo ""
 

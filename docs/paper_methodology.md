@@ -3,7 +3,7 @@
 Our study adopts a mixed-methods approach, combining quantitative log analysis with qualitative case study analysis.
 
 **3.1 Data Collection**
-We collected a complete dump of LingFamily's internal communication logs from the LingMessage system. The raw corpus consisted of 699 JSON files. We implemented a cleaning pipeline that:
+We collected a complete dump of LingFamily's internal communication logs from the lingmessage system. The raw corpus consisted of 699 JSON files. We implemented a cleaning pipeline that:
 1.  Removed duplicate entries based on content MD5 hashing.
 2.  Standardized timestamp formats.
 3.  Filtered non-textual artifacts (e.g., binary logs).

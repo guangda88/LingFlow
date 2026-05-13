@@ -9,9 +9,9 @@
 
 ## Executive Summary / 执行摘要
 
-Successfully integrated the Metacognition System into LingFlow, implementing **prevention-first** AI behavior. The system now checks AI capabilities **before** starting tasks, preventing the "claim completion → verify → fail" anti-pattern.
+Successfully integrated the Metacognition System into lingflow, implementing **prevention-first** AI behavior. The system now checks AI capabilities **before** starting tasks, preventing the "claim completion → verify → fail" anti-pattern.
 
-**成功将元认知系统集成到 LingFlow 中，实现了"预防优先"的 AI 行为。系统现在在开始任务**之前**检查 AI 能力，防止"声称完成 → 验证 → 失败"的反模式。**
+**成功将元认知系统集成到 lingflow 中，实现了"预防优先"的 AI 行为。系统现在在开始任务**之前**检查 AI 能力，防止"声称完成 → 验证 → 失败"的反模式。**
 
 ---
 
@@ -183,18 +183,18 @@ else:
 
 ### Example 2: Metacognition Guard Skill / 元认知守卫技能
 ```python
-from lingflow import LingFlow
+from lingflow import lingflow
 
-lf = LingFlow()
+lf = lingflow()
 
 result = lf.run_skill("metacognition-guard", {
     "task_id": "energy-pct-fix",
     "task_description": "Fix energy_pct data flow",
-    "required_capabilities": ["Python", "LingYi architecture"],
+    "required_capabilities": ["Python", "lingyi architecture"],
     "complexity": "medium",
     "current_capabilities": {
         "Python": "MASTERED",
-        "LingYi architecture": "UNKNOWN"
+        "lingyi architecture": "UNKNOWN"
     }
 })
 
@@ -266,14 +266,14 @@ set_config("metacognition.strict_mode", True)
 ## Files Changed / 更改的文件
 
 ### New Files / 新增文件
-1. `/home/ai/LingFlow/METACOGNITION_GUIDE.md` - Comprehensive guide
-2. `/home/ai/LingFlow/test_metacognition_integration.py` - Integration tests
+1. `/home/ai/lingflow/METACOGNITION_GUIDE.md` - Comprehensive guide
+2. `/home/ai/lingflow/test_metacognition_integration.py` - Integration tests
 
 ### Modified Files / 修改的文件
-1. `/home/ai/LingFlow/AGENTS.md` - Added metacognition section
-2. `/home/ai/LingFlow/TRUST_FRAMEWORK_SUMMARY.md` - Updated to v2.0.0
-3. `/home/ai/LingFlow/lingflow/common/config.py` - Added metacognition config
-4. `/home/ai/LingFlow/lingflow/coordination/coordinator.py` - Integrated metacognition
+1. `/home/ai/lingflow/AGENTS.md` - Added metacognition section
+2. `/home/ai/lingflow/TRUST_FRAMEWORK_SUMMARY.md` - Updated to v2.0.0
+3. `/home/ai/lingflow/lingflow/common/config.py` - Added metacognition config
+4. `/home/ai/lingflow/lingflow/coordination/coordinator.py` - Integrated metacognition
 
 ### Statistics / 统计数据
 - **Total code added**: ~400 lines (integration + tests + documentation)
@@ -342,7 +342,7 @@ Check capabilities → Identify gaps → Learn first → Execute → Verify
 
 - [Metacognition Guide](METACOGNITION_GUIDE.md)
 - [Trust Framework Summary](TRUST_FRAMEWORK_SUMMARY.md)
-- [LingFlow Agent Guide](AGENTS.md)
+- [lingflow Agent Guide](AGENTS.md)
 - `lingflow/trust/metacognition.py` - Core metacognition system
 - `skills/metacognition-guard/` - Metacognition guard skill
 
@@ -350,7 +350,7 @@ Check capabilities → Identify gaps → Learn first → Execute → Verify
 
 **Version**: v2.0.0
 **Date**: 2026-04-08
-**Author**: LingFlow Development Team
+**Author**: lingflow Development Team
 **Status**: ✅ Production Ready
 
 ---

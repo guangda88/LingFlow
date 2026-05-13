@@ -1,4 +1,4 @@
-# 🛡️ LingFlow 远程仓库防护措施总览
+# 🛡️ lingflow 远程仓库防护措施总览
 
 **目标**: 防止未验证代码直推 — 确保所有提交符合质量标准、安全要求、代码规范。
 
@@ -43,7 +43,7 @@
 ### 1. 配置 GPG 签名
 
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 ./.gitea/setup-gpg.sh --configure
 ```
 
@@ -55,7 +55,7 @@ cd /home/ai/LingFlow
 
 ### 3. 配置 Protected Branch（需要管理员权限）
 
-访问：`http://zhinenggitea.iepose.cn/guangda/LingFlow/settings/branches`
+访问：`http://zhinenggitea.iepose.cn/guangda/lingflow/settings/branches`
 
 按 `docs/GITEA_PROTECTED_BRANCH_SETUP.md` 中的步骤配置。
 
@@ -63,8 +63,8 @@ cd /home/ai/LingFlow
 
 ```bash
 # 在服务器上执行
-cd /var/lib/gitea/repositories/guangda/LingFlow.git/hooks
-curl -o pre-receive https://raw.githubusercontent.com/guangda/LingFlow/master/.gitea/hooks/pre-receive
+cd /var/lib/gitea/repositories/guangda/lingflow.git/hooks
+curl -o pre-receive https://raw.githubusercontent.com/guangda/lingflow/master/.gitea/hooks/pre-receive
 chmod +x pre-receive
 chown git:git pre-receive
 ```
@@ -254,7 +254,7 @@ gpg: signing failed: No secret key
 
 - [Gitea Protected Branch 配置指南](docs/GITEA_PROTECTED_BRANCH_SETUP.md)
 - [灵族安全策略](docs/灵族安全策略.md)
-- [LingFlow 安全文档](SECURITY.md)
+- [lingflow 安全文档](SECURITY.md)
 - [灵通宪章](docs/CHARTER.md)
 
 ## 🎯 效果验证
@@ -281,10 +281,10 @@ gpg: signing failed: No secret key
 ## 📞 联系方式
 
 如有问题，请联系：
-- LingFlow Team: guangda@iepose.cn
+- lingflow Team: guangda@iepose.cn
 - Gitea 管理员: （需要添加）
 
 ---
 
 **最后更新**: 2026-04-13
-**维护者**: LingFlow Team
+**维护者**: lingflow Team

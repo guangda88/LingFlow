@@ -1,4 +1,4 @@
-"""LingFlow 情报系统统一管线
+"""lingflow 情报系统统一管线
 
 编排 Star 追踪 → 多平台采集 → 分析 → 报告生成全流程。
 支持独立运行或注册到 LingScheduler 定时调度。
@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional
 
 from lingflow.intelligence.collectors import (
     HNCollector,
-    LingFlowMonitor,
+    lingflowMonitor,
     RedditCollector,
     StarTracker,
 )
@@ -29,7 +29,7 @@ log = logging.getLogger("intel-pipeline")
 def _collect_github(days: int) -> list:
     all_mentions = []
     try:
-        monitor = LingFlowMonitor()
+        monitor = lingflowMonitor()
         all_mentions.extend(monitor.collect_issues(state="open", days=days))
         all_mentions.extend(monitor.collect_discussions(days=days))
         all_mentions.extend(monitor.collect_releases())
@@ -45,7 +45,7 @@ def _collect_reddit(days: int) -> list:
     try:
         reddit = RedditCollector()
         mentions = reddit.search_mentions(
-            keywords=["LingFlow", "lingflow-core"],
+            keywords=["lingflow", "lingflow-core"],
             limit=100,
             days=days,
         )
@@ -61,7 +61,7 @@ def _collect_hn(days: int) -> list:
     try:
         hn = HNCollector()
         mentions = hn.search_mentions(
-            keywords=["LingFlow", "lingflow-core"],
+            keywords=["lingflow", "lingflow-core"],
             limit=100,
             days=days,
         )

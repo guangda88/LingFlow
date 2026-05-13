@@ -1,5 +1,5 @@
 """
-LingFlow Phase 5: AI工具适配器
+lingflow Phase 5: AI工具适配器
 
 提供与各种AI代码分析工具（Semgrep、Ruff、Pylint等）的集成适配器。
 """

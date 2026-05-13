@@ -1,8 +1,8 @@
-# LingFlow v4.0 开发原则
+# lingflow v4.0 开发原则
 
 **版本**: 4.0
 **日期**: 2026-03-30
-**核心理念**: "LingFlow 如何帮助 Claude Code 及其它 coding tools 变得更好"
+**核心理念**: "lingflow 如何帮助 Claude Code 及其它 coding tools 变得更好"
 **定位**: AI Coding Tools 的上下文管理和多智能体协作增强引擎
 
 ---
@@ -12,13 +12,13 @@
 ### 我们是什么
 
 ```
-✅ LingFlow 是：
+✅ lingflow 是：
   - AI Coding Tools 的增强组件
   - 上下文管理解决方案提供者
   - 多智能体协作优化引擎
   - SDK/插件生态系统的一部分
 
-❌ LingFlow 不是：
+❌ lingflow 不是：
   - Claude Code/Harness/Crush 的竞争对手
   - 完整的 IDE 或开发平台
   - 试图覆盖 92% SDLC 的全能工具
@@ -48,7 +48,7 @@
 
 #### 解决的实际痛点
 
-| Tool | 痛点 | LingFlow 解决方案 |
+| Tool | 痛点 | lingflow 解决方案 |
 |------|------|------------------|
 | **Claude Code** | ~200K token bug | 精确 Token 计数 + 智能压缩 |
 | **Cursor** | 200K 限制太低 | 分层压缩策略，延长 2-3 倍 |
@@ -87,7 +87,7 @@
 
 #### 解决的实际痛点
 
-| Tool | 痛点 | LingFlow 解决方案 |
+| Tool | 痛点 | lingflow 解决方案 |
 |------|------|------------------|
 | **Claude Agent Teams** | Token 成本高，协调开销大 | 智能任务调度，2-4x 性能 |
 | **Cursor Composer** | 缺乏智能协调 | 自动依赖分析 + 任务分解 |
@@ -215,10 +215,10 @@ async def optimize_schedule(tasks: list, num_agents: int) -> dict:
 ### 原则 2: 互补思维
 
 ```
-✅ LingFlow + Claude Code = 1 + 1 > 2
-✅ LingFlow + Cursor = 互补增强
-✅ LingFlow + Windsurf = 互补增强
-✅ LingFlow + Copilot = 互补增强
+✅ lingflow + Claude Code = 1 + 1 > 2
+✅ lingflow + Cursor = 互补增强
+✅ lingflow + Windsurf = 互补增强
+✅ lingflow + Copilot = 互补增强
 
 ❌ 不竞争
 ❌ 不替代
@@ -510,8 +510,8 @@ Token 效率：
 
 | 版本 | 日期 | 变更内容 | 作者 |
 |------|------|----------|------|
-| 1.0 | 2026-03-25 | 初始版本（独立平台导向） | LingFlow |
-| 4.0 | 2026-03-30 | 重大修订（价值创造导向） | LingFlow |
+| 1.0 | 2026-03-25 | 初始版本（独立平台导向） | lingflow |
+| 4.0 | 2026-03-30 | 重大修订（价值创造导向） | lingflow |
 
 ---
 

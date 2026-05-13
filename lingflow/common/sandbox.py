@@ -1,5 +1,5 @@
 """
-LingFlow 安全沙箱执行器
+lingflow 安全沙箱执行器
 
 提供进程隔离的安全环境，用于执行不可信的技能代码。
 
@@ -150,7 +150,7 @@ class SkillSandbox:
         "threading",
         "queue",
     }
-    # LingFlow 层：LingFlow 自有模块
+    # lingflow 层：lingflow 自有模块
     _SAFE_LINGFLOW = {
         "lingflow.trust",
     }

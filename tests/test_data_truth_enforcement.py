@@ -1,7 +1,7 @@
 """Test data truth enforcement
 
 This test demonstrates how the trust framework prevents data hallucination
-issues like the energy_pct incident in LingYi.
+issues like the energy_pct incident in lingyi.
 """
 
 import json
@@ -25,7 +25,7 @@ def test_prevent_data_hallucination_energy_pct():
     Scenario: A developer adds a new UI field but forgets to implement
     the update logic. The trust framework catches this.
 
-    Reproduction of LingYi energy_pct issue:
+    Reproduction of lingyi energy_pct issue:
     1. energy_pct field is added to database schema
     2. energy_pct is displayed in UI
     3. But no code updates it (always 0)

@@ -1,5 +1,5 @@
 """
-LingFlow 性能评估器
+lingflow 性能评估器
 评估代码性能指标
 """
 
@@ -34,7 +34,7 @@ class PerformanceEvaluator:
         self.process = psutil.Process()
 
     def evaluate(self, params: Dict[str, Any]) -> float:
-        """评估性能质量（用于LingMinOpt）
+        """评估性能质量（用于lingminopt）
 
         Args:
             params: 优化参数
@@ -163,7 +163,7 @@ class PerformanceEvaluator:
 
 
 def fallback_evaluate(params: Dict[str, Any], target_path: str = ".") -> float:
-    """降级评估函数（无LingMinOpt时）
+    """降级评估函数（无lingminopt时）
 
     Args:
         params: 优化参数
@@ -178,7 +178,7 @@ def fallback_evaluate(params: Dict[str, Any], target_path: str = ".") -> float:
 
 if __name__ == "__main__":
     # 测试
-    evaluator = PerformanceEvaluator("/home/ai/LingFlow/lingflow")
+    evaluator = PerformanceEvaluator("/home/ai/lingflow/lingflow")
 
     params = {"cache_size": 100, "parallelism": 2, "timeout": 30}
 

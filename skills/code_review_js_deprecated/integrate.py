@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-集成 code-review-js 技能到 LingFlow
+集成 code-review-js 技能到 lingflow
 """
 
 import sys
@@ -8,15 +8,15 @@ import os
 import json
 from pathlib import Path
 
-# 添加 LingFlow 路径
+# 添加 lingflow 路径
 lingflow_path = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(lingflow_path))
 
 
 def register_skill():
-    """注册 code-review-js 技能到 LingFlow"""
+    """注册 code-review-js 技能到 lingflow"""
     print("=" * 70)
-    print("🔧 集成 code-review-js 技能到 LingFlow")
+    print("🔧 集成 code-review-js 技能到 lingflow")
     print("=" * 70)
     print()
     
@@ -137,7 +137,7 @@ console.log(test);
     print()
     
     # 6. 注册技能
-    print("📋 注册技能到 LingFlow:")
+    print("📋 注册技能到 lingflow:")
     
     # 更新技能列表
     skills_list_file = lingflow_path / "skills" / "SKILLS.md"
@@ -181,7 +181,7 @@ console.log(test);
 import sys
 from pathlib import Path
 
-# 添加 LingFlow 路径
+# 添加 lingflow 路径
 lingflow_path = Path(__file__).parent
 sys.path.insert(0, str(lingflow_path))
 
@@ -236,8 +236,8 @@ if __name__ == "__main__":
     print(f"  python run_code_review_js.py <target_dir> [language]")
     print()
     print("📋 示例:")
-    print(f"  python run_code_review_js.py /home/ai/zhineng-bridge javascript")
-    print(f"  python run_code_review_js.py /home/ai/zhineng-bridge typescript")
+    print(f"  python run_code_review_js.py /home/ai/zhibridge javascript")
+    print(f"  python run_code_review_js.py /home/ai/zhibridge typescript")
     print()
     print("=" * 70)
     

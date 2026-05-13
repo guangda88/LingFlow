@@ -128,14 +128,14 @@ manager.save_session()
 ✅ **添加定期任务**
 ```bash
 # 每周一凌晨2点自动运行优化
-0 2 * * 1 /home/ai/LingFlow/scripts/run_optimization_simple.sh
+0 2 * * 1 /home/ai/lingflow/scripts/run_optimization_simple.sh
 ```
 
 **验证**:
 ```bash
-$ crontab -l | grep LingFlow
-# LingFlow 定期自优化（每周一凌晨2点执行）
-0 2 * * 1 /home/ai/LingFlow/scripts/run_optimization_simple.sh
+$ crontab -l | grep lingflow
+# lingflow 定期自优化（每周一凌晨2点执行）
+0 2 * * 1 /home/ai/lingflow/scripts/run_optimization_simple.sh
 ```
 
 #### 2.3 趋势分析工具
@@ -149,7 +149,7 @@ $ crontab -l | grep LingFlow
 
 **测试结果**:
 ```
-📊 LingFlow 优化历史摘要
+📊 lingflow 优化历史摘要
 
 总优化次数: 2
 违规数统计:
@@ -226,10 +226,10 @@ python -c "from lingflow.core import SessionManager; ..."
 
 ```bash
 # 手动运行
-/home/ai/LingFlow/scripts/run_optimization_simple.sh
+/home/ai/lingflow/scripts/run_optimization_simple.sh
 
 # 查看趋势
-python /home/ai/LingFlow/scripts/analyze_optimization_trends.py
+python /home/ai/lingflow/scripts/analyze_optimization_trends.py
 
 # 查看最新报告
 cat .lingflow/reports/autonomous_optimization_*.json | tail -1 | jq '.'
@@ -404,10 +404,10 @@ crontab -e
 from lingflow.core import SessionManager
 
 # 定期优化
-crontab -l | grep LingFlow
+crontab -l | grep lingflow
 
 # 趋势分析
-python /home/ai/LingFlow/scripts/analyze_optimization_trends.py
+python /home/ai/lingflow/scripts/analyze_optimization_trends.py
 ```
 
 ---

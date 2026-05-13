@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 echo "=========================================="
-echo "  LingFlow Quality Gate - 本地测试"
+echo "  lingflow Quality Gate - 本地测试"
 echo "=========================================="
 echo ""
 

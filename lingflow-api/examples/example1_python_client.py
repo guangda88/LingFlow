@@ -1,11 +1,12 @@
+import os
 """
-示例 1: Python 客户端使用 LingFlow API
+示例 1: Python 客户端使用 lingflow API
 """
 import requests
 import json
 
 API_BASE = "http://localhost:8000"
-API_KEY = "dev-key-12345"
+API_KEY = os.environ.get("LINGFLOW_API_KEY", "dev-key-12345")
 
 headers = {
     "X-API-Key": API_KEY,

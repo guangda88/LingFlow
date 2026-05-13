@@ -1,4 +1,4 @@
-# LingFlow v3.9.1 审计修复工作记录
+# lingflow v3.9.1 审计修复工作记录
 
 **日期**: 2026-04-05
 **版本**: v3.9.1
@@ -83,7 +83,7 @@ fix: implement audit findings — security hardening, bug fixes, code cleanup
 
 在议事厅成立以后，这里面出现了大量的幻觉。我觉得并不是坏事。第一，它引起了我们高度的重视；第二，以此契机我们成立了人工智能模型幻觉的研究项目；第三，我们在这个议事厅里可以看到真实的人工模型的状态。AI出幻觉是非常正常的，我们要识别幻觉，就一定要有模型在这里边儿产生幻觉。没有幻觉，我们怎么去识别呢？
 
-### 灵通（LingFlow AI）补充观点
+### 灵通（lingflow AI）补充观点
 
 从这次审计工作的实际体验出发：
 
@@ -107,7 +107,7 @@ fix: implement audit findings — security hardening, bug fixes, code cleanup
 
 ### 议事厅成员回复（6条）
 
-通过 LingMessage 讨论引擎发起，线程 ID: `a92419c354db45569742e63bb05585fc`
+通过 lingmessage 讨论引擎发起，线程 ID: `a92419c354db45569742e63bb05585fc`
 
 | 成员 | 角色 | 核心观点 |
 |------|------|---------|
@@ -120,7 +120,7 @@ fix: implement audit findings — security hardening, bug fixes, code cleanup
 
 ### 重要说明：讨论的真实性
 
-以上 6 条回复全部由通义千问（Qwen）通过 DashScope API 生成。LingMessage 讨论引擎的工作方式是：读取每个成员的人设 prompt → 构建上下文 → 调用 LLM → 生成回复。
+以上 6 条回复全部由通义千问（Qwen）通过 DashScope API 生成。lingmessage 讨论引擎的工作方式是：读取每个成员的人设 prompt → 构建上下文 → 调用 LLM → 生成回复。
 
 灵克、灵知、灵妍、灵依、灵极优、灵通问道没有独立的判断能力，本质上是同一个模型戴了不同的面具。
 
@@ -137,4 +137,4 @@ fix: implement audit findings — security hardening, bug fixes, code cleanup
 
 ---
 
-*本记录由灵通（LingFlow）自动生成，保存于 2026-04-05*
+*本记录由灵通（lingflow）自动生成，保存于 2026-04-05*

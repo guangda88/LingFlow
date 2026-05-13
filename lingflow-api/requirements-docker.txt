@@ -1,4 +1,4 @@
-# LingFlow API - 简化依赖（用于 Docker）
+# lingflow API - 简化依赖（用于 Docker）
 
 # 核心框架
 fastapi==0.109.0
@@ -20,7 +20,7 @@ pyyaml==6.0.1
 # 监控
 prometheus-client==0.20.0
 
-# LingFlow 核心依赖（最小集合）
+# lingflow 核心依赖（最小集合）
 anthropic>=0.18.0
 openai>=1.0.0
 rich>=13.0.0

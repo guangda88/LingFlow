@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LingFlow 结构优化 - 实际效果验证
+lingflow 结构优化 - 实际效果验证
 
 在真实项目上验证结构优化的效果
 """
@@ -151,7 +151,7 @@ def generate_report(
     """生成验证报告"""
     print("\n📄 生成验证报告...")
 
-    report = f"""# LingFlow 结构优化验证报告
+    report = f"""# lingflow 结构优化验证报告
 
 **日期**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 **目标**: {target_path}
@@ -247,7 +247,7 @@ structure_optimization:
 
 ## 5. 结论
 
-LingFlow 结构优化成功识别了代码中的结构问题，并提供了**数据驱动的改进建议**。
+lingflow 结构优化成功识别了代码中的结构问题，并提供了**数据驱动的改进建议**。
 
 **关键发现**:
 - 结构违规数量: {baseline['structure_violations']}
@@ -265,7 +265,7 @@ LingFlow 结构优化成功识别了代码中的结构问题，并提供了**数
 
 ---
 
-*报告由 LingFlow 自动生成*
+*报告由 lingflow 自动生成*
 """
 
     return report
@@ -286,13 +286,13 @@ def save_report(report: str, target_path: str) -> str:
 def main():
     """主函数"""
     print("="*70)
-    print(" LingFlow 结构优化 - 实际效果验证 ".center(70))
+    print(" lingflow 结构优化 - 实际效果验证 ".center(70))
     print("="*70)
 
     # 选择验证目标
     targets = {
         "1": ("lingflow/self_optimizer", "自优化系统自身"),
-        "2": ("lingflow", "整个LingFlow项目"),
+        "2": ("lingflow", "整个lingflow项目"),
         "3": ("skills/code-review", "code-review技能"),
     }
 

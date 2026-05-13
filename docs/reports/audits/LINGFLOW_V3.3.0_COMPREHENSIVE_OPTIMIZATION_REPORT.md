@@ -1,4 +1,4 @@
-# LingFlow V3.3.0 深度代码审查与优化报告
+# lingflow V3.3.0 深度代码审查与优化报告
 
 **版本**: V3.3.0
 **日期**: 2026-03-25
@@ -9,7 +9,7 @@
 
 ## 执行摘要
 
-本次审查对 LingFlow 项目进行了全方位的深度分析和优化，涵盖了**安全漏洞修复**、**代码复杂度优化**、**文档完善**和**质量改进**四大维度。所有优化均经过严格测试验证，确保向后兼容性和功能完整性。
+本次审查对 lingflow 项目进行了全方位的深度分析和优化，涵盖了**安全漏洞修复**、**代码复杂度优化**、**文档完善**和**质量改进**四大维度。所有优化均经过严格测试验证，确保向后兼容性和功能完整性。
 
 ### 优化成果
 
@@ -639,7 +639,7 @@ def _validate_skill_module(
 performance_monitor = PerformanceMonitor()
 
 # 改进: 依赖注入
-class LingFlow:
+class lingflow:
     def __init__(self, monitor: PerformanceMonitor):
         self._monitor = monitor
 ```
@@ -749,7 +749,7 @@ class ComponentFactory:
 - ✅ **质量保证验证**: 确保零回归
 
 **特别感谢**:
-- LingFlow开发团队提供的优秀代码基础
+- lingflow开发团队提供的优秀代码基础
 - 测试框架的完善设计，使得测试覆盖率稳定在78%
 - 现有代码的良好架构，便于优化和维护
 
@@ -775,9 +775,9 @@ class ComponentFactory:
 
 ### 10.3 联系方式
 
-- **项目仓库**: http://zhinenggitea.iepose.cn/guangda/LingFlow
-- **文档位置**: `/home/ai/LingFlow/docs/`
-- **报告位置**: `/home/ai/LingFlow/`
+- **项目仓库**: http://zhinenggitea.iepose.cn/guangda/lingflow
+- **文档位置**: `/home/ai/lingflow/docs/`
+- **报告位置**: `/home/ai/lingflow/`
 
 ---
 

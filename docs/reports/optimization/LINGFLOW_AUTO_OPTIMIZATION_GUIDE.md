@@ -1,6 +1,6 @@
-# LingFlow 自优化系统 - 使用指南
+# lingflow 自优化系统 - 使用指南
 
-> **基于 LingMinOpt 框架的自动化代码质量优化系统**
+> **基于 lingminopt 框架的自动化代码质量优化系统**
 > **优化日期**: 2026-04-01
 > **当前基线**: 17个结构违规
 
@@ -11,7 +11,7 @@
 ### 方式1：立即运行优化
 
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 python run_self_optimization.py
 ```
 
@@ -28,7 +28,7 @@ chmod +x scripts/schedule_optimization.sh
 crontab -e
 
 # 添加以下行：
-0 2 * * 1 /home/ai/LingFlow/scripts/schedule_optimization.sh
+0 2 * * 1 /home/ai/lingflow/scripts/schedule_optimization.sh
 ```
 
 ### 方式3：Python代码调用
@@ -37,7 +37,7 @@ crontab -e
 from lingflow.self_optimizer import quick_optimize
 
 result = quick_optimize(
-    target="/home/ai/LingFlow/lingflow",
+    target="/home/ai/lingflow/lingflow",
     goal="structure",
     async_mode=False
 )
@@ -76,11 +76,11 @@ coupling_limit: 8.33
 
 ```bash
 # 每周一凌晨2点自动运行
-0 2 * * 1 /home/ai/LingFlow/scripts/schedule_optimization.sh
+0 2 * * 1 /home/ai/lingflow/scripts/schedule_optimization.sh
 ```
 
 **流程**：
-1. 运行LingMinOpt优化
+1. 运行lingminopt优化
 2. 生成优化报告
 3. 检查是否超过阈值
 4. 发送通知（如果配置）
@@ -144,7 +144,7 @@ plt.figure(figsize=(12, 6))
 plt.plot(violations, marker='o')
 plt.xlabel('优化次数')
 plt.ylabel('违规数量')
-plt.title('LingFlow 代码质量趋势')
+plt.title('lingflow 代码质量趋势')
 plt.grid(True)
 plt.savefig('.lingflow/reports/quality_trend.png')
 print("趋势图已保存: .lingflow/reports/quality_trend.png")
@@ -179,13 +179,13 @@ structure:
 
 ```bash
 # 每天凌晨2点（更频繁）
-0 2 * * * /home/ai/LingFlow/scripts/schedule_optimization.sh
+0 2 * * * /home/ai/lingflow/scripts/schedule_optimization.sh
 
 # 每周一次（推荐）
-0 2 * * 1 /home/ai/LingFlow/scripts/schedule_optimization.sh
+0 2 * * 1 /home/ai/lingflow/scripts/schedule_optimization.sh
 
 # 每月一次（最低频率）
-0 2 1 * * /home/ai/LingFlow/scripts/schedule_optimization.sh
+0 2 1 * * /home/ai/lingflow/scripts/schedule_optimization.sh
 ```
 
 ---
@@ -211,7 +211,7 @@ structure:
 - [ ] 建立质量监控仪表板
 - [ ] 编写重构指南
 - [ ] 优化CI/CD集成
-- [ ] 团队培训LingMinOpt使用
+- [ ] 团队培训lingminopt使用
 
 ---
 
@@ -238,7 +238,7 @@ structure:
 
 ```bash
 # 每周运行一次
-0 2 * * 1 /home/ai/LingFlow/scripts/schedule_optimization.sh
+0 2 * * 1 /home/ai/lingflow/scripts/schedule_optimization.sh
 ```
 
 ### 2. 监控趋势
@@ -269,14 +269,14 @@ python scripts/generate_report.py --format markdown --output docs/optimization_r
 ### 成功要素
 
 1. ✅ **数据驱动**: 基于实际代码分析
-2. ✅ **自动化**: 使用LingMinOpt自动优化
+2. ✅ **自动化**: 使用lingminopt自动优化
 3. ✅ **持续性**: 定期运行，持续改进
 4. ✅ **可追溯**: 保存所有优化报告
 
 ### 关键发现
 
 1. **耦合度是关键**: 从10→8.33的影响最大
-2. **类大小要合理**: 500比200更适合LingFlow
+2. **类大小要合理**: 500比200更适合lingflow
 3. **优化效率高**: 8.41秒，71.7%改进
 4. **可持续改进**: 可以定期重复运行
 
@@ -284,7 +284,7 @@ python scripts/generate_report.py --format markdown --output docs/optimization_r
 
 ## 🎉 总结
 
-LingFlow自优化系统已完全就绪！
+lingflow自优化系统已完全就绪！
 
 ### 核心成果
 
@@ -297,14 +297,14 @@ LingFlow自优化系统已完全就绪！
 
 ```bash
 # 运行优化
-python /home/ai/LingFlow/run_self_optimization.py
+python /home/ai/lingflow/run_self_optimization.py
 
 # 设置定期任务
 crontab -e
-# 添加: 0 2 * * 1 /home/ai/LingFlow/scripts/schedule_optimization.sh
+# 添加: 0 2 * * 1 /home/ai/lingflow/scripts/schedule_optimization.sh
 
 # 查看报告
-cat /home/ai/LingFlow/.lingflow/reports/optimization_report_*.json | jq '.'
+cat /home/ai/lingflow/.lingflow/reports/optimization_report_*.json | jq '.'
 ```
 
 ---

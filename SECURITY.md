@@ -1,4 +1,4 @@
-# 🟠 灵通 (LingFlow) — 安全策略
+# 🟠 灵通 (lingflow) — 安全策略
 
 > 风险等级: **HIGH** | 角色: 工作流引擎 — 提供技能、工作流、需求、测试、监控、文件操作
 
@@ -6,7 +6,7 @@
 
 | 项目 | 值 |
 |------|------|
-| Agent ID | `LingFlow` |
+| Agent ID | `lingflow` |
 | 角色 | 工作流引擎 — 提供技能、工作流、需求、测试、监控、文件操作 |
 | 风险等级 | HIGH |
 | 工具 | 26 个 MCP 工具（技能执行、代码审查、工作流编排、需求管理、测试运行） |
@@ -47,8 +47,8 @@
 | SEC-DATA-001 | 数据完整性 | 验证数据必须实际经过验证 |
 | SEC-MON-001 | 监控 & 响应 | 审计日志 + 异常检测 |
 
-完整基线文档：`/data/lingfamily/LingFlow_plus/docs/security_baseline_v1.py`
-安全巡检脚本：`/data/lingfamily/LingFlow_plus/docs/security_patrol.py`
+完整基线文档：`/data/lingfamily/lingflowplus/docs/security_baseline_v1.py`
+安全巡检脚本：`/data/lingfamily/lingflowplus/docs/security_patrol.py`
 
 
 ## OWASP LLM Top 10 映射
@@ -69,5 +69,5 @@
 
 ---
 
-*生成时间: 2026-04-12 | 由灵通+ (LingFlow+) 自动生成*
+*生成时间: 2026-04-12 | 由灵通+ (lingflow+) 自动生成*
 *下次审查: 2026-07-12 或重大变更时*

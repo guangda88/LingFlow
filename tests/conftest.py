@@ -1,4 +1,4 @@
-"""LingFlow 测试根配置和共享 fixture"""
+"""lingflow 测试根配置和共享 fixture"""
 
 import importlib.util
 import sys

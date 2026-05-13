@@ -1,4 +1,4 @@
-# LingFlow 审计报告自审计 (Self-Audit of AUDIT_REPORT.md)
+# lingflow 审计报告自审计 (Self-Audit of AUDIT_REPORT.md)
 
 **审计日期**: 2026-04-05  
 **自审计方法**: 逐条对照源代码验证原始审计报告的每项发现  

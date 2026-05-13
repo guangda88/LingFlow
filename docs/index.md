@@ -1,8 +1,8 @@
-# LingFlow API 文档
+# lingflow API 文档
 
 ## 众智混元，万法灵通
 
-LingFlow 是一个完整覆盖软件工程全生命周期的工程流系统。
+lingflow 是一个完整覆盖软件工程全生命周期的工程流系统。
 
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -40,10 +40,10 @@ pip install lingflow
 ### 基础使用
 
 ```python
-from lingflow import LingFlow
+from lingflow import lingflow
 
 # 初始化系统
-lf = LingFlow()
+lf = lingflow()
 
 # 执行单个技能
 result = lf.run_skill("code_review", {
@@ -58,7 +58,7 @@ result = lf.run_workflow_file("workflows/ci_cd.yaml")
 ## 文档导航
 
 ### 📘 [快速开始指南](quickstart.md)
-5分钟上手LingFlow，了解基本概念和用法。
+5分钟上手lingflow，了解基本概念和用法。
 
 ### 📚 [API 参考](api/lingflow.md)
 完整的API文档，包含所有模块、类和方法的详细说明。
@@ -72,7 +72,7 @@ result = lf.run_workflow_file("workflows/ci_cd.yaml")
 ## 系统架构
 
 ```
-LingFlow
+lingflow
 ├── coordination/       # Agent协调系统
 │   ├── Agent         # 智能Agent基类
 │   ├── AgentCoordinator # 多Agent协调器
@@ -96,7 +96,7 @@ LingFlow
 ## 核心概念
 
 ### Agent（智能体）
-Agent是LingFlow的基本执行单元，每个Agent具有：
+Agent是lingflow的基本执行单元，每个Agent具有：
 - **技能（Skills）** - 可执行的专业任务
 - **状态（State）** - 上下文和配置
 - **通信（Communication）** - 与其他Agent协作
@@ -116,7 +116,7 @@ tasks:
 ```
 
 ### 自优化（Self-Optimization）
-LingFlow能够自我优化和进化：
+lingflow能够自我优化和进化：
 - **参数调优** - 自动优化系统参数
 - **学习改进** - 基于反馈持续学习
 - **性能监控** - 实时跟踪关键指标
@@ -125,12 +125,12 @@ LingFlow能够自我优化和进化：
 
 当前版本: **v3.8.0**
 
-更新日志请查看 [GitHub Releases](https://github.com/guangda88/LingFlow/releases)
+更新日志请查看 [GitHub Releases](https://github.com/guangda88/lingflow/releases)
 
 ## 社区
 
-- **GitHub**: [guangda88/LingFlow](https://github.com/guangda88/LingFlow)
-- **问题反馈**: [Issues](https://github.com/guangda88/LingFlow/issues)
+- **GitHub**: [guangda88/lingflow](https://github.com/guangda88/lingflow)
+- **问题反馈**: [Issues](https://github.com/guangda88/lingflow/issues)
 - **贡献指南**: [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## 许可证
@@ -139,4 +139,4 @@ MIT License - 详见 [LICENSE](LICENSE)
 
 ---
 
-**众智混元，万法灵通** - LingFlow让软件工程更智能、更高效。
+**众智混元，万法灵通** - lingflow让软件工程更智能、更高效。

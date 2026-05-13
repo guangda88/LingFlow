@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LingFlow Test Runner - 运行所有测试
+lingflow Test Runner - 运行所有测试
 """
 
 import sys
@@ -67,7 +67,7 @@ def main():
     """主函数"""
     import argparse
 
-    parser = argparse.ArgumentParser(description="LingFlow Test Runner")
+    parser = argparse.ArgumentParser(description="lingflow Test Runner")
     parser.add_argument(
         "--type",
         choices=["unit", "e2e", "all"],

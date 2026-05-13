@@ -20,14 +20,14 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
-        logging.FileHandler("/home/ai/LingFlow/scripts/scheduler.log", encoding="utf-8"),
+        logging.FileHandler("/home/ai/lingflow/scripts/scheduler.log", encoding="utf-8"),
         logging.StreamHandler(),
     ],
 )
 log = logging.getLogger("import_scheduler")
 
-CHECKPOINT = Path("/home/ai/LingFlow/scripts/import_checkpoint.json")
-TEXTBOOK_DIR = Path("/home/ai/zhineng-knowledge-system/data/textbooks/txt格式")
+CHECKPOINT = Path("/home/ai/lingflow/scripts/import_checkpoint.json")
+TEXTBOOK_DIR = Path("/home/ai/lingzhi/data/textbooks/txt格式")
 REPORT_INTERVAL = 300
 DEFAULT_BATCH_SIZE = 5
 MAX_RETRIES = 2

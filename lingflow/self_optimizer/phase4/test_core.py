@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-LingFlow Phase 4 核心算法测试
+lingflow Phase 4 核心算法测试
 
 验证贝叶斯优化、多目标优化和敏感性分析功能。
 """
@@ -251,7 +251,7 @@ def test_integration_with_evaluators():
 def main():
     """运行所有测试"""
     print("\n" + "=" * 60)
-    print("LingFlow Phase 4 核心算法测试套件")
+    print("lingflow Phase 4 核心算法测试套件")
     print("=" * 60)
 
     tests = [

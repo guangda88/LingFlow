@@ -1,6 +1,6 @@
-# LingFlow 架构概览
+# lingflow 架构概览
 
-本文档详细说明LingFlow系统的架构设计和核心组件。
+本文档详细说明lingflow系统的架构设计和核心组件。
 
 ## 系统架构
 
@@ -8,7 +8,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        LingFlow 系统                         │
+│                        lingflow 系统                         │
 ├─────────────────────────────────────────────────────────────┤
 │                                                               │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
@@ -19,7 +19,7 @@
 │         └────────────────┼────────────────┘                 │
 │                          │                                  │
 │                  ┌───────▼───────┐                          │
-│                  │  LingFlow     │                          │
+│                  │  lingflow     │                          │
 │                  │  Core Engine  │                          │
 │                  └───────┬───────┘                          │
 │                          │                                  │
@@ -175,7 +175,7 @@ lingflow/monitoring/
 用户请求
    │
    ▼
-LingFlow 入口
+lingflow 入口
    │
    ├─→ 技能执行 → AgentCoordinator → Agent → 结果
    │
@@ -437,7 +437,7 @@ def test_agent_execution():
 
 ```python
 def test_workflow_execution():
-    lf = LingFlow()
+    lf = lingflow()
     result = lf.run_workflow_file("test_workflow.yaml")
     assert result["status"] == "success"
 ```
@@ -446,7 +446,7 @@ def test_workflow_execution():
 
 ```python
 def test_e2e_ci_cd():
-    lf = LingFlow()
+    lf = lingflow()
     result = lf.run_workflow_file("ci_cd.yaml")
     assert result["status"] == "success"
 ```

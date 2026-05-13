@@ -1,4 +1,4 @@
-"""LingFlow 工作流编排器"""
+"""lingflow 工作流编排器"""
 
 import asyncio
 import logging

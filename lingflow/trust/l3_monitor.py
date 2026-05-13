@@ -1,7 +1,7 @@
 """
 L3 Metacognitive State Monitor — PRO-014 Phase 1 Implementation
 
-灵研 (LingResearch)
+灵研 (lingresearch)
 2026-04-17
 
 根因：PRO-014明镜计划，实现L3完整性验证层。

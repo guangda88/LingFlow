@@ -1,4 +1,4 @@
-"""LingFlow 代理协调器"""
+"""lingflow 代理协调器"""
 
 import asyncio
 import logging
@@ -979,7 +979,7 @@ class AgentCoordinator(BaseCoordinator):
                 skill_code = f.read()
 
             # Skip sandbox validation for trust-guardrail skill (it needs lingflow.trust)
-            # The skill is trusted as it's part of LingFlow's core verification system
+            # The skill is trusted as it's part of lingflow's core verification system
             is_trust_skill = skill_name == "trust-guardrail"
 
             # 验证代码安全性

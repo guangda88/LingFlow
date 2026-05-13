@@ -1,4 +1,4 @@
-"""LingFlow 对话上下文管理器
+"""lingflow 对话上下文管理器
 
 自动跟踪对话进度，在 token 限制时压缩上下文到持久化存储。
 """
@@ -464,7 +464,7 @@ class ContextManager:
 
         # 生成摘要
         summary_parts = [
-            "# LingFlow 对话上下文摘要",
+            "# lingflow 对话上下文摘要",
             "",
             f"**会话 ID**: {self.session_id}",
             f"**时间**: {self.snapshot.timestamp}",

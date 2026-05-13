@@ -1,4 +1,4 @@
-# LingFlow REST API - Python 依赖
+# lingflow REST API - Python 依赖
 # 核心框架
 fastapi==0.109.0
 uvicorn[standard]==0.27.0
@@ -25,7 +25,7 @@ alembic==1.13.1
 python-dotenv==1.0.0
 pyyaml==6.0.1
 
-# LingFlow 核心（从本地安装）
+# lingflow 核心（从本地安装）
 # -e ../.
 
 # 开发依赖

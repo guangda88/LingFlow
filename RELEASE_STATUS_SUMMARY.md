@@ -1,4 +1,4 @@
-# LingFlow v3.8.0 - Release Status Summary
+# lingflow v3.8.0 - Release Status Summary
 
 **Date**: 2026-04-02
 **Status**: 🎉 **90% Complete** - Automated steps done, manual steps pending
@@ -69,7 +69,7 @@ git ls-remote --tags origin | grep v3.8.0
 # 3b0b8f9a...    refs/tags/v3.8.0
 ```
 
-**Tag URL**: https://github.com/guangda88/LingFlow/releases/tag/v3.8.0
+**Tag URL**: https://github.com/guangda88/lingflow/releases/tag/v3.8.0
 
 ---
 
@@ -145,7 +145,7 @@ docker pull guangda88/lingflow-api:latest
 **Instructions**: See `GITHUB_RELEASE_GUIDE.md`
 
 **Method 1: Web Interface (Recommended)**
-1. Visit: https://github.com/guangda88/LingFlow/releases/new
+1. Visit: https://github.com/guangda88/lingflow/releases/new
 2. Select tag: `v3.8.0`
 3. Title: `🎉 v3.8.0 - AI生态平台`
 4. Description: Copy content from `RELEASE_v3.8.0.md`
@@ -158,10 +158,10 @@ docker pull guangda88/lingflow-api:latest
 gh release create v3.8.0 \
   --title "🎉 v3.8.0 - AI生态平台" \
   --notes-file RELEASE_v3.8.0.md \
-  --repo guangda88/LingFlow
+  --repo guangda88/lingflow
 ```
 
-**Release URL**: https://github.com/guangda88/LingFlow/releases/tag/v3.8.0
+**Release URL**: https://github.com/guangda88/lingflow/releases/tag/v3.8.0
 
 ---
 
@@ -221,7 +221,7 @@ curl http://localhost:8000/health  # Should return: {"status": "healthy"}
 ```
 
 ### GitHub Release Verification (after creation) ⏳
-- Visit: https://github.com/guangda88/LingFlow/releases
+- Visit: https://github.com/guangda88/lingflow/releases
 - Confirm `v3.8.0` appears as "Latest release"
 - Check release notes display correctly
 - Verify assets are attached
@@ -263,7 +263,7 @@ During the release process, these documentation files were created:
 
 2. **Documentation Updates**
    - Update README badges
-   - Publish tutorial: "Getting Started with LingFlow v3.8.0"
+   - Publish tutorial: "Getting Started with lingflow v3.8.0"
    - Record demo video
 
 3. **Monitor Feedback**
@@ -305,7 +305,7 @@ If you encounter issues:
 
 **Release Status**: 🎉 **90% Complete - Awaiting Manual Steps**
 
-**"众智混元，万法灵通"** - *LingFlow v3.8.0*
+**"众智混元，万法灵通"** - *lingflow v3.8.0*
 
 ---
 

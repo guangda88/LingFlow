@@ -1,7 +1,7 @@
 # LingFlow 代码质量审查报告
 
 **生成日期**: 2026-03-25
-**审查范围**: `/home/ai/LingFlow/lingflow` 核心模块
+**审查范围**: `/home/ai/lingflow/lingflow` 核心模块
 **审查标准**: PEP 8, Python最佳实践, 代码质量度量
 
 ---

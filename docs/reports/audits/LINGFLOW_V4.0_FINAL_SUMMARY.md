@@ -1,4 +1,4 @@
-# LingFlow V4.0 封装优化 - 最终总结
+# lingflow V4.0 封装优化 - 最终总结
 
 **版本**: V4.0.0
 **日期**: 2026-03-25
@@ -39,7 +39,7 @@
 ┌─────────────────────────────────────────┐
 │   用户层 (CLI/SDK/REST)                 │
 ├─────────────────────────────────────────┤
-│   API门面层 (LingFlow - 双模式)          │
+│   API门面层 (lingflow - 双模式)          │
 ├─────────────────────────────────────────┤
 │   服务层 (Skill/Workflow/Agent/Plugin)  │
 ├─────────────────────────────────────────┤
@@ -73,7 +73,7 @@
 
 #### 2. 统一异常体系
 ```python
-✓ LingFlowError (基类)
+✓ lingflowError (基类)
 ✓ ConfigurationError
 ✓ SkillError
 ✓ ValidationError
@@ -83,8 +83,8 @@
 
 #### 3. 配置系统
 ```python
-✓ LingFlowConfig (配置类)
-✓ LingFlowConfigBuilder (构建器)
+✓ lingflowConfig (配置类)
+✓ lingflowConfigBuilder (构建器)
 ✓ 配置验证
 ✓ 性能预设 (fast/balanced/conservative)
 ✓ 配置序列化
@@ -225,21 +225,21 @@ combined = Result.zip(Result.ok(1), Result.ok(2), Result.ok(3))
 ### 2. 配置构建器使用
 ```python
 # 基础构建
-config = (LingFlowConfig.builder()
+config = (lingflowConfig.builder()
           .max_parallel(4)
           .timeout(600)
           .compression(True, 8000)
           .build())
 
 # 性能预设
-fast_config = LingFlowConfig.builder().performance("fast").build()
-balanced_config = LingFlowConfig.builder().performance("balanced").build()
+fast_config = lingflowConfig.builder().performance("fast").build()
+balanced_config = lingflowConfig.builder().performance("balanced").build()
 ```
 
 ### 3. 技能服务使用
 ```python
 # 初始化
-config = LingFlowConfig()
+config = lingflowConfig()
 cache = CacheManager(config)
 skill_service = SimpleSkillService(config, cache)
 
@@ -481,7 +481,7 @@ if result.success:
 
 ## 总结
 
-LingFlow V4.0 封装优化项目已经完成了**方案设计**和**核心代码示例**阶段。
+lingflow V4.0 封装优化项目已经完成了**方案设计**和**核心代码示例**阶段。
 
 ### 已完成
 - ✅ 方案对比分析

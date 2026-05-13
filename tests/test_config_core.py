@@ -1,17 +1,17 @@
-"""LingFlowConfig tests"""
+"""lingflowConfig tests"""
 
 import warnings
 
 import pytest
 
-from lingflow.core.config import LingFlowConfig
+from lingflow.core.config import lingflowConfig
 
 
-class TestLingFlowConfigDefaults:
+class TestlingflowConfigDefaults:
     def test_defaults(self):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
-            cfg = LingFlowConfig()
+            cfg = lingflowConfig()
         assert cfg.max_parallel == 2
         assert cfg.max_iterations == 100
         assert cfg.workflow_timeout == 600.0
@@ -26,14 +26,14 @@ class TestLingFlowConfigDefaults:
 
     def test_deprecation_warning(self):
         with pytest.warns(DeprecationWarning, match="deprecated"):
-            LingFlowConfig()
+            lingflowConfig()
 
 
-class TestLingFlowConfigValidation:
+class TestlingflowConfigValidation:
     def _make(self, **kw):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
-            return LingFlowConfig(**kw)
+            return lingflowConfig(**kw)
 
     def test_valid(self):
         cfg = self._make()
@@ -85,11 +85,11 @@ class TestLingFlowConfigValidation:
             cfg.validate()
 
 
-class TestLingFlowConfigSerialization:
+class TestlingflowConfigSerialization:
     def _make(self, **kw):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
-            return LingFlowConfig(**kw)
+            return lingflowConfig(**kw)
 
     def test_to_dict(self):
         cfg = self._make(max_parallel=4)
@@ -99,18 +99,18 @@ class TestLingFlowConfigSerialization:
 
     def test_from_dict(self):
         d = {"max_parallel": 8, "skill_timeout": 60.0}
-        cfg = LingFlowConfig.from_dict(d)
+        cfg = lingflowConfig.from_dict(d)
         assert cfg.max_parallel == 8
         assert cfg.skill_timeout == 60.0
 
     def test_from_dict_ignores_unknown(self):
         d = {"max_parallel": 4, "unknown_key": "ignored"}
-        cfg = LingFlowConfig.from_dict(d)
+        cfg = lingflowConfig.from_dict(d)
         assert cfg.max_parallel == 4
 
     def test_roundtrip(self):
         cfg = self._make(max_parallel=4, log_level="DEBUG")
         d = cfg.to_dict()
-        cfg2 = LingFlowConfig.from_dict(d)
+        cfg2 = lingflowConfig.from_dict(d)
         assert cfg2.max_parallel == 4
         assert cfg2.log_level == "DEBUG"

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LingFlow v3.3.0 - Spec-Driven Secure Development Workflow Demo
+lingflow v3.3.0 - Spec-Driven Secure Development Workflow Demo
 
 This script demonstrates the complete multi-agent secure development workflow:
 1. Constitutional constraint loading
@@ -38,7 +38,7 @@ class SpecDrivenWorkflowDemo:
     def __init__(self):
         """Initialize workflow components"""
         print("=" * 80)
-        print("LingFlow v3.3.0 - Spec-Driven Secure Development Workflow")
+        print("lingflow v3.3.0 - Spec-Driven Secure Development Workflow")
         print("=" * 80)
         print()
 

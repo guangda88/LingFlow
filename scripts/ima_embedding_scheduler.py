@@ -21,7 +21,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
-        logging.FileHandler("/home/ai/LingFlow/scripts/ima_embedding.log", encoding="utf-8"),
+        logging.FileHandler("/home/ai/lingflow/scripts/ima_embedding.log", encoding="utf-8"),
         logging.StreamHandler(),
     ],
 )
@@ -29,7 +29,7 @@ log = logging.getLogger("ima_embedding")
 
 DB_URL = os.environ.get("DATABASE_URL", "postgresql://localhost:5436/zhineng_kb")
 EMBEDDING_URL = "http://localhost:8001/embed"
-CHECKPOINT_FILE = Path("/home/ai/LingFlow/scripts/ima_embedding_checkpoint.json")
+CHECKPOINT_FILE = Path("/home/ai/lingflow/scripts/ima_embedding_checkpoint.json")
 BATCH_SIZE = 100
 EMBEDDING_DELAY = 0.12
 EMBEDDING_TIMEOUT = 30

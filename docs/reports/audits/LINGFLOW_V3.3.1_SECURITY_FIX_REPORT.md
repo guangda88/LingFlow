@@ -1,4 +1,4 @@
-# LingFlow V3.3.1 关键安全修复报告
+# lingflow V3.3.1 关键安全修复报告
 
 **版本**: V3.3.1
 **日期**: 2026-03-25
@@ -41,7 +41,7 @@
 ln -s /etc/passwd /tmp/safe_link.yaml
 
 # 攻击者尝试访问
-python -c "import lingflow; lf = lingflow.LingFlow(); lf.run_workflow_file('/tmp/safe_link.yaml')"
+python -c "import lingflow; lf = lingflow.lingflow(); lf.run_workflow_file('/tmp/safe_link.yaml')"
 
 # 成功读取到 /etc/passwd 的内容！
 ```
@@ -500,10 +500,10 @@ lingflow/testing/unit/ ... 79 passed
 import os
 import tempfile
 from pathlib import Path
-from lingflow import LingFlow
+from lingflow import lingflow
 
 # 测试1: 路径遍历攻击
-lf = LingFlow()
+lf = lingflow()
 try:
     lf.run_workflow_file("../../etc/passwd")
     assert False, "应该拒绝路径遍历攻击"
@@ -731,7 +731,7 @@ assert result == 10
 
 **特别感谢**:
 - 安全审计指出的关键问题
-- LingFlow开发团队的支持
+- lingflow开发团队的支持
 - 测试框架的完善设计
 
 ---
@@ -754,9 +754,9 @@ assert result == 10
 
 ### 12.3 联系方式
 
-- **项目仓库**: http://zhinenggitea.iepose.cn/guangda/LingFlow
-- **文档位置**: `/home/ai/LingFlow/docs/`
-- **报告位置**: `/home/ai/LingFlow/`
+- **项目仓库**: http://zhinenggitea.iepose.cn/guangda/lingflow
+- **文档位置**: `/home/ai/lingflow/docs/`
+- **报告位置**: `/home/ai/lingflow/`
 
 ---
 

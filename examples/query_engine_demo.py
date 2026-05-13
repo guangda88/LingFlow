@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LingFlow QueryEngine - 使用示例和测试"""
+"""lingflow QueryEngine - 使用示例和测试"""
 
 import sys
 from pathlib import Path
@@ -17,7 +17,7 @@ from lingflow.core.query_engine import (
 )
 
 print("=" * 70)
-print("🔧 LingFlow QueryEngine - 使用示例")
+print("🔧 lingflow QueryEngine - 使用示例")
 print("=" * 70)
 print()
 

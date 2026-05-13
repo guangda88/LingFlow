@@ -1,6 +1,6 @@
-# LingFlow 深度系统审计报告
+# lingflow 深度系统审计报告
 
-**项目**: LingFlow (灵通工程流系统) v3.9.0  
+**项目**: lingflow (灵通工程流系统) v3.9.0  
 **审计日期**: 2026-04-05  
 **审计范围**: 全代码库深度审计 — 业务逻辑、安全漏洞、代码质量、合规规范、架构风险  
 **代码规模**: 354 个 Python 文件, 89,497 行代码  
@@ -194,12 +194,12 @@ class SkillRegistry:
 **影响**: 配置混乱，维护负担
 
 两个配置系统同时存在：
-- `core/config.py`: `LingFlowConfig` dataclass (已标记 `@deprecated`)
+- `core/config.py`: `lingflowConfig` dataclass (已标记 `@deprecated`)
 - `common/config.py`: `ConfigManager` (活跃使用)
 
-弃用的 `LingFlowConfig` 仍被多处引用，且两者的字段有重叠但不完全一致。
+弃用的 `lingflowConfig` 仍被多处引用，且两者的字段有重叠但不完全一致。
 
-**修复建议**: 制定迁移计划，逐步移除 `LingFlowConfig`，统一到 `ConfigManager`。
+**修复建议**: 制定迁移计划，逐步移除 `lingflowConfig`，统一到 `ConfigManager`。
 
 ---
 
@@ -548,11 +548,11 @@ Black 和 isort 检查失败不会阻止 CI。
   run: |
     python3 -c "
     import sys
-    sys.path.insert(0, '/home/ai/LingFlow')  # 硬编码本地路径
+    sys.path.insert(0, '/home/ai/lingflow')  # 硬编码本地路径
     from skills.code_review.implementation import review_code
 ```
 
-GitHub Actions 运行环境中不存在 `/home/ai/LingFlow`。
+GitHub Actions 运行环境中不存在 `/home/ai/lingflow`。
 
 **修复建议**: 移除硬编码路径，使用 `sys.path.insert(0, '.')` 或正确安装包。
 
@@ -653,7 +653,7 @@ GitHub Actions 运行环境中不存在 `/home/ai/LingFlow`。
 | 裸 `except:` | 4 | 仅在 `phase5/test_*.py` (非生产代码) |
 | 未使用导入 | 3+ | `FeedbackItem`, `FeedbackSeverity`, `ToolType` |
 | 模拟/存根代码 | 1 | `Agent.execute_task()` (核心组件) |
-| 弃用但未移除 | 1 | `LingFlowConfig` |
+| 弃用但未移除 | 1 | `lingflowConfig` |
 | 硬编码路径 | 2 | `config.yaml`, CI workflow |
 | 重复类定义 | 1 | `CompressionConfig` |
 
@@ -661,7 +661,7 @@ GitHub Actions 运行环境中不存在 `/home/ai/LingFlow`。
 
 ## 九、总结
 
-LingFlow 展现了一个设计良好的架构骨架，具备分层技能系统、进程隔离沙箱、智能压缩和自优化等先进特性。**主要风险集中在安全层**：沙箱的 AST 分析存在绕过路径，降级到字符串匹配的机制使其失效。**次要风险在于多个组件处于半完成状态**（Agent 存根、FeedbackLoop 硬编码、双重配置系统），表明系统可能经历了快速迭代但部分模块未完成集成。
+lingflow 展现了一个设计良好的架构骨架，具备分层技能系统、进程隔离沙箱、智能压缩和自优化等先进特性。**主要风险集中在安全层**：沙箱的 AST 分析存在绕过路径，降级到字符串匹配的机制使其失效。**次要风险在于多个组件处于半完成状态**（Agent 存根、FeedbackLoop 硬编码、双重配置系统），表明系统可能经历了快速迭代但部分模块未完成集成。
 
 **建议的下一步行动**:
 1. 立即处理 2 个 CRITICAL 安全问题（S-02, S-04）

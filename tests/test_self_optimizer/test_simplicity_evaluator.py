@@ -15,7 +15,7 @@ class TestSimplicityEvaluator:
     @pytest.fixture
     def evaluator(self):
         """创建评估器"""
-        return SimplicityEvaluator("/home/ai/LingFlow/lingflow")
+        return SimplicityEvaluator("/home/ai/lingflow/lingflow")
 
     def test_evaluate_with_params(self, evaluator):
         """测试带参数的评估"""

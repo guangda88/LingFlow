@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """自动会话恢复模块
 
-在 LingFlow 导入时自动显示上次会话摘要（如果存在）。
+在 lingflow 导入时自动显示上次会话摘要（如果存在）。
 """
 
 import os

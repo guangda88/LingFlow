@@ -1,9 +1,9 @@
-# LingFlow 代码优化实施报告
-## 基于 LingMinOpt 架构
+# lingflow 代码优化实施报告
+## 基于 lingminopt 架构
 
 **实施日期**: 2026-03-24
-**架构**: LingMinOpt (灵极优)
-**目标**: 在 LingMinOpt 框架下对 LingFlow 进行全面代码优化
+**架构**: lingminopt (灵极优)
+**目标**: 在 lingminopt 框架下对 lingflow 进行全面代码优化
 
 ---
 
@@ -11,7 +11,7 @@
 
 | 项目 | 状态 | 说明 |
 |------|------|------|
-| LingMinOpt 集成 | ✅ 完成 | 创建独立优化器框架 |
+| lingminopt 集成 | ✅ 完成 | 创建独立优化器框架 |
 | 代码格式化 | ✅ 完成 | black + isort 处理 25+ 文件 |
 | 导入清理 | ✅ 完成 | 移除未使用导入 |
 | 静态分析 | ✅ 完成 | flake8 问题显著减少 |
@@ -89,7 +89,7 @@ lingflow-optimizer/
 │   └── optimization_report_*.md
 ├── run_full_optimization.py     # 主运行脚本
 ├── variable.py                  # 搜索空间定义
-├── run_optimizer.py             # LingMinOpt 优化器
+├── run_optimizer.py             # lingminopt 优化器
 └── prepare.py                   # 固定配置
 ```
 
@@ -106,7 +106,7 @@ lingflow-optimizer/
 ```python
 from utils import CodeAnalyzer
 
-analyzer = CodeAnalyzer(Path("/home/ai/LingFlow"))
+analyzer = CodeAnalyzer(Path("/home/ai/lingflow"))
 result = analyzer.analyze()
 
 # 获取指标
@@ -143,7 +143,7 @@ git.restore_snapshot()   # 恢复原状态
 
 ---
 
-## 三、LingMinOpt 集成
+## 三、lingminopt 集成
 
 ### 3.1 搜索空间定义
 
@@ -263,7 +263,7 @@ cd /home/ai/lingflow-optimizer
 python run_full_optimization.py
 ```
 
-### 6.2 使用 LingMinOpt 优化器
+### 6.2 使用 lingminopt 优化器
 
 ```bash
 cd /home/ai/lingflow-optimizer
@@ -294,7 +294,7 @@ cat results/optimization_report_*.md
 
 ## 八、总结
 
-本次实施在 LingMinOpt 架架下成功完成了:
+本次实施在 lingminopt 架架下成功完成了:
 
 1. ✅ 创建独立的代码优化框架
 2. ✅ 实现自动代码格式化和导入整理
@@ -307,4 +307,4 @@ cat results/optimization_report_*.md
 ---
 
 *生成时间: 2026-03-24*
-*生成工具: LingFlow 优化器 (LingMinOpt 架构)*
+*生成工具: lingflow 优化器 (lingminopt 架构)*

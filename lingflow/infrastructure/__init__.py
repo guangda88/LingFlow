@@ -1,4 +1,4 @@
-"""LingFlow Infrastructure Module
+"""lingflow Infrastructure Module
 
 Cluster infrastructure registry and management.
 """

@@ -1,4 +1,4 @@
-"""LingFlow 代理注册表"""
+"""lingflow 代理注册表"""
 
 from typing import Any, Dict, List, Optional
 

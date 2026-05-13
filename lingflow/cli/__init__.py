@@ -1,8 +1,8 @@
-"""灵通 (LingFlow) CLI Interface
+"""灵通 (lingflow) CLI Interface
 
 众智混元，万法灵通
 
-Provides command-line interface for executing LingFlow skills and workflows.
+Provides command-line interface for executing lingflow skills and workflows.
 Uses Click for CLI argument parsing and command organization.
 """
 
@@ -11,7 +11,7 @@ from pathlib import Path
 
 import click
 
-from lingflow import LingFlow
+from lingflow import lingflow
 from lingflow.cli.analyze import analyze
 from lingflow.cli.feedback import feedback
 from lingflow.cli.learn import learn
@@ -21,7 +21,7 @@ from lingflow.cli.test import test
 
 __all__ = ["cli", "run", "workflow", "list_skills", "init", "config_cmd"]
 
-lf = LingFlow()
+lf = lingflow()
 
 
 def _get_version() -> str:
@@ -39,7 +39,7 @@ def _get_version() -> str:
 @click.group()
 @click.version_option(version=_get_version(), prog_name="lingflow")
 def cli() -> None:
-    """灵通 (LingFlow) CLI 主入口 - 众智混元，万法灵通"""
+    """灵通 (lingflow) CLI 主入口 - 众智混元，万法灵通"""
 
 
 @cli.command()
@@ -83,7 +83,7 @@ def list_skills():
 
 @cli.command()
 def init():
-    """初始化 LingFlow 工作目录"""
+    """初始化 lingflow 工作目录"""
     lingflow_dir = Path(".lingflow")
     lingflow_dir.mkdir(exist_ok=True)
     (lingflow_dir / "config").mkdir(exist_ok=True)
@@ -93,7 +93,7 @@ def init():
     config_file = lingflow_dir / "config" / "config.yaml"
     if not config_file.exists():
         config_file.write_text(
-            "# LingFlow configuration\n"
+            "# lingflow configuration\n"
             "# Override with LINGFLOW_ env vars\n"
             "workflow:\n  max_parallel: 2\n  max_iterations: 100\n"
             "skills:\n  path: skills\n  default_timeout: 30\n"
@@ -102,7 +102,7 @@ def init():
             encoding="utf-8",
         )
         click.echo(f"Created default config: {config_file}")
-    click.echo("LingFlow 工作目录已初始化: .lingflow/")
+    click.echo("lingflow 工作目录已初始化: .lingflow/")
 
 
 @cli.command("config")

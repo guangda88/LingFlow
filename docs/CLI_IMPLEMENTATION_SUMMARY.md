@@ -1,8 +1,8 @@
-# LingFlow CLI 实现总结
+# lingflow CLI 实现总结
 
 ## 实现概览
 
-成功为 LingFlow 实现了完整的 CLI 命令系统，集成 Phase 4-5 功能。
+成功为 lingflow 实现了完整的 CLI 命令系统，集成 Phase 4-5 功能。
 
 ### 实现时间
 2026-03-31
@@ -10,22 +10,22 @@
 ### 核心文件
 
 #### 1. CLI 主程序
-- **文件**: `/home/ai/LingFlow/lingflow/cli.py`
+- **文件**: `/home/ai/lingflow/lingflow/cli.py`
 - **状态**: ✅ 已实现并测试
 - **行数**: ~1100 行
 
 #### 2. 文档
-- **使用指南**: `/home/ai/LingFlow/docs/CLI_GUIDE.md` (~500 行)
-- **快速参考**: `/home/ai/LingFlow/docs/CLI_EXAMPLES.md` (~200 行)
-- **实现总结**: `/home/ai/LingFlow/docs/CLI_IMPLEMENTATION_SUMMARY.md` (本文件)
+- **使用指南**: `/home/ai/lingflow/docs/CLI_GUIDE.md` (~500 行)
+- **快速参考**: `/home/ai/lingflow/docs/CLI_EXAMPLES.md` (~200 行)
+- **实现总结**: `/home/ai/lingflow/docs/CLI_IMPLEMENTATION_SUMMARY.md` (本文件)
 
 #### 3. 测试
-- **CLI测试**: `/home/ai/LingFlow/tests/cli/test_cli_commands.py`
+- **CLI测试**: `/home/ai/lingflow/tests/cli/test_cli_commands.py`
 - **测试结果**: ✅ 所有测试通过 (7/7)
 
 #### 4. 示例
-- **演示脚本**: `/home/ai/LingFlow/examples/cli_demo.sh`
-- **集成示例**: `/home/ai/LingFlow/examples/integration_example.py`
+- **演示脚本**: `/home/ai/lingflow/examples/cli_demo.sh`
+- **集成示例**: `/home/ai/lingflow/examples/integration_example.py`
 
 ---
 
@@ -375,7 +375,7 @@ def _generate_learning_report(path, tools, feedback, rules, patterns):
 ```bash
 $ python tests/cli/test_cli_commands.py
 ============================================================
-LingFlow CLI 测试
+lingflow CLI 测试
 ============================================================
 
 测试: lingflow --help
@@ -719,4 +719,4 @@ tests/cli/
 
 **众智混元，万法灵通** 🚀
 
-*LingFlow CLI - 让 AI 增强工程流触手可及*
+*lingflow CLI - 让 AI 增强工程流触手可及*

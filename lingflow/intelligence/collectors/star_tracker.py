@@ -1,4 +1,4 @@
-"""Star 增长追踪器 - 追踪LingFlow项目的Star增长趋势
+"""Star 增长追踪器 - 追踪lingflow项目的Star增长趋势
 
 记录新增Star用户，分析增长模式。
 """
@@ -32,10 +32,10 @@ class StargazerData:
 class StarTracker:
     """Star增长追踪器
 
-    追踪LingFlow项目的Star增长，记录新增用户。
+    追踪lingflow项目的Star增长，记录新增用户。
     """
 
-    def __init__(self, repo: str = "guangda88/LingFlow", token: Optional[str] = None):
+    def __init__(self, repo: str = "guangda88/lingflow", token: Optional[str] = None):
         """初始化追踪器
 
         Args:

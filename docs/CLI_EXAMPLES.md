@@ -1,4 +1,4 @@
-# LingFlow CLI 快速参考
+# lingflow CLI 快速参考
 
 常用命令速查表
 

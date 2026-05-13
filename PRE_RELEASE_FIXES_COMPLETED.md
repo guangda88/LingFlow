@@ -1,4 +1,4 @@
-# LingFlow v3.8.0 - 发布前修复完成报告
+# lingflow v3.8.0 - 发布前修复完成报告
 
 **执行日期**: 2026-04-02
 **修复内容**: 3 个关键问题
@@ -229,4 +229,4 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 
 ---
 
-*LingFlow v3.8.0 - 发布前修复完成*
+*lingflow v3.8.0 - 发布前修复完成*

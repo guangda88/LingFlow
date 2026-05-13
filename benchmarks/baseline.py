@@ -1,5 +1,5 @@
 """
-LingFlow 性能基线测试
+lingflow 性能基线测试
 
 基于 VibeCoding 原则，建立关键操作的性能基线，
 用于量化优化效果。
@@ -13,11 +13,11 @@ import time
 from pathlib import Path
 from typing import Dict, Any
 
-# 导入 LingFlow
+# 导入 lingflow
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from lingflow import LingFlow
+from lingflow import lingflow
 from lingflow.core.layered_skill_loader import get_layered_loader
 from lingflow.compression.smart_compressor import SmartContextCompressor
 
@@ -27,8 +27,8 @@ class TestPerformanceBaseline:
 
     @pytest.fixture
     def lingflow(self):
-        """初始化 LingFlow 实例"""
-        return LingFlow()
+        """初始化 lingflow 实例"""
+        return lingflow()
 
     @pytest.fixture
     def loader(self):
@@ -191,7 +191,7 @@ class TestPerformanceComparison:
             for _ in range(5)
         ]
 
-        lingflow = LingFlow()
+        lingflow = lingflow()
 
         # 顺序执行
         start = time.perf_counter()

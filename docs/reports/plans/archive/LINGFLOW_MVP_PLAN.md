@@ -1,8 +1,8 @@
-# LingFlow v4.0 MVP 开发规划
+# lingflow v4.0 MVP 开发规划
 
 **版本**: 1.0
 **日期**: 2026-03-30
-**目标**: 验证"LingFlow 如何帮助 Claude Code 及其它 coding tools 变得更好"
+**目标**: 验证"lingflow 如何帮助 Claude Code 及其它 coding tools 变得更好"
 **周期**: 1-2 个月
 
 ---
@@ -12,7 +12,7 @@
 ### 核心目标
 
 ```
-验证 LingFlow 的核心价值：
+验证 lingflow 的核心价值：
   1. 上下文管理增强
   2. Claude Code 集成可行性
   3. 用户需求和反馈

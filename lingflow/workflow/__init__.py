@@ -1,4 +1,4 @@
-"""LingFlow Workflow模块"""
+"""lingflow Workflow模块"""
 
 from .orchestrator import WorkflowOrchestrator
 

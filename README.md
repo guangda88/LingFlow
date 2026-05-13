@@ -1,4 +1,4 @@
-# LingFlow v3.9.1 - AI 生态平台
+# lingflow v3.9.1 - AI 生态平台
 
 <div align="center">
 
@@ -6,7 +6,7 @@
 [![Docker](https://img.shields.io/badge/docker-latest-blue.svg)](https://hub.docker.com/r/guangda88/lingflow-api)
 [![GitHub Action](https://img.shields.io/badge/action-quality--gate-green.svg)](https://github.com/marketplace/actions/lingflow-actions)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-3.9.1-orange.svg)](https://github.com/guangda88/LingFlow)
+[![Version](https://img.shields.io/badge/version-3.9.1-orange.svg)](https://github.com/guangda88/lingflow)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **众智混元，万法灵通**
@@ -17,9 +17,9 @@ CLI • API • Actions • Skills Market
 
 ---
 
-## 🎯 什么是 LingFlow？
+## 🎯 什么是 lingflow？
 
-**LingFlow** 是一个**AI 增强的软件工程流生态平台**，覆盖 92% 的 SDLC，支持 **4 种使用方式**。
+**lingflow** 是一个**AI 增强的软件工程流生态平台**，覆盖 92% 的 SDLC，支持 **4 种使用方式**。
 
 ### 四层架构
 
@@ -72,8 +72,8 @@ pip install lingflow-core[intelligence]
 ### 从源码安装
 
 ```bash
-git clone https://github.com/guangda88/LingFlow.git
-cd LingFlow
+git clone https://github.com/guangda88/lingflow.git
+cd lingflow
 pip install -e .
 ```
 
@@ -94,7 +94,7 @@ lingflow list-skills
 
 ## 🚀 四种使用方式
 
-LingFlow v3.8.0 现在支持 **4 种使用方式**，满足不同场景需求：
+lingflow v3.8.0 现在支持 **4 种使用方式**，满足不同场景需求：
 
 ### 1️⃣ CLI 工具（本地开发）
 
@@ -146,7 +146,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: guangda88/LingFlow/actions/quality-gate@v1
+      - uses: guangda88/lingflow/actions/quality-gate@v1
         with:
           command: review
           path: ./src
@@ -174,7 +174,7 @@ lingflow skill publish ./my-skill
 
 ### 解决的核心问题
 
-| 痛点 | LingFlow解决方案 |
+| 痛点 | lingflow解决方案 |
 |------|-----------------|
 | **AI生成代码质量差** | 自优化系统，持续改进，预期改进60% |
 | **上下文窗口限制** | 智能压缩，会话延长2-3倍 |
@@ -220,7 +220,7 @@ Token节省: 30-50%
 
 ### 2. 自优化系统（Unique）
 
-**基于LingMinOpt的参数优化**:
+**基于lingminopt的参数优化**:
 
 ```bash
 # 自动检测代码质量问题
@@ -249,7 +249,7 @@ lingflow optimize simplicity --target ./my-project
 
 **实际效果**:
 ```
-项目: LingFlow自身 (192个类)
+项目: lingflow自身 (192个类)
 基线: 4个结构违规
 优化后: 预期1个违规
 改进: 60% ↓
@@ -349,8 +349,8 @@ pip install lingflow-core
 pip install lingflow-core[full]
 
 # 从源码安装
-git clone https://github.com/guangda88/LingFlow.git
-cd LingFlow
+git clone https://github.com/guangda88/lingflow.git
+cd lingflow
 pip install -e .
 ```
 
@@ -436,7 +436,7 @@ lingflow optimize structure --target ./
 
 **背景**: 使用Claude Code/Cursor的5-20人团队
 
-**使用LingFlow**:
+**使用lingflow**:
 ```bash
 # 1. 初始化
 lingflow init my-project
@@ -460,7 +460,7 @@ lingflow optimize structure
 
 **背景**: 需要统一规范的多团队协作
 
-**使用LingFlow**:
+**使用lingflow**:
 ```yaml
 # .lingflow/workflows/standard-development.yaml
 stages:
@@ -485,7 +485,7 @@ stages:
 
 **背景**: 需要CI/CD集成的自动化部署
 
-**使用LingFlow**:
+**使用lingflow**:
 ```bash
 # CI/CD Pipeline
 - name: "质量检查"
@@ -554,15 +554,15 @@ Token节省: 30-50%
 
 ## 📞 联系方式
 
-- **GitHub**: https://github.com/guangda88/LingFlow
-- **Issues**: https://github.com/guangda88/LingFlow/issues
-- **Discussions**: https://github.com/guangda88/LingFlow/discussions
+- **GitHub**: https://github.com/guangda88/lingflow
+- **Issues**: https://github.com/guangda88/lingflow/issues
+- **Discussions**: https://github.com/guangda88/lingflow/discussions
 
 ---
 
 <div align="center">
 
-**LingFlow v3.8.0** - 让AI工具更好地为软件工程服务
+**lingflow v3.8.0** - 让AI工具更好地为软件工程服务
 
 **众智混元，万法灵通** ⚡
 

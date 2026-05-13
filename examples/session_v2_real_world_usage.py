@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-LingFlow Session v2 - 实际项目使用示例
+lingflow Session v2 - 实际项目使用示例
 
-展示如何在LingFlow项目的不同模块中使用Session v2进行：
+展示如何在lingflow项目的不同模块中使用Session v2进行：
 1. API调用追踪和Token统计
 2. 工作流会话管理
 3. 测试会话追踪
@@ -19,7 +19,7 @@ from typing import Optional
 from lingflow.core import SessionManager, SessionSnapshot
 
 print("=" * 70)
-print("🌟 LingFlow Session v2 - 实际项目使用示例")
+print("🌟 lingflow Session v2 - 实际项目使用示例")
 print("=" * 70)
 print()
 

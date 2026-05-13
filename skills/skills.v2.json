@@ -1,7 +1,7 @@
 {
   "$schema": "./skill-schema-v2.json",
   "version": "2.0",
-  "description": "LingFlow Skill Configuration v2.0 - Workflow-focused skills with agent mapping",
+  "description": "lingflow Skill Configuration v2.0 - Workflow-focused skills with agent mapping",
   "skills": [
     {
       "name": "brainstorming",

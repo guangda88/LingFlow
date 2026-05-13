@@ -1,4 +1,4 @@
-# LingFlow v3.9.0 路线图 — 社区与异步
+# lingflow v3.9.0 路线图 — 社区与异步
 
 **目标**: 从生态骨架到活跃社区，从同步到异步平滑升级
 **时间窗口**: 4-6 周
@@ -124,7 +124,7 @@ async def tenant_middleware(request, call_next):
 
 | 级别 | 标准 | 维护者 | 标识 |
 |------|------|--------|------|
-| official | 通过完整测试 + 文档审查 + 安全扫描 | LingFlow 核心团队 | ✅ 官方 |
+| official | 通过完整测试 + 文档审查 + 安全扫描 | lingflow 核心团队 | ✅ 官方 |
 | community | 有 SKILL.md + 基本测试 | 社区贡献者 | 🟢 社区 |
 | experimental | 有 SKILL.md，测试可选 | 任何人 | 🟡 实验 |
 

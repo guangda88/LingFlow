@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-LingFlow 自优化执行脚本
-使用LingMinOpt框架优化LingFlow代码结构
+lingflow 自优化执行脚本
+使用lingminopt框架优化lingflow代码结构
 """
 
 import json
@@ -10,7 +10,7 @@ from pathlib import Path
 from datetime import datetime
 
 print("=" * 70)
-print("🔧 LingFlow 自优化 - LingMinOpt 实际应用")
+print("🔧 lingflow 自优化 - lingminopt 实际应用")
 print("=" * 70)
 print(f"开始时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 print()
@@ -23,7 +23,7 @@ print("-" * 70)
 
 from lingflow.self_optimizer.evaluator import StructureEvaluator
 
-evaluator = StructureEvaluator('/home/ai/LingFlow/lingflow')
+evaluator = StructureEvaluator('/home/ai/lingflow/lingflow')
 
 # 当前默认参数
 current_params = {
@@ -39,14 +39,14 @@ print(f"✅ 当前违规数: {current_violations}")
 print(f"当前参数: {json.dumps(current_params, indent=2)}")
 
 # ============================================================================
-# 步骤2：运行LingMinOpt优化
+# 步骤2：运行lingminopt优化
 # ============================================================================
-print("\n🎯 步骤2：运行LingMinOpt贝叶斯优化")
+print("\n🎯 步骤2：运行lingminopt贝叶斯优化")
 print("-" * 70)
 
 from lingflow.self_optimizer import quick_optimize
 
-print("正在优化LingFlow代码结构...")
+print("正在优化lingflow代码结构...")
 print("目标: 最小化结构违规数")
 print("方法: 贝叶斯优化 + 网格搜索")
 print()
@@ -55,7 +55,7 @@ start_time = time.time()
 
 # 运行优化
 result = quick_optimize(
-    target="/home/ai/LingFlow/lingflow",
+    target="/home/ai/lingflow/lingflow",
     goal="structure",
     async_mode=False
 )
@@ -100,7 +100,7 @@ print(f"✅ 验证违规数: {best_violations}")
 report = {
     "optimization_summary": {
         "timestamp": datetime.now().isoformat(),
-        "target": "/home/ai/LingFlow/lingflow",
+        "target": "/home/ai/lingflow/lingflow",
         "goal": "structure",
         "duration_seconds": elapsed,
     },
@@ -122,7 +122,7 @@ report = {
 }
 
 # 保存报告
-report_path = Path("/home/ai/LingFlow/.lingflow/reports")
+report_path = Path("/home/ai/lingflow/.lingflow/reports")
 report_path.mkdir(parents=True, exist_ok=True)
 
 report_file = report_path / f"optimization_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
@@ -166,7 +166,7 @@ print("  4. 将优化结果集成到CI/CD流程")
 # 总结
 # ============================================================================
 print("\n" + "=" * 70)
-print("🎉 LingFlow 自优化完成！")
+print("🎉 lingflow 自优化完成！")
 print("=" * 70)
 
 print(f"\n核心成果:")

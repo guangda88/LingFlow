@@ -178,7 +178,7 @@ URL: http://zhinenggitea.iepose.cn/guangda/LingFlow.git
 ### 步骤 1: 检查当前状态
 
 ```bash
-cd /home/ai/zhineng-knowledge-system/lingflow
+cd /home/ai/lingzhi/lingflow
 git status
 ```
 

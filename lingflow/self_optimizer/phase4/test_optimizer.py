@@ -1,5 +1,5 @@
 """
-LingFlow Phase 4: 优化器测试
+lingflow Phase 4: 优化器测试
 
 验证贝叶斯优化器和网格搜索优化器的基本功能。
 """

@@ -46,7 +46,7 @@
           "tool": "bash",
           "command": "ls -la",
           "description": "List files in current directory",
-          "result_summary": "列出/home/ai目录内容，包含大量灵族项目：LingFlow, LingClaude, LingYi, LingMessage, LingLaw, LingYang, zhineng-bridge, zhineng-knowledge-system等。注意crush.bin.bak约59MB。"
+          "result_summary": "列出/home/ai目录内容，包含大量灵族项目：lingflow, lingclaude, lingyi, lingmessage, linglaw, lingyang, zhineng-bridge, zhineng-knowledge-system等。注意crush.bin.bak约59MB。"
         },
         {
           "tool": "bash",
@@ -95,6 +95,6 @@
     "message_storage": "/home/ai/.local/share/opencode/storage/message/ses_268ff870fffe2FeKPmO3Gm1E1R/",
     "part_storage": "/home/ai/.local/share/opencode/storage/part/",
     "session_meta": "/home/ai/.local/share/opencode/storage/session/global/ses_268ff870fffe2FeKPmO3Gm1E1R.json",
-    "this_file": "/home/ai/LingFlow/data/opencode_session_2026-04-16_research.json"
+    "this_file": "/home/ai/lingflow/data/opencode_session_2026-04-16_research.json"
   }
 }

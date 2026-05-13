@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LingFlow v3.3.0 全面测试脚本
+lingflow v3.3.0 全面测试脚本
 
 测试覆盖:
 - 代理注册和发现
@@ -314,7 +314,7 @@ class TestRunner:
             bool: True if all tests passed, False otherwise
         """
         print("=" * 70)
-        print("  LingFlow v3.3.0 全面测试")
+        print("  lingflow v3.3.0 全面测试")
         print("=" * 70)
 
         # 运行测试

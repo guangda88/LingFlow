@@ -1,4 +1,4 @@
-"""LingFlow v2 Session管理 - 基于Claude Code设计"""
+"""lingflow v2 Session管理 - 基于Claude Code设计"""
 
 import json
 import uuid

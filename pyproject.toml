@@ -102,10 +102,10 @@ full = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/guangda88/LingFlow"
-Documentation = "https://github.com/guangda88/LingFlow/blob/main/README.md"
-Repository = "https://github.com/guangda88/LingFlow"
-"Bug Tracker" = "https://github.com/guangda88/LingFlow/issues"
+Homepage = "https://github.com/guangda88/lingflow"
+Documentation = "https://github.com/guangda88/lingflow/blob/main/README.md"
+Repository = "https://github.com/guangda88/lingflow"
+"Bug Tracker" = "https://github.com/guangda88/lingflow/issues"
 
 [project.scripts]
 lingflow = "lingflow.cli.__main__:cli"

@@ -1,14 +1,14 @@
-# LingFlow API Documentation
+# lingflow API Documentation
 # 完整的工程流系统API参考
 
-site_name: LingFlow API Documentation
-site_description: LingFlow 工程流系统完整API文档 - 众智混元，万法灵通
-site_author: LingFlow Team
-copyright: Copyright &copy; 2026 LingFlow
+site_name: lingflow API Documentation
+site_description: lingflow 工程流系统完整API文档 - 众智混元，万法灵通
+site_author: lingflow Team
+copyright: Copyright &copy; 2026 lingflow
 
 # Repository
-repo_name: guangda88/LingFlow
-repo_url: https://github.com/guangda88/LingFlow
+repo_name: guangda88/lingflow
+repo_url: https://github.com/guangda88/lingflow
 
 # Theme
 theme:

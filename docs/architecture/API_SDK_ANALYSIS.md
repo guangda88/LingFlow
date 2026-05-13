@@ -1,14 +1,14 @@
-# LingFlow API/SDK 封装分析报告
+# lingflow API/SDK 封装分析报告
 
 **版本**: v1.0.0
 **日期**: 2026-04-02
-**分析范围**: LingFlow v3.8.0 全部功能模块
+**分析范围**: lingflow v3.8.0 全部功能模块
 
 ---
 
 ## 📋 执行摘要
 
-本文档分析 LingFlow 各功能模块，评估其封装为 API 或 SDK 的**可行性、价值、复杂度**和**优先级**。
+本文档分析 lingflow 各功能模块，评估其封装为 API 或 SDK 的**可行性、价值、复杂度**和**优先级**。
 
 ### 核心结论
 
@@ -47,8 +47,8 @@
 from typing import Dict, Any, List
 from dataclasses import dataclass
 
-class LingFlowSkillsSDK:
-    """LingFlow 技能系统 SDK"""
+class lingflowSkillsSDK:
+    """lingflow 技能系统 SDK"""
 
     def __init__(self, work_dir: str = "."):
         """初始化 SDK"""
@@ -170,10 +170,10 @@ class LingFlowSkillsSDK:
 ```python
 # 安装: pip install lingflow-sdk
 
-from lingflow_sdk import LingFlowSkillsSDK
+from lingflow_sdk import lingflowSkillsSDK
 
 # 初始化
-sdk = LingFlowSkillsSDK(work_dir="./my-project")
+sdk = lingflowSkillsSDK(work_dir="./my-project")
 
 # 列出所有测试技能
 test_skills = sdk.list_skills(category="testing")
@@ -206,7 +206,7 @@ results = sdk.execute_skills_batch(tasks)
 # OpenAPI 规范
 openapi: 3.0.0
 info:
-  title: LingFlow Skills API
+  title: lingflow Skills API
   version: 1.0.0
 
 paths:
@@ -392,8 +392,8 @@ class WorkflowConfig:
         if self.quality_thresholds is None:
             self.quality_thresholds = {}
 
-class LingFlowWorkflowsSDK:
-    """LingFlow 工作流 SDK"""
+class lingflowWorkflowsSDK:
+    """lingflow 工作流 SDK"""
 
     def __init__(self, work_dir: str = "."):
         """初始化 SDK"""
@@ -676,8 +676,8 @@ class QueryConfig:
     structured_output: bool = False
     auto_compact: bool = True
 
-class LingFlowQuerySDK:
-    """LingFlow QueryEngine SDK"""
+class lingflowQuerySDK:
+    """lingflow QueryEngine SDK"""
 
     def __init__(self, config: Optional[QueryConfig] = None):
         """初始化 SDK"""
@@ -843,8 +843,8 @@ paths:
 
 **SDK 设计**:
 ```python
-class LingFlowReviewSDK:
-    """LingFlow 代码审查 SDK"""
+class lingflowReviewSDK:
+    """lingflow 代码审查 SDK"""
 
     def review(
         self,
@@ -887,7 +887,7 @@ class LingFlowReviewSDK:
 
 ### 现状
 - **实现位置**: `lingflow/self_optimizer/`
-- **核心算法**: LingMinOpt（贝叶斯优化）
+- **核心算法**: lingminopt（贝叶斯优化）
 - **优化目标**: 结构、性能、简洁
 
 ### 封装方案
@@ -943,7 +943,7 @@ paths:
 | **市场需求** | ⭐⭐⭐⭐ | 自动代码优化是新兴需求 |
 | **技术可行性** | ⭐⭐ | 算法复杂，实现难度高 |
 | **商业价值** | ⭐⭐⭐⭐ | 高价值服务 |
-| **竞争优势** | ⭐⭐⭐⭐⭐ | 独特的 LingMinOpt 算法 |
+| **竞争优势** | ⭐⭐⭐⭐⭐ | 独特的 lingminopt 算法 |
 
 ---
 
@@ -1095,7 +1095,7 @@ paths:
               └──────────────┼──────────────┘
                              │
                     ┌────────▼────────┐
-                    │  LingFlow Core  │
+                    │  lingflow Core  │
                     │  (v3.8.0)       │
                     └─────────────────┘
 ```
@@ -1159,12 +1159,12 @@ lingflow-sdk/
 
 ### 预期收益
 
-- **技术收益**: 提升 LingFlow 易用性和可集成性
+- **技术收益**: 提升 lingflow 易用性和可集成性
 - **商业收益**: 开辟 SaaS 收入渠道
 - **生态收益**: 吸引更多开发者和企业用户
 
 ---
 
-**LingFlow API/SDK 封装分析 - v1.0.0**
+**lingflow API/SDK 封装分析 - v1.0.0**
 
 *从工程流系统到 AI 基础设施平台的演进*

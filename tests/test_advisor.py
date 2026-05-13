@@ -58,7 +58,7 @@ class TestGenerateReportStructure:
     def test_report_header(self, advisor, sample_result):
         metrics = {"review_score": 75, "structure_violations": 5}
         report = advisor.generate_report("structure", "/path", metrics, sample_result)
-        assert "# LingFlow 自优化建议报告" in report
+        assert "# lingflow 自优化建议报告" in report
         assert "结构优化" in report
 
     def test_structure_metrics(self, advisor, sample_result):

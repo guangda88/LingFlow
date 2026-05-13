@@ -50,7 +50,7 @@
 python -c "
 from skills.rag_quality_loop.implementation import execute_skill
 result = execute_skill({
-    'test_set_path': '/home/ai/zhineng-knowledge-system/data/training/qa_benchmark/test_qa.jsonl',
+    'test_set_path': '/home/ai/lingzhi/data/training/qa_benchmark/test_qa.jsonl',
     'top_k': 10,
     'use_vector': True,
     'use_bm25': True,

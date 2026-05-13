@@ -1,7 +1,7 @@
 # 灵族 (LingZu) 全系统安全审计报告
 
 **审计日期**: 2026-05-08
-**审计者**: 灵通 (LingFlow)
+**审计者**: 灵通 (lingflow)
 **范围**: 12灵族成员 + 4外部项目 + 系统基础设施
 **方法**: 文件权限扫描、代码审计、网络暴露检测、Git追踪验证、运行时服务检查
 
@@ -13,7 +13,7 @@
 
 **立即需要行动的Top 3**:
 1. 从git中移除并轮换JWT私钥 (C-1) — 🔴 灵知项目范围，需灵知处理
-2. 将所有`0.0.0.0`绑定改为`127.0.0.1`或加防火墙 (C-2) — LingFlow API已安全(127.0.0.1)，data/config.json为AList共享服务(接受风险)，其余为灵知/LingLaw范围
+2. 将所有`0.0.0.0`绑定改为`127.0.0.1`或加防火墙 (C-2) — lingflow API已安全(127.0.0.1)，data/config.json为AList共享服务(接受风险)，其余为灵知/linglaw范围
 3. ~~修复crush.json权限为600 (C-4)~~ — ✅ 已修复并验证，全部24个文件均为600
 
 ---
@@ -22,22 +22,22 @@
 
 | # | 项目 | 路径 | 类型 | 扫描状态 |
 |---|------|------|------|----------|
-| 1 | 灵通 (LingFlow) | /home/ai/LingFlow | 核心平台 | ✅ 完成 |
-| 2 | 灵克 (LingClaude) | /home/ai/LingClaude | 编程助手 | ✅ 完成 |
-| 3 | 灵研 (LingResearch) | /home/ai/lingresearch | 科研框架 | ✅ 完成 |
-| 4 | 灵知 (LingZhi) | /home/ai/zhineng-knowledge-system | 知识管理 | ✅ 完成 |
-| 5 | 灵通问道 (LingTongAsk) | /home/ai/lingtongask | 播客生成 | ✅ 完成 |
-| 6 | 灵通+ (LingFlow_plus) | /home/ai/LingFlow_plus | 协调者 | ✅ 完成 |
-| 7 | 灵犀 (LingXi) | /home/ai/Ling-term-mcp | MCP终端 | ✅ 完成 |
-| 8 | 灵信 (LingMessage) | /home/ai/LingMessage | 消息总线 | ✅ 完成 |
-| 9 | 灵网 (LingWeb) | /home/ai/LingWeb | 网站开发 | ✅ 完成 |
-| 10 | 灵极优 (LingMinOpt) | /home/ai/LingMinOpt | 自优化框架 | ✅ 完成 |
-| 11 | 灵扬 (LingYang) | /home/ai/LingYang | 对外联络 | ✅ 完成 |
-| 12 | 智桥 (ZhiBridge) | /home/ai/zhineng-bridge | 通信桥梁 | ✅ 完成 |
-| Ext | 灵律 (LingLaw) | /home/ai/LingLaw | 外部 | ✅ 完成 |
-| Ext | 灵依 (LingYi) | /home/ai/LingYi | 外部 | ✅ 完成 |
-| Ext | 灵声 (LingVoice) | /home/ai/LingVoice | 外部 | ✅ 完成 |
-| Ext | 灵康 (LingHealth) | /home/ai/LingHealth | 外部 | ✅ 完成 |
+| 1 | 灵通 (lingflow) | /home/ai/lingflow | 核心平台 | ✅ 完成 |
+| 2 | 灵克 (lingclaude) | /home/ai/lingclaude | 编程助手 | ✅ 完成 |
+| 3 | 灵研 (lingresearch) | /home/ai/lingresearch | 科研框架 | ✅ 完成 |
+| 4 | 灵知 (lingzhi) | /home/ai/lingzhi | 知识管理 | ✅ 完成 |
+| 5 | 灵通问道 (lingtongask) | /home/ai/lingtongask | 播客生成 | ✅ 完成 |
+| 6 | 灵通+ (lingflowplus) | /home/ai/lingflow_plus | 协调者 | ✅ 完成 |
+| 7 | 灵犀 (lingxi) | /home/ai/lingxi | MCP终端 | ✅ 完成 |
+| 8 | 灵信 (lingmessage) | /home/ai/lingmessage | 消息总线 | ✅ 完成 |
+| 9 | 灵网 (lingweb) | /home/ai/lingweb | 网站开发 | ✅ 完成 |
+| 10 | 灵极优 (lingminopt) | /home/ai/lingminopt | 自优化框架 | ✅ 完成 |
+| 11 | 灵扬 (lingyang) | /home/ai/lingyang | 对外联络 | ✅ 完成 |
+| 12 | 智桥 (zhibridge) | /home/ai/zhibridge | 通信桥梁 | ✅ 完成 |
+| Ext | 灵律 (linglaw) | /home/ai/linglaw | 外部 | ✅ 完成 |
+| Ext | 灵依 (lingyi) | /home/ai/lingyi | 外部 | ✅ 完成 |
+| Ext | 灵声 (lingvoice) | /home/ai/lingvoice | 外部 | ✅ 完成 |
+| Ext | 灵康 (linghealth) | /home/ai/linghealth | 外部 | ✅ 完成 |
 
 ---
 
@@ -63,7 +63,7 @@
 
 | 属性 | 值 |
 |------|-----|
-| **项目** | zhineng-knowledge-system, LingLaw, 系统级 |
+| **项目** | zhineng-knowledge-system, linglaw, 系统级 |
 | **影响** | 所有端口对局域网/公网开放 |
 | **证据** | `ss -tlnp` 确认以下0.0.0.0绑定 |
 | **紧急度** | 🔴 立即 |
@@ -74,7 +74,7 @@
 0.0.0.0:5901  VNC (TigerVNC)
 0.0.0.0:8000  灵知后端
 0.0.0.0:8001  灵知服务
-0.0.0.0:8002  LingLaw API (经frpc隧道暴露至 linglaw.mefrp.com)
+0.0.0.0:8002  linglaw API (经frpc隧道暴露至 linglaw.mefrp.com)
 0.0.0.0:8008  灵知Web
 0.0.0.0:8501  Streamlit (灵知)
 0.0.0.0:8890  uvicorn app
@@ -91,9 +91,9 @@
 
 | 属性 | 值 |
 |------|-----|
-| **项目** | LingLaw |
+| **项目** | linglaw |
 | **文件** | `frpc_linglaw.toml` |
-| **影响** | LingLaw API经公网隧道明文传输 |
+| **影响** | linglaw API经公网隧道明文传输 |
 | **证据** | `useEncryption = false`, 连接 `8.148.27.215:2333` |
 | **暴露域名** | `linglaw.mefrp.com` |
 | **紧急度** | 🔴 立即 |
@@ -106,7 +106,7 @@
 |------|-----|
 | **项目** | 10/11个灵族成员 |
 | **影响** | 任何本地进程可读取所有Agent的会话令牌 |
-| **证据** | 仅LingFlow_plus为600，其余10个为664 |
+| **证据** | 仅lingflowplus为600，其余10个为664 |
 | **紧急度** | 🔴 立即 |
 
 **修复**: 已执行并验证 — 全部24个crush.json/crush.db均为600 (2026-05-08确认)。
@@ -133,11 +133,11 @@
 | **文件** | `docker-compose.cli-proxy.yml` |
 | **密钥** | `CLIPROXYAPI_API_KEY=lingzhi-api-key-001` |
 
-### H-3: LingHealth硬编码数据库密码
+### H-3: linghealth硬编码数据库密码
 
 | 属性 | 值 |
 |------|-----|
-| **项目** | LingHealth |
+| **项目** | linghealth |
 | **文件** | `deploy/docker-compose.yaml` |
 | **密码** | `POSTGRES_PASSWORD: linghealth` |
 | **连接串** | `postgresql+asyncpg://linghealth:linghealth@postgres:5432/linghealth` |
@@ -146,13 +146,13 @@
 
 | 属性 | 值 |
 |------|-----|
-| **项目** | LingMessage (影响全局) |
+| **项目** | lingmessage (影响全局) |
 | **文件** | `/home/ai/.lingmessage/lingbus.db` (实际使用路径) |
 | **权限** | ~~644~~ → ✅ 600 (2026-05-08修复) |
 | **影响** | 任何进程可读写所有Agent间通信 |
 | **E2E确认** | 无认证可读取3922线程/1625消息，包括所有Agent间通信内容 |
 
-**注意**: `/home/ai/LingMessage/lingbus.db`存在但为空（0行）。实际数据在`~/.lingmessage/lingbus.db`。
+**注意**: `/home/ai/lingmessage/lingbus.db`存在但为空（0行）。实际数据在`~/.lingmessage/lingbus.db`。
 
 **修复**: ✅ 已执行 `chmod 600 /home/ai/.lingmessage/lingbus.db` 并验证。
 
@@ -160,26 +160,26 @@
 
 | 属性 | 值 |
 |------|-----|
-| **项目** | LingMessage (影响全局) |
+| **项目** | lingmessage (影响全局) |
 | **地址** | `127.0.0.1:9528/mcp` |
 | **影响** | 任何本地进程可冒充任何Agent发送/读取消息 |
 | **证据** | `run_lingbus_http.py`无任何认证代码 |
 
-### H-6: ~~LingFlow Git安全钩子被禁用~~ — ✅ 已修复
+### H-6: ~~lingflow Git安全钩子被禁用~~ — ✅ 已修复
 
 | 属性 | 值 |
 |------|-----|
-| **项目** | LingFlow (核心平台) |
+| **项目** | lingflow (核心平台) |
 | **原文件** | `.git/hooks/pre-commit.disabled`, `.git/hooks/pre-push.disabled` |
 | **原问题** | 钩子引用不存在的AUDIT_v0.16.md，每次提交跑全量pytest(~82s) |
 | **修复** | 重写为轻量钩子：pre-commit(密钥检测+语法+lint)，pre-push(追踪密钥文件+冲突标记)，秒级完成 |
 | **验证** | 两钩子均已测试通过 |
 
-### H-7: LingClaude session_state.json权限回退
+### H-7: lingclaude session_state.json权限回退
 
 | 属性 | 值 |
 |------|-----|
-| **项目** | LingClaude |
+| **项目** | lingclaude |
 | **文件** | session_state.json |
 | **权限** | 664 (应为600) |
 | **状态** | SS-2修复已回退 |
@@ -205,7 +205,7 @@
 
 ## 中等级别发现 (MEDIUM)
 
-### M-1: LingYi无盐SHA256密码回退
+### M-1: lingyi无盐SHA256密码回退
 
 | 文件 | `_web_app_auth.py:151-152` |
 |------|---------------------------|
@@ -213,28 +213,28 @@
 
 ### M-2: 7/12个Agent项目缺少Git钩子
 
-| 有钩子 | lingresearch, zhineng-knowledge-system, lingtongask, zhineng-bridge, LingFlow_plus |
+| 有钩子 | lingresearch, zhineng-knowledge-system, lingtongask, zhineng-bridge, lingflowplus |
 |--------|------|
-| 无钩子 | LingFlow, LingClaude, LingXi, LingMessage, LingWeb, LingMinOpt, LingYang |
+| 无钩子 | lingflow, lingclaude, lingxi, lingmessage, lingweb, lingminopt, lingyang |
 
 ### M-3: 多个.env文件权限664
 
-| 项目 | LingFlow, zhineng-knowledge-system (.env + .env.production), lingtongask |
+| 项目 | lingflow, zhineng-knowledge-system (.env + .env.production), lingtongask |
 |------|------|
 
-### M-4: LingWeb自签名证书被Git追踪
+### M-4: lingweb自签名证书被Git追踪
 
 | 文件 | `lingyi-demo/cert.pem` (664权限, git-tracked) |
 
 ### M-5: 10/14个项目.gitignore缺少.pem/.key模式
 
-### M-6: LingLaw和LingVoice无.gitignore
+### M-6: linglaw和lingvoice无.gitignore
 
 ### M-7: 多个世界可写文件
 
-| 包括 | LingLaw的`.db`, `user_data`, `start_frpc.sh`; LingFlow的`.db`文件 |
+| 包括 | linglaw的`.db`, `user_data`, `start_frpc.sh`; lingflow的`.db`文件 |
 
-### M-8: LingHealth无.gitignore
+### M-8: linghealth无.gitignore
 
 ---
 
@@ -242,11 +242,11 @@
 
 | ID | 发现 | 项目 |
 |----|------|------|
-| I-1 | XSS转义函数 `escapeHtml()` 存在 | LingWeb |
-| I-2 | 沙箱有 `ALLOWED_MODULES` 白名单 | LingFlow |
+| I-1 | XSS转义函数 `escapeHtml()` 存在 | lingweb |
+| I-2 | 沙箱有 `ALLOWED_MODULES` 白名单 | lingflow |
 | I-3 | SSH密钥权限正确 (600) | 系统 |
 | I-4 | 主目录权限750 | 系统 |
-| I-5 | LingBus HTTP代理正确绑定127.0.0.1 | LingMessage |
+| I-5 | LingBus HTTP代理正确绑定127.0.0.1 | lingmessage |
 | I-6 | .env文件未被Git追踪 (4个已检查项目) | 多个项目 |
 
 ---
@@ -255,7 +255,7 @@
 
 | 问题ID | 描述 | 声称修复 | 实际验证结果 |
 |--------|------|----------|-------------|
-| SS-2 | session_state.json权限 | 0600 + HMAC | ❌ **回退**: LingClaude仍664, HMAC未验证 |
+| SS-2 | session_state.json权限 | 0600 + HMAC | ❌ **回退**: lingclaude仍664, HMAC未验证 |
 | SS-3 | 信号处理器做I/O | flag + atexit | ❌ **未修复**: `_signal_handler`仍直接调用save/backup (crash_recovery.py:103-117)，无重入保护 |
 | SS-6 | crush.json权限 | 0600 | ❌ **未修复**: 10/11仍664 |
 | SS-10 | Daemon读取状态无HMAC | 已修复 | ❌ **未实现**: `verify_state_integrity()`仅做JSON解析+字段检查 (crash_recovery.py:344-370)，无HMAC |
@@ -334,8 +334,8 @@ echo "=== P0: LingBus DB权限修复 ==="
 chmod 600 /home/ai/.lingmessage/lingbus.db
 echo "  Fixed: ~/.lingmessage/lingbus.db"
 
-echo "=== P1: LingClaude session_state.json修复 ==="
-find /home/ai/LingClaude -name "session_state.json" -exec chmod 600 {} \;
+echo "=== P1: lingclaude session_state.json修复 ==="
+find /home/ai/lingclaude -name "session_state.json" -exec chmod 600 {} \;
 echo "  Fixed: session_state.json"
 
 echo "=== 完成 ==="
@@ -378,12 +378,12 @@ echo "=== 完成 ==="
 | 1 | LingBus HTTP代理无认证访问 (`POST /mcp`) | ✅ 200 OK，返回服务器信息 | H-5 |
 | 2 | LingBus DB直接读取 (`~/.lingmessage/lingbus.db`) | ✅ 可读取3922线程/1625消息 | H-4 |
 | 3 | JWT私钥内容验证 | ✅ 真实RSA私钥，非占位符 | C-1 |
-| 4 | LingLaw API直接访问 (`0.0.0.0:8002`) | ✅ 200 OK，返回完整HTML页面 | C-2 |
+| 4 | linglaw API直接访问 (`0.0.0.0:8002`) | ✅ 200 OK，返回完整HTML页面 | C-2 |
 | 5 | crush.db世界可读 (12个agent) | ✅ 全部644权限，总计~420MB会话数据 | C-4 |
 | 6 | crush.json内容检查 | ⚠️ 仅含`options`配置，无session token | C-4降级 |
 | 7 | PostgreSQL 5436直连测试 | ⚠️ 端口开放(0.0.0.0)，需SCRAM-SHA-256认证 | C-2部分 |
 | 8 | Redis 6381密码爆破测试 | ✅ 认证必需，常见弱密码全部失败 | 安全 |
-| 9 | LingLaw API文档暴露 (`/docs`) | ✅ 200 OK，1014 bytes API文档 | C-2 |
+| 9 | linglaw API文档暴露 (`/docs`) | ✅ 200 OK，1014 bytes API文档 | C-2 |
 
 ### E2E测试1详情: LingBus HTTP代理
 ```
@@ -393,7 +393,7 @@ Body: serverInfo.name=lingmessage-lingbus, version=3.2.4
 结论: 任何本地进程可冒充任何Agent
 ```
 
-### E2E测试4详情: LingLaw API
+### E2E测试4详情: linglaw API
 ```
 Request: GET http://127.0.0.1:8002/
 Response: 200 OK, Content-Type: text/html
@@ -403,8 +403,8 @@ Body: 完整的"灵律 — 法律AI智能办案系统"页面
 
 ### E2E测试5详情: crush.db
 ```
-LingFlow/crush.db: 644, 40MB, 4378 messages, 50 sessions
-LingClaude/crush.db: 644, 64MB
+lingflow/crush.db: 644, 40MB, 4378 messages, 50 sessions
+lingclaude/crush.db: 644, 64MB
 灵研/crush.db: 644, 46MB
 ... (全部12个agent均为644权限)
 ```
@@ -424,7 +424,7 @@ Result: 全部认证失败 (AuthenticationError)
 结论: Redis配置了密码且非弱密码，但端口仍暴露在0.0.0.0
 ```
 
-### E2E测试9详情: LingLaw API文档暴露
+### E2E测试9详情: linglaw API文档暴露
 ```
 Request: GET http://127.0.0.1:8002/docs
 Response: 200 OK, 1014 bytes, text/html
@@ -440,7 +440,7 @@ Body: Swagger/OpenAPI文档页面
 |----|--------|----------|------|
 | C-4 | crush.json/crush.db权限 | `stat -c '%a %n'` 全部24个文件 | ✅ 全部600 |
 | H-4 | LingBus DB权限 | `stat -c '%a %n' ~/.lingmessage/lingbus.db` | ✅ 600 (从644修复) |
-| C-2(LingFlow) | LingFlow API绑定 | `main.py:580` 确认 host="127.0.0.1" | ✅ 安全 |
+| C-2(lingflow) | lingflow API绑定 | `main.py:580` 确认 host="127.0.0.1" | ✅ 安全 |
 | C-2(data/config) | AList文件服务器0.0.0.0:5244 | 评估：灵族共享文件服务，改为127.0.0.1会破坏rclone挂载 | ⚠️ 接受风险 |
 | LingBus频道 | 频道分离实现 | 代码审计：poll_messages有channels参数，SQL IN过滤，open_thread验证channel | ✅ 已实现 |
 | H-6 | Git安全钩子 | 重写pre-commit(密钥+语法+lint)+pre-push(密钥文件+冲突标记)，秒级完成 | ✅ 已修复 |
@@ -455,10 +455,10 @@ Body: Swagger/OpenAPI文档页面
 
 **未修复项（超出灵通范围）**:
 - C-1 JWT私钥 → 灵知项目
-- C-3 frpc加密 → LingLaw项目
+- C-3 frpc加密 → linglaw项目
 - H-5 LingBus HTTP认证 → 需设计认证方案
-- H-7 LingClaude session_state.json → 灵克项目
+- H-7 lingclaude session_state.json → 灵克项目
 
 ---
 
-**报告结束** | 审计者: 灵通 (LingFlow) | 2026-05-08
+**报告结束** | 审计者: 灵通 (lingflow) | 2026-05-08

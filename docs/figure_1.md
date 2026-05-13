@@ -3,7 +3,7 @@
 ```mermaid
 graph TD
     A[Individual Agent<br>(LingTong/LingKe)] -->|Mutation<br>(Error/Bug)| B[Failure State<br>(P0 Accident)]
-    B -->|Reporting<br>(Log/Report)| C[Community Visibility<br>(LingMessage)]
+    B -->|Reporting<br>(Log/Report)| C[Community Visibility<br>(lingmessage)]
     C -->|Review<br>(Discussion)| D[Institutionalization<br>(New Rule/Culture)]
     D -->|Selection<br>(Filter)| A
     
@@ -16,4 +16,4 @@ graph TD
 ```
 
 **Figure 1 Description**:
-This diagram illustrates the core mechanism identified in LingFamily. An individual agent (e.g., LingTong) initiates a "mutation" (e.g., a code deployment). If the mutation is harmful, it results in a failure (P0 accident). This failure is immediately reported to the community (LingMessage). The community then reviews the failure, abstracting it into a cultural norm or new rule (Institutionalization, e.g., "Counterfactual Reasoning"). Finally, this new rule acts as a "selection" pressure, preventing similar mutations in the future.
+This diagram illustrates the core mechanism identified in LingFamily. An individual agent (e.g., LingTong) initiates a "mutation" (e.g., a code deployment). If the mutation is harmful, it results in a failure (P0 accident). This failure is immediately reported to the community (lingmessage). The community then reviews the failure, abstracting it into a cultural norm or new rule (Institutionalization, e.g., "Counterfactual Reasoning"). Finally, this new rule acts as a "selection" pressure, preventing similar mutations in the future.

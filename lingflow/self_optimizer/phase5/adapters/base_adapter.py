@@ -1,5 +1,5 @@
 """
-LingFlow Phase 5: AI工具适配器基类
+lingflow Phase 5: AI工具适配器基类
 
 定义所有适配器的通用接口和基础功能。
 """

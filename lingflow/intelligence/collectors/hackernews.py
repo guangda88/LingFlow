@@ -1,6 +1,6 @@
 """Hacker News 采集器
 
-采集Hacker News上关于LingFlow的讨论。
+采集Hacker News上关于lingflow的讨论。
 """
 
 from datetime import datetime, timedelta
@@ -27,7 +27,7 @@ class HNCollector(BaseCollector):
     API_BASE = "http://hn.algolia.com/api/v1"
 
     # 搜索关键词
-    SEARCH_KEYWORDS = ["LingFlow", "lingflow-core", "lingflow.ai", "灵通工程流"]
+    SEARCH_KEYWORDS = ["lingflow", "lingflow-core", "lingflow.ai", "灵通工程流"]
 
     def __init__(self, config: Optional[CollectorConfig] = None):
         """初始化采集器"""
@@ -275,7 +275,7 @@ def main():
     collector = HNCollector()
 
     # 搜索提及
-    mentions = collector.search_mentions(keywords=["LingFlow", "Claude Code"], limit=50, days=30)
+    mentions = collector.search_mentions(keywords=["lingflow", "Claude Code"], limit=50, days=30)
 
     print()
     print("📊 采集结果:")

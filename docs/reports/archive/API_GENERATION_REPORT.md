@@ -405,25 +405,25 @@ class LingFlow:
 
 ### 配置文件
 
-- `/home/ai/LingFlow/mkdocs.yml` - MkDocs主配置
+- `/home/ai/lingflow/mkdocs.yml` - MkDocs主配置
 
 ### 文档源文件
 
-- `/home/ai/LingFlow/docs/index.md`
-- `/home/ai/LingFlow/docs/quickstart.md`
-- `/home/ai/LingFlow/docs/api/*.md` (8个文件)
-- `/home/ai/LingFlow/docs/examples/*.md` (3个文件)
-- `/home/ai/LingFlow/docs/guides/architecture.md`
+- `/home/ai/lingflow/docs/index.md`
+- `/home/ai/lingflow/docs/quickstart.md`
+- `/home/ai/lingflow/docs/api/*.md` (8个文件)
+- `/home/ai/lingflow/docs/examples/*.md` (3个文件)
+- `/home/ai/lingflow/docs/guides/architecture.md`
 
 ### 脚本和样式
 
-- `/home/ai/LingFlow/docs/scripts/generate_api_docs.py`
-- `/home/ai/LingFlow/stylesheets/extra.css`
-- `/home/ai/LingFlow/javascripts/extra.js`
+- `/home/ai/lingflow/docs/scripts/generate_api_docs.py`
+- `/home/ai/lingflow/stylesheets/extra.css`
+- `/home/ai/lingflow/javascripts/extra.js`
 
 ### 生成的网站
 
-- `/home/ai/LingFlow/site/` (24MB, 121个HTML文件)
+- `/home/ai/lingflow/site/` (24MB, 121个HTML文件)
 
 ## 总结
 

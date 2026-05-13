@@ -4,7 +4,7 @@
 """
 
 import sys
-sys.path.insert(0, '/home/ai/LingFlow/skills/ui-mockup-generator')
+sys.path.insert(0, '/home/ai/lingflow/skills/ui-mockup-generator')
 
 from implementation import generate_mockup
 

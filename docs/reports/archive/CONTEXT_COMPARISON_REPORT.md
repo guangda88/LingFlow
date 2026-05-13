@@ -740,7 +740,7 @@ from lingflow.compression import SmartContextCompressor
 - Documentation: https://zread.ai/charmbracelet/crush
 
 **LingFlow**：
-- Repository: /home/ai/LingFlow
+- Repository: /home/ai/lingflow
 - Core Files:
   - `lingflow/compression/smart_compressor.py`
   - `lingflow/compression/compressor.py`

@@ -1,7 +1,7 @@
-# LingMinOpt 灵极优框架 - LingFlow 自优化系统完整实施方案
+# lingminopt 灵极优框架 - lingflow 自优化系统完整实施方案
 
-> **项目**: LingFlow v3.8.0 自优化系统
-> **框架**: LingMinOpt (灵极优) - Minimal Optimization Framework
+> **项目**: lingflow v3.8.0 自优化系统
+> **框架**: lingminopt (灵极优) - Minimal Optimization Framework
 > **日期**: 2026-04-01
 > **目标**: 构建完整的AI驱动代码自优化系统
 
@@ -11,16 +11,16 @@
 
 ### 现状分析
 
-LingFlow已经具备基础的自优化框架：
+lingflow已经具备基础的自优化框架：
 - ✅ **优化器**: `ProcessIsolatedOptimizer`, `SynchronousOptimizer`
 - ✅ **触发器**: `OptimizationTrigger` (7种触发条件)
 - ✅ **评估器**: `StructureEvaluator`, `PerformanceEvaluator`, `SimplicityEvaluator`
 - ✅ **配置系统**: `OptimizationConfig`
-- ⚠️ **缺失**: LingMinOpt核心引擎、高级优化策略、学习系统
+- ⚠️ **缺失**: lingminopt核心引擎、高级优化策略、学习系统
 
 ### 实施目标
 
-构建完整的LingMinOpt灵极优框架，实现：
+构建完整的lingminopt灵极优框架，实现：
 
 1. **Phase 1**: 核心优化引擎（贝叶斯优化、多目标优化）
 2. **Phase 2**: 智能学习系统（模式学习、知识积累）
@@ -29,14 +29,14 @@ LingFlow已经具备基础的自优化框架：
 
 ---
 
-## 🎯 第一部分：LingMinOpt核心架构
+## 🎯 第一部分：lingminopt核心架构
 
 ### 1.1 架构总览
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    LingFlow 自优化系统                        │
-│                     (基于 LingMinOpt)                        │
+│                    lingflow 自优化系统                        │
+│                     (基于 lingminopt)                        │
 └─────────────────────────────────────────────────────────────┘
                               │
         ┌─────────────────────┼─────────────────────┐
@@ -64,7 +64,7 @@ LingFlow已经具备基础的自优化框架：
 # lingflow/self_optimizer/phase4/engine.py
 
 """
-LingMinOpt 核心优化引擎
+lingminopt 核心优化引擎
 支持贝叶斯优化、多目标优化、敏感性分析
 """
 
@@ -103,7 +103,7 @@ class OptimizationResult:
     improvement_percentage: float
 
 class OptimizationEngine:
-    """LingMinOpt 优化引擎"""
+    """lingminopt 优化引擎"""
 
     def __init__(
         self,
@@ -303,7 +303,7 @@ class OptimizationEngine:
 # lingflow/self_optimizer/phase4/search_space.py
 
 """
-LingMinOpt 搜索空间定义
+lingminopt 搜索空间定义
 支持离散、连续、分类参数
 """
 
@@ -442,7 +442,7 @@ class SearchSpace:
 # lingflow/self_optimizer/phase4/multi_objective.py
 
 """
-LingMinOpt 多目标优化
+lingminopt 多目标优化
 支持Pareto前沿、NSGA-II算法
 """
 
@@ -653,7 +653,7 @@ class MultiObjectiveOptimizer:
   - Pareto前沿计算
   - 可视化支持
 
-- [ ] **Task 1.4**: 集成到LingFlow
+- [ ] **Task 1.4**: 集成到lingflow
   - 替换现有的简单优化器
   - API兼容性保证
   - 性能基准测试
@@ -799,7 +799,7 @@ for i, point in enumerate(pareto_front[:10]):
 ### 3.2 集成到现有系统
 
 ```python
-# 在现有代码中启用LingMinOpt
+# 在现有代码中启用lingminopt
 
 from lingflow.self_optimizer import quick_optimize
 
@@ -929,5 +929,5 @@ cat docs/api/self_optimizer.md
 
 **文档版本**: v1.0
 **最后更新**: 2026-04-01
-**维护者**: LingFlow Team
+**维护者**: lingflow Team
 **许可**: MIT License

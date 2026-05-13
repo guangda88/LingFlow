@@ -15,7 +15,7 @@ docker login
 
 ### 2. 标记镜像
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 
 # API 镜像
 docker tag lingflow-api:test guangda88/lingflow-api:latest
@@ -63,7 +63,7 @@ curl http://localhost:8000/health
 
 - **Docker Hub**: https://hub.docker.com/r/guangda88/lingflow-api
 - **PyPI**: https://pypi.org/project/lingflow-core/
-- **GitHub**: https://github.com/guangda88/LingFlow
+- **GitHub**: https://github.com/guangda88/lingflow
 
 ---
 

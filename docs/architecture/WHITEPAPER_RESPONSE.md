@@ -70,7 +70,7 @@ async def metrics():
 ### 5. GitHub Actions：首要突破口
 
 **白皮书原话**:
-> CI/CD 是开发者高频场景，LingFlow 应优先占领这个入口。
+> CI/CD 是开发者高频场景，lingflow 应优先占领这个入口。
 
 **我的实现**:
 ```bash
@@ -110,7 +110,7 @@ python scripts/scan.py
 
 ### 2. GitHub Action（完整）
 
-**位置**: `/home/ai/LingFlow/actions/quality-gate`
+**位置**: `/home/ai/lingflow/actions/quality-gate`
 
 **包含**:
 ```

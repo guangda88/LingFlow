@@ -1,6 +1,6 @@
-# 🎉 LingMinOpt 灵极优框架 - 实施总结报告
+# 🎉 lingminopt 灵极优框架 - 实施总结报告
 
-> **项目**: LingFlow v3.8.0 自优化系统
+> **项目**: lingflow v3.8.0 自优化系统
 > **完成日期**: 2026-04-01
 > **状态**: ✅ 核心框架已完成，可立即使用
 
@@ -14,7 +14,7 @@
 
 | 文档 | 说明 | 状态 |
 |------|------|------|
-| `LINGMINOPT_SELF_OPTIMIZATION_MASTER_PLAN.md` | 完整的LingMinOpt架构设计和实施计划 | ✅ 完成 |
+| `LINGMINOPT_SELF_OPTIMIZATION_MASTER_PLAN.md` | 完整的lingminopt架构设计和实施计划 | ✅ 完成 |
 | `LINGMINOPT_QUICK_START.md` | 快速启动指南 | ✅ 完成 |
 | `CLAUDE_CODE_PRACTICAL_LEARNING_PLAN.md` | Claude Code学习计划 | ✅ 完成 |
 | `CLAUDE_CODE_ADDITIONAL_DESIGN_INSIGHTS.md` | 额外设计思想分析 | ✅ 完成 |
@@ -130,7 +130,7 @@ space.add_categorical("optimizer", ["adam", "sgd"])      # 分类
 
 ### 性能提升
 
-| 指标 | 传统方法 | LingMinOpt | 提升 |
+| 指标 | 传统方法 | lingminopt | 提升 |
 |------|---------|-----------|------|
 | 参数搜索次数 | 100（网格） | 30（贝叶斯） | **70%↓** |
 | 找到最优解概率 | 60% | 85%+ | **40%↑** |
@@ -172,7 +172,7 @@ result = optimizer.run()
 from lingflow.self_optimizer import quick_optimize
 
 result = quick_optimize(
-    target="/home/ai/LingFlow/lingflow",
+    target="/home/ai/lingflow/lingflow",
     goal="structure"
 )
 
@@ -238,7 +238,7 @@ pareto_front = multi_opt.run()
 
 1. **运行演示程序**
    ```bash
-   cd /home/ai/LingFlow
+   cd /home/ai/lingflow
    python demo_lingminopt.py
    ```
 
@@ -320,8 +320,8 @@ pareto_front = multi_opt.run()
 
 - 📖 文档: `LINGMINOPT_QUICK_START.md`
 - 💻 示例: `demo_lingminopt.py`
-- 🐛 问题: https://github.com/guangda88/LingFlow/issues
-- 💬 讨论: https://github.com/guangda88/LingFlow/discussions
+- 🐛 问题: https://github.com/guangda88/lingflow/issues
+- 💬 讨论: https://github.com/guangda88/lingflow/discussions
 
 ### 贡献指南
 
@@ -338,7 +338,7 @@ pareto_front = multi_opt.run()
 ### v1.0.0 (2026-04-01)
 
 **新增**:
-- ✅ 完整的LingMinOpt框架
+- ✅ 完整的lingminopt框架
 - ✅ 贝叶斯优化引擎
 - ✅ 多目标优化支持
 - ✅ 灵活的搜索空间
@@ -358,7 +358,7 @@ pareto_front = multi_opt.run()
 
 ## ✅ 总结
 
-LingMinOpt灵极优框架已经**完全可用**！
+lingminopt灵极优框架已经**完全可用**！
 
 ### 核心成就
 
@@ -382,7 +382,7 @@ python -c "from lingflow.self_optimizer import quick_optimize; quick_optimize('y
 
 **文档版本**: v1.0
 **最后更新**: 2026-04-01
-**维护者**: LingFlow Team
+**维护者**: lingflow Team
 **许可**: MIT License
 
 🎉 **祝您优化愉快！**

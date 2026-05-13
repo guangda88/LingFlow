@@ -1,4 +1,4 @@
-# LingFlow 技术债务报告
+# lingflow 技术债务报告
 
 **版本**: v3.1.0
 **日期**: 2026-03-25
@@ -9,7 +9,7 @@
 
 ## 执行摘要
 
-LingFlow V3.1.0 已完成所有高优先级和2个中优先级技术债务的修复，现在可以安全部署。
+lingflow V3.1.0 已完成所有高优先级和2个中优先级技术债务的修复，现在可以安全部署。
 
 - **高优先级债务**: 3个问题 → **全部解决** ✅
 - **中优先级债务**: 2个问题 → **全部解决** ✅
@@ -44,7 +44,7 @@ LingFlow V3.1.0 已完成所有高优先级和2个中优先级技术债务的修
 - 提升对并发功能的信心
 
 **文件修改**:
-- `/home/ai/LingFlow/tests/test_agent.py` (添加 121 行)
+- `/home/ai/lingflow/tests/test_agent.py` (添加 121 行)
 
 ---
 
@@ -84,7 +84,7 @@ LingFlow V3.1.0 已完成所有高优先级和2个中优先级技术债务的修
 - 全部31个测试通过 ✅
 
 **文件修改**:
-- `/home/ai/LingFlow/tests/test_common_config.py` (修改 10+ 测试方法)
+- `/home/ai/lingflow/tests/test_common_config.py` (修改 10+ 测试方法)
 
 ---
 
@@ -117,7 +117,7 @@ LingFlow V3.1.0 已完成所有高优先级和2个中优先级技术债务的修
 - 提升对错误处理的信心
 
 **文件修改**:
-- `/home/ai/LingFlow/tests/test_coordinator.py` (添加 208 行)
+- `/home/ai/lingflow/tests/test_coordinator.py` (添加 208 行)
 
 ---
 
@@ -207,7 +207,7 @@ await page.setViewport({ width: 375, height: 667 });
 - 全部25个新测试通过 ✅
 
 **文件修改**:
-- `/home/ai/LingFlow/tests/test_constitution.py` (添加 110+ 行)
+- `/home/ai/lingflow/tests/test_constitution.py` (添加 110+ 行)
 
 ---
 
@@ -235,7 +235,7 @@ await page.setViewport({ width: 375, height: 667 });
 - 全部5个新测试通过 ✅
 
 **文件修改**:
-- `/home/ai/LingFlow/tests/test_compressor.py` (添加 160+ 行，添加 asyncio import)
+- `/home/ai/lingflow/tests/test_compressor.py` (添加 160+ 行，添加 asyncio import)
 
 ---
 
@@ -376,7 +376,7 @@ DEFAULT_CONTEXT_LIMIT = 8000
 
 ## 结论
 
-LingFlow V3.1.0 已准备好生产部署。所有高优先级和2个中优先级技术债务已解决，测试套件稳定且全面，代码质量良好。剩余的低优先级债务可以安全地在部署后处理，不影响生产就绪性。
+lingflow V3.1.0 已准备好生产部署。所有高优先级和2个中优先级技术债务已解决，测试套件稳定且全面，代码质量良好。剩余的低优先级债务可以安全地在部署后处理，不影响生产就绪性。
 
 **建议**: 继续部署，并在后续迭代中持续改进。
 
@@ -386,27 +386,27 @@ LingFlow V3.1.0 已准备好生产部署。所有高优先级和2个中优先级
 
 ### 修改的文件
 
-1. `/home/ai/LingFlow/tests/test_agent.py`
+1. `/home/ai/lingflow/tests/test_agent.py`
    - 添加 `TestAgentConcurrentExecution` 类
    - 4个新测试方法
    - +121 行
 
-2. `/home/ai/LingFlow/tests/test_common_config.py`
+2. `/home/ai/lingflow/tests/test_common_config.py`
    - 修改11个测试方法以使用显式配置文件路径
    - 移除外部配置依赖
 
-3. `/home/ai/LingFlow/tests/test_coordinator.py`
+3. `/home/ai/lingflow/tests/test_coordinator.py`
    - 添加 `TestErrorHandling` 类
    - 5个新测试方法
    - +208 行
 
-4. `/home/ai/LingFlow/tests/test_constitution.py`
+4. `/home/ai/lingflow/tests/test_constitution.py`
    - 添加 `TestParameterizedSecurityChecks` 类
    - 3个参数化测试方法
    - 25个测试用例
    - +110 行
 
-5. `/home/ai/LingFlow/tests/test_compressor.py`
+5. `/home/ai/lingflow/tests/test_compressor.py`
    - 添加 `import asyncio`
    - 添加 `TestCompressorConcurrentSafety` 类
    - 5个并发安全测试方法
@@ -442,5 +442,5 @@ LingFlow V3.1.0 已准备好生产部署。所有高优先级和2个中优先级
 ---
 
 **报告生成**: 2026-03-25
-**LingFlow 版本**: v3.1.0
+**lingflow 版本**: v3.1.0
 **下一步**: 部署到生产环境

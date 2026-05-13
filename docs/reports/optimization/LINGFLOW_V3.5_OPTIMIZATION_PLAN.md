@@ -1,4 +1,4 @@
-# LingFlow V3.5 封装优化方案
+# lingflow V3.5 封装优化方案
 
 **版本**: V3.5.0
 **日期**: 2026-03-25
@@ -10,7 +10,7 @@
 
 ## 执行摘要
 
-本方案针对LingFlow的**4个核心封装问题**，采用**最小化改动**和**渐进式迁移**策略，在6周内完成优化。
+本方案针对lingflow的**4个核心封装问题**，采用**最小化改动**和**渐进式迁移**策略，在6周内完成优化。
 
 **核心改进**：
 1. ✅ 统一返回类型 - 使用简化的Result类型
@@ -50,7 +50,7 @@
 
 **当前代码**：
 ```python
-class LingFlow:
+class lingflow:
     def run_skill(self, skill_name: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """返回Dict[str, Any]，类型不安全"""
         return self._coordinator.execute_skill(skill_name, params or {})
@@ -82,7 +82,7 @@ result["data"]  # IDE不知道data存在
 
 **当前代码**：
 ```python
-class LingFlow:
+class lingflow:
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         """config被忽略，实际未使用"""
         self._coordinator = AgentCoordinator()  # ❌ 硬编码
@@ -287,8 +287,8 @@ class Result(Generic[T]):
         }
 
 
-class LingFlowError(Exception):
-    """LingFlow异常"""
+class lingflowError(Exception):
+    """lingflow异常"""
 
     def __init__(self, message: str, *, code: str = "LF000", details: Optional[Dict[str, Any]] = None):
         self.message = message
@@ -301,9 +301,9 @@ class LingFlowError(Exception):
 
 ```python
 # 新API（推荐）
-from lingflow import LingFlow, Result
+from lingflow import lingflow, Result
 
-lf = LingFlow()
+lf = lingflow()
 
 # 执行技能
 result: Result[Dict[str, Any]] = lf.run_skill("echo", {"message": "hello"})
@@ -329,7 +329,7 @@ result = lingflow.run_skill("echo", {"message": "hello"})
 # result仍然是Dict[str, Any]
 
 # 内部实现
-class LingFlow:
+class lingflow:
     def run_skill(self, skill_name: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """向后兼容：返回Dict"""
         result = self._run_skill_impl(skill_name, params)
@@ -370,8 +370,8 @@ from pathlib import Path
 
 
 @dataclass
-class LingFlowConfig:
-    """LingFlow配置类（类型安全）"""
+class lingflowConfig:
+    """lingflow配置类（类型安全）"""
 
     # 协调器配置
     max_parallel: int = 2
@@ -406,7 +406,7 @@ class LingFlowConfig:
             raise ValueError("compression_target_tokens must be >= 1000")
 
     @classmethod
-    def from_dict(cls, config: Dict[str, Any]) -> "LingFlowConfig":
+    def from_dict(cls, config: Dict[str, Any]) -> "lingflowConfig":
         """从字典创建配置（兼容旧API）"""
         # 过滤未知键
         valid_keys = {f.name for f in cls.__dataclass_fields__}
@@ -424,10 +424,10 @@ class LingFlowConfig:
 
 ```python
 # 方式1: 使用默认配置
-config = LingFlowConfig()  # 使用所有默认值
+config = lingflowConfig()  # 使用所有默认值
 
 # 方式2: 指定部分配置
-config = LingFlowConfig(
+config = lingflowConfig(
     max_parallel=4,
     skill_timeout=60.0
 )
@@ -438,7 +438,7 @@ old_config_dict = {
     "skill_timeout": 60.0,
     "unknown_key": "xxx"  # 自动过滤
 }
-config = LingFlowConfig.from_dict(old_config_dict)
+config = lingflowConfig.from_dict(old_config_dict)
 
 # 方式4: 验证配置
 try:
@@ -446,14 +446,14 @@ try:
 except ValueError as e:
     print(f"Invalid config: {e}")
 
-# 在LingFlow中使用
-lf = LingFlow(config=config)
+# 在lingflow中使用
+lf = lingflow(config=config)
 
 # 或者兼容旧API
-lf = LingFlow(config=config.to_dict())
+lf = lingflow(config=config.to_dict())
 ```
 
-**说明**：配置的文件加载和保存由应用层处理，不作为 LingFlowConfig 的内置方法，以避免引入额外的依赖。
+**说明**：配置的文件加载和保存由应用层处理，不作为 lingflowConfig 的内置方法，以避免引入额外的依赖。
 
 应用层示例：
 
@@ -461,13 +461,13 @@ lf = LingFlow(config=config.to_dict())
 import yaml
 
 # 应用层可选的文件I/O功能
-def load_config_from_yaml(file_path: str) -> LingFlowConfig:
+def load_config_from_yaml(file_path: str) -> lingflowConfig:
     """应用层：从YAML文件加载配置（需要安装PyYAML）"""
     with open(file_path, 'r') as f:
         data = yaml.safe_load(f)
-    return LingFlowConfig(**data)
+    return lingflowConfig(**data)
 
-def save_config_to_yaml(config: LingFlowConfig, file_path: str):
+def save_config_to_yaml(config: lingflowConfig, file_path: str):
     """应用层：保存配置到YAML文件（需要安装PyYAML）"""
     with open(file_path, 'w') as f:
         yaml.dump(config.to_dict(), f)
@@ -664,7 +664,7 @@ class ValidatedSkill(BaseSkill):
             raise ValueError(f"Unknown operation: {op}")
 
 # 使用
-lf = LingFlow()
+lf = lingflow()
 result = lf.run_skill("echo", {"message": "hello"})
 ```
 
@@ -737,8 +737,8 @@ class Orchestrator:
         raise NotImplementedError
 
 
-class LingFlowState:
-    """LingFlow全局状态（单例）"""
+class lingflowState:
+    """lingflow全局状态（单例）"""
 
     _instance = None
 
@@ -795,15 +795,15 @@ class LingFlowState:
 
 
 # 全局实例（向后兼容）
-_lingflow_state = LingFlowState()
+_lingflow_state = lingflowState()
 
 
 def init_lingflow(config: Optional[Dict[str, Any]] = None):
-    """初始化LingFlow（全局函数，向后兼容）"""
+    """初始化lingflow（全局函数，向后兼容）"""
     from ..coordination.coordinator import AgentCoordinator
     from ..workflow.orchestrator import WorkflowOrchestrator
 
-    state = LingFlowState()
+    state = lingflowState()
 
     # 创建默认组件
     coordinator = AgentCoordinator()
@@ -895,7 +895,7 @@ result = coordinator.execute_skill("echo", {"message": "hello"})
 **任务清单**：
 - [ ] 创建`lingflow/core/types.py`
 - [ ] 实现`Result`类
-- [ ] 实现`LingFlowError`异常
+- [ ] 实现`lingflowError`异常
 - [ ] 编写单元测试
 - [ ] 更新文档
 
@@ -940,7 +940,7 @@ def test_result_unwrap_or():
 
 **任务清单**：
 - [ ] 创建`lingflow/core/config.py`
-- [ ] 实现`LingFlowConfig`类
+- [ ] 实现`lingflowConfig`类
 - [ ] 实现配置验证
 - [ ] 支持YAML/JSON文件
 - [ ] 编写单元测试
@@ -960,23 +960,23 @@ lingflow/
 # tests/test_config.py
 
 def test_config_default():
-    config = LingFlowConfig()
+    config = lingflowConfig()
     assert config.max_parallel == 2
     assert config.skill_timeout == 30.0
 
 def test_config_validation():
-    config = LingFlowConfig(max_parallel=0)
+    config = lingflowConfig(max_parallel=0)
     with pytest.raises(ValueError):
         config.validate()
 
 def test_config_from_dict():
     config_dict = {"max_parallel": 4, "skill_timeout": 60.0}
-    config = LingFlowConfig.from_dict(config_dict)
+    config = lingflowConfig.from_dict(config_dict)
     assert config.max_parallel == 4
     assert config.skill_timeout == 60.0
 
 def test_config_from_file():
-    config = LingFlowConfig.from_file("tests/fixtures/config.yaml")
+    config = lingflowConfig.from_file("tests/fixtures/config.yaml")
     assert config.max_parallel == 4
 ```
 
@@ -1036,7 +1036,7 @@ def test_skill_registry():
 
 **任务清单**：
 - [ ] 创建`lingflow/core/state.py`
-- [ ] 实现`LingFlowState`单例
+- [ ] 实现`lingflowState`单例
 - [ ] 修改`AgentCoordinator`隐藏内部状态
 - [ ] 实现依赖注入
 - [ ] 编写单元测试
@@ -1074,20 +1074,20 @@ from typing import Any, Dict, Optional
 
 from .coordination.coordinator import AgentCoordinator
 from .workflow.orchestrator import WorkflowOrchestrator
-from .core.types import Result, LingFlowError
-from .core.config import LingFlowConfig
-from .core.state import LingFlowState, init_lingflow
+from .core.types import Result, lingflowError
+from .core.config import lingflowConfig
+from .core.state import lingflowState, init_lingflow
 
 
-class LingFlow:
-    """LingFlow 统一入口"""
+class lingflow:
+    """lingflow 统一入口"""
 
     def __init__(
         self,
         config: Optional[Dict[str, Any]] = None,
-        config_obj: Optional[LingFlowConfig] = None
+        config_obj: Optional[lingflowConfig] = None
     ):
-        """初始化 LingFlow
+        """初始化 lingflow
 
         Args:
             config: 配置字典（旧API，向后兼容）
@@ -1097,13 +1097,13 @@ class LingFlow:
         if config_obj is not None:
             self.config = config_obj
         elif config is not None:
-            self.config = LingFlowConfig.from_dict(config)
+            self.config = lingflowConfig.from_dict(config)
         else:
-            self.config = LingFlowConfig()
+            self.config = lingflowConfig()
 
         # 初始化
         init_lingflow(self.config.to_dict())
-        state = LingFlowState()
+        state = lingflowState()
         self._coordinator = state.get_coordinator()
         self._orchestrator = state.get_orchestrator()
 

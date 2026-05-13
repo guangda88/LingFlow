@@ -1,5 +1,5 @@
 """
-LingFlow 进程隔离的优化器
+lingflow 进程隔离的优化器
 使用独立进程运行优化，不影响主流程
 """
 
@@ -34,7 +34,7 @@ class OptimizationResult:
 def _optimization_worker(request: OptimizationRequest, result_queue: mp.Queue):
     """优化工作进程（运行在独立进程中）"""
     try:
-        # 尝试导入LingMinOpt
+        # 尝试导入lingminopt
         try:
             from lingminopt import ExperimentConfig, MinimalOptimizer
 
@@ -46,7 +46,7 @@ def _optimization_worker(request: OptimizationRequest, result_queue: mp.Queue):
         search_space = _create_search_space(request.goal)
 
         if HAS_LINGMINOPT:
-            # 使用LingMinOpt
+            # 使用lingminopt
             # 根据目标选择评估器
             if request.goal == "structure":
                 from lingflow.self_optimizer.evaluator import StructureEvaluator
@@ -369,7 +369,7 @@ class SynchronousOptimizer:
 if __name__ == "__main__":  # pragma: no cover
     # 测试
     request = OptimizationRequest(
-        target="/home/ai/LingFlow/lingflow", goal="structure", params={}, config={"max_experiments": 5}
+        target="/home/ai/lingflow/lingflow", goal="structure", params={}, config={"max_experiments": 5}
     )
 
     # 同步测试

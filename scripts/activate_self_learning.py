@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LingFlow 自学习系统激活脚本
+lingflow 自学习系统激活脚本
 
 功能:
 1. 初始化知识库
@@ -343,7 +343,7 @@ def save_report(report: Dict[str, Any], output_path: Path):
 
 def main():
     """主函数"""
-    parser = argparse.ArgumentParser(description="LingFlow 自学习系统")
+    parser = argparse.ArgumentParser(description="lingflow 自学习系统")
     parser.add_argument("--scan", action="store_true", help="运行代码扫描")
     parser.add_argument("--learn", action="store_true", help="从反馈中学习规则")
     parser.add_argument("--pattern", action="store_true", help="识别代码模式")

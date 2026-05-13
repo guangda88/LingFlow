@@ -1,7 +1,7 @@
-# LingFlow 模块封装方案分析
+# lingflow 模块封装方案分析
 
 > **分析日期**: 2026-04-01
-> **目的**: 评估LingFlow现有模块适合的封装形式
+> **目的**: 评估lingflow现有模块适合的封装形式
 > **版本**: v3.8.0
 
 ---
@@ -471,7 +471,7 @@ from lingflow.workflow.multi_workflow import (
     StableTrackWorkflow
 )
 
-app = FastAPI(title="LingFlow Workflow API")
+app = FastAPI(title="lingflow Workflow API")
 
 coordinator = MultiWorkflowCoordinator(max_parallel_workflows=4)
 
@@ -575,7 +575,7 @@ from lingflow.core.skill import SkillRegistry
 
 @click.group()
 def cli():
-    """LingFlow CLI - 33个预置技能"""
+    """lingflow CLI - 33个预置技能"""
     pass
 
 @cli.command()
@@ -642,7 +642,7 @@ from lingflow.testing.runner import TestRunner
 
 @click.group()
 def test():
-    """LingFlow测试CLI"""
+    """lingflow测试CLI"""
     pass
 
 @test.command()
@@ -693,8 +693,8 @@ def list_suites():
 
 from lingflow.core import QueryEngine, create_default_engine
 
-class LingFlowSDK:
-    """LingFlow Python SDK"""
+class lingflowSDK:
+    """lingflow Python SDK"""
 
     def __init__(self):
         self.engine = create_default_engine()
@@ -719,7 +719,7 @@ class LingFlowSDK:
         }
 
 # 使用示例
-sdk = LingFlowSDK()
+sdk = lingflowSDK()
 result = sdk.chat("帮我优化这段代码")
 print(result["response"])
 ```
@@ -941,9 +941,9 @@ sdk/
 ### MCP服务器收益
 
 1. **Claude Code集成**
-   - ✅ 用户可直接在Claude Code中使用LingFlow功能
+   - ✅ 用户可直接在Claude Code中使用lingflow功能
    - ✅ 无需切换工具，提升体验
-   - ✅ AI可以自动调用LingFlow能力
+   - ✅ AI可以自动调用lingflow能力
 
 2. **智能化提升**
    - ✅ AI可以查询GitHub趋势，给出技术建议

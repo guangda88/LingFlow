@@ -72,9 +72,9 @@
 ## 使用示例
 
 ```python
-from lingflow import LingFlow
+from lingflow import lingflow
 
-lf = LingFlow()
+lf = lingflow()
 
 # 验证测试集格式
 lf.run_skill("retrieval-quality-test", {

@@ -1,4 +1,4 @@
-# LingFlow 核心模块 API 文档
+# lingflow 核心模块 API 文档
 
 版本: 3.6.0
 更新日期: 2026-03-31
@@ -21,7 +21,7 @@
   - [配置类型](#配置类型)
   - [便捷函数](#便捷函数-1)
 - [配置系统 (lingflow.core.config)](#配置系统-lingflowcoreconfig)
-  - [LingFlowConfig](#lingflowconfig)
+  - [lingflowConfig](#lingflowconfig)
 - [合规性系统 (lingflow.core.constitution)](#合规性系统-lingflowcoreconstitution)
   - [Constitution](#constitution)
   - [ConstitutionalPrinciple](#constitutionalprinciple)
@@ -37,7 +37,7 @@
 
 ## 核心类型 (lingflow.core.types)
 
-LingFlow 的标准化类型系统。
+lingflow 的标准化类型系统。
 
 ### Result
 
@@ -109,7 +109,7 @@ d = result.to_dict()
 
 ## 技能系统 (lingflow.core.skill)
 
-LingFlow 的技能系统，支持基于类和基于函数的技能。
+lingflow 的技能系统，支持基于类和基于函数的技能。
 
 ### BaseSkill
 
@@ -441,25 +441,25 @@ skill_name = route_skill("请审查这段代码")
 
 类型安全的配置管理。
 
-### LingFlowConfig
+### lingflowConfig
 
-LingFlow 配置类。
+lingflow 配置类。
 
 ```python
-from lingflow.core.config import LingFlowConfig
+from lingflow.core.config import lingflowConfig
 
 # 创建默认配置
-config = LingFlowConfig()
+config = lingflowConfig()
 
 # 自定义配置
-config = LingFlowConfig(
+config = lingflowConfig(
     max_parallel=4,
     skill_timeout=60.0,
     log_level="DEBUG"
 )
 
 # 从字典创建
-config = LingFlowConfig.from_dict({
+config = lingflowConfig.from_dict({
     "max_parallel": 4,
     "skill_cache_enabled": True
 })
@@ -498,7 +498,7 @@ config.validate()
 # 如果无效，抛出 ValueError
 ```
 
-##### `from_dict(config: Dict[str, Any]) -> LingFlowConfig`
+##### `from_dict(config: Dict[str, Any]) -> lingflowConfig`
 
 从字典创建配置（类方法）。
 
@@ -754,7 +754,7 @@ from lingflow.core import (
     mark_task_complete,
     route_skill,
     # 配置
-    LingFlowConfig,
+    lingflowConfig,
     # 合规性
     Constitution,
     ConstitutionalPrinciple,
@@ -762,7 +762,7 @@ from lingflow.core import (
     # 合规性矩阵
     ComplianceMatrix,
     # 异常
-    LingFlowError,
+    lingflowError,
 )
 ```
 
@@ -777,4 +777,4 @@ from lingflow.core import (
 
 ## 许可证
 
-© 2026 LingFlow Team. All rights reserved.
+© 2026 lingflow Team. All rights reserved.

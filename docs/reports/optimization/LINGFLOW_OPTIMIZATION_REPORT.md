@@ -1,7 +1,7 @@
-# LingFlow 自优化结果报告
+# lingflow 自优化结果报告
 
 > **优化日期**: 2026-04-01 13:27:32
-> **优化框架**: LingMinOpt 灵极优
+> **优化框架**: lingminopt 灵极优
 > **优化目标**: 代码结构质量
 > **状态**: ✅ 优化成功
 
@@ -67,7 +67,7 @@
 #### 1. max_class_size: 200 → 500 (+300)
 
 **含义**: 允许更大的类
-**原因**: LingFlow中某些核心类（如协调器、优化器）本身就比较复杂，但设计合理
+**原因**: lingflow中某些核心类（如协调器、优化器）本身就比较复杂，但设计合理
 **建议**: 不需要强制拆分这些类，它们的大小是合理的
 
 #### 2. max_method_count: 15 → 20 (+5)
@@ -168,7 +168,7 @@
 
 ### 优先级P0（立即执行）
 
-- [x] 运行LingMinOpt优化
+- [x] 运行lingminopt优化
 - [x] 生成优化报告
 - [ ] 更新质量门禁配置
 - [ ] 保存优化基线
@@ -201,7 +201,7 @@
 ### 关键发现
 
 1. **类大小限制应该放宽**: 从200→500
-   - LingFlow的核心类本身就很复杂
+   - lingflow的核心类本身就很复杂
    - 强制拆分会降低可读性
    - 保持大类的内聚性更重要
 
@@ -232,7 +232,7 @@
 改进效果: 71.7%
 ```
 
-**结论**: LingMinOpt的贝叶斯优化非常高效，比网格搜索快数倍。
+**结论**: lingminopt的贝叶斯优化非常高效，比网格搜索快数倍。
 
 ### 参数敏感性
 
@@ -285,12 +285,12 @@
 
 ```bash
 # 1周后重新运行
-python /home/ai/LingFlow/run_self_optimization.py
+python /home/ai/lingflow/run_self_optimization.py
 
 # 或者快速检查
 python -c "
 from lingflow.self_optimizer import quick_optimize
-result = quick_optimize('/home/ai/LingFlow/lingflow', 'structure')
+result = quick_optimize('/home/ai/lingflow/lingflow', 'structure')
 print(f'当前违规数: {result.best_score}')
 "
 ```
@@ -310,7 +310,7 @@ print(f'当前违规数: {result.best_score}')
 
 1. **质量基线已建立**: 17个违规
 2. **优化路径已明确**: 降低耦合度是关键
-3. **工具已就绪**: LingMinOpt框架
+3. **工具已就绪**: lingminopt框架
 4. **流程已验证**: 自优化切实可行
 
 ### 下一步

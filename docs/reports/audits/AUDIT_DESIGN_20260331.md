@@ -66,7 +66,7 @@ class BaseWorkflow(ABC):
 
 **实际情况**:
 ```bash
-$ ls -la /home/ai/LingFlow/lingflow/workflow/
+$ ls -la /home/ai/lingflow/lingflow/workflow/
 -rw-r--r-- 1 ai ai 23KB Mar 31 22:55 multi_workflow.py
 # workflow_base.py 不存在
 ```

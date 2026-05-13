@@ -1,5 +1,5 @@
 """
-LingFlow 优化建议生成器
+lingflow 优化建议生成器
 生成详细的优化建议报告
 """
 
@@ -31,7 +31,7 @@ class OptimizationAdvisor:
             Markdown格式的报告
         """
         lines = [
-            "# LingFlow 自优化建议报告",
+            "# lingflow 自优化建议报告",
             "",
             f"生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
             f"优化目标: {self._goal_name(goal)}",
@@ -160,7 +160,7 @@ class OptimizationAdvisor:
 
     def _format_recommendations(self, current_metrics: Dict[str, Any], result: OptimizationResult, goal: str) -> list[str]:
         """格式化优化建议"""
-        lines = ["## 优化建议", "", "### 最佳参数配置", "", "```yaml", "# LingFlow 自优化参数配置", ""]
+        lines = ["## 优化建议", "", "### 最佳参数配置", "", "```yaml", "# lingflow 自优化参数配置", ""]
 
         # 格式化最佳参数
         for key, value in sorted(result.best_params.items()):
@@ -336,7 +336,7 @@ class OptimizationAdvisor:
             lines.append("| ... | ... | ... |")
             lines.append(f"| 共 {len(result.history)} 次实验 | | |")
 
-        lines.extend(["", "---", "", "*报告由 LingFlow 自动生成*", ""])
+        lines.extend(["", "---", "", "*报告由 lingflow 自动生成*", ""])
 
         return lines
 
@@ -386,7 +386,7 @@ if __name__ == "__main__":  # pragma: no cover
     # 测试
     from lingflow.self_optimizer.evaluator import StructureEvaluator
 
-    evaluator = StructureEvaluator("/home/ai/LingFlow/lingflow")
+    evaluator = StructureEvaluator("/home/ai/lingflow/lingflow")
     metrics = evaluator.get_current_metrics()
 
     result = OptimizationResult(
@@ -399,7 +399,7 @@ if __name__ == "__main__":  # pragma: no cover
 
     advisor = OptimizationAdvisor()
     report = advisor.generate_report(
-        goal="structure", target="/home/ai/LingFlow/lingflow", current_metrics=metrics, optimization_result=result
+        goal="structure", target="/home/ai/lingflow/lingflow", current_metrics=metrics, optimization_result=result
     )
 
     print(report)

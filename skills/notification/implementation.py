@@ -20,7 +20,7 @@ LEVEL_COLORS = {
 }
 
 
-def _build_html_email(message: str, level: str, title: str = "LingFlow 通知") -> str:
+def _build_html_email(message: str, level: str, title: str = "lingflow 通知") -> str:
     color = LEVEL_COLORS.get(level, "#2196F3")
     return f"""<!DOCTYPE html>
 <html><body style="font-family: sans-serif; margin: 0; padding: 20px;">
@@ -51,7 +51,7 @@ def send_email(
         msg = MIMEMultipart("alternative")
         msg["From"] = smtp_user
         msg["To"] = to_address
-        msg["Subject"] = subject or f"[LingFlow] {level.upper()} 通知"
+        msg["Subject"] = subject or f"[lingflow] {level.upper()} 通知"
 
         msg.attach(MIMEText(message, "plain", "utf-8"))
         msg.attach(MIMEText(_build_html_email(message, level), "html", "utf-8"))
@@ -134,7 +134,7 @@ def send_webhook(
     try:
         import requests
 
-        payload = {"message": message, "level": level, "source": "LingFlow"}
+        payload = {"message": message, "level": level, "source": "lingflow"}
         resp = requests.post(webhook_url, json=payload, timeout=15)
 
         if resp.status_code == 200:

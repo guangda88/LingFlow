@@ -1,5 +1,5 @@
 #!/bin/bash
-# LingFlow 定期自优化脚本
+# lingflow 定期自优化脚本
 # 建议通过cron定期运行
 
 set -e
@@ -17,7 +17,7 @@ mkdir -p "$REPORT_DIR"
 LOG_FILE="$LOG_DIR/optimization_$(date +%Y%m%d_%H%M%S).log"
 
 echo "========================================" | tee -a "$LOG_FILE"
-echo "LingFlow 定期自优化" | tee -a "$LOG_FILE"
+echo "lingflow 定期自优化" | tee -a "$LOG_FILE"
 echo "开始时间: $(date '+%Y-%m-%d %H:%M:%S')" | tee -a "$LOG_FILE"
 echo "========================================" | tee -a "$LOG_FILE"
 
@@ -29,7 +29,7 @@ fi
 
 # 运行自优化
 echo "" | tee -a "$LOG_FILE"
-echo "运行LingMinOpt优化..." | tee -a "$LOG_FILE"
+echo "运行lingminopt优化..." | tee -a "$LOG_FILE"
 echo "目标: $PROJECT_DIR/lingflow" | tee -a "$LOG_FILE"
 
 cd "$PROJECT_DIR"

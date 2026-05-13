@@ -1,8 +1,8 @@
-# LingFlow学习Claude Code的实战计划
+# lingflow学习Claude Code的实战计划
 
 > **基于Claude Code Python移植版本 (claw-code)的实际源码分析**
 > **日期**: 2026-04-01
-> **目标**: 从Claude Code的实际实现中学习，系统性地改进LingFlow
+> **目标**: 从Claude Code的实际实现中学习，系统性地改进lingflow
 
 ---
 
@@ -31,7 +31,7 @@ class StoredSession:
 2. **简洁性**：只存储必要信息，不保存整个状态树
 3. **Token追踪**：内置使用量统计，便于成本控制
 
-#### LingFlow现状
+#### lingflow现状
 
 ```python
 # lingflow/context/session.py
@@ -168,7 +168,7 @@ class QueryEnginePort:
 3. **Token预算**：硬性限制防止成本失控
 4. **结构化输出**：支持JSON格式输出
 
-#### LingFlow现状
+#### lingflow现状
 
 ```python
 # lingflow/coordination/coordinator.py
@@ -358,7 +358,7 @@ class PortRuntime:
 3. **评分排序**：根据相关度排序
 4. **多样性**：优先选择不同类型的匹配
 
-#### LingFlow现状
+#### lingflow现状
 
 ```python
 # lingflow/coordination/coordinator.py
@@ -481,7 +481,7 @@ class PromptRouter:
 
 ### 阶段1：核心基础设施（1-2周）
 
-**目标**：建立LingFlow的基础架构
+**目标**：建立lingflow的基础架构
 
 #### 任务1.1：Session管理重构
 - [ ] 实现`SessionManager`
@@ -614,7 +614,7 @@ class AgentCoordinator:
 
 ### 实践建议
 
-1. **边读边实现**：每看完一个文件，立即在LingFlow中实现对应功能
+1. **边读边实现**：每看完一个文件，立即在lingflow中实现对应功能
 2. **保持简洁**：不要过度设计，从最简单的实现开始
 3. **测试驱动**：先写测试，再写实现
 4. **文档同步**：实现的同时更新文档

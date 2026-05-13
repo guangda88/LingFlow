@@ -1,6 +1,6 @@
 # 基础用法示例
 
-本文档提供LingFlow的基础用法示例，帮助你快速理解和使用系统。
+本文档提供lingflow的基础用法示例，帮助你快速理解和使用系统。
 
 ## 目录
 
@@ -15,16 +15,16 @@
 ### 基础初始化
 
 ```python
-from lingflow import LingFlow
+from lingflow import lingflow
 
 # 使用默认配置初始化
-lf = LingFlow()
+lf = lingflow()
 ```
 
 ### 自定义配置初始化
 
 ```python
-from lingflow import LingFlow
+from lingflow import lingflow
 
 # 使用自定义配置
 config = {
@@ -34,7 +34,7 @@ config = {
     "log_level": "INFO"
 }
 
-lf = LingFlow(config=config)
+lf = lingflow(config=config)
 ```
 
 ### 环境变量配置
@@ -52,8 +52,8 @@ LINGFLOW_COMPRESSION_THRESHOLD=0.85
 from dotenv import load_dotenv
 load_dotenv()
 
-from lingflow import LingFlow
-lf = LingFlow()
+from lingflow import lingflow
+lf = lingflow()
 ```
 
 ## 执行技能
@@ -390,9 +390,9 @@ LINGFLOW_CONFIG = {
 
 # main.py
 from config import LINGFLOW_CONFIG
-from lingflow import LingFlow
+from lingflow import lingflow
 
-lf = LingFlow(config=LINGFLOW_CONFIG)
+lf = lingflow(config=LINGFLOW_CONFIG)
 ```
 
 ### 2. 模块化工作流
@@ -423,9 +423,9 @@ tasks:
 ### 3. 资源清理
 
 ```python
-from lingflow import LingFlow
+from lingflow import lingflow
 
-lf = LingFlow()
+lf = lingflow()
 
 try:
     # 执行任务
@@ -439,11 +439,11 @@ finally:
 
 ```python
 import logging
-from lingflow import LingFlow
+from lingflow import lingflow
 
 logger = logging.getLogger(__name__)
 
-lf = LingFlow()
+lf = lingflow()
 
 logger.info("开始代码审查")
 result = lf.run_skill("code_review", {"file_path": "main.py"})
@@ -462,7 +462,7 @@ else:
 #!/usr/bin/env python3
 """完整的CI/CD流程示例"""
 
-from lingflow import LingFlow
+from lingflow import lingflow
 import logging
 
 # 配置日志
@@ -470,8 +470,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def main():
-    # 初始化LingFlow
-    lf = LingFlow()
+    # 初始化lingflow
+    lf = lingflow()
 
     # 1. 代码检查
     logger.info("步骤1: 代码检查")

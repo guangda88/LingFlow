@@ -404,7 +404,7 @@ class TestPreCommitHookGenerator:
 
         assert output_path.exists()
         content = output_path.read_text()
-        assert "LingFlow" in content
+        assert "lingflow" in content
         assert "Self-Learning" in content
 
     def test_generate_config(self, temp_kb, tmp_path):

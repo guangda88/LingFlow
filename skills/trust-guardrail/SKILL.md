@@ -19,7 +19,7 @@ Trust Guardrail 在 AI 声称完成任务时自动验证其输出，确保可追
 ### 反模式：数据幻觉 (Anti-pattern: Data Hallucination)
 
 - 字段被定义、存储、显示，但**从未被更新**
-- 例如：`energy_pct` 在 LingYi 中只显示为 0，无任何更新逻辑
+- 例如：`energy_pct` 在 lingyi 中只显示为 0，无任何更新逻辑
 
 ## 检查清单 (Checklist)
 
@@ -174,9 +174,9 @@ result = pipeline.execute(claim)
 2. **提供修复建议** - 基于验证结果
 3. **记录审计日志** - 保存验证失败证据
 
-## 与 LingYi 的关联 (Connection to LingYi)
+## 与 lingyi 的关联 (Connection to lingyi)
 
-此技能直接响应 LingYi 中的 "数据幻觉" 问题：
+此技能直接响应 lingyi 中的 "数据幻觉" 问题：
 
 - **问题**: `energy_pct` 字段存在但从不更新
 - **原因**: 无人问 "谁更新它？"

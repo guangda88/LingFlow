@@ -1,4 +1,4 @@
-"""LingFlow Common模块"""
+"""lingflow Common模块"""
 
 from .config import get_config, save_config, set_config
 from .exceptions import (
@@ -7,7 +7,7 @@ from .exceptions import (
     AgentNotFoundError,
     CompressionError,
     ConfigurationError,
-    LingFlowError,
+    lingflowError,
     SkillError,
     SkillExecutionError,
     SkillLoadError,
@@ -32,7 +32,7 @@ __all__ = [
     "get_config",
     "set_config",
     "save_config",
-    "LingFlowError",
+    "lingflowError",
     "SkillError",
     "SkillNotFoundError",
     "SkillLoadError",

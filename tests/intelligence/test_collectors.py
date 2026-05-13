@@ -49,7 +49,7 @@ class TestRedditCollector:
             "id": "test123",
             "author": "test_user",
             "title": "Test Post",
-            "selftext": "Test content about LingFlow",
+            "selftext": "Test content about lingflow",
             "permalink": "/r/test/comments/test123/",
             "created_utc": 1712236800,  # 2024-04-04
             "score": 100,
@@ -87,7 +87,7 @@ class TestHNCollector:
         hit_data = {
             "objectID": "12345",
             "author": "hn_user",
-            "title": "LingFlow Discussion",
+            "title": "lingflow Discussion",
             "url": "https://example.com",
             "created_at": "2026-04-04T10:00:00.000Z",
             "points": 80,

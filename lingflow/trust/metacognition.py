@@ -1,4 +1,4 @@
-"""LingFlow Metacognition System
+"""lingflow Metacognition System
 
 Provides knowledge boundary awareness and capability tracking for AI agents.
 

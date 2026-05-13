@@ -41,7 +41,7 @@ feat: 多智能体工程流 - 重构与文档完成
 ### 仓库1: GitHub
 
 ```bash
-URL: github.com:guangda88/LingFlow.git
+URL: github.com:guangda88/lingflow.git
 分支: master
 状态: 推送中...
 ```
@@ -49,7 +49,7 @@ URL: github.com:guangda88/LingFlow.git
 ### 仓库2: 智能GitLab
 
 ```bash
-URL: http://zhinenggitea.iepose.cn/guangda/LingFlow.git
+URL: http://zhinenggitea.iepose.cn/guangda/lingflow.git
 分支: master
 状态: 待推送
 ```
@@ -91,12 +91,12 @@ URL: http://zhinenggitea.iepose.cn/guangda/LingFlow.git
 
 ### 主仓库 (GitHub)
 - **用途**: 公开发布，协作开发
-- **URL**: github.com:guangda88/LingFlow
+- **URL**: github.com:guangda88/lingflow
 - **优先级**: 主要
 
 ### 备份仓库 (Gitea)
 - **用途**: 内部备份，灾备
-- **URL**: zhinenggitea.iepose.cn/guangda/LingFlow
+- **URL**: zhinenggitea.iepose.cn/guangda/lingflow
 - **优先级**: 备份
 
 ---

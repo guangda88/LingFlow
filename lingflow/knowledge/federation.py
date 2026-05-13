@@ -22,8 +22,8 @@ from lingflow.knowledge.sources.base import (
     SearchResult,
 )
 from lingflow.knowledge.sources.external import ExternalIntelligenceSource
-from lingflow.knowledge.sources.lingflow import LingFlowKnowledgeSource
-from lingflow.knowledge.sources.lingtongask import LingTongAskKnowledgeSource
+from lingflow.knowledge.sources.lingflow import lingflowKnowledgeSource
+from lingflow.knowledge.sources.lingtongask import lingtongaskKnowledgeSource
 
 
 @dataclass(frozen=True)
@@ -110,8 +110,8 @@ class KnowledgeFederation:
 
         # Create sources
         self._sources = {
-            "lingflow": LingFlowKnowledgeSource(self._project_root),
-            "lingtongask": LingTongAskKnowledgeSource(self._project_root),
+            "lingflow": lingflowKnowledgeSource(self._project_root),
+            "lingtongask": lingtongaskKnowledgeSource(self._project_root),
             "external": ExternalIntelligenceSource(self._project_root),
         }
 

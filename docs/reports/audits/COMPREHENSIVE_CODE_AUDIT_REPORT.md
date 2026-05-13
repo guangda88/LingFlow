@@ -1,4 +1,4 @@
-# LingFlow 全面代码审计报告
+# lingflow 全面代码审计报告
 
 **审计日期**: 2026-03-31
 **审计范围**: 全项目（214个Python文件）
@@ -127,7 +127,7 @@ Hooks: 已启用
 
 **结论**: 自优化系统自身质量优秀 ✅
 
-#### 整个LingFlow项目优化
+#### 整个lingflow项目优化
 
 ```
 目标: lingflow
@@ -295,7 +295,7 @@ structure_optimization:
 
 ### 审计结论
 
-**LingFlow项目整体质量优秀** ⭐⭐⭐⭐
+**lingflow项目整体质量优秀** ⭐⭐⭐⭐
 
 - ✅ 代码规模合理 (214文件, 55K行)
 - ✅ 测试覆盖充分 (99.6%通过率)
@@ -315,7 +315,7 @@ structure_optimization:
 
 ### 用户价值
 
-通过启用自优化系统，LingFlow现在能够：
+通过启用自优化系统，lingflow现在能够：
 1. 自动检测代码质量问题
 2. 智能触发优化流程
 3. 提供数据驱动的改进建议
@@ -323,12 +323,12 @@ structure_optimization:
 
 ---
 
-**LingFlow 自优化系统现已启用！** 🎉
+**lingflow 自优化系统现已启用！** 🎉
 
 让代码质量持续自动改进。
 
 ---
 
 *审计完成时间: 2026-03-31*
-*审计工具: LingFlow Self-Optimizer*
+*审计工具: lingflow Self-Optimizer*
 *系统版本: v3.6.0*

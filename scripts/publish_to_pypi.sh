@@ -1,5 +1,5 @@
 #!/bin/bash
-# LingFlow PyPI 发布脚本
+# lingflow PyPI 发布脚本
 # 使用方法: ./scripts/publish_to_pypi.sh [test|prod]
 
 set -e  # 遇到错误立即退出
@@ -134,7 +134,7 @@ publish_prod() {
 
 # 主流程
 main() {
-    log_info "🚀 LingFlow PyPI 发布脚本"
+    log_info "🚀 lingflow PyPI 发布脚本"
     echo ""
 
     check_version

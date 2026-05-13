@@ -1,8 +1,8 @@
-# LingFlow Hooks 系统 v1.2.0 部署指南
+# lingflow Hooks 系统 v1.2.0 部署指南
 
 **文档版本**: 1.2.0
 **创建日期**: 2026-03-29
-**适用**: LingFlow 多智能体系统
+**适用**: lingflow 多智能体系统
 **状态**: 已部署
 
 ---
@@ -23,7 +23,7 @@
 
 ### 1.1 Hooks 系统 v1.2.0
 
-LingFlow Hooks 系统 v1.2.0 是一套完整的 Git Hooks 自动化检查系统，旨在：
+lingflow Hooks 系统 v1.2.0 是一套完整的 Git Hooks 自动化检查系统，旨在：
 
 - **保证代码质量**: 自动检查代码格式、风格、类型注解
 - **规范提交消息**: 强制使用规范的提交消息格式
@@ -67,7 +67,7 @@ pytest --version
 
 ### 2.2 自动部署（推荐）
 
-在 LingFlow 项目根目录执行：
+在 lingflow 项目根目录执行：
 
 ```bash
 # 配置 Git 使用项目本地 hooks
@@ -159,7 +159,7 @@ git init
 **输出示例**:
 
 ```
-=== LingFlow Pre-commit Hook v1.2.0 ===
+=== lingflow Pre-commit Hook v1.2.0 ===
 
 [INFO] 检查的文件:
   lingflow/agent/executor.py
@@ -225,7 +225,7 @@ git init
 **输出示例**:
 
 ```
-=== LingFlow Commit-msg Hook v1.2.0 ===
+=== lingflow Commit-msg Hook v1.2.0 ===
 
 [INFO] 检查提交消息:
   feat(agent): 添加新的代码审查 Agent
@@ -274,12 +274,12 @@ git init
 **输出示例**:
 
 ```
-=== LingFlow Pre-push Hook v1.2.0 ===
+=== lingflow Pre-push Hook v1.2.0 ===
 
-[INFO] 推送目标: origin (http://zhinenggitea.iepose.cn/guangda/LingFlow.git)
+[INFO] 推送目标: origin (http://zhinenggitea.iepose.cn/guangda/lingflow.git)
 
 === 检查远程仓库配置 ===
-[INFO] Gitea: http://zhinenggitea.iepose.cn/guangda/LingFlow.git
+[INFO] Gitea: http://zhinenggitea.iepose.cn/guangda/lingflow.git
 [PASS] 远程仓库检查通过
 
 === 检查分支一致性 ===
@@ -579,14 +579,14 @@ export GITEA_REMOTE=origin
 
 ### A. Hooks 版本历史
 
-- **v1.2.0** (2026-03-29): LingFlow 专用版本
+- **v1.2.0** (2026-03-29): lingflow 专用版本
   - 添加多智能体系统特定检查
   - 支持多仓库一致性检查
   - 优化性能和错误消息
 
 ### B. 相关文档
 
-- [LINGFLOW_DEVELOPMENT_RULES.md](./LINGFLOW_DEVELOPMENT_RULES.md): LingFlow 开发规则
+- [LINGFLOW_DEVELOPMENT_RULES.md](./LINGFLOW_DEVELOPMENT_RULES.md): lingflow 开发规则
 - [DEVELOPMENT_RULES_V4.0.md](../zhineng-knowledge-system/DEVELOPMENT_RULES_V4.0.md): 基础开发规则
 
 ### C. 常见问题
@@ -606,5 +606,5 @@ A: 将 hooks 提交到仓库，并在开发文档中说明配置方法。
 **测试状态**: ✅ 已测试
 **文档状态**: ✅ 完整
 
-**维护者**: LingFlow 开发团队
+**维护者**: lingflow 开发团队
 **联系方式**: 通过 GitHub Issues 或 Gitea Issues 联系

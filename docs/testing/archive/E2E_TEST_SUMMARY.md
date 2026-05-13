@@ -113,7 +113,7 @@ Generated files in `/tmp/chrome-devtools-mcp-test/`:
 ### Quick Start
 
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 export PATH="/tmp/node-v22.12.0-linux-x64/bin:$PATH"
 node e2e-test.js
 ```
@@ -201,9 +201,9 @@ The Chrome DevTools MCP Server is **ready for production use** with:
 
 ## Files Created
 
-1. `/home/ai/LingFlow/e2e-test.js` - Test script (17 KB)
-2. `/home/ai/LingFlow/E2E_TESTING_GUIDE.md` - Testing guide
-3. `/home/ai/LingFlow/CHROME_DEVTOOLS_MCP_E2E_TEST_REPORT.md` - Full report
+1. `/home/ai/lingflow/e2e-test.js` - Test script (17 KB)
+2. `/home/ai/lingflow/E2E_TESTING_GUIDE.md` - Testing guide
+3. `/home/ai/lingflow/CHROME_DEVTOOLS_MCP_E2E_TEST_REPORT.md` - Full report
 4. `/tmp/chrome-devtools-mcp-test/*` - Test outputs
 
 ---

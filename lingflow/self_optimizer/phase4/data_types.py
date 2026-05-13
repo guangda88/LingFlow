@@ -1,5 +1,5 @@
 """
-LingFlow Phase 4: 核心数据类型定义
+lingflow Phase 4: 核心数据类型定义
 
 包含所有优化相关的数据类和枚举类型。
 """

@@ -1,4 +1,4 @@
-# LingFlow 立即行动计划
+# lingflow 立即行动计划
 
 **基于专家反馈整合**
 **日期**: 2026-04-02
@@ -51,14 +51,14 @@ git push origin v3.8.0
 ### Day 3-4: 推广内容准备
 
 #### 1. "Show HN" 文章
-**标题**: Show HN: LingFlow – 我用中医理论打造的 AI 工程流系统，2 周从 1 种使用方式扩展到 4 种
+**标题**: Show HN: lingflow – 我用中医理论打造的 AI 工程流系统，2 周从 1 种使用方式扩展到 4 种
 
 **大纲**:
 ```markdown
-# Show HN: LingFlow – AI 增强的软件工程流系统
+# Show HN: lingflow – AI 增强的软件工程流系统
 
 ## 简介
-我是 Guangda，一名中医主任医师兼开发者。在过去 2 年里，我利用业余时间开发了 LingFlow——一个覆盖 92% SDLC 的 AI 工程流系统。
+我是 Guangda，一名中医主任医师兼开发者。在过去 2 年里，我利用业余时间开发了 lingflow——一个覆盖 92% SDLC 的 AI 工程流系统。
 
 ## 核心特性
 - 33 个专业技能（代码生成、审查、测试、部署）
@@ -82,19 +82,19 @@ git push origin v3.8.0
 ## 使用示例
 \`\`\`yaml
 # GitHub Actions
-- uses: guangda88/LingFlow/actions/quality-gate@v3.8.0
+- uses: guangda88/lingflow/actions/quality-gate@v3.8.0
   with:
     command: review
     path: ./src
 \`\`\`
 
 ## 开源
-- GitHub: https://github.com/guangda88/LingFlow
+- GitHub: https://github.com/guangda88/lingflow
 - PyPI: https://pypi.org/project/lingflow-core/
 - Docker: https://hub.docker.com/r/guangda88/lingflow-api
 
 ## 为什么要做这个？
-传统软件开发存在诸多痛点：AI 生成代码质量差、上下文窗口受限、工具碎片化。LingFlow 试图用中医"整体性、自组织、共生性"的哲学来解决这些问题。
+传统软件开发存在诸多痛点：AI 生成代码质量差、上下文窗口受限、工具碎片化。lingflow 试图用中医"整体性、自组织、共生性"的哲学来解决这些问题。
 
 期待您的反馈！
 ```
@@ -102,7 +102,7 @@ git push origin v3.8.0
 #### 2. 技术博客
 **发布渠道**: Dev.to, Medium, 掘金
 
-**标题**: 从本地工具到 AI 生态平台：LingFlow v3.8.0 的 2 周进化之路
+**标题**: 从本地工具到 AI 生态平台：lingflow v3.8.0 的 2 周进化之路
 
 **大纲**:
 ```markdown
@@ -140,7 +140,7 @@ git push origin v3.8.0
 ```yaml
 Hacker News:
   - 时间: 美国西部时间 上午 8-10 点
-  - 标题: Show HN: LingFlow – AI-Powered Software Engineering Workflow
+  - 标题: Show HN: lingflow – AI-Powered Software Engineering Workflow
   - 内容: 上述 "Show HN" 文章
   - 回复: 及时响应评论
 
@@ -169,7 +169,7 @@ Reddit:
 创建 `lingflow/skills-index` 仓库：
 
 ```markdown
-# 🏆 LingFlow 30 天技能挑战赛
+# 🏆 lingflow 30 天技能挑战赛
 
 ## 活动时间
 2026-04-09 ~ 2026-05-09
@@ -192,7 +192,7 @@ Reddit:
 
 ## 官方支持
 - [技能模板](https://github.com/lingflow/skill-template)
-- [开发指南](https://github.com/lingflow/LingFlow/docs/skill-development.md)
+- [开发指南](https://github.com/lingflow/lingflow/docs/skill-development.md)
 - [技术支持](https://discord.gg/lingflow)
 ```
 
@@ -227,16 +227,16 @@ Discord:
   - #contributors     # 贡献者专属
 
 微信群:
-  - LingFlow 用户群    # 一般用户
-  - LingFlow 开发群   # 贡献者
-  - LingFlow 核心群   # Maintainers
+  - lingflow 用户群    # 一般用户
+  - lingflow 开发群   # 贡献者
+  - lingflow 核心群   # Maintainers
 ```
 
 #### 社区指南
 创建 `COMMUNITY_GUIDE.md`:
 
 ```markdown
-# LingFlow 社区指南
+# lingflow 社区指南
 
 ## 社区角色
 - Users: 使用者
@@ -406,7 +406,7 @@ X-Tenant-ID: tenant_12345
 
 #### Phase 2-4 规划
 ```markdown
-# LingFlow 未来 6 个月路线图
+# lingflow 未来 6 个月路线图
 
 ## v3.9.0 (Month 2): 异步与扩展
 - 异步任务支持
@@ -458,9 +458,9 @@ X-Tenant-ID: tenant_12345
 
 ### Day 6-7: Hackathon 筹备
 
-#### LingFlow Hackathon
+#### lingflow Hackathon
 ```markdown
-# 🎯 LingFlow Hackathon 2026
+# 🎯 lingflow Hackathon 2026
 
 ## 主题
 "AI 驱动的软件工程自动化"
@@ -480,7 +480,7 @@ X-Tenant-ID: tenant_12345
 - 三等奖: $200 + 纪念品
 
 ## 评委
-- LingFlow Maintainers
+- lingflow Maintainers
 - 企业级架构师
 - 社区代表
 
@@ -555,4 +555,4 @@ X-Tenant-ID: tenant_12345
 
 ---
 
-*LingFlow - 众智混元，万法灵通*
+*lingflow - 众智混元，万法灵通*

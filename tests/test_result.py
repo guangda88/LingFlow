@@ -2,40 +2,40 @@
 
 import pytest
 
-from lingflow.common.exceptions import LingFlowError
+from lingflow.common.exceptions import lingflowError
 from lingflow.core.types import Result
 
 
-class TestLingFlowError:
-    """Test LingFlowError exception."""
+class TestlingflowError:
+    """Test lingflowError exception."""
 
     def test_basic_error(self):
         """Test basic error creation."""
-        error = LingFlowError("Test error")
+        error = lingflowError("Test error")
         assert error.message == "Test error"
         assert error.code == "LF_ERROR"
         assert error.details == {}
 
     def test_error_with_code(self):
         """Test error with custom code."""
-        error = LingFlowError("Test error", code="CUSTOM_ERROR")
+        error = lingflowError("Test error", code="CUSTOM_ERROR")
         assert error.code == "CUSTOM_ERROR"
 
     def test_error_with_details(self):
         """Test error with details."""
         details = {"file": "test.py", "line": 10}
-        error = LingFlowError("Test error", details=details)
+        error = lingflowError("Test error", details=details)
         assert error.details == details
 
     def test_error_str_representation(self):
         """Test error string representation."""
-        error = LingFlowError("Test error", code="TEST")
+        error = lingflowError("Test error", code="TEST")
         assert str(error) == "[TEST] Test error"
 
     def test_error_raise(self):
-        """Test raising LingFlowError."""
-        with pytest.raises(LingFlowError) as exc_info:
-            raise LingFlowError("Test error")
+        """Test raising lingflowError."""
+        with pytest.raises(lingflowError) as exc_info:
+            raise lingflowError("Test error")
         assert str(exc_info.value) == "[LF_ERROR] Test error"
 
 

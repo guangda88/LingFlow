@@ -1,8 +1,8 @@
 """
-LingFlow Phase 5: AI工具学习系统
+lingflow Phase 5: AI工具学习系统
 
 从外部AI代码分析工具（SonarQube、CodeQL、Semgrep等）中学习，
-提取规则和模式，自动集成到LingFlow的代码审查和优化流程中。
+提取规则和模式，自动集成到lingflow的代码审查和优化流程中。
 
 核心功能：
 - AI工具适配器（Semgrep、Ruff、Pylint等）
@@ -26,7 +26,7 @@ LingFlow Phase 5: AI工具学习系统
 
 # 版本信息 (与主项目版本保持一致)
 __version__ = "3.8.0"
-__author__ = "LingFlow Team"
+__author__ = "lingflow Team"
 
 # 核心类导出（待实现）
 # from lingflow.self_optimizer.phase5.core import (

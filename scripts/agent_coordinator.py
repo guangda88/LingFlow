@@ -1,5 +1,5 @@
 """
-LingFlow Agent Coordinator - 主入口文件
+lingflow Agent Coordinator - 主入口文件
 
 核心功能:
 - 代理注册和发现
@@ -18,7 +18,7 @@ from lingflow.common import Task, TaskPriority
 async def main():
     """测试主函数"""
     print("=" * 60)
-    print("LingFlow Agent Coordinator - 重构版本")
+    print("lingflow Agent Coordinator - 重构版本")
     print("=" * 60)
 
     # 初始化协调器

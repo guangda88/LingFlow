@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """CLI命令测试脚本
 
-测试LingFlow CLI的基本功能
+测试lingflow CLI的基本功能
 """
 
 import subprocess
@@ -104,7 +104,7 @@ def test_list_skills():
     """测试列出技能"""
     print("测试: lingflow list-skills")
     code, out, err = run_command([sys.executable, "-m", "lingflow.cli", "list-skills"])
-    # 这个命令可能会失败，因为需要LingFlow完全初始化
+    # 这个命令可能会失败，因为需要lingflow完全初始化
     # 只要命令能识别就行
     print(f"返回码: {code}")
     if code == 0:
@@ -125,7 +125,7 @@ def run_all_tests():
     ]
 
     print("=" * 60)
-    print("LingFlow CLI 测试")
+    print("lingflow CLI 测试")
     print("=" * 60)
     print()
 

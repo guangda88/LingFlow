@@ -3,7 +3,7 @@
 
 set -e
 
-echo "🔧 安装 LingFlow PyPI 发布工具..."
+echo "🔧 安装 lingflow PyPI 发布工具..."
 
 # 方法 1: 使用系统包管理器（推荐）
 echo "尝试使用 apt 安装..."

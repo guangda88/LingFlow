@@ -1,4 +1,4 @@
-# AutoResearch对LingFlow的启示与改进建议
+# AutoResearch对lingflow的启示与改进建议
 
 > 版本: 3.3.0
 > 日期: 2026-03-23
@@ -9,7 +9,7 @@
 ## 📋 目录
 
 1. [AutoResearch核心理念](#autoresearch核心理念)
-2. [LingFlow与AutoResearch对比](#lingflow与autoresearch对比)
+2. [lingflow与AutoResearch对比](#lingflow与autoresearch对比)
 3. [核心启示与改进建议](#核心启示与改进建议)
 4. [具体改进方案](#具体改进方案)
 5. [实施路线图](#实施路线图)
@@ -212,11 +212,11 @@ def save_result(exp_id, description, val_bpb, status):
 
 ---
 
-## LingFlow与AutoResearch对比
+## lingflow与AutoResearch对比
 
 ### 架构对比
 
-| 维度 | AutoResearch | LingFlow v3.3.0 |
+| 维度 | AutoResearch | lingflow v3.3.0 |
 |------|-------------|------------------|
 | **文件数量** | 3个核心文件 | 10+个核心文件 |
 | **代码复杂度** | ~1000行 | ~3000+行 |
@@ -251,7 +251,7 @@ def save_result(exp_id, description, val_bpb, status):
 总时间：~15分钟/实验
 ```
 
-#### LingFlow工作流
+#### lingflow工作流
 
 ```
 1. brainstorming（30分钟）
@@ -275,7 +275,7 @@ def save_result(exp_id, description, val_bpb, status):
 
 ### 设计哲学对比
 
-| 维度 | AutoResearch | LingFlow |
+| 维度 | AutoResearch | lingflow |
 |------|-------------|-----------|
 | **核心理念** | 极简、快速迭代 | 完整、高质量 |
 | **目标** | 最小BPC | 高质量代码 |
@@ -293,7 +293,7 @@ def save_result(exp_id, description, val_bpb, status):
 
 **观察**:
 - AutoResearch只有3个文件，却可以完成复杂的ML实验
-- LingFlow有20+个文件，功能强大但学习曲线陡峭
+- lingflow有20+个文件，功能强大但学习曲线陡峭
 
 **启示**:
 > **简单性本身就是质量。** 系统越简单，越容易理解、维护、扩展。
@@ -305,7 +305,7 @@ def save_result(exp_id, description, val_bpb, status):
 ```python
 # lingflow/lite.py - 极简模式入口
 """
-LingFlow Lite - 极简模式，只有3个文件
+lingflow Lite - 极简模式，只有3个文件
 
 适用场景:
 - 快速原型开发
@@ -339,7 +339,7 @@ lingflow/
 ├── common/
 └── ...
 
-简化后结构 (LingFlow Lite):
+简化后结构 (lingflow Lite):
 lingflow-lite/
 ├── core.py          # 核心功能（500行）
 ├── workflow.md     # 工作流定义
@@ -376,7 +376,7 @@ coordinator = FullCoordinator(
 
 **观察**:
 - AutoResearch的5分钟时间预算让实验可预测
-- LingFlow没有时间约束，任务可能无限期运行
+- lingflow没有时间约束，任务可能无限期运行
 
 **启示**:
 > **固定约束可以激发创造力。** 有限时间内，人们会专注于最重要的改进。
@@ -491,7 +491,7 @@ class TimeoutHandler:
 
 **观察**:
 - AutoResearch只用BPC这一个指标，决策简单明确
-- LingFlow有8维代码审查，但缺少量化评分
+- lingflow有8维代码审查，但缺少量化评分
 
 **启示**:
 > **单一真理指标可以简化决策。** 多维度分析很有价值，但最终需要可比较的单一分数。
@@ -611,7 +611,7 @@ class QualityGate:
 
 **观察**:
 - AutoResearch完全自主，AI自己决定下一步
-- LingFlow需要大量人工确认（brainstorming审查、code-review审查等）
+- lingflow需要大量人工确认（brainstorming审查、code-review审查等）
 
 **启示**:
 > **完全自主可以极大提高效率。** 减少人工决策点，让系统自己运行。
@@ -753,7 +753,7 @@ class SafetyGuard:
 
 **观察**:
 - AutoResearch明确拒绝"增加20行丑陋代码只降低0.001 BPC"
-- LingFlow过度优化，很多功能使用率低
+- lingflow过度优化，很多功能使用率低
 
 **启示**:
 > **简单性本身就是一种质量指标。** 复杂度应该有明确的回报。
@@ -894,7 +894,7 @@ class ComplexityReward:
 
 **观察**:
 - AutoResearch固定随机种子，确保实验可复现
-- LingFlow的测试和执行缺乏随机性控制
+- lingflow的测试和执行缺乏随机性控制
 
 **启示**:
 > **可复现性是科学实验的基础。** 无法复现的结果无法信任和改进。
@@ -1076,7 +1076,7 @@ class ResultVerifier:
 
 **观察**:
 - AutoResearch每次只改变一个因素
-- LingFlow允许并行多任务，但改进可能不明确
+- lingflow允许并行多任务，但改进可能不明确
 
 **启示**:
 > **小步前进比大跳跃更可靠。** 单因素变化可以准确评估每个改进的效果。
@@ -1240,7 +1240,7 @@ class KnowledgeBase:
 
 **观察**:
 - AutoResearch自动记录所有实验到results.tsv
-- LingFlow缺少完整的实验追踪系统
+- lingflow缺少完整的实验追踪系统
 
 **启示**:
 > **自动化记录可以避免人为遗漏和错误。** 数据是持续改进的基础。
@@ -1337,11 +1337,11 @@ class ExperimentVisualizer:
         html = """
         <html>
         <head>
-            <title>LingFlow Experiment Report</title>
+            <title>lingflow Experiment Report</title>
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         </head>
         <body>
-            <h1>LingFlow Experiment Report</h1>
+            <h1>lingflow Experiment Report</h1>
 
             <!-- 总体统计 -->
             <div id="summary">
@@ -1494,7 +1494,7 @@ class ABTester:
 
 ## 具体改进方案
 
-### 方案1: LingFlow Lite (极简版)
+### 方案1: lingflow Lite (极简版)
 
 **目标**: 提供5分钟即可上手的使用体验
 
@@ -1687,7 +1687,7 @@ test_id = tester.create_ab_test("new-algo", config_a, config_b)
    - Week 7: 实现AutonomousOptimizer
    - Week 8: 实现SafetyGuard
 
-2. **Week 9-10**: LingFlow Lite
+2. **Week 9-10**: lingflow Lite
    - Week 9: 核心功能精简
    - Week 10: 文档和示例
 
@@ -1724,7 +1724,7 @@ test_id = tester.create_ab_test("new-algo", config_a, config_b)
 
 ### 核心启示总结
 
-| 启示 | AutoResearch做法 | LingFlow改进 | 预期收益 |
+| 启示 | AutoResearch做法 | lingflow改进 | 预期收益 |
 |------|---------------|--------------|---------|
 | **极简主义** | 3个文件 | 创建Lite版本 | 5分钟上手 |
 | **时间预算** | 固定5分钟 | 添加时间约束 | 可预测执行 |
@@ -1747,7 +1747,7 @@ test_id = tester.create_ab_test("new-algo", config_a, config_b)
 
 **P2 (有价值)**:
 5. 自主优化代理 - 高级功能
-6. LingFlow Lite - 新手友好
+6. lingflow Lite - 新手友好
 
 ### 投资回报
 
@@ -1757,7 +1757,7 @@ test_id = tester.create_ab_test("new-algo", config_a, config_b)
 | 质量评分 | 1.5周 | 自动化决策 | 高 |
 | 实验追踪 | 2周 | 完整历史 | 中 |
 | 自主优化 | 3周 | 夜间运行 | 中 |
-| LingFlow Lite | 2周 | 新手友好 | 中 |
+| lingflow Lite | 2周 | 新手友好 | 中 |
 
 ### 下一步行动
 

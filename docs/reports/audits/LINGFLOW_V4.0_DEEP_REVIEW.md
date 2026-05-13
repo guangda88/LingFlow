@@ -1,4 +1,4 @@
-# LingFlow V4.0 深度审查报告
+# lingflow V4.0 深度审查报告
 
 **版本**: V4.0.0
 **日期**: 2026-03-25
@@ -264,11 +264,11 @@ class Result(Generic[T]):
 
         注意：
         - 成功时返回实际数据
-        - 失败时抛出 LingFlowError
+        - 失败时抛出 lingflowError
         - 成功但 data 为 None 时，返回 None（这是合法的）
         """
         if self.is_error:
-            raise LingFlowError(
+            raise lingflowError(
                 f"Cannot access data of failed result: {self._error}",
                 code=self._code
             )
@@ -323,7 +323,7 @@ class Result(Generic[T]):
         assert result4.is_error
         try:
             result4.data  # 会抛出异常
-        except LingFlowError as e:
+        except lingflowError as e:
             pass
 
         # 示例 5: 成功但数据为 None（罕见但合法）
@@ -724,12 +724,12 @@ cache2.set("key1", {"value": "from_process_B"})
 
 # 场景 2: 多实例部署
 # 实例 1
-instance1 = LingFlow()
+instance1 = lingflow()
 instance1.skill.execute("operation", {"id": 123})
 # 结果被缓存: {"operation:123": {"result": ...}}
 
 # 实例 2
-instance2 = LingFlow()
+instance2 = lingflow()
 instance2.skill.execute("operation", {"id": 123})
 # ❌ 问题：无法命中实例 1 的缓存，需要重新计算
 
@@ -815,7 +815,7 @@ class RedisCacheManager:
         return result > 0
 
     def clear(self):
-        """清空缓存（只清空 LingFlow 的 key）"""
+        """清空缓存（只清空 lingflow 的 key）"""
         pattern = f"{self._key_prefix}:*"
         keys = self._redis.keys(pattern)
         if keys:
@@ -939,13 +939,13 @@ class VersionedCacheManager:
 
 ```python
 # 场景 1: 配置更新中途失败
-config1 = LingFlowConfig()
+config1 = lingflowConfig()
 config1.max_parallel = 100  # 设置第一步
 
 # ❌ 在这里，如果配置更新失败
 # 导致 max_parallel=100，但其他配置还是旧值
 
-config2 = LingFlowConfig()
+config2 = lingflowConfig()
 config2.skill_timeout = 60  # 设置第二步
 
 # 问题：max_parallel 和 skill_timeout 来自不同的配置版本
@@ -979,8 +979,8 @@ import threading
 import copy
 
 @dataclass
-class LingFlowConfig:
-    """LingFlow 配置类（支持原子性热重载）"""
+class lingflowConfig:
+    """lingflow 配置类（支持原子性热重载）"""
 
     # 工作流配置
     max_parallel: int = 2
@@ -1008,7 +1008,7 @@ class LingFlowConfig:
                 code=result.code
             )
 
-    def clone(self) -> "LingFlowConfig":
+    def clone(self) -> "lingflowConfig":
         """克隆配置（用于创建新版本）"""
         new_config = copy.deepcopy(self)
         new_config._version += 1
@@ -1036,18 +1036,18 @@ class LingFlowConfig:
 class ConfigManager:
     """配置管理器（支持原子性热重载）"""
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
         self._lock = threading.RLock()
-        self._config_history: List[LingFlowConfig] = []
+        self._config_history: List[lingflowConfig] = []
 
     @property
-    def config(self) -> LingFlowConfig:
+    def config(self) -> lingflowConfig:
         """获取当前配置（只读）"""
         with self._lock:
             return copy.deepcopy(self._config)
 
-    def update_config(self, new_config: LingFlowConfig) -> bool:
+    def update_config(self, new_config: lingflowConfig) -> bool:
         """更新配置（原子性）"""
         # 验证新配置
         validation = new_config.validate()
@@ -1091,7 +1091,7 @@ class ConfigManager:
                 self._notify_config_changed(self._config, old_config)
                 return True
 
-    def _notify_config_changed(self, old_config: LingFlowConfig, new_config: LingFlowConfig):
+    def _notify_config_changed(self, old_config: lingflowConfig, new_config: lingflowConfig):
         """通知配置变更"""
         for callback in self._callbacks:
             callback(old_config, new_config)
@@ -1123,7 +1123,7 @@ class ConfigAwareService:
         # 订阅配置变更
         config_manager.subscribe(self._on_config_changed)
 
-    def _on_config_changed(self, old_config: LingFlowConfig, new_config: LingFlowConfig):
+    def _on_config_changed(self, old_config: lingflowConfig, new_config: lingflowConfig):
         """配置变更回调"""
         print(f"Config changed: v{old_config._version} -> v{new_config._version}")
 
@@ -1142,7 +1142,7 @@ class ConfigAwareService:
             self._executor = ThreadPoolExecutor(max_workers=new_config.max_parallel)
 
 # 使用示例
-config_manager = ConfigManager(LingFlowConfig())
+config_manager = ConfigManager(lingflowConfig())
 
 # 创建服务
 skill_service = ConfigAwareService(config_manager)
@@ -1574,7 +1574,7 @@ class Result(Generic[T]):
     def data(self) -> T:
         """获取数据"""
         if self.is_error:
-            raise LingFlowError(self._error, code=self.code)
+            raise lingflowError(self._error, code=self.code)
         return self._data
 
     @property

@@ -1,10 +1,10 @@
 """
 L3-Enhanced QueryEngine — 集成L3元认知状态监控的查询引擎
 
-灵研 (LingResearch)
+灵研 (lingresearch)
 2026-04-17
 
-根因：PRO-014明镜计划，将L3监控机制集成到LingFlow查询引擎。
+根因：PRO-014明镜计划，将L3监控机制集成到lingflow查询引擎。
 
 核心概念：
 - L3集成：在查询过程中监控MS状态

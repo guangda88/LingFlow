@@ -24,7 +24,7 @@
 | target_platform | str | "wechat" | 目标发布平台 (wechat/zhihu/weibo/github) |
 | max_articles | int | 3 | 最多生成文章数 |
 | top_k | int | 20 | 每次检索返回的文档片段数 |
-| search_api_url | str | http://127.0.0.1:8000/api/v1/search/hybrid | 灵知搜索API地址 |
+| search_api_url | str | http://127.0.0.1:8001/api/v1/search/hybrid | 灵知搜索API地址 |
 | use_query_expansion | bool | True | 启用查询扩展 |
 | domains | list | [] | 限定领域过滤 (如 ["古籍", "气功"]) |
 

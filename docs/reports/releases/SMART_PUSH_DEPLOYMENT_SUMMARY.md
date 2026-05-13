@@ -13,8 +13,8 @@
 ### 1. 智能知识系统
 | 项目 | 路径 | 远程仓库 |
 |------|------|----------|
-| 智能知识系统 | `/home/ai/zhineng-knowledge-system` | GitHub + Gitea |
-| LingFlow | `/home/ai/LingFlow` | GitHub + Gitea |
+| 智能知识系统 | `/home/ai/lingzhi` | GitHub + Gitea |
+| lingflow | `/home/ai/lingflow` | GitHub + Gitea |
 
 ### 2. 共享配置
 | 资源 | 路径 | 说明 |
@@ -27,7 +27,7 @@
 
 ## 功能对比
 
-| 功能 | 智能知识系统 | LingFlow | 状态 |
+| 功能 | 智能知识系统 | lingflow | 状态 |
 |------|------------|----------|------|
 | 智能网络检测 | ✅ | ✅ | 双项目支持 |
 | 自动代理切换 | ✅ | ✅ | 共享 Clash |
@@ -42,13 +42,13 @@
 
 ### 智能知识系统
 ```bash
-cd /home/ai/zhineng-knowledge-system
+cd /home/ai/lingzhi
 git smart-push github gitea
 ```
 
-### LingFlow
+### lingflow
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 git smart-push github origin
 ```
 
@@ -72,7 +72,7 @@ DEBUG=1 ~/.git-hooks/smart-push
 | 项目 | GitHub 直连 | Gitea 直连 | Clash 代理 |
 |------|-----------|-----------|-----------|
 | 智能知识系统 | 0.298s | N/A | 0.565s |
-| LingFlow | 0.301s | ~0.1s | ~0.6s |
+| lingflow | 0.301s | ~0.1s | ~0.6s |
 
 ### 推送性能
 | 操作 | 平均耗时 | 状态 |
@@ -87,13 +87,13 @@ DEBUG=1 ~/.git-hooks/smart-push
 
 ### 项目配置文件
 ```
-/home/ai/zhineng-knowledge-system/
+/home/ai/lingzhi/
 ├── SMART_PUSH_V3_REPORT.md      # 技术报告
 ├── SMART_PUSH_GUIDE.md           # 使用指南
 └── .git/hooks/smart-push        # 项目本地 Hook
 
-/home/ai/LingFlow/
-├── SMART_PUSH_LINGFLOW_SETUP.md  # LingFlow 专用文档
+/home/ai/lingflow/
+├── SMART_PUSH_LINGFLOW_SETUP.md  # lingflow 专用文档
 ├── SMART_PUSH_V3_REPORT.md       # 技术报告
 ├── SMART_PUSH_GUIDE.md           # 使用指南
 └── .git/hooks/smart-push        # 项目本地 Hook
@@ -127,10 +127,10 @@ alias sp-gh='~/.git-hooks/smart-push github'
 alias sp-gt='~/.git-hooks/smart-push gitea'
 
 # 项目快捷方式
-alias zk-cd='cd /home/ai/zhineng-knowledge-system'
-alias lf-cd='cd /home/ai/LingFlow'
-alias zk-push='cd /home/ai/zhineng-knowledge-system && ~/.git-hooks/smart-push github gitea'
-alias lf-push='cd /home/ai/LingFlow && ~/.git-hooks/smart-push github origin'
+alias zk-cd='cd /home/ai/lingzhi'
+alias lf-cd='cd /home/ai/lingflow'
+alias zk-push='cd /home/ai/lingzhi && ~/.git-hooks/smart-push github gitea'
+alias lf-push='cd /home/ai/lingflow && ~/.git-hooks/smart-push github origin'
 ```
 
 ### 使用示例
@@ -142,7 +142,7 @@ sp-both              # 双仓库推送
 
 # 项目推送
 zk-push              # 智能知识系统双仓库推送
-lf-push              # LingFlow 双仓库推送
+lf-push              # lingflow 双仓库推送
 ```
 
 ---
@@ -320,7 +320,7 @@ git ls-remote --heads github
 
 **✅ 双项目部署成功**
 
-- 智能知识系统和 LingFlow 项目都已部署
+- 智能知识系统和 lingflow 项目都已部署
 - 共享全局 Hooks 配置
 - 统一的使用体验
 - 自动化网络处理

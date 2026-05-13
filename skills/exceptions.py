@@ -1,6 +1,6 @@
-"""LingFlow Skills 自定义异常模块
+"""lingflow Skills 自定义异常模块
 
-本模块定义了 LingFlow 框架中各 Skills 的自定义异常类型。
+本模块定义了 lingflow 框架中各 Skills 的自定义异常类型。
 使用自定义异常可以提供更精确的错误处理和更清晰的错误信息。
 
 使用示例:
@@ -15,8 +15,8 @@
 """
 
 
-class LingFlowSkillError(Exception):
-    """LingFlow Skills 基础异常类
+class lingflowSkillError(Exception):
+    """lingflow Skills 基础异常类
 
     所有 Skills 特定异常的基类。
     用于捕获和处理 Skills 执行过程中的通用错误。
@@ -40,7 +40,7 @@ class LingFlowSkillError(Exception):
         return self.message
 
 
-class APIDocError(LingFlowSkillError):
+class APIDocError(lingflowSkillError):
     """API 文档生成器异常
 
     在 API 文档生成过程中发生错误时抛出。
@@ -51,7 +51,7 @@ class APIDocError(LingFlowSkillError):
         super().__init__(message, "api-doc-generator")
 
 
-class UIMockupError(LingFlowSkillError):
+class UIMockupError(lingflowSkillError):
     """UI 原型生成器异常
 
     在 UI 原型生成过程中发生错误时抛出。
@@ -62,7 +62,7 @@ class UIMockupError(LingFlowSkillError):
         super().__init__(message, "ui-mockup-generator")
 
 
-class DatabaseSchemaError(LingFlowSkillError):
+class DatabaseSchemaError(lingflowSkillError):
     """数据库设计器异常
 
     在数据库模式设计过程中发生错误时抛出。
@@ -73,7 +73,7 @@ class DatabaseSchemaError(LingFlowSkillError):
         super().__init__(message, "database-schema-designer")
 
 
-class CICDError(LingFlowSkillError):
+class CICDError(lingflowSkillError):
     """CI/CD 编排器异常
 
     在 CI/CD 流水线配置生成过程中发生错误时抛出。
@@ -84,7 +84,7 @@ class CICDError(LingFlowSkillError):
         super().__init__(message, "ci-cd-orchestrator")
 
 
-class DeploymentError(LingFlowSkillError):
+class DeploymentError(lingflowSkillError):
     """部署自动化异常
 
     在部署配置生成过程中发生错误时抛出。
@@ -95,7 +95,7 @@ class DeploymentError(LingFlowSkillError):
         super().__init__(message, "deployment-automation")
 
 
-class EnvironmentManagerError(LingFlowSkillError):
+class EnvironmentManagerError(lingflowSkillError):
     """环境管理器异常
 
     在环境配置管理过程中发生错误时抛出。

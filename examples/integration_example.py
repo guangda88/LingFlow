@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-LingFlow CLI 集成示例
+lingflow CLI 集成示例
 
-展示如何在Python代码中使用LingFlow的CLI功能
+展示如何在Python代码中使用lingflow的CLI功能
 """
 
 import sys
@@ -12,7 +12,7 @@ from typing import Optional
 # 添加项目路径
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from lingflow import LingFlow
+from lingflow import lingflow
 from lingflow.self_optimizer.phase4 import (
     quick_optimize,
     OptimizationEngine,
@@ -253,7 +253,7 @@ def example_multi_objective(target: str = "."):
 def main():
     """运行所有示例"""
     print("\n" + "="*60)
-    print("LingFlow CLI 集成示例")
+    print("lingflow CLI 集成示例")
     print("="*60)
 
     # 获取目标路径
@@ -280,7 +280,7 @@ def main():
     print("更多信息:")
     print("  - 文档: docs/CLI_GUIDE.md")
     print("  - 快速参考: docs/CLI_EXAMPLES.md")
-    print("  - GitHub: https://github.com/guangda88/LingFlow")
+    print("  - GitHub: https://github.com/guangda88/lingflow")
 
 
 if __name__ == "__main__":

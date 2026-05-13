@@ -1,4 +1,4 @@
-# 🎉 LingFlow 核心架构改进 - 完整总结报告
+# 🎉 lingflow 核心架构改进 - 完整总结报告
 
 > **基于Claude Code实战学习计划**
 > **优化日期**: 2026-04-01
@@ -19,7 +19,7 @@
 ### 核心成就
 
 1. ✅ **Session v2重构**: 基于Claude Code设计
-2. ✅ **LingMinOpt优化**: 再次优化，违规从17→15
+2. ✅ **lingminopt优化**: 再次优化，违规从17→15
 3. ✅ **核心架构改进**: 3个新模块创建
 4. ✅ **完整文档**: 10+份文档
 
@@ -64,7 +64,7 @@ saved_path = manager.save_session()
 
 ---
 
-### 2. LingMinOpt优化增强
+### 2. lingminopt优化增强
 
 **最新优化结果**:
 ```
@@ -131,7 +131,7 @@ saved_path = manager.save_session()
    - 快速开始指南
    - 实施路线图
 
-### LingMinOpt框架文档（4份）
+### lingminopt框架文档（4份）
 
 1. **LINGMINOPT_SELF_OPTIMIZATION_MASTER_PLAN.md**
    - 完整架构设计
@@ -153,7 +153,7 @@ saved_path = manager.save_session()
    - 场景示例
    - 下一步行动
 
-### LingFlow优化报告（3份）
+### lingflow优化报告（3份）
 
 1. **LINGFLOW_OPTIMIZATION_REPORT.md**
    - 详细优化报告
@@ -178,7 +178,7 @@ saved_path = manager.save_session()
 
 ```bash
 # 运行核心改进
-$ python /home/ai/LingFlow/improve_core.py
+$ python /home/ai/lingflow/improve_core.py
 
 ✅ Session v2已创建: lingflow/core/session_v2.py
 ✅ 优化完成! 违规数: 15.0
@@ -207,7 +207,7 @@ summary = manager.get_usage_summary()
 ✅ **简洁性**: 只存储必要信息，提高性能
 ✅ **Token追踪**: 内置统计，便于成本控制
 
-### 2. LingMinOpt持续改进
+### 2. lingminopt持续改进
 
 | 优化轮次 | 违规数 | 改进 |
 |---------|--------|------|
@@ -246,10 +246,10 @@ print(m.get_usage_summary())
 "
 
 # 2. 再次运行优化
-python /home/ai/LingFlow/run_self_optimization.py
+python /home/ai/lingflow/run_self_optimization.py
 
 # 3. 查看改进报告
-cat /home/ai/LingFlow/CORE_IMPROVEMENTS_REPORT.json | jq '.'
+cat /home/ai/lingflow/CORE_IMPROVEMENTS_REPORT.json | jq '.'
 ```
 
 ### 本周计划
@@ -295,7 +295,7 @@ cat /home/ai/LingFlow/CORE_IMPROVEMENTS_REPORT.json | jq '.'
 ### 核心价值
 
 1. **AI驱动的架构改进**: 基于Claude Code设计思想
-2. **数据驱动的参数优化**: LingMinOpt贝叶斯优化
+2. **数据驱动的参数优化**: lingminopt贝叶斯优化
 3. **持续改进的闭环系统**: 定期优化，持续验证
 4. **生产级别的可靠性**: 不可变设计，完整测试
 
@@ -306,10 +306,10 @@ cat /home/ai/LingFlow/CORE_IMPROVEMENTS_REPORT.json | jq '.'
 python -c "from lingflow.core.session_v2 import SessionManager; ..."
 
 # 运行优化
-python /home/ai/LingFlow/run_self_optimization.py
+python /home/ai/lingflow/run_self_optimization.py
 
 # 查看报告
-cat /home/ai/LingFlow/CORE_IMPROVEMENTS_REPORT.json | jq '.'
+cat /home/ai/lingflow/CORE_IMPROVEMENTS_REPORT.json | jq '.'
 ```
 
 ### 完成清单
@@ -320,7 +320,7 @@ cat /home/ai/LingFlow/CORE_IMPROVEMENTS_REPORT.json | jq '.'
 - [x] Session管理重构
 - [ ] QueryEngine实现（进行中）
 
-**LingMinOpt优化**:
+**lingminopt优化**:
 - [x] 框架集成
 - [x] 第1次优化（60→17，↓ 71.7%）
 - [x] 第2次优化（17→15，↓ 11.8%）
@@ -348,7 +348,7 @@ cat /home/ai/LingFlow/CORE_IMPROVEMENTS_REPORT.json | jq '.'
 # 设置crontab每周运行
 
 # 3. 查看所有文档
-ls -lh /home/ai/LingFlow/*.md
+ls -lh /home/ai/lingflow/*.md
 ```
 
 ### 本周目标
@@ -372,7 +372,7 @@ ls -lh /home/ai/LingFlow/*.md
 **初始违规数**: 60
 **目标违规数**: 10 (已超额完成！)
 **累计改进**: 90% ↓
-**框架**: LingMinOpt + Claude Code设计
+**框架**: lingminopt + Claude Code设计
 **状态**: ✅ 核心架构改进完成并超越目标
 
-🎉 **持续优化，持续改进！LingFlow正在变得更好！**
+🎉 **持续优化，持续改进！lingflow正在变得更好！**

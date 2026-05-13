@@ -1,5 +1,5 @@
 """
-LingFlow Phase 5: 核心数据模型定义
+lingflow Phase 5: 核心数据模型定义
 
 包含AI反馈、规则、模式等核心数据类。
 """
@@ -148,7 +148,7 @@ class ExtractedRule:
     success_count: int = 0  # 成功次数
 
     def to_lingflow_rule(self) -> Dict[str, Any]:
-        """转换为LingFlow代码审查规则"""
+        """转换为lingflow代码审查规则"""
         return {
             "rule_id": self.id,
             "name": self.name,

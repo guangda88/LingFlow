@@ -1,12 +1,12 @@
 # Large Files Refactoring Plan
 
 **Date**: 2026-03-31
-**Author**: LingFlow Development Team
+**Author**: lingflow Development Team
 **Version**: 1.0
 
 ## Executive Summary
 
-This document outlines the refactoring strategy for three large files in the LingFlow project that exceed the recommended 500-line limit. The plan focuses on modularization, separation of concerns, and maintaining backward compatibility while improving code maintainability.
+This document outlines the refactoring strategy for three large files in the lingflow project that exceed the recommended 500-line limit. The plan focuses on modularization, separation of concerns, and maintaining backward compatibility while improving code maintainability.
 
 ### Files Analyzed
 
@@ -295,7 +295,7 @@ If these components are already implemented elsewhere in the codebase:
 
 ```bash
 # Check if anything imports from v4_example
-grep -r "lingflow_v4_example" /home/ai/LingFlow --include="*.py"
+grep -r "lingflow_v4_example" /home/ai/lingflow --include="*.py"
 ```
 
 ---
@@ -582,7 +582,7 @@ repos:
 #!/bin/bash
 # scripts/check_file_length.sh
 
-find /home/ai/LingFlow -name "*.py" -not -path "*/venv/*" | while read file; do
+find /home/ai/lingflow -name "*.py" -not -path "*/venv/*" | while read file; do
     lines=$(wc -l < "$file")
     if [ $lines -gt 500 ]; then
         echo "WARNING: $file is $lines lines"

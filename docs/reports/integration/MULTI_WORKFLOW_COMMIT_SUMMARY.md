@@ -71,7 +71,7 @@ MULTI_WORKFLOW_README.md                        (300行)
 #### 6. 文档索引
 ```
 docs/architecture/INDEX.md                      (150行)
-└── LingFlow架构文档完整索引
+└── lingflow架构文档完整索引
 ```
 
 ### 修改文件（1个）

@@ -3,7 +3,7 @@
 **Date**: 2026-03-23
 **Project**: zhinengresearch (灵研)
 **Version**: 0.1.0
-**Framework**: LingFlow 8-Dimension Code Review
+**Framework**: lingflow 8-Dimension Code Review
 
 ---
 
@@ -524,5 +524,5 @@ tests/
 ---
 
 **Report Date**: 2026-03-23
-**Auditor**: LingFlow 8-Dimension Code Review
+**Auditor**: lingflow 8-Dimension Code Review
 **Framework Version**: v3.3.0

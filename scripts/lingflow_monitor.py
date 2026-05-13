@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-LingFlow 情报收集主脚本
+lingflow 情报收集主脚本
 
-整合所有情报收集节点，收集网络世界对LingFlow的评价和讨论。
+整合所有情报收集节点，收集网络世界对lingflow的评价和讨论。
 
 运行方式:
     python scripts/lingflow_monitor.py
@@ -11,7 +11,7 @@ LingFlow 情报收集主脚本
 """
 
 from lingflow.intelligence.analyzers.sentiment import SentimentAnalyzer
-from lingflow.intelligence.collectors import LingFlowMonitor, StarTracker
+from lingflow.intelligence.collectors import lingflowMonitor, StarTracker
 import os
 import sys
 import json
@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 def main():
     """主函数"""
     print("=" * 70)
-    print("🔍 LingFlow 情报收集系统")
+    print("🔍 lingflow 情报收集系统")
     print("=" * 70)
     print()
     print("📡 收集节点:")
@@ -41,7 +41,7 @@ def main():
     print("📋 节点 1: GitHub 监控")
     print("=" * 70)
 
-    monitor = LingFlowMonitor()
+    monitor = lingflowMonitor()
 
     # 采集最近7天的数据
     all_mentions = []
@@ -134,7 +134,7 @@ def main():
 
     with open(report_file, 'w', encoding='utf-8') as f:
         f.write("=" * 70 + "\n")
-        f.write("LingFlow 情报简报\n")
+        f.write("lingflow 情报简报\n")
         f.write("=" * 70 + "\n")
         f.write(f"\n采集时间: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
 

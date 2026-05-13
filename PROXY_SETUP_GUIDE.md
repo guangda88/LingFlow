@@ -1,4 +1,4 @@
-# 🌐 代理配置指南 - LingFlow 部署
+# 🌐 代理配置指南 - lingflow 部署
 
 **用途**: 网络不稳定时使用代理推送
 
@@ -148,7 +148,7 @@ unset HTTPS_PROXY
 
 ```bash
 # 测试 Git
-git ls-remote https://github.com/guangda88/LingFlow.git
+git ls-remote https://github.com/guangda88/lingflow.git
 
 # 测试 HTTPS
 curl -I https://github.com
@@ -260,7 +260,7 @@ git config --global https.proxy http://127.0.0.1:7890
 git push origin master
 
 # 3. 验证
-git ls-remote https://github.com/guangda88/LingFlow.git
+git ls-remote https://github.com/guangda88/lingflow.git
 ```
 
 ### Railway 部署
@@ -306,7 +306,7 @@ curl -x http://127.0.0.1:7890 -I https://registry-1.docker.io/v2/
 
 ```bash
 # 修改远程 URL
-git remote set-url origin git@github.com:guangda88/LingFlow.git
+git remote set-url origin git@github.com:guangda88/lingflow.git
 
 # 配置 SSH 代理（在 ~/.ssh/config）
 Host github.com

@@ -1,5 +1,5 @@
 """
-LingFlow Phase 5: Semgrep适配器
+lingflow Phase 5: Semgrep适配器
 
 Semgrep是一个快速的静态分析工具，支持多种语言和自定义规则。
 """

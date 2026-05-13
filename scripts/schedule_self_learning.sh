@@ -1,12 +1,12 @@
 #!/bin/bash
-# LingFlow 自学习系统调度配置
+# lingflow 自学习系统调度配置
 #
 # 将此脚本添加到 crontab 中实现定期执行:
-#   0 2 * * * /home/ai/LingFlow/scripts/schedule_self_learning.sh
+#   0 2 * * * /home/ai/lingflow/scripts/schedule_self_learning.sh
 #
-# 或者使用 LingFlow 内置调度器
+# 或者使用 lingflow 内置调度器
 
-PROJECT_ROOT="/home/ai/LingFlow"
+PROJECT_ROOT="/home/ai/lingflow"
 SCRIPT="$PROJECT_ROOT/scripts/activate_self_learning.py"
 LOG_DIR="$PROJECT_ROOT/.lingflow/logs"
 REPORT_DIR="$PROJECT_ROOT/.lingflow/reports"

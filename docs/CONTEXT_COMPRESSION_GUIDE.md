@@ -2,7 +2,7 @@
 
 ## Overview
 
-LingFlow's context compression system optimizes token usage while preserving critical information. This is essential for multi-agent workflows where agents need relevant context without overwhelming token limits.
+lingflow's context compression system optimizes token usage while preserving critical information. This is essential for multi-agent workflows where agents need relevant context without overwhelming token limits.
 
 **Key Benefits:**
 - **30-50% token reduction** average

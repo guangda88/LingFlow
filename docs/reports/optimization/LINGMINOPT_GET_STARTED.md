@@ -1,22 +1,22 @@
-# 🎯 LingMinOpt 立即使用指南
+# 🎯 lingminopt 立即使用指南
 
-> **快速上手LingMinOpt灵极优框架**
+> **快速上手lingminopt灵极优框架**
 > **5分钟内开始优化你的项目**
 
 ---
 
 ## ✅ 验证安装
 
-运行以下命令验证LingMinOpt已就绪：
+运行以下命令验证lingminopt已就绪：
 
 ```bash
-cd /home/ai/LingFlow
-python -c "from lingflow.self_optimizer.phase4 import SearchSpace; print('✅ LingMinOpt已就绪！')"
+cd /home/ai/lingflow
+python -c "from lingflow.self_optimizer.phase4 import SearchSpace; print('✅ lingminopt已就绪！')"
 ```
 
 预期输出：
 ```
-✅ LingMinOpt已就绪！
+✅ lingminopt已就绪！
 ```
 
 ---
@@ -30,7 +30,7 @@ from lingflow.self_optimizer import quick_optimize
 
 # 一行代码优化
 result = quick_optimize(
-    target="/home/ai/LingFlow/lingflow",  # 你的项目路径
+    target="/home/ai/lingflow/lingflow",  # 你的项目路径
     goal="structure",                      # 结构优化
     async_mode=False                       # 同步执行
 )
@@ -44,7 +44,7 @@ print(f"实验次数: {result.experiments}")
 
 ### 实际效果
 
-刚才的演示已经成功优化了LingFlow代码：
+刚才的演示已经成功优化了lingflow代码：
 - ✅ 找到最佳参数配置
 - ✅ 减少结构违规到6个
 - ✅ 仅用20次实验
@@ -53,10 +53,10 @@ print(f"实验次数: {result.experiments}")
 ### 立即尝试
 
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 python -c "
 from lingflow.self_optimizer import quick_optimize
-result = quick_optimize('/home/ai/LingFlow/lingflow', 'structure')
+result = quick_optimize('/home/ai/lingflow/lingflow', 'structure')
 print(f'最佳参数: {result.best_params}')
 print(f'改进: {result.best_score} 个违规')
 "
@@ -365,8 +365,8 @@ print(f"改进: {(result.trials[0].score - result.best_score) / result.trials[0]
 
 ---
 
-**立即开始**: `python -c "from lingflow.self_optimizer import quick_optimize; quick_optimize('/home/ai/LingFlow/lingflow', 'structure')"`
+**立即开始**: `python -c "from lingflow.self_optimizer import quick_optimize; quick_optimize('/home/ai/lingflow/lingflow', 'structure')"`
 
 **文档**: `LINGMINOPT_QUICK_START.md`
 
-**支持**: https://github.com/guangda88/LingFlow/issues
+**支持**: https://github.com/guangda88/lingflow/issues

@@ -8,7 +8,7 @@ import json
 import os
 from pathlib import Path
 
-# 添加 LingFlow 路径
+# 添加 lingflow 路径
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from skills.code_review_js import JavaScriptCodeReviewSkill, review_javascript
@@ -164,7 +164,7 @@ def test_specific_project():
     print()
     
     # 检查 zhineng-bridge 是否存在
-    target_dir = "/home/ai/zhineng-bridge"
+    target_dir = "/home/ai/zhibridge"
     
     if not os.path.exists(target_dir):
         print(f"❌ 项目不存在: {target_dir}")

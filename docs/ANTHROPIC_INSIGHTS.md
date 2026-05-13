@@ -1,8 +1,8 @@
-# Anthropic 长期运行代理研究对 LingFlow 的启示
+# Anthropic 长期运行代理研究对 lingflow 的启示
 
 **日期**: 2026-03-22
 **参考**: https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
-**LingFlow 版本**: v3.2.0
+**lingflow 版本**: v3.2.0
 
 ---
 
@@ -78,9 +78,9 @@ Anthropic 面临的核心挑战：
 
 ---
 
-## 💡 对 LingFlow 的启示
+## 💡 对 lingflow 的启示
 
-### ✅ LingFlow 已有的优势
+### ✅ lingflow 已有的优势
 
 1. **工作流系统**
    - ✅ 基于 YAML 的工作流定义
@@ -109,7 +109,7 @@ Anthropic 面临的核心挑战：
 
 #### 1. 进度持久化机制（高优先级）
 
-**问题**：LingFlow 缺少跨会话的进度跟踪
+**问题**：lingflow 缺少跨会话的进度跟踪
 
 **建议实现**：
 
@@ -530,7 +530,7 @@ class ContextRecovery:
         pending_features = feature_mgr.get_pending_features()[:3]
 
         briefing = f"""
-# LingFlow 项目简报
+# lingflow 项目简报
 
 ## 最近工作
 """
@@ -646,7 +646,7 @@ def session():
 
 ## 🎯 关键差异对比
 
-| 维度 | Anthropic 方案 | LingFlow 现状 | 建议 |
+| 维度 | Anthropic 方案 | lingflow 现状 | 建议 |
 |--------|---------------|----------------|------|
 | 进度持久化 | `claude-progress.txt` | ❌ 缺失 | ✅ `ProgressTracker` |
 | 功能跟踪 | `features.json` | ❌ 缺失 | ✅ `FeatureManager` |
@@ -677,7 +677,7 @@ def session():
 ... 重复直到所有功能通过
 ```
 
-### LingFlow 改进后的模式
+### lingflow 改进后的模式
 
 ```yaml
 # workflows/long_running_project.yaml
@@ -811,7 +811,7 @@ class LongRunningWorkflow:
 4. **端到端测试**：不仅仅依赖单元测试
 5. **快速上下文恢复**：标准化会话启动流程
 
-### LingFlow 优势
+### lingflow 优势
 
 ✅ 已有强大的工作流系统
 ✅ 已有多代理协调能力
@@ -851,4 +851,4 @@ class LongRunningWorkflow:
 
 ---
 
-**结论**：Anthropic 的研究验证了 LingFlow 的方向是正确的，但在进度持久化和状态管理方面需要加强。通过实施上述建议，LingFlow 可以成为一个更强大的长期运行代理系统。
+**结论**：Anthropic 的研究验证了 lingflow 的方向是正确的，但在进度持久化和状态管理方面需要加强。通过实施上述建议，lingflow 可以成为一个更强大的长期运行代理系统。

@@ -1,4 +1,4 @@
-# LingFlow V4.0 封装优化方案
+# lingflow V4.0 封装优化方案
 
 **版本**: V4.0.0
 **日期**: 2026-03-25
@@ -40,7 +40,7 @@
 ├─────────────────────────────────────────────────────────────────┤
 │                        API门面层 (Facade)                         │
 │  ┌─────────────────────────────────────────────────────────────┐│
-│  │  LingFlow (统一入口) - 支持同步/异步                       ││
+│  │  lingflow (统一入口) - 支持同步/异步                       ││
 │  │  ├─ skill: SkillService (同步)                            ││
 │  │  ├─ workflow: WorkflowService (同步)                      ││
 │  │  ├─ agent: AgentService (同步)                             ││
@@ -91,7 +91,7 @@
 ├─────────────────────────────────────────────────────────────────┤
 │                        核心类型层 (Core Types)                    │
 │  ┌──────────────┬──────────────┬──────────────┬──────────────┐ │
-│  │Result[T]     │LingFlowConfig│BaseSkill     │Exceptions    │ │
+│  │Result[T]     │lingflowConfig│BaseSkill     │Exceptions    │ │
 │  │              │              │              │              │ │
 │  │- 统一结果    │- 配置构建器  │- 技能基类    │- 统一异常    │ │
 │  │- 链式调用    │- 类型验证    │- 生命周期    │- 错误码      │ │
@@ -111,7 +111,7 @@
 
 | 层级 | 职责 | 示例 |
 |------|------|------|
-| API门面层 | 统一入口，简化使用 | `LingFlow` 类 |
+| API门面层 | 统一入口，简化使用 | `lingflow` 类 |
 | 服务层 | 业务逻辑，服务编排 | `SkillService` |
 | 领域层 | 核心模型，业务规则 | `Coordinator`, `Agent` |
 | 技能层 | 可扩展功能，插件化 | `BaseSkill` |
@@ -235,7 +235,7 @@ class Result(Generic[T]):
     def unwrap(self) -> T:
         """获取数据，失败时抛出异常"""
         if self.is_error:
-            raise LingFlowError(self.error or "Unknown error", code=self.code)
+            raise lingflowError(self.error or "Unknown error", code=self.code)
         return self.data
 
     def unwrap_or(self, default: T) -> T:
@@ -475,8 +475,8 @@ async def gather_results(*coros: "Result[T]") -> "Result[List[T]]":
 ```python
 from typing import Dict, Any, Optional, List
 
-class LingFlowError(Exception):
-    """LingFlow 基础异常"""
+class lingflowError(Exception):
+    """lingflow 基础异常"""
 
     def __init__(
         self,
@@ -519,7 +519,7 @@ class LingFlowError(Exception):
         return f"{self.__class__.__name__}(code={self.code!r}, message={self.message!r})"
 
 
-class WorkflowError(LingFlowError):
+class WorkflowError(lingflowError):
     """工作流相关异常"""
 
     def __init__(
@@ -539,7 +539,7 @@ class WorkflowError(LingFlowError):
         super().__init__(message, code="WF001", details=details, **kwargs)
 
 
-class SkillError(LingFlowError):
+class SkillError(lingflowError):
     """技能相关异常"""
 
     def __init__(
@@ -559,7 +559,7 @@ class SkillError(LingFlowError):
         super().__init__(message, code="SK001", details=details, **kwargs)
 
 
-class AgentError(LingFlowError):
+class AgentError(lingflowError):
     """代理相关异常"""
 
     def __init__(
@@ -579,7 +579,7 @@ class AgentError(LingFlowError):
         super().__init__(message, code="AG001", details=details, **kwargs)
 
 
-class ConfigurationError(LingFlowError):
+class ConfigurationError(lingflowError):
     """配置相关异常"""
 
     def __init__(
@@ -599,7 +599,7 @@ class ConfigurationError(LingFlowError):
         super().__init__(message, code="CF001", details=details, **kwargs)
 
 
-class ValidationError(LingFlowError):
+class ValidationError(lingflowError):
     """验证相关异常"""
 
     def __init__(
@@ -622,7 +622,7 @@ class ValidationError(LingFlowError):
         super().__init__(message, code="VD001", details=details, **kwargs)
 
 
-class TimeoutError(LingFlowError):
+class TimeoutError(lingflowError):
     """超时相关异常"""
 
     def __init__(
@@ -717,8 +717,8 @@ class ConfigSource(Enum):
 
 
 @dataclass
-class LingFlowConfig:
-    """LingFlow 配置类（支持热重载）"""
+class lingflowConfig:
+    """lingflow 配置类（支持热重载）"""
 
     # ========== 工作流配置 ==========
     max_parallel: int = 2
@@ -778,9 +778,9 @@ class LingFlowConfig:
     async_pool_size: int = 10
 
     @classmethod
-    def builder(cls) -> "LingFlowConfigBuilder":
+    def builder(cls) -> "lingflowConfigBuilder":
         """创建构建器"""
-        return LingFlowConfigBuilder(cls())
+        return lingflowConfigBuilder(cls())
 
     def validate(self) -> Result[None]:
         """验证配置"""
@@ -848,21 +848,21 @@ class LingFlowConfig:
         return json_str
 
     @classmethod
-    def from_yaml(cls, file_path: Union[str, Path]) -> "LingFlowConfig":
+    def from_yaml(cls, file_path: Union[str, Path]) -> "lingflowConfig":
         """从 YAML 文件加载"""
         file_path = Path(file_path)
         data = yaml.safe_load(file_path.read_text(encoding='utf-8'))
         return cls(**data)
 
     @classmethod
-    def from_json(cls, file_path: Union[str, Path]) -> "LingFlowConfig":
+    def from_json(cls, file_path: Union[str, Path]) -> "lingflowConfig":
         """从 JSON 文件加载"""
         file_path = Path(file_path)
         data = json.loads(file_path.read_text(encoding='utf-8'))
         return cls(**data)
 
     @classmethod
-    def from_env(cls, prefix: str = "LINGFLOW_") -> "LingFlowConfig":
+    def from_env(cls, prefix: str = "LINGFLOW_") -> "lingflowConfig":
         """从环境变量加载"""
         data = {}
 
@@ -886,40 +886,40 @@ class LingFlowConfig:
         return cls(**data)
 
 
-class LingFlowConfigBuilder:
+class lingflowConfigBuilder:
     """配置构建器（增强版）"""
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
 
     # ========== 工作流配置 ==========
-    def max_parallel(self, value: int) -> "LingFlowConfigBuilder":
+    def max_parallel(self, value: int) -> "lingflowConfigBuilder":
         self._config.max_parallel = value
         return self
 
-    def max_iterations(self, value: int) -> "LingFlowConfigBuilder":
+    def max_iterations(self, value: int) -> "lingflowConfigBuilder":
         self._config.max_iterations = value
         return self
 
-    def workflow_timeout(self, value: float) -> "LingFlowConfigBuilder":
+    def workflow_timeout(self, value: float) -> "lingflowConfigBuilder":
         self._config.workflow_timeout = value
         return self
 
     # ========== 技能配置 ==========
-    def skills_path(self, path: str) -> "LingFlowConfigBuilder":
+    def skills_path(self, path: str) -> "lingflowConfigBuilder":
         self._config.skills_path = path
         return self
 
-    def skill_timeout(self, value: float) -> "LingFlowConfigBuilder":
+    def skill_timeout(self, value: float) -> "lingflowConfigBuilder":
         self._config.skill_timeout = value
         return self
 
     # ========== 代理配置 ==========
-    def agent_timeout(self, value: float) -> "LingFlowConfigBuilder":
+    def agent_timeout(self, value: float) -> "lingflowConfigBuilder":
         self._config.agent_timeout = value
         return self
 
-    def agent_context_limit(self, value: int) -> "LingFlowConfigBuilder":
+    def agent_context_limit(self, value: int) -> "lingflowConfigBuilder":
         self._config.agent_context_limit = value
         return self
 
@@ -928,7 +928,7 @@ class LingFlowConfigBuilder:
         self,
         enabled: bool,
         target_tokens: int = 4000
-    ) -> "LingFlowConfigBuilder":
+    ) -> "lingflowConfigBuilder":
         self._config.compression_enabled = enabled
         self._config.compression_target_tokens = target_tokens
         return self
@@ -938,7 +938,7 @@ class LingFlowConfigBuilder:
         self,
         allow_symlinks: bool = False,
         validate_paths: bool = True
-    ) -> "LingFlowConfigBuilder":
+    ) -> "lingflowConfigBuilder":
         self._config.allow_symlinks = allow_symlinks
         self._config.validate_paths = validate_paths
         return self
@@ -948,7 +948,7 @@ class LingFlowConfigBuilder:
         self,
         level: str = "INFO",
         file_path: Optional[str] = None
-    ) -> "LingFlowConfigBuilder":
+    ) -> "lingflowConfigBuilder":
         self._config.log_level = level
         self._config.log_file = file_path
         return self
@@ -959,7 +959,7 @@ class LingFlowConfigBuilder:
         enabled: bool = True,
         metrics: bool = True,
         tracing: bool = False
-    ) -> "LingFlowConfigBuilder":
+    ) -> "lingflowConfigBuilder":
         self._config.monitoring_enabled = enabled
         self._config.metrics_enabled = metrics
         self._config.tracing_enabled = tracing
@@ -971,30 +971,30 @@ class LingFlowConfigBuilder:
         enabled: bool = True,
         path: str = "plugins",
         auto_load: bool = True
-    ) -> "LingFlowConfigBuilder":
+    ) -> "lingflowConfigBuilder":
         self._config.plugins_enabled = enabled
         self._config.plugins_path = path
         self._config.auto_load_plugins = auto_load
         return self
 
     # ========== 并发配置 ==========
-    def async_mode(self, enabled: bool = True) -> "LingFlowConfigBuilder":
+    def async_mode(self, enabled: bool = True) -> "lingflowConfigBuilder":
         self._config.async_enabled = enabled
         return self
 
-    def thread_pool_size(self, size: int) -> "LingFlowConfigBuilder":
+    def thread_pool_size(self, size: int) -> "lingflowConfigBuilder":
         self._config.thread_pool_size = size
         return self
 
     # ========== 便捷方法 ==========
-    def timeout(self, value: float) -> "LingFlowConfigBuilder":
+    def timeout(self, value: float) -> "lingflowConfigBuilder":
         """设置所有超时"""
         self._config.agent_timeout = value
         self._config.skill_timeout = value
         self._config.workflow_timeout = value
         return self
 
-    def performance(self, mode: str = "balanced") -> "LingFlowConfigBuilder":
+    def performance(self, mode: str = "balanced") -> "lingflowConfigBuilder":
         """性能预设"""
         if mode == "fast":
             self._config.max_parallel = 8
@@ -1007,21 +1007,21 @@ class LingFlowConfigBuilder:
             self._config.compression_enabled = True
         return self
 
-    def development(self) -> "LingFlowConfigBuilder":
+    def development(self) -> "lingflowConfigBuilder":
         """开发模式"""
         self._config.log_level = "DEBUG"
         self._config.monitoring_enabled = True
         self._config.performance("balanced")
         return self
 
-    def production(self) -> "LingFlowConfigBuilder":
+    def production(self) -> "lingflowConfigBuilder":
         """生产模式"""
         self._config.log_level = "WARNING"
         self._config.monitoring_enabled = True
         self._config.performance("balanced")
         return self
 
-    def build(self) -> LingFlowConfig:
+    def build(self) -> lingflowConfig:
         """构建配置"""
         result = self._config.validate()
         if result.is_error:
@@ -1033,23 +1033,23 @@ class LingFlowConfigBuilder:
 class ConfigManager:
     """配置管理器（支持热重载）"""
 
-    def __init__(self, config: Optional[LingFlowConfig] = None):
-        self._config = config or LingFlowConfig()
+    def __init__(self, config: Optional[lingflowConfig] = None):
+        self._config = config or lingflowConfig()
         self._config_hash = self._compute_hash()
         self._lock = threading.RLock()
-        self._reload_callbacks: List[Callable[[LingFlowConfig], None]] = []
+        self._reload_callbacks: List[Callable[[lingflowConfig], None]] = []
 
     def _compute_hash(self) -> str:
         """计算配置哈希值"""
         config_str = json.dumps(self._config.to_dict(), sort_keys=True)
         return hashlib.sha256(config_str.encode()).hexdigest()
 
-    def get_config(self) -> LingFlowConfig:
+    def get_config(self) -> lingflowConfig:
         """获取配置"""
         with self._lock:
             return self._config
 
-    def reload_config(self, new_config: LingFlowConfig) -> bool:
+    def reload_config(self, new_config: lingflowConfig) -> bool:
         """重新加载配置"""
         with self._lock:
             new_hash = self._compute_hash_from_config(new_config)
@@ -1070,12 +1070,12 @@ class ConfigManager:
 
             return True
 
-    def _compute_hash_from_config(self, config: LingFlowConfig) -> str:
+    def _compute_hash_from_config(self, config: lingflowConfig) -> str:
         """计算配置哈希值"""
         config_str = json.dumps(config.to_dict(), sort_keys=True)
         return hashlib.sha256(config_str.encode()).hexdigest()
 
-    def on_reload(self, callback: Callable[[LingFlowConfig, LingFlowConfig], None]):
+    def on_reload(self, callback: Callable[[lingflowConfig, lingflowConfig], None]):
         """注册配置重载回调"""
         self._reload_callbacks.append(callback)
 
@@ -1095,9 +1095,9 @@ class ConfigManager:
                         if current_modified != last_modified:
                             try:
                                 if file_path.suffix in ['.yaml', '.yml']:
-                                    new_config = LingFlowConfig.from_yaml(file_path)
+                                    new_config = lingflowConfig.from_yaml(file_path)
                                 elif file_path.suffix == '.json':
-                                    new_config = LingFlowConfig.from_json(file_path)
+                                    new_config = lingflowConfig.from_json(file_path)
                                 else:
                                     continue
 
@@ -1183,7 +1183,7 @@ class SkillResult:
 class SkillService:
     """技能服务（同步版本）"""
 
-    def __init__(self, config: LingFlowConfig, cache_manager: Optional['CacheManager'] = None):
+    def __init__(self, config: lingflowConfig, cache_manager: Optional['CacheManager'] = None):
         self._config = config
         self._cache_manager = cache_manager
         self._skills: Dict[str, BaseSkill] = {}
@@ -1364,7 +1364,7 @@ class SkillService:
 class AsyncSkillService:
     """技能服务（异步版本）"""
 
-    def __init__(self, config: LingFlowConfig, cache_manager: Optional['CacheManager'] = None):
+    def __init__(self, config: lingflowConfig, cache_manager: Optional['CacheManager'] = None):
         self._config = config
         self._cache_manager = cache_manager
         self._sync_service = SkillService(config, cache_manager)
@@ -1437,7 +1437,7 @@ class WorkflowService:
 
     def __init__(
         self,
-        config: LingFlowConfig,
+        config: lingflowConfig,
         skill_service: SkillService
     ):
         self._config = config
@@ -1564,7 +1564,7 @@ class AsyncWorkflowService:
 
     def __init__(
         self,
-        config: LingFlowConfig,
+        config: lingflowConfig,
         skill_service: AsyncSkillService
     ):
         self._config = config
@@ -1664,8 +1664,8 @@ class AsyncWorkflowService:
 from typing import Optional, Union, Dict, Any
 
 
-class LingFlow:
-    """LingFlow 统一API门面（双模式：同步+异步）
+class lingflow:
+    """lingflow 统一API门面（双模式：同步+异步）
 
     Features:
         - 同步/异步双模式
@@ -1676,16 +1676,16 @@ class LingFlow:
 
     Examples:
         >>> # 同步模式
-        >>> lf = LingFlow()
+        >>> lf = lingflow()
         >>> result = lf.skill.execute("code-analysis", {"target": "./"})
         >>>
         >>> # 异步模式
-        >>> lf = LingFlow(async_mode=True)
+        >>> lf = lingflow(async_mode=True)
         >>> result = await lf.skill_async.execute("code-analysis", {"target": "./"})
         >>>
         >>> # 自定义配置
-        >>> config = LingFlowConfig.builder().max_parallel(4).build()
-        >>> lf = LingFlow(config)
+        >>> config = lingflowConfig.builder().max_parallel(4).build()
+        >>> lf = lingflow(config)
         >>>
         >>> # 会话管理
         >>> with lingflow_session(config) as lf:
@@ -1695,20 +1695,20 @@ class LingFlow:
 
     def __init__(
         self,
-        config: Optional[LingFlowConfig] = None,
+        config: Optional[lingflowConfig] = None,
         async_mode: bool = False,
         enable_cache: bool = True,
         enable_monitoring: bool = True
     ):
-        """初始化 LingFlow
+        """初始化 lingflow
 
         Args:
-            config: 配置对象，默认使用 LingFlowConfig()
+            config: 配置对象，默认使用 lingflowConfig()
             async_mode: 是否启用异步模式
             enable_cache: 是否启用缓存
             enable_monitoring: 是否启用监控
         """
-        self._config = config or LingFlowConfig()
+        self._config = config or lingflowConfig()
         self._async_mode = async_mode
 
         # 初始化缓存管理器
@@ -1729,7 +1729,7 @@ class LingFlow:
         self.plugins = PluginService(self._config)
 
     @property
-    def config(self) -> LingFlowConfig:
+    def config(self) -> lingflowConfig:
         """获取当前配置（只读）"""
         return self._config
 
@@ -1752,7 +1752,7 @@ class LingFlow:
 
         return status
 
-    def reload_config(self, new_config: LingFlowConfig) -> bool:
+    def reload_config(self, new_config: lingflowConfig) -> bool:
         """重新加载配置"""
         old_config = self._config
         self._config = new_config
@@ -1798,19 +1798,19 @@ class LingFlow:
 # ==================== 上下文管理器 ====================
 
 class lingflow_session:
-    """LingFlow 会话上下文管理器"""
+    """lingflow 会话上下文管理器"""
 
     def __init__(
         self,
-        config: Optional[LingFlowConfig] = None,
+        config: Optional[lingflowConfig] = None,
         async_mode: bool = False
     ):
-        self._config = config or LingFlowConfig()
+        self._config = config or lingflowConfig()
         self._async_mode = async_mode
-        self._instance: Optional[LingFlow] = None
+        self._instance: Optional[lingflow] = None
 
-    def __enter__(self) -> LingFlow:
-        self._instance = LingFlow(self._config, async_mode=self._async_mode)
+    def __enter__(self) -> lingflow:
+        self._instance = lingflow(self._config, async_mode=self._async_mode)
         return self._instance
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -1829,7 +1829,7 @@ def handle_errors(func):
     def wrapper(*args, **kwargs):
         try:
             return Result.ok(func(*args, **kwargs))
-        except LingFlowError as e:
+        except lingflowError as e:
             return Result.fail(e.message, code=e.code, details=e.details)
         except Exception as e:
             return Result.fail(str(e), code="UNEXPECTED_ERROR")
@@ -1858,7 +1858,7 @@ def async_handle_errors(func):
     async def wrapper(*args, **kwargs):
         try:
             return Result.ok(await func(*args, **kwargs))
-        except LingFlowError as e:
+        except lingflowError as e:
             return Result.fail(e.message, code=e.code, details=e.details)
         except Exception as e:
             return Result.fail(str(e), code="UNEXPECTED_ERROR")
@@ -1903,11 +1903,11 @@ class BasePlugin(ABC):
     # 依赖
     dependencies: List[str] = []
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
 
     @classmethod
-    def validate_config(cls, config: LingFlowConfig) -> Result[None]:
+    def validate_config(cls, config: lingflowConfig) -> Result[None]:
         """验证配置"""
         return Result.ok()
 
@@ -1965,7 +1965,7 @@ class MiddlewarePlugin(BasePlugin):
 class PluginService:
     """插件管理服务"""
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
         self._plugins: Dict[str, BasePlugin] = {}
         self._skill_plugins: Dict[str, List[SkillPlugin]] = {}
@@ -2127,7 +2127,7 @@ from collections import OrderedDict
 class CacheManager:
     """缓存管理器（支持 TTL 和 LRU）"""
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
         self._cache: OrderedDict[str, Dict[str, Any]] = OrderedDict()
         self._stats = {
@@ -2226,7 +2226,7 @@ class CacheManager:
                 "total_entries": len(self._cache),
             }
 
-    def update_config(self, new_config: LingFlowConfig):
+    def update_config(self, new_config: lingflowConfig):
         """更新配置"""
         self._config = new_config
 
@@ -2260,7 +2260,7 @@ class Metric:
 class Monitor:
     """性能监控器"""
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         self._config = config
         self._metrics: Dict[str, List[Metric]] = defaultdict(list)
         self._counters: Dict[str, int] = defaultdict(int)
@@ -2347,7 +2347,7 @@ class Monitor:
             self._counters.clear()
             self._timers.clear()
 
-    def update_config(self, new_config: LingFlowConfig):
+    def update_config(self, new_config: lingflowConfig):
         """更新配置"""
         self._config = new_config
 
@@ -2406,10 +2406,10 @@ def monitor_async_performance(monitor: Monitor):
 
 ```python
 # ============ 同步模式 ============
-from lingflow import LingFlow, LingFlowConfig
+from lingflow import lingflow, lingflowConfig
 
 # 使用默认配置
-lf = LingFlow()
+lf = lingflow()
 
 # 执行技能
 result = lf.skill.execute("code-analysis", {"target": "./lingflow/"})
@@ -2428,7 +2428,7 @@ if result.is_ok:
 # ============ 异步模式 ============
 import asyncio
 
-lf = LingFlow(async_mode=True)
+lf = lingflow(async_mode=True)
 
 async def main():
     result = await lf.skill_async.execute("code-analysis", {"target": "./"})
@@ -2439,7 +2439,7 @@ asyncio.run(main())
 
 
 # ============ 自定义配置 ============
-config = (LingFlowConfig.builder()
+config = (lingflowConfig.builder()
           .max_parallel(4)
           .timeout(600)
           .compression(True, 8000)
@@ -2448,7 +2448,7 @@ config = (LingFlowConfig.builder()
           .monitoring(enabled=True)
           .build())
 
-lf = LingFlow(config)
+lf = lingflow(config)
 
 
 # ============ 会话管理 ============
@@ -2555,7 +2555,7 @@ class MyAnalysisSkill(BaseSkill):
 
 
 # 注册技能
-lf = LingFlow()
+lf = lingflow()
 lf.skill._skills[MyAnalysisSkill.name] = MyAnalysisSkill()
 
 # 使用技能
@@ -2565,7 +2565,7 @@ result = lf.skill.execute("my-analysis", {"target": "./"})
 ### 8.4 自定义插件
 
 ```python
-from lingflow import BasePlugin, SkillPlugin, SkillService, LingFlowConfig
+from lingflow import BasePlugin, SkillPlugin, SkillService, lingflowConfig
 
 class MySkillPlugin(SkillPlugin):
     """自定义技能插件"""
@@ -2574,7 +2574,7 @@ class MySkillPlugin(SkillPlugin):
     version = "1.0.0"
     description = "My custom skill plugin"
 
-    def __init__(self, config: LingFlowConfig):
+    def __init__(self, config: lingflowConfig):
         super().__init__(config)
         self._skill = MyAnalysisSkill()
 
@@ -2586,7 +2586,7 @@ class MySkillPlugin(SkillPlugin):
 
 
 # 注册插件
-lf = LingFlow()
+lf = lingflow()
 plugin = MySkillPlugin(lf.config)
 lf.plugins.register_plugin(plugin)
 
@@ -2602,7 +2602,7 @@ result = lf.skill.execute("my-analysis", {"target": "./"})
 
 **Week 1**：
 - [ ] 创建 `lingflow/core/types.py` - Result 和异常体系
-- [ ] 创建 `lingflow/core/config.py` - LingFlowConfig 和构建器
+- [ ] 创建 `lingflow/core/config.py` - lingflowConfig 和构建器
 - [ ] 创建 `lingflow/core/skill.py` - BaseSkill 和相关类型
 - [ ] 编写单元测试
 
@@ -2677,7 +2677,7 @@ result = lf.skill.execute("my-analysis", {"target": "./"})
 - [ ] 代码审查
 - [ ] 文档审查
 - [ ] 发布说明
-- [ ] 发布 LingFlow V4.0.0
+- [ ] 发布 lingflow V4.0.0
 
 ---
 
@@ -2751,7 +2751,7 @@ result = lf.skill.execute("my-analysis", {"target": "./"})
 
 **下周（Week 2）**：
 1. ✅ 完成 Result 类型实现
-2. ✅ 完成 LingFlowConfig 实现
+2. ✅ 完成 lingflowConfig 实现
 3. ✅ 完成 BaseSkill 实现
 4. ✅ 编写单元测试
 

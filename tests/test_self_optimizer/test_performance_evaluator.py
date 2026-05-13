@@ -15,7 +15,7 @@ class TestPerformanceEvaluator:
     @pytest.fixture
     def evaluator(self):
         """创建评估器"""
-        return PerformanceEvaluator("/home/ai/LingFlow/lingflow")
+        return PerformanceEvaluator("/home/ai/lingflow/lingflow")
 
     def test_evaluate_with_params(self, evaluator):
         """测试带参数的评估"""

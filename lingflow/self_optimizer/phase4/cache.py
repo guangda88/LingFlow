@@ -1,5 +1,5 @@
 """
-LingFlow Phase 4: 参数缓存机制
+lingflow Phase 4: 参数缓存机制
 
 YOLO实现：LRU缓存，快速访问
 """

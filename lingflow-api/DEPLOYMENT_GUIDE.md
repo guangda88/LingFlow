@@ -1,4 +1,4 @@
-# LingFlow REST API - 生产部署指南
+# lingflow REST API - 生产部署指南
 
 **任务**: 公开发布和部署服务
 **状态**: 执行中
@@ -10,7 +10,7 @@
 ### Step 1: 构建镜像
 
 ```bash
-cd /home/ai/LingFlow/lingflow-api
+cd /home/ai/lingflow/lingflow-api
 
 # 构建镜像
 docker build -t lingflow/api:latest -t lingflow/api:v1.0.0 -f Dockerfile .
@@ -143,10 +143,10 @@ services:
 ### Step 1: 创建 Release
 
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 
 # 创建 Git tag
-git tag -a actions/quality-gate/v1.0.0 -m "LingFlow Quality Gate v1.0.0
+git tag -a actions/quality-gate/v1.0.0 -m "lingflow Quality Gate v1.0.0
 
 # 推送标签
 git push origin actions/quality-gate/v1.0.0
@@ -157,10 +157,10 @@ git push origin actions/quality-gate/v1.0.0
 1. 访问 https://github.com/marketplace/actions
 2. 点击 "Create a new Action"
 3. 填写信息：
-   - Name: LingFlow Quality Gate
+   - Name: lingflow Quality Gate
    - Description: AI-powered code review and quality gate
    - Organization: guangda88 (或 lingflow)
-   - Repository: LingFlow
+   - Repository: lingflow
    - Action: actions/quality-gate
 4. 发布
 

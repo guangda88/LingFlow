@@ -290,7 +290,7 @@ python -c "import json; print(len(json.load(open('skills/skills.json'))['skills'
 python -c "from lingflow.workflow import WorkflowOrchestrator; from lingflow.coordination import AgentCoordinator; o=WorkflowOrchestrator(AgentCoordinator()); print(len(o.load_workflow_from_yaml('workflows/requirements-analysis.yaml')))"
 
 # 运行所有测试
-cd /home/ai/LingFlow && python -m pytest tests/ -v
+cd /home/ai/lingflow && python -m pytest tests/ -v
 ```
 
 ---

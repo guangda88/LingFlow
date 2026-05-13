@@ -25,7 +25,7 @@
 
 ### 集成目标
 
-将Phase 4（参数优化系统）和Phase 5（AI工具学习系统）无缝集成到现有LingFlow系统中，实现：
+将Phase 4（参数优化系统）和Phase 5（AI工具学习系统）无缝集成到现有lingflow系统中，实现：
 
 1. **零破坏集成**：保持100%向后兼容性
 2. **渐进式增强**：可选启用新功能
@@ -51,7 +51,7 @@
 
 ```
 lingflow/
-├── __init__.py           # LingFlow统一入口
+├── __init__.py           # lingflow统一入口
 ├── cli.py                # CLI命令行接口
 ├── core/
 │   └── skill.py          # Skill系统（BaseSkill, SkillRegistry）
@@ -546,7 +546,7 @@ def list_rules(category):
 @click.option("--enhance/--no-enhance", default=True, help="自动启用Phase 4/5增强")
 def workflow(workflow_file, enhance):
     """执行工作流（支持增强）"""
-    lf = LingFlow()
+    lf = lingflow()
 
     if enhance:
         from lingflow.integration import WorkflowEnhancer
@@ -570,7 +570,7 @@ def workflow(workflow_file, enhance):
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         LingFlow CLI                            │
+│                         lingflow CLI                            │
 ├─────────────────────────────────────────────────────────────────┤
 │  run | workflow | optimize | learn | feedback                   │
 └────────────────────┬────────────────────────────────────────────┘
@@ -1500,4 +1500,4 @@ from lingflow.self_optimizer.phase5 import (
 
 **文档版本**: v1.0
 **最后更新**: 2026-03-31
-**维护者**: LingFlow团队
+**维护者**: lingflow团队

@@ -1,4 +1,4 @@
-# LingFlow Skills 分层架构配置
+# lingflow Skills 分层架构配置
 #
 # 此配置定义技能的三层架构：
 # - L1: 核心调度层 (5个) - 永不卸载
@@ -9,7 +9,7 @@
 # 日期: 2026-03-26
 
 version: "2.0"
-description: "LingFlow Skills Three-Layer Architecture Configuration"
+description: "lingflow Skills Three-Layer Architecture Configuration"
 
 # ============================================================================
 # LAYER 1: 核心调度层
@@ -295,6 +295,12 @@ L3:
         - name: rag-quality-loop
           description: "RAG质量闭环（基线评估→弱域识别→参数调优→验证改善）"
           triggers: ["RAG", "闭环", "调优", "quality loop", "tuning"]
+          version: "1.0.0"
+          supports_dry_run: true
+
+        - name: content-production
+          description: "内容生产管线（灵知检索→结构化文章→多平台适配）"
+          triggers: ["content production", "produce articles", "内容生产", "article"]
           version: "1.0.0"
           supports_dry_run: true
 

@@ -1,10 +1,10 @@
-# LingFlow 进化总结
+# lingflow 进化总结
 
-> 基于 Superpowers 理念的 LingFlow 系统进化完成报告
+> 基于 Superpowers 理念的 lingflow 系统进化完成报告
 
 ## 项目概述
 
-LingFlow 已成功进化为基于 Superpowers 理念的智能软件开发工作流引擎。此次进化将 LingFlow 原有的测试和分析能力与 Superpowers 的技能驱动架构完美结合，创建了一个更强大、更系统的开发工具。
+lingflow 已成功进化为基于 Superpowers 理念的智能软件开发工作流引擎。此次进化将 lingflow 原有的测试和分析能力与 Superpowers 的技能驱动架构完美结合，创建了一个更强大、更系统的开发工具。
 
 ---
 
@@ -54,7 +54,7 @@ lingflow/
 │   └── hooks.json
 ├── agents/                      # 代理配置
 ├── skill_trigger.py            # 技能触发机制
-├── lingflow_integration.py     # LingFlow 集成模块
+├── lingflow_integration.py     # lingflow 集成模块
 ├── skills.json                 # 技能配置
 └── README.md                   # 主文档
 ```
@@ -87,9 +87,9 @@ can_trigger = trigger.can_trigger_skill(
 )
 ```
 
-### 4. LingFlow 集成 ✅
+### 4. lingflow 集成 ✅
 
-将 LingFlow 现有的测试和分析能力无缝集成到新框架：
+将 lingflow 现有的测试和分析能力无缝集成到新框架：
 
 **集成模块** (`lingflow_integration.py`):
 - 综合测试引擎集成
@@ -100,9 +100,9 @@ can_trigger = trigger.can_trigger_skill(
 
 **使用示例**:
 ```python
-from lingflow_integration import LingFlowIntegration
+from lingflow_integration import lingflowIntegration
 
-integration = LingFlowIntegration()
+integration = lingflowIntegration()
 
 # 运行综合测试
 result = integration.run_comprehensive_tests(
@@ -157,7 +157,7 @@ requesting-code-review → finishing-a-development-branch
 
 ### 4. 全面测试集成
 
-集成了 LingFlow 的三种测试引擎：
+集成了 lingflow 的三种测试引擎：
 
 1. **comprehensive_test_runner** - 9 维度综合测试
 2. **end_to_end_test_engine** - 端到端测试
@@ -178,9 +178,9 @@ requesting-code-review → finishing-a-development-branch
 
 ## 效率提升
 
-基于 LingFlow 原有的性能数据，进化后的系统提供：
+基于 lingflow 原有的性能数据，进化后的系统提供：
 
-| 维度 | 传统方式 | LingFlow 新版 | 提升 |
+| 维度 | 传统方式 | lingflow 新版 | 提升 |
 |------|----------|--------------|------|
 | 代码分析 | 4-6 小时 | 12 分钟 | 20-30x |
 | 代码优化 | 3-6 月 | 8 小时 | 50-100x |
@@ -203,7 +203,7 @@ requesting-code-review → finishing-a-development-branch
 ✅ **两阶段审查** - 规范和质量双重审查
 ✅ **设计文档化** - 强调设计和计划文档
 
-### LingFlow 独特优势
+### lingflow 独特优势
 
 🚀 **原生测试引擎** - 集成三种强大的测试引擎
 🚀 **代码分析能力** - 8 维度自动代码分析
@@ -222,24 +222,24 @@ requesting-code-review → finishing-a-development-branch
 你: "我想添加一个用户认证功能"
 
 # 自动触发 brainstorming
-LingFlow: (使用 brainstorming 技能)
+lingflow: (使用 brainstorming 技能)
 "好的！让我先了解一下需求..."
 [逐个询问问题]
 [提出方案]
 [设计获得批准]
 
 # 自动触发 using-git-worktrees
-LingFlow: (使用 using-git-worktrees 技能)
+lingflow: (使用 using-git-worktrees 技能)
 "创建隔离工作空间..."
 ✅ 工作空间就绪
 
 # 自动触发 writing-plans
-LingFlow: (使用 writing-plans 技能)
+lingflow: (使用 writing-plans 技能)
 "创建实施计划..."
 ✅ 计划已保存
 
 # 自动触发 subagent-driven-development
-LingFlow: (使用 subagent-driven-development 技能)
+lingflow: (使用 subagent-driven-development 技能)
 "开始实施..."
 ✓ 任务 1: 依赖设置
 ✓ 任务 2: JWT 实现
@@ -247,7 +247,7 @@ LingFlow: (使用 subagent-driven-development 技能)
 [所有任务完成]
 
 # 自动触发 finishing-a-development-branch
-LingFlow: (使用 finishing-a-development-branch 技能)
+lingflow: (使用 finishing-a-development-branch 技能)
 "运行最终验证..."
 ✅ 所有测试通过
 🎉 实施完成！
@@ -264,7 +264,7 @@ LingFlow: (使用 finishing-a-development-branch 技能)
    - `hooks/hooks.json` - 钩子配置
    - `hooks/session-start` - 会话启动钩子
    - `skill_trigger.py` - 技能触发模块
-   - `lingflow_integration.py` - LingFlow 集成模块
+   - `lingflow_integration.py` - lingflow 集成模块
 
 2. **技能文件**
    - `skills/brainstorming/SKILL.md`
@@ -355,15 +355,15 @@ lingflow/
 
 ## 致谢
 
-LingFlow 的进化深受 [obra/Superpowers](https://github.com/obra/Superpowers) 项目的启发。感谢 Jesse 创建了如此优秀的技能驱动开发框架，为我们提供了宝贵的参考和灵感。
+lingflow 的进化深受 [obra/Superpowers](https://github.com/obra/Superpowers) 项目的启发。感谢 Jesse 创建了如此优秀的技能驱动开发框架，为我们提供了宝贵的参考和灵感。
 
-同时感谢 LingFlow 原有团队的贡献，为本次进化奠定了坚实的技术基础。
+同时感谢 lingflow 原有团队的贡献，为本次进化奠定了坚实的技术基础。
 
 ---
 
 ## 总结
 
-LingFlow 已成功进化为一个功能完整、设计优雅的智能工作流引擎。通过融合 Superpowers 的技能驱动架构和 LingFlow 的测试分析能力，新系统提供：
+lingflow 已成功进化为一个功能完整、设计优雅的智能工作流引擎。通过融合 Superpowers 的技能驱动架构和 lingflow 的测试分析能力，新系统提供：
 
 - ✅ **完整的技能系统** - 9 个核心技能覆盖完整开发流程
 - ✅ **智能触发机制** - 基于上下文的自动技能触发

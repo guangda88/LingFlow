@@ -1,4 +1,4 @@
-"""灵通 工程流系统 (LingFlow Engineering Flow)
+"""灵通 工程流系统 (lingflow Engineering Flow)
 
 众智混元，万法灵通
 
@@ -94,11 +94,11 @@ def compress_context():
         return ""
 
 
-class LingFlow:
-    """LingFlow 统一入口 - 封装所有复杂性"""
+class lingflow:
+    """lingflow 统一入口 - 封装所有复杂性"""
 
     def __init__(self, config: Optional[Dict[str, Any]] = None):
-        """初始化 LingFlow
+        """初始化 lingflow
 
         Args:
             config: 配置字典，可包含:

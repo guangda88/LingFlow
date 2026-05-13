@@ -203,4 +203,4 @@ lingflow run [skill-name] --params '{"param": "value"}'
 
 **模板版本**: v1.0.0
 **最后更新**: 2026-03-30
-**维护者**: LingFlow Team
+**维护者**: lingflow Team

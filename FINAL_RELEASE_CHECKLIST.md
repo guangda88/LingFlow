@@ -1,4 +1,4 @@
-# LingFlow v3.8.0 - 最终发布检查清单
+# lingflow v3.8.0 - 最终发布检查清单
 
 **日期**: 2026-04-02
 **状态**: ✅ 发布就绪
@@ -114,7 +114,7 @@ docker push guangda88/lingflow-api:v3.8.0
 ```
 
 ### 5. GitHub Release
-- 创建 Release: https://github.com/guangda88/LingFlow/releases/new
+- 创建 Release: https://github.com/guangda88/lingflow/releases/new
 - Tag: v3.8.0
 - Title: "🎉 v3.8.0 - AI 生态平台"
 - 内容: 使用 `RELEASE_v3.8.0.md`
@@ -206,4 +206,4 @@ docker push guangda88/lingflow-api:v3.8.0
 
 ---
 
-*LingFlow v3.8.0 - 最终发布检查清单*
+*lingflow v3.8.0 - 最终发布检查清单*

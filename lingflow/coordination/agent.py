@@ -1,4 +1,4 @@
-"""LingFlow 代理类"""
+"""lingflow 代理类"""
 
 import asyncio
 import time

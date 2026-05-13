@@ -1,4 +1,4 @@
-"""LingFlow Agent/Skill 配置适配器
+"""lingflow Agent/Skill 配置适配器
 
 支持 v1 和 v2 配置格式的转换和兼容。
 

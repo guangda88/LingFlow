@@ -1,4 +1,4 @@
-# LingFlow 向 Claude Code 学习的核心思想和方法
+# lingflow 向 Claude Code 学习的核心思想和方法
 
 > **学习日期**: 2026-04-01
 > **源码地址**: /home/ai/claude-code-port/
@@ -46,7 +46,7 @@ class StoredSession:
 - ✅ **状态一致**: 防止意外修改
 - ✅ **可预测性**: 数据创建后永不改变
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 # lingflow/core/session_v2.py
 @dataclass(frozen=True)
@@ -84,7 +84,7 @@ snapshot.messages = ("新消息",)  # ❌ 错误: 不可变
 - ✅ **预算管理**: 设置使用上限
 - ✅ **性能分析**: 了解Token消耗模式
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 class SessionManager:
     def __init__(self):
@@ -132,7 +132,7 @@ summary = api_client.get_usage_summary()
 - ✅ **跨平台**: JSON格式通用
 - ✅ **易调试**: 人类可读
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 def save_session(self, session_id: str = None) -> Path:
     snapshot = self.create_snapshot(session_id)
@@ -169,7 +169,7 @@ class QueryEngineConfig:
 - ✅ **可测试**: 不同配置测试
 - ✅ **生产级**: 环境特定配置
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 # lingflow/core/query_engine.py
 @dataclass(frozen=True)
@@ -206,7 +206,7 @@ def create_budget_conscious_engine(budget: int) -> QueryEngine:
 - ✅ **性能优化**: 减少处理开销
 - ✅ **透明性**: 自动处理，用户无感
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 class MessageCompactor:
     @staticmethod
@@ -256,7 +256,7 @@ class QueryEngine:
 - ✅ **可扩展**: 易于添加新路由
 - ✅ **高效**: 减少手动判断
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 class PromptRouter:
     def route(self, prompt: str, top_k: int = 3) -> RouteResult:
@@ -307,7 +307,7 @@ result = router.route("请帮我优化代码")
 - ✅ **资源控制**: 防止无限对话
 - ✅ **用户体验**: 自然的多轮交互
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 class QueryEngine:
     def submit(self, prompt: str, tools=None, agents=None) -> TurnResult:
@@ -346,7 +346,7 @@ class QueryEngine:
 - ✅ **可调试**: 丰富的错误信息
 - ✅ **恢复力**: 自动重试
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 class QueryEngine:
     def submit(self, prompt: str, ...) -> TurnResult:
@@ -392,7 +392,7 @@ class QueryEngine:
 - ✅ **快速**: 响应及时
 - ✅ **可扩展**: 支持大规模
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 # Session v2性能优化
 class SessionManager:
@@ -429,7 +429,7 @@ class SessionManager:
 - ✅ **可靠**: 编译时检查
 - ✅ **IDE支持**: 更好的自动完成
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 from typing import Dict, List, Optional, Tuple, Callable, Any
 from dataclasses import dataclass
@@ -470,7 +470,7 @@ class QueryEngine:
 - 独立的组件
 - 标准化接口
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 # 独立的模块
 lingflow/core/query_engine.py      # 查询引擎
@@ -494,7 +494,7 @@ from lingflow.core import (
 - 预配置实例
 - 环境特定配置
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 def create_default_engine() -> QueryEngine:
     """创建默认配置的QueryEngine"""
@@ -528,7 +528,7 @@ def create_long_conversation_engine() -> QueryEngine:
 - 运行时选择
 - 易于扩展
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 class RouteStrategy(Enum):
     """路由策略"""
@@ -561,7 +561,7 @@ class RouteRule:
 - 状态变化通知
 - 松耦合
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 class QueryEngine:
     def __init__(self, config):
@@ -593,7 +593,7 @@ class QueryEngine:
 - 链式调用
 - 可读性强
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 class PromptRouter:
     def add_rule(self, rule: RouteRule) -> 'PromptRouter':
@@ -629,7 +629,7 @@ router = (PromptRouter()
 - 上下文管理
 - 资源限制
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 class QueryEngine:
     def __init__(self, config):
@@ -662,7 +662,7 @@ class QueryEngine:
 - 性能监控
 - 使用统计
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 class PromptRouter:
     def __init__(self):
@@ -695,7 +695,7 @@ class PromptRouter:
 - Mock友好
 - 隔离测试
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 # 26个单元测试
 class TestQueryEngine(unittest.TestCase):
@@ -733,7 +733,7 @@ class TestQueryEngine(unittest.TestCase):
 - 类型注解
 - Docstring
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 class QueryEngine:
     """查询处理引擎
@@ -786,13 +786,13 @@ class QueryEngine:
 - 持续集成
 - 反馈循环
 
-**LingFlow应用**:
+**lingflow应用**:
 ```python
 # 自动化优化系统
 # Crontab配置: 每周一凌晨2点自动运行
-# 0 2 * * 1 /home/ai/LingFlow/scripts/run_optimization_simple.sh
+# 0 2 * * 1 /home/ai/lingflow/scripts/run_optimization_simple.sh
 
-# 运行LingMinOpt优化
+# 运行lingminopt优化
 from lingflow.self_optimizer import quick_optimize
 
 result = quick_optimize(
@@ -930,7 +930,7 @@ class StoredSession:
     # 不可变 = 线程安全 + 状态一致
 ```
 
-**LingFlow验证**:
+**lingflow验证**:
 ```python
 # 实际测试证明：不可变设计确实有效防止了状态错误
 snapshot = manager.create_snapshot()
@@ -945,7 +945,7 @@ snapshot.messages = ("新",)  # FrozenInstanceError ✅
 config = QueryEngineConfig(max_turns=8, auto_compact=True)
 ```
 
-**LingFlow验证**:
+**lingflow验证**:
 ```python
 # 工厂函数让不同场景的配置变得简单
 default_engine = create_default_engine()
@@ -961,7 +961,7 @@ long_engine = create_long_conversation_engine()
 {"session_id": "uuid", "messages": [...]}
 ```
 
-**LingFlow验证**:
+**lingflow验证**:
 ```python
 # 简洁的JSON持久化
 # 易于调试、跨平台、人类可读
@@ -975,7 +975,7 @@ manager.save_session()  # 自动生成清晰的JSON
 - 自动重试
 - 自动清理
 
-**LingFlow验证**:
+**lingflow验证**:
 ```python
 # 自动优化系统
 # Crontab: 每周一自动运行
@@ -1018,7 +1018,7 @@ manager.save_session()  # 自动生成清晰的JSON
 - runtime.py             # 运行时
 ```
 
-### LingFlow实现
+### lingflow实现
 
 ```python
 # 导入学习成果
@@ -1072,4 +1072,4 @@ from lingflow.core import (
 **代码质量**: 6个违规 (90%改进)
 **系统状态**: ✅ 生产就绪
 
-🎯 **从理论到实践，LingFlow成功应用Claude Code的设计思想！**
+🎯 **从理论到实践，lingflow成功应用Claude Code的设计思想！**

@@ -404,7 +404,7 @@ best_params = result.best_params
 #### 3. 定期执行能力
 ```bash
 # 每周一自动运行
-0 2 * * 1 /home/ai/LingFlow/scripts/run_optimization_simple.sh
+0 2 * * 1 /home/ai/lingflow/scripts/run_optimization_simple.sh
 ```
 
 #### 4. 趋势分析能力
@@ -652,7 +652,7 @@ print(f'学习结果: {result}')
 **Crontab集成**:
 ```bash
 # 每周日凌晨2点运行学习
-0 2 * * 0 /home/ai/LingFlow/scripts/run_learning_cycle.sh
+0 2 * * 0 /home/ai/lingflow/scripts/run_learning_cycle.sh
 ```
 
 **预期产出**:

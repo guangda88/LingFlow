@@ -10,7 +10,7 @@
 
 ### 集成成果
 
-✅ **Session v2已完全集成到LingFlow核心系统**
+✅ **Session v2已完全集成到lingflow核心系统**
 - 导出路径: `lingflow.core`
 - 可用导入: `from lingflow.core import SessionManager, SessionSnapshot`
 - 向后兼容: 与现有`session.py`系统共存
@@ -109,7 +109,7 @@ print(f"恢复的消息数: {summary['message_count']}")
 
 ### 共存策略
 
-LingFlow现在有两个Session系统，各有用途：
+lingflow现在有两个Session系统，各有用途：
 
 #### 1. 现有session.py (lingflow/context/session.py)
 
@@ -168,7 +168,7 @@ from lingflow.core import SessionManager
 
 # 1. 保存摘要（使用现有session.py）
 save_context(
-    summary="LingFlow优化工作",
+    summary="lingflow优化工作",
     tasks=[
         {"name": "代码质量优化", "done": True},
         {"name": "Session v2集成", "done": True}
@@ -179,7 +179,7 @@ save_context(
 # 2. 管理详细会话（使用Session v2）
 manager = SessionManager()
 manager.add_message("开始优化", input_tokens=10, output_tokens=5)
-manager.add_message("运行LingMinOpt", input_tokens=20, output_tokens=30)
+manager.add_message("运行lingminopt", input_tokens=20, output_tokens=30)
 manager.save_session()
 
 # 两者互补，各司其职
@@ -309,7 +309,7 @@ save_context(
 ✅ **会话摘要保存**
 ```python
 save_context(
-    summary="本次完成了LingFlow优化",
+    summary="本次完成了lingflow优化",
     next_steps=["部署到生产环境"]
 )
 ```
@@ -321,7 +321,7 @@ save_context(
 ### 运行集成测试
 
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 python test_session_v2_integration.py
 ```
 
@@ -480,4 +480,4 @@ manager.save_session()
 **状态**: ✅ 生产就绪
 **测试**: ✅ 全部通过
 
-🎉 **Session v2已成功集成到LingFlow！**
+🎉 **Session v2已成功集成到lingflow！**

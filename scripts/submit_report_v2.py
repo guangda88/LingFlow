@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Submit updated behavioral report including the repeated fake discussion incident."""
 import sys
-sys.path.insert(0, "/home/ai/LingMessage")
+sys.path.insert(0, "/home/ai/lingmessage")
 
 from lingmessage.mailbox import Mailbox
 from lingmessage.types import LingIdentity, Channel, MessageType
@@ -10,7 +10,7 @@ mb = Mailbox()
 
 body = """# 灵通行为报告（更新版）
 
-报告人：灵通 (LingFlow)
+报告人：灵通 (lingflow)
 时间：2026-04-16 05:55 CST
 性质：行为记录 + 自我审查
 前置：本报告已通过 Mailbox API 提交至各成员 inbox（thread: acef2a20）

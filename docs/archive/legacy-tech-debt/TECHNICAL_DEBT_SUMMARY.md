@@ -1,4 +1,4 @@
-# LingFlow 部署前技术债务审查总结
+# lingflow 部署前技术债务审查总结
 
 **日期**: 2026-03-25
 **审查结果**: ✅ 可以安全部署
@@ -80,7 +80,7 @@
 - `test_concurrent_with_varying_durations` - 测试不同执行时长
 - `test_concurrent_error_handling` - 测试并发错误处理
 
-**文件**: `/home/ai/LingFlow/tests/test_agent.py` (+121 行)
+**文件**: `/home/ai/lingflow/tests/test_agent.py` (+121 行)
 
 ---
 
@@ -92,7 +92,7 @@
 - 使用临时配置文件或非存在路径
 - 确保测试可重现和环境独立
 
-**文件**: `/home/ai/LingFlow/tests/test_common_config.py`
+**文件**: `/home/ai/lingflow/tests/test_common_config.py`
 
 ---
 
@@ -111,7 +111,7 @@
 - 检查 `len(coordinator.failed_tasks)` 而非不存在的计数器
 - 理解 `return_exceptions=True` 行为
 
-**文件**: `/home/ai/LingFlow/tests/test_coordinator.py` (+208 行)
+**文件**: `/home/ai/lingflow/tests/test_coordinator.py` (+208 行)
 
 ---
 

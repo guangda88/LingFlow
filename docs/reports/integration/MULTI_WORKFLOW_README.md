@@ -20,7 +20,7 @@
 ### 2. 文档结构
 
 ```
-LingFlow/
+lingflow/
 ├── docs/
 │   └── architecture/
 │       ├── MULTI_WORKFLOW_DESIGN.md      # 完整设计文档

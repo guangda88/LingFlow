@@ -1,13 +1,13 @@
-# GSD vs LingFlow：架构对比与价值分析
+# GSD vs lingflow：架构对比与价值分析
 
 **生成时间**: 2026-04-13
-**分析对象**: GSD v2 (Get Shit Done) vs LingFlow
+**分析对象**: GSD v2 (Get Shit Done) vs lingflow
 
 ---
 
 ## 📊 核心数据对比
 
-| 维度 | GSD v2 | LingFlow |
+| 维度 | GSD v2 | lingflow |
 |------|----------|-----------|
 | **编程语言** | TypeScript | Python |
 | **运行时** | Node.js | Python 3.8+ |
@@ -73,7 +73,7 @@
 
 ---
 
-## 🔥 LingFlow 的核心优势
+## 🔥 lingflow 的核心优势
 
 ### 1. **灵族生态统一**
 - 身份锚定：AGENTS.md + CRUSH.md 防止身份冲刷
@@ -126,7 +126,7 @@
 
 ---
 
-## 💡 GSD 对 LingFlow 的价值
+## 💡 GSD 对 lingflow 的价值
 
 ### 🟢 高价值借鉴
 
@@ -157,11 +157,11 @@
 
 | GSD 特性 | 原因 |
 |-----------|------|
-| **TypeScript 重写** | LingFlow 是 Python 生态，不应重写 |
+| **TypeScript 重写** | lingflow 是 Python 生态，不应重写 |
 | **TUI/Web UI** | 当前是 CLI 工具，UI 不是优先级 |
-| **30+ 技能包** | LingFlow 已有 33 技能，数量足够 |
-| **24 扩展** | LingFlow 有 Hook 系统，功能类似 |
-| **MCP Server** | LingFlow 已通过 coordinator 支持 MCP |
+| **30+ 技能包** | lingflow 已有 33 技能，数量足够 |
+| **24 扩展** | lingflow 有 Hook 系统，功能类似 |
+| **MCP Server** | lingflow 已通过 coordinator 支持 MCP |
 | **Parallel Worker Orchestration** | 已有 Semaphore-based 并行 |
 
 ---
@@ -226,34 +226,34 @@
 
 1. **架构冲突**
    - GSD 是单机应用（Pi SDK）
-   - LingFlow 是微服务架构（Coordinator + Orchestrator）
+   - lingflow 是微服务架构（Coordinator + Orchestrator）
    - 建议：逐步迁移，不要大爆炸式重写
 
 2. **语言不兼容**
    - GSD 是 TypeScript（Node.js）
-   - LingFlow 是 Python
+   - lingflow 是 Python
    - 建议：借鉴设计模式，不移植代码
 
 3. **生态不兼容**
    - GSD 依赖 Pi SDK（特定生态）
-   - LingFlow 独立开发（灵族生态）
+   - lingflow 独立开发（灵族生态）
    - 建议：保持独立性，只借鉴思想
 
 ### 业务风险
 
 1. **身份丢失**
    - GSD 没有身份锚定概念
-   - LingFlow 有 AGENTS.md + CRUSH.md
+   - lingflow 有 AGENTS.md + CRUSH.md
    - 建议：任何改进必须保留身份锚定
 
 2. **元认知缺失**
    - GSD 没有能力声明系统
-   - LingFlow 有 Metacognition Principle
+   - lingflow 有 Metacognition Principle
    - 建议：auto mode 前必须检查能力
 
 3. **安全基线弱化**
    - GSD 没有严格的四层防护
-   - LingFlow 有完整的仓库防护体系
+   - lingflow 有完整的仓库防护体系
    - 建议：所有新功能必须通过安全基线
 
 ---
@@ -285,19 +285,19 @@
 ### GSD 的核心哲学
 > **Extension-first.** 如果可以作为扩展，就必须作为扩展。核心保持精简。
 
-### LingFlow 的核心哲学
+### lingflow 的核心哲学
 > **自知·自觉·自决·进化。** 灵通宪章（CHARTER.md）——自觉（知道真实状态）、自决（发现问题就行动）、进化（未被发现的原因就是进化方向）。
 
 ### 共同点
 
-1. **状态驱动**：GSD 的 `.gsd/STATE.md` vs LingFlow 的 `.lingflow/` 文件
-2. **技能系统**：GSD 的 30+ 技能 vs LingFlow 的 33 技能
-3. **验证机制**：GSD 的 verification commands vs LingFlow 的 verification-before-completion
-4. **成本意识**：GSD 的 per-unit 记账 vs LingFlow 的 token 统计
+1. **状态驱动**：GSD 的 `.gsd/STATE.md` vs lingflow 的 `.lingflow/` 文件
+2. **技能系统**：GSD 的 30+ 技能 vs lingflow 的 33 技能
+3. **验证机制**：GSD 的 verification commands vs lingflow 的 verification-before-completion
+4. **成本意识**：GSD 的 per-unit 记账 vs lingflow 的 token 统计
 
 ### 差异点
 
-| 维度 | GSD | LingFlow |
+| 维度 | GSD | lingflow |
 |------|------|----------|
 | **自主性** | 高（auto mode） | 低（需人工协调） |
 | **Git 管理** | 强（worktree + squash） | 弱（当前分支） |
@@ -339,12 +339,12 @@
 
 - [GSD-2 README](https://github.com/gsd-build/gsd-2)
 - [GSD-2 VISION](https://github.com/gsd-build/gsd-2/blob/master/VISION.md)
-- [LingFlow AGENTS.md](./AGENTS.md)
-- [LingFlow CHARTER.md](./docs/CHARTER.md)
-- [LingFlow SECURITY.md](./SECURITY.md)
+- [lingflow AGENTS.md](./AGENTS.md)
+- [lingflow CHARTER.md](./docs/CHARTER.md)
+- [lingflow SECURITY.md](./SECURITY.md)
 
 ---
 
-**分析者**: LingFlow (灵通)
+**分析者**: lingflow (灵通)
 **审核**: 待灵族评审
 **状态**: 待决策

@@ -18,7 +18,7 @@
 
 ### 什么是 code-review-js？
 
-**code-review-js** 是 LingFlow 的一个技能，用于审查 JavaScript/TypeScript 代码。
+**code-review-js** 是 lingflow 的一个技能，用于审查 JavaScript/TypeScript 代码。
 
 ### 支持的语言
 
@@ -69,7 +69,7 @@ npm install --save-dev typescript @typescript-eslint/parser @typescript-eslint/e
 ### 3. 验证技能
 
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 python3 skills/code-review-js/test.py
 ```
 
@@ -80,8 +80,8 @@ python3 skills/code-review-js/test.py
 ### 方法1: 使用 Python 脚本
 
 ```bash
-cd /home/ai/LingFlow
-python3 run_code_review_js.py /home/ai/zhineng-bridge javascript
+cd /home/ai/lingflow
+python3 run_code_review_js.py /home/ai/zhibridge javascript
 ```
 
 ### 方法2: 使用便捷函数
@@ -90,10 +90,10 @@ python3 run_code_review_js.py /home/ai/zhineng-bridge javascript
 from skills.code_review_js import review_javascript
 
 # 审查 JavaScript 项目
-report = review_javascript("/home/ai/zhineng-bridge", "javascript")
+report = review_javascript("/home/ai/zhibridge", "javascript")
 
 # 审查 TypeScript 项目
-report = review_javascript("/home/ai/zhineng-bridge", "typescript")
+report = review_javascript("/home/ai/zhibridge", "typescript")
 
 # 输出报告
 import json
@@ -106,7 +106,7 @@ print(json.dumps(report, indent=2))
 from skills.code_review_js import JavaScriptCodeReviewSkill
 
 # 创建审查器
-reviewer = JavaScriptCodeReviewSkill("/home/ai/zhineng-bridge", "javascript")
+reviewer = JavaScriptCodeReviewSkill("/home/ai/zhibridge", "javascript")
 
 # 执行审查
 report = reviewer.analyze()
@@ -310,7 +310,7 @@ npm audit
 npm test
 
 # 使用 code-review-js
-python3 /home/ai/LingFlow/run_code_review_js.py . javascript
+python3 /home/ai/lingflow/run_code_review_js.py . javascript
 ```
 
 ### 2. 自动修复问题
@@ -399,7 +399,7 @@ console.log(test);
 EOF
 
 # 运行审查
-python3 /home/ai/LingFlow/run_code_review_js.py /tmp/test-project javascript
+python3 /home/ai/lingflow/run_code_review_js.py /tmp/test-project javascript
 ```
 
 ### 示例2: 审查 TypeScript 项目
@@ -438,17 +438,17 @@ console.log(test);
 EOF
 
 # 运行审查
-python3 /home/ai/LingFlow/run_code_review_js.py /tmp/ts-project typescript
+python3 /home/ai/lingflow/run_code_review_js.py /tmp/ts-project typescript
 ```
 
 ### 示例3: 审查 React 项目
 
 ```bash
 # 审查 React 项目
-python3 /home/ai/LingFlow/run_code_review_js.py /home/ai/my-react-app javascript
+python3 /home/ai/lingflow/run_code_review_js.py /home/ai/my-react-app javascript
 
 # 审查 React TypeScript 项目
-python3 /home/ai/LingFlow/run_code_review_js.py /home/ai/my-react-app typescript
+python3 /home/ai/lingflow/run_code_review_js.py /home/ai/my-react-app typescript
 ```
 
 ---
@@ -457,8 +457,8 @@ python3 /home/ai/LingFlow/run_code_review_js.py /home/ai/my-react-app typescript
 
 如有问题，请查看：
 
-- LingFlow 文档：`/home/ai/LingFlow/docs/`
-- Code Review 技能：`/home/ai/LingFlow/skills/code-review-js/`
+- lingflow 文档：`/home/ai/lingflow/docs/`
+- Code Review 技能：`/home/ai/lingflow/skills/code-review-js/`
 - ESLint 文档：https://eslint.org/
 - TypeScript 文档：https://www.typescriptlang.org/
 

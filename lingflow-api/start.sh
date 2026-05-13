@@ -1,5 +1,5 @@
 #!/bin/bash
-# LingFlow REST API - 快速启动脚本
+# lingflow REST API - 快速启动脚本
 
 set -e
 
@@ -72,7 +72,7 @@ build_images() {
 
 # 启动服务
 start_services() {
-    print_info "启动 LingFlow API 服务..."
+    print_info "启动 lingflow API 服务..."
     docker-compose up -d
 
     print_info "等待服务启动..."
@@ -92,7 +92,7 @@ start_services() {
 show_info() {
     echo ""
     echo "=========================================="
-    echo "  LingFlow REST API 已启动"
+    echo "  lingflow REST API 已启动"
     echo "=========================================="
     echo ""
     echo "📖 API 文档:"
@@ -142,7 +142,7 @@ test_api() {
 main() {
     echo ""
     echo "=========================================="
-    echo "  LingFlow REST API - 快速启动"
+    echo "  lingflow REST API - 快速启动"
     echo "=========================================="
     echo ""
 
@@ -161,7 +161,7 @@ main() {
     test_api
 
     echo ""
-    print_info "启动完成！开始使用 LingFlow API 吧 🚀"
+    print_info "启动完成！开始使用 lingflow API 吧 🚀"
 }
 
 # 运行

@@ -1,8 +1,8 @@
 #!/bin/bash
-# LingFlow 包装命令 - 自动设置环境并执行命令
+# lingflow 包装命令 - 自动设置环境并执行命令
 
 export PATH="$HOME/.local/bin:$PATH"
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 
 # 如果有参数，执行 lingflow 命令
 if [ $# -gt 0 ]; then

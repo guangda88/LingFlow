@@ -9,7 +9,7 @@ tasks:
       target_platform: "{{params.target_platform | default('wechat')}}"
       max_articles: "{{params.max_articles | default(3)}}"
       top_k: "{{params.top_k | default(20)}}"
-      search_api_url: "{{params.search_api_url | default('http://127.0.0.1:8000/api/v1/search/hybrid')}}"
+      search_api_url: "{{params.search_api_url | default('http://127.0.0.1:8001/api/v1/search/hybrid')}}"
       use_query_expansion: "{{params.use_query_expansion | default(true)}}"
       domains: "{{params.domains | default([])}}"
       output_path: "{{params.output_path | default('')}}"

@@ -1,5 +1,5 @@
 """
-LingFlow Knowledge Federation Module
+lingflow Knowledge Federation Module
 
 This module implements a cross-project knowledge federation system
 that enables unified querying across multiple knowledge sources.

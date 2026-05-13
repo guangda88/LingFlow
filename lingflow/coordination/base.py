@@ -1,4 +1,4 @@
-"""LingFlow 协调相关的基类"""
+"""lingflow 协调相关的基类"""
 
 from typing import Any, Dict
 

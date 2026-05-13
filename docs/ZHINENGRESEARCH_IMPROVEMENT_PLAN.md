@@ -536,5 +536,5 @@ This improvement plan will elevate zhinengresearch from "Good" (3.1/5.0) to "Exc
 ---
 
 **Plan Date**: 2026-03-23
-**Author**: LingFlow Code Review Framework
+**Author**: lingflow Code Review Framework
 **Version**: v3.3.0

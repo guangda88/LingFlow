@@ -30,16 +30,16 @@ class IndexedDoc:
 
 
 _REPO_REGISTRY: List[Dict[str, str]] = [
-    {"dir": "LingFlow", "cn": "灵通", "en": "LingFlow"},
-    {"dir": "LingClaude", "cn": "灵克", "en": "LingClaude"},
-    {"dir": "LingYi", "cn": "灵依", "en": "LingYi"},
-    {"dir": "LingMessage", "cn": "灵信", "en": "LingMessage"},
-    {"dir": "LingYang", "cn": "灵扬", "en": "LingYang"},
-    {"dir": "LingMinOpt", "cn": "灵极优", "en": "LingMinOpt"},
+    {"dir": "lingflow", "cn": "灵通", "en": "lingflow"},
+    {"dir": "lingclaude", "cn": "灵克", "en": "lingclaude"},
+    {"dir": "lingyi", "cn": "灵依", "en": "lingyi"},
+    {"dir": "lingmessage", "cn": "灵信", "en": "lingmessage"},
+    {"dir": "lingyang", "cn": "灵扬", "en": "lingyang"},
+    {"dir": "lingminopt", "cn": "灵极优", "en": "lingminopt"},
     {"dir": "Ling-term-mcp", "cn": "灵犀", "en": "LingTermMCP"},
-    {"dir": "zhineng-knowledge-system", "cn": "灵知", "en": "LingZhi"},
-    {"dir": "zhineng-bridge", "cn": "智桥", "en": "ZhiBridge"},
-    {"dir": "lingresearch", "cn": "灵研", "en": "LingResearch"},
+    {"dir": "zhineng-knowledge-system", "cn": "灵知", "en": "lingzhi"},
+    {"dir": "zhineng-bridge", "cn": "智桥", "en": "zhibridge"},
+    {"dir": "lingresearch", "cn": "灵研", "en": "lingresearch"},
 ]
 
 _SKIP_DIRS = {

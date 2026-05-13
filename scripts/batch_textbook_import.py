@@ -23,10 +23,10 @@ from typing import Dict, List, Optional
 
 import os
 
-TEXTBOOK_DIR = Path("/home/ai/zhineng-knowledge-system/data/textbooks/txt格式")
-SQLITE_DB = Path("/home/ai/zhineng-knowledge-system/data/textbooks.db")
-CHECKPOINT_FILE = Path("/home/ai/LingFlow/scripts/import_checkpoint.json")
-LOG_FILE = Path("/home/ai/LingFlow/scripts/import.log")
+TEXTBOOK_DIR = Path("/home/ai/lingzhi/data/textbooks/txt格式")
+SQLITE_DB = Path("/home/ai/lingzhi/data/textbooks.db")
+CHECKPOINT_FILE = Path("/home/ai/lingflow/scripts/import_checkpoint.json")
+LOG_FILE = Path("/home/ai/lingflow/scripts/import.log")
 
 DB_URL = os.environ.get("DATABASE_URL", "postgresql://localhost:5436/zhineng_kb")
 EMBEDDING_URL = "http://localhost:8001/embed"
@@ -312,7 +312,7 @@ async def import_file_to_postgres(
                     meta,
                 )
 
-        # Also write to documents table (the table LingZhi actually searches)
+        # Also write to documents table (the table lingzhi actually searches)
         max_doc_id = await conn.fetchval("SELECT MAX(id) FROM documents")
         if max_doc_id is not None:
             await conn.execute("SELECT setval('documents_id_seq', $1)", max_doc_id + 1)

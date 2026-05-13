@@ -84,9 +84,9 @@ Metacognition forces **honest self-assessment**.
 
 ### The "Data Hallucination" Problem / 数据幻觉问题
 
-Example from LingYi project:
+Example from lingyi project:
 
-**来自 LingYi 项目的例子：**
+**来自 lingyi 项目的例子：**
 
 - `energy_pct` field was defined, stored, and displayed
 - But never updated by any code
@@ -143,7 +143,7 @@ from lingflow.trust.metacognition import (
 ### Installation / 安装
 
 ```bash
-# Metacognition is part of LingFlow
+# Metacognition is part of lingflow
 pip install -e .
 ```
 
@@ -240,19 +240,19 @@ print(f"Can start: {requirements['can_start']}")
 **场景**：在开始任务前检查能力
 
 ```python
-from lingflow import LingFlow
+from lingflow import lingflow
 
-lf = LingFlow()
+lf = lingflow()
 
 # Run metacognition guard before task
 result = lf.run_skill("metacognition-guard", {
     "task_id": "energy-pct-fix",
     "task_description": "Fix energy_pct data flow issue",
-    "required_capabilities": ["Python", "LingYi architecture"],
+    "required_capabilities": ["Python", "lingyi architecture"],
     "complexity": "medium",
     "current_capabilities": {
         "Python": "MASTERED",
-        "LingYi architecture": "UNKNOWN"
+        "lingyi architecture": "UNKNOWN"
     }
 })
 
@@ -580,18 +580,18 @@ def get_metacognitive_agent() -> MetacognitiveAgent:
 
 ## Examples / 示例
 
-See `/home/ai/LingFlow/tests/test_metacognition.py` for complete test cases and examples.
+See `/home/ai/lingflow/tests/test_metacognition.py` for complete test cases and examples.
 
 ---
 
 ## Related Documentation / 相关文档
 
 - [Trust Framework Summary](TRUST_FRAMEWORK_SUMMARY.md)
-- [LingFlow Agent Guide](AGENTS.md)
+- [lingflow Agent Guide](AGENTS.md)
 - [Metacognition Guard Skill](skills/metacognition-guard/SKILL.md)
 
 ---
 
 **Version**: v1.0.0
 **Last Updated**: 2026-04-08
-**Maintained by**: LingFlow Development Team
+**Maintained by**: lingflow Development Team

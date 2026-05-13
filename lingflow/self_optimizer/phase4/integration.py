@@ -1,5 +1,5 @@
 """
-LingFlow Phase 4 集成到现有 self_optimizer
+lingflow Phase 4 集成到现有 self_optimizer
 
 提供向后兼容的适配器，将Phase 4的新功能集成到现有系统。
 """

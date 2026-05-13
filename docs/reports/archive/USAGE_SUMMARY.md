@@ -24,7 +24,7 @@
 ### 1. 一键运行优化
 
 ```bash
-python /home/ai/LingFlow/run_self_optimization.py
+python /home/ai/lingflow/run_self_optimization.py
 ```
 
 ### 2. 设置定期任务
@@ -32,14 +32,14 @@ python /home/ai/LingFlow/run_self_optimization.py
 ```bash
 # 添加到crontab（每周一凌晨2点）
 crontab -e
-# 添加: 0 2 * * 1 /home/ai/LingFlow/scripts/schedule_optimization.sh
+# 添加: 0 2 * * 1 /home/ai/lingflow/scripts/schedule_optimization.sh
 ```
 
 ### 3. 快速检查
 
 ```python
 from lingflow.self_optimizer import quick_optimize
-result = quick_optimize('/home/ai/LingFlow/lingflow', 'structure')
+result = quick_optimize('/home/ai/lingflow/lingflow', 'structure')
 print(f'当前违规数: {result.best_score}')
 ```
 
@@ -132,16 +132,16 @@ coupling_limit: 8.33      # 更严格的耦合控制
 
 ```bash
 # 1. 查看优化报告
-cat /home/ai/LingFlow/.lingflow/reports/optimization_report_20260401_132741.json | jq '.results'
+cat /home/ai/lingflow/.lingflow/reports/optimization_report_20260401_132741.json | jq '.results'
 
 # 2. 设置定期任务
 crontab -e
-# 添加: 0 2 * * 1 /home/ai/LingFlow/scripts/schedule_optimization.sh
+# 添加: 0 2 * * 1 /home/ai/lingflow/scripts/schedule_optimization.sh
 
 # 3. 识别问题类
 python -c "
 from lingflow.self_optimizer.evaluator import StructureEvaluator
-evaluator = StructureEvaluator('/home/ai/LingFlow/lingflow')
+evaluator = StructureEvaluator('/home/ai/lingflow/lingflow')
 # 分析违规最多的类
 "
 
@@ -210,14 +210,14 @@ evaluator = StructureEvaluator('/home/ai/LingFlow/lingflow')
 
 **立即开始**:
 ```bash
-python /home/ai/LingFlow/run_self_optimization.py
+python /home/ai/lingflow/run_self_optimization.py
 ```
 
 **持续改进**:
 ```bash
 # 设置每周自动运行
 crontab -e
-# 添加: 0 2 * * 1 /home/ai/LingFlow/scripts/schedule_optimization.sh
+# 添加: 0 2 * * 1 /home/ai/lingflow/scripts/schedule_optimization.sh
 ```
 
 ---

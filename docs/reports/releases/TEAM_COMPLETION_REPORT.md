@@ -1,6 +1,6 @@
-# LingFlow 项目 - 团队协作完成总结
+# lingflow 项目 - 团队协作完成总结
 
-**项目**: LingFlow 多智能体系统
+**项目**: lingflow 多智能体系统
 **团队**: lingflow-optimization
 **完成日期**: 2026-03-29
 **方法论**: VibeCoding + Hooks 系统 v1.2.0
@@ -105,7 +105,7 @@
 ## 📁 生成的文档
 
 ### 开发规则文档
-- `LINGFLOW_DEVELOPMENT_RULES.md` - LingFlow 特定规则
+- `LINGFLOW_DEVELOPMENT_RULES.md` - lingflow 特定规则
 - `VIBECODING_IMPLEMENTATION_GUIDE.md` - VibeCoding 实施指南
 
 ### 审查和优化报告
@@ -121,7 +121,7 @@
 ### Smart Push 系统
 - `SMART_PUSH_V3_REPORT.md` - 技术报告
 - `SMART_PUSH_GUIDE.md` - 使用指南
-- `SMART_PUSH_LINGFLOW_SETUP.md` - LingFlow 配置
+- `SMART_PUSH_LINGFLOW_SETUP.md` - lingflow 配置
 
 ---
 
@@ -198,7 +198,7 @@
 2. ✅ **代码优化** - 性能提升 + 100% 测试通过
 3. ✅ **Hooks 部署** - 77% 测试通过率，系统可用
 
-**LingFlow 项目现在具备**:
+**lingflow 项目现在具备**:
 - 完整的开发规则体系
 - 自动化质量检查机制
 - 智能代理推送系统

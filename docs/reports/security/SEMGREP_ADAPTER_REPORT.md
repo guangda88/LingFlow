@@ -4,7 +4,7 @@
 
 ## 概述
 
-本报告验证Semgrep工具在LingFlow Phase 5中的集成可行性。
+本报告验证Semgrep工具在lingflow Phase 5中的集成可行性。
 
 ## 验证指标
 

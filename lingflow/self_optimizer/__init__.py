@@ -1,6 +1,6 @@
 """
-LingFlow 自优化系统
-基于 LingMinOpt 的自我优化能力
+lingflow 自优化系统
+基于 lingminopt 的自我优化能力
 """
 
 from lingflow.self_optimizer.config import DEFAULT_CONFIG, OptimizationConfig, get_global_config

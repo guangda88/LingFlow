@@ -1,6 +1,6 @@
-# LingFlow 两周冲刺计划（MVP）
+# lingflow 两周冲刺计划（MVP）
 
-**基于**: 《LingFlow 生态架构演进白皮书》
+**基于**: 《lingflow 生态架构演进白皮书》
 **时间**: 2026-04-02 ~ 2026-04-16
 **目标**: 从"本地工具"升级为"开发者生态平台"
 
@@ -56,7 +56,7 @@ GET    /api/v1/intelligence/npm
 **实现方案**（白皮书建议）:
 ```yaml
 # action.yml
-name: 'LingFlow Quality Gate'
+name: 'lingflow Quality Gate'
 description: 'AI-powered code review and quality gate'
 branding:
   icon: 'check-circle'
@@ -101,7 +101,7 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 COMMAND=$1
 PATH=$2
 
-# 执行 LingFlow
+# 执行 lingflow
 RESULT=$(lingflow $COMMAND $PATH)
 
 # 发布评论到 PR

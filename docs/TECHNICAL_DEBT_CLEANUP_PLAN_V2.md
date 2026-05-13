@@ -1,4 +1,4 @@
-# LingFlow 技术债务清理计划 v2
+# lingflow 技术债务清理计划 v2
 
 **日期**: 2026-04-03
 **基于**: 宪章与原则审计报告
@@ -39,7 +39,7 @@ grep -r "__version__" lingflow/bootstrap.py  # 3.8.0
 **文件**: `docs/VERSIONING.md` (新建)
 
 ```markdown
-# LingFlow 版本策略
+# lingflow 版本策略
 
 ## 当前版本: v3.8.0
 
@@ -112,7 +112,7 @@ grep -rn "TODO\|FIXME\|XXX\|HACK" lingflow/ --include="*.py"
 ```bash
 # 1. 创建文档索引
 cat > docs/INDEX.md << 'EOF'
-# LingFlow 文档索引
+# lingflow 文档索引
 
 ## 核心文档
 - [README](../README.md) - 项目介绍

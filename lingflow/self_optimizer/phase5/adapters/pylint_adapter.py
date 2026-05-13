@@ -1,5 +1,5 @@
 """
-LingFlow Phase 5: Pylint适配器
+lingflow Phase 5: Pylint适配器
 
 Pylint是一个Python代码分析工具，查找编程错误、代码异味和不符合规范的地方。
 """

@@ -1,4 +1,4 @@
-# LingFlow 代码审计与自优化启用总结
+# lingflow 代码审计与自优化启用总结
 
 **完成时间**: 2026-03-31
 **版本**: v3.6.0
@@ -54,7 +54,7 @@ Python文件: 214个
 质量评分: 优秀 ⭐⭐⭐⭐⭐
 ```
 
-**整个LingFlow项目**:
+**整个lingflow项目**:
 ```
 实验次数: 10
 优化耗时: 2.4秒
@@ -152,7 +152,7 @@ coupling_limit: 9.98
 ```python
 from lingflow.bootstrap import bootstrap
 
-# 启动LingFlow（hooks自动启用）
+# 启动lingflow（hooks自动启用）
 status = bootstrap(hooks=True)
 
 # hooks会自动检测并提示优化
@@ -198,7 +198,7 @@ cat LINGFLOW_OPTIMIZATION_*.md
 
 ### 审计结论
 
-**LingFlow项目整体质量优秀** ⭐⭐⭐⭐
+**lingflow项目整体质量优秀** ⭐⭐⭐⭐
 
 - ✅ 代码规模合理
 - ✅ 测试覆盖充分
@@ -209,7 +209,7 @@ cat LINGFLOW_OPTIMIZATION_*.md
 
 **已完全启用并验证** ✅
 
-现在LingFlow能够：
+现在lingflow能够：
 1. 自动检测代码质量问题
 2. 智能触发优化流程
 3. 提供数据驱动的改进建议
@@ -217,12 +217,12 @@ cat LINGFLOW_OPTIMIZATION_*.md
 
 ---
 
-**LingFlow v3.6.0** - 代码审计完成，自优化系统已启用！⚡
+**lingflow v3.6.0** - 代码审计完成，自优化系统已启用！⚡
 
 众智混元，万法灵通
 
 ---
 
 *完成时间: 2026-03-31*
-*审计工具: LingFlow Self-Optimizer*
+*审计工具: lingflow Self-Optimizer*
 *系统版本: v3.6.0*

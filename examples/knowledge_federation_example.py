@@ -70,7 +70,7 @@ async def main():
 
     # 5. Query by context
     print("\n[4] Querying by context text...")
-    context = "How does the session management work in LingFlow?"
+    context = "How does the session management work in lingflow?"
     result = await federation.query_by_context(
         context=context,
         options=KnowledgeQuery.Options(

@@ -1,4 +1,4 @@
-"""LingFlow PromptRouter - 基于Claude Code设计的智能Prompt路由系统
+"""lingflow PromptRouter - 基于Claude Code设计的智能Prompt路由系统
 
 特性:
 - 基于关键词的智能匹配

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LingFlow 多工程流系统演示
+lingflow 多工程流系统演示
 
 展示如何使用双工程流和多工程流系统
 """
@@ -331,7 +331,7 @@ async def demo_custom_config():
 async def main():
     """主函数"""
     print("\n" + "="*60)
-    print("🎯 LingFlow 多工程流系统 - 完整演示")
+    print("🎯 lingflow 多工程流系统 - 完整演示")
     print("="*60)
 
     demos = [

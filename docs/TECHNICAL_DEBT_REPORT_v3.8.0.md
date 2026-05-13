@@ -1,4 +1,4 @@
-# LingFlow v3.8.0 技术债清单
+# lingflow v3.8.0 技术债清单
 
 **审计日期**: 2026-04-02
 **测试状态**: 1359 passed, 0 failed, 6 skipped
@@ -57,10 +57,10 @@ track_context = lambda *a, **k: None
 
 | 系统 | 位置 | 使用方 |
 |------|------|--------|
-| `LingFlowConfig` (dataclass) | `core/config.py` | 2处（core/__init__.py + 1测试） |
+| `lingflowConfig` (dataclass) | `core/config.py` | 2处（core/__init__.py + 1测试） |
 | `ConfigManager` (dict+env) | `common/config.py` | 4处生产代码 |
 
-`LingFlowConfig` 实质死代码但对外可见。
+`lingflowConfig` 实质死代码但对外可见。
 
 ### P1.2 `get_smart_compressor` 导出链可能断裂
 

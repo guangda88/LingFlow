@@ -1,6 +1,6 @@
 """Reddit讨论采集器
 
-采集Reddit上关于LingFlow的讨论。
+采集Reddit上关于lingflow的讨论。
 """
 
 from datetime import datetime, timedelta
@@ -35,7 +35,7 @@ class RedditCollector(BaseCollector):
     ]
 
     # 搜索关键词
-    SEARCH_KEYWORDS = ["LingFlow", "lingflow-core", "lingflow.ai"]
+    SEARCH_KEYWORDS = ["lingflow", "lingflow-core", "lingflow.ai"]
 
     def __init__(self, config: Optional[CollectorConfig] = None):
         """初始化采集器"""
@@ -45,7 +45,7 @@ class RedditCollector(BaseCollector):
 
         # Reddit API配置
         self.api_base = "https://www.reddit.com"
-        self.user_agent = "LingFlow-Intelligence/1.0"
+        self.user_agent = "lingflow-Intelligence/1.0"
 
         # 备选: 使用rss2json
         self.rss2json_api = "https://api.rss2json.com/v1/api.json"
@@ -263,7 +263,7 @@ def main():
     collector = RedditCollector()
 
     # 搜索提及
-    mentions = collector.search_mentions(keywords=["LingFlow", "Claude"], limit=50, days=7)
+    mentions = collector.search_mentions(keywords=["lingflow", "Claude"], limit=50, days=7)
 
     print()
     print("📊 采集结果:")

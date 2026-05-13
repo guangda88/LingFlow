@@ -24,13 +24,13 @@ source ~/.bashrc
 在每次使用前运行:
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 ```
 
 ### 3. 使用 init.sh 脚本
 
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 ./init.sh
 ```
 
@@ -49,13 +49,13 @@ lingflow --help
 
 ## 注意事项
 
-⚠️ **重要**: LingFlow 需要在 `/home/ai/LingFlow` 目录下运行，以确保日志文件有正确的访问权限。
+⚠️ **重要**: LingFlow 需要在 `/home/ai/lingflow` 目录下运行，以确保日志文件有正确的访问权限。
 
 ## 常用命令
 
 ```bash
 # 切换到 LingFlow 目录
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 
 # 执行技能
 lingflow run code-review --params '{"target": "./lingflow/"}'

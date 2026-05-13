@@ -1,10 +1,10 @@
 # demo-01: 基础智能体示例
 
-> VibeCoding 最佳实践 - LingFlow 核心能力展示
+> VibeCoding 最佳实践 - lingflow 核心能力展示
 
 ## 项目概述
 
-这是一个展示 LingFlow 核心能力的示例项目，按照 VibeCoding 三轮开发法构建：
+这是一个展示 lingflow 核心能力的示例项目，按照 VibeCoding 三轮开发法构建：
 
 - **第一轮**: 静态原型（已完成）
 - **第二轮**: 逻辑交互（已完成）

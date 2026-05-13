@@ -1,7 +1,7 @@
 # intel-pipeline
 
 ## 描述
-LingFlow 情报系统统一管线。编排 Star 追踪 → 多平台采集 → 分析 → 报告生成全流程。
+lingflow 情报系统统一管线。编排 Star 追踪 → 多平台采集 → 分析 → 报告生成全流程。
 支持独立运行或注册到 LingScheduler 定时调度。
 
 ## 参数

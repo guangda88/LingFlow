@@ -1,6 +1,6 @@
-"""LingFlow Core Types
+"""lingflow Core Types
 
-This module provides standardized types for the LingFlow framework.
+This module provides standardized types for the lingflow framework.
 """
 
 from typing import Any, Dict, Generic, Optional, TypeVar

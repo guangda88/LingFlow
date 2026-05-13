@@ -4,7 +4,7 @@
 
 ## Overview (概述)
 
-元认知系统是 LingFlow 的核心创新之一，它要求 AI 在开始任务前必须明确自己的知识边界。这不是事后验证，而是事前预防。
+元认知系统是 lingflow 的核心创新之一，它要求 AI 在开始任务前必须明确自己的知识边界。这不是事后验证，而是事前预防。
 
 **核心哲学**：
 - **知知与知不知** (Know what you know and don't know): AI 必须明确知道自己知道什么、不知道什么
@@ -25,10 +25,10 @@
 ### Example 1: PostgreSQL Migration (PostgreSQL 迁移)
 
 ```python
-from lingflow import LingFlow
+from lingflow import lingflow
 from lingflow.trust import get_metacognitive_agent
 
-lf = LingFlow()
+lf = lingflow()
 agent = get_metacognitive_agent()
 
 agent.register_capability(
@@ -64,11 +64,11 @@ evolution = agent.propose_evolution(
 result = lf.run_skill("metacognition-guard", {
     "task_id": "energy-pct-fix",
     "task_description": "Fix energy_pct data flow issue",
-    "required_capabilities": ["Python", "LingYi architecture"],
+    "required_capabilities": ["Python", "lingyi architecture"],
     "complexity": "medium",
     "current_capabilities": {
         "Python": "MASTERED",
-        "LingYi architecture": "UNKNOWN"
+        "lingyi architecture": "UNKNOWN"
     }
 })
 

@@ -1,5 +1,5 @@
 name: 智能气功知识库代码优化
-description: 用 LingFlow 分析并优化智能气功知识库的代码
+description: 用 lingflow 分析并优化智能气功知识库的代码
 
 tasks:
   # 阶段1：代码分析

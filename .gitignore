@@ -62,3 +62,4 @@ hitory-of-lingflw.zip
 # SQLite WAL files
 data/data.db-shm
 data/data.db-wal
+scripts/rename.py

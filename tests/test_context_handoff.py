@@ -119,7 +119,7 @@ class TestHandoffMarkdown:
             reason="token_limit",
         )
         md = doc.to_markdown()
-        assert "# LingFlow 会话交接文档" in md
+        assert "# lingflow 会话交接文档" in md
         assert "md-test" in md
         assert "token_limit" in md
 

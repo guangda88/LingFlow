@@ -1,6 +1,6 @@
 """Default Health Checks and Notification Handlers for Operations Monitor
 
-Provides pre-configured health checks for common LingFlow components
+Provides pre-configured health checks for common lingflow components
 and notification handlers for alerts.
 """
 

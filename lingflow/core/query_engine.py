@@ -1,4 +1,4 @@
-"""LingFlow QueryEngine - 基于Claude Code设计的查询处理引擎
+"""lingflow QueryEngine - 基于Claude Code设计的查询处理引擎
 
 特性:
 - 配置驱动的查询处理

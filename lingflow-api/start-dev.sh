@@ -1,10 +1,10 @@
 #!/bin/bash
-# LingFlow REST API - 开发启动脚本
+# lingflow REST API - 开发启动脚本
 
 set -e
 
 echo "=========================================="
-echo "  LingFlow REST API - 开发服务器"
+echo "  lingflow REST API - 开发服务器"
 echo "=========================================="
 echo ""
 

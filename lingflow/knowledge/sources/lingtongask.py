@@ -1,7 +1,7 @@
 """
-LingTongAsk Knowledge Source
+lingtongask Knowledge Source
 
-Provides access to LingTongAsk project knowledge including:
+Provides access to lingtongask project knowledge including:
 - Content guidelines
 - Project charter
 - Qigong knowledge base
@@ -22,9 +22,9 @@ from lingflow.knowledge.query import (
 from lingflow.knowledge.sources.base import KnowledgeSource, SearchContext
 
 
-class LingTongAskKnowledgeSource(KnowledgeSource):
+class lingtongaskKnowledgeSource(KnowledgeSource):
     """
-    Knowledge source for LingTongAsk project.
+    Knowledge source for lingtongask project.
 
     Reads from:
     - PROJECT_CHARTER.md
@@ -35,8 +35,8 @@ class LingTongAskKnowledgeSource(KnowledgeSource):
 
     def __init__(self, project_root: Optional[Path] = None):
         super().__init__()
-        # Default to LingTongAsk project location
-        self._project_root = project_root or Path("/home/ai/LingTongAsk")
+        # Default to lingtongask project location
+        self._project_root = project_root or Path("/home/ai/lingtongask")
         self._charter_file = self._project_root / "PROJECT_CHARTER.md"
         self._roadmap_file = self._project_root / "ROADMAP.md"
         self._docs_dir = self._project_root / "docs"
@@ -45,7 +45,7 @@ class LingTongAskKnowledgeSource(KnowledgeSource):
 
     @property
     def name(self) -> str:
-        return "LingTongAsk"
+        return "lingtongask"
 
     @property
     def source_type(self) -> ResultSource:
@@ -92,7 +92,7 @@ class LingTongAskKnowledgeSource(KnowledgeSource):
                 pass
 
     async def search(self, query: KnowledgeQuery, context: Optional[SearchContext] = None) -> KnowledgeResult:
-        """Search LingTongAsk knowledge"""
+        """Search lingtongask knowledge"""
         items: list[KnowledgeItem] = []
 
         # Search charter

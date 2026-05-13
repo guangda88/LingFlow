@@ -1,4 +1,4 @@
-"""LingFlow E2E 测试模块
+"""lingflow E2E 测试模块
 
 提供端到端测试能力。
 

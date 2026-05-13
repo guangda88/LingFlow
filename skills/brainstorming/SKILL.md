@@ -113,20 +113,20 @@ digraph brainstorming {
 - **Incremental validation** - Present design, get approval before moving on
 - **Be flexible** - Go back and clarify when something doesn't make sense
 
-## LingFlow Integration
+## lingflow Integration
 
-This skill integrates with LingFlow's existing capabilities:
+This skill integrates with lingflow's existing capabilities:
 
-- **Code Analysis**: When exploring project context, use LingFlow's code analysis engine to understand the codebase
-- **Testing**: Include testing strategies that leverage LingFlow's comprehensive test engine
-- **Documentation**: Design docs should follow LingFlow's documentation standards
+- **Code Analysis**: When exploring project context, use lingflow's code analysis engine to understand the codebase
+- **Testing**: Include testing strategies that leverage lingflow's comprehensive test engine
+- **Documentation**: Design docs should follow lingflow's documentation standards
 
 ## Example Interaction
 
 ```
 User: "I want to add a user authentication system"
 
-LingFlow (brainstorming):
+lingflow (brainstorming):
 "Great! Let me first understand your current project context.
 [Analyzes codebase]
 

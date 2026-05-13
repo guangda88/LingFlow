@@ -1,4 +1,4 @@
-# LingFlow v3.3.0 优化完成总结
+# lingflow v3.3.0 优化完成总结
 
 > **完成日期**: 2026-03-23
 > **优化阶段**: P0 完成，P1 进行中
@@ -445,7 +445,7 @@ python .scripts/check_docstrings.py file1.py file2.py
 
 ## 🎯 总结
 
-LingFlow v3.3.0 的质量改进工作已经取得了显著的进展：
+lingflow v3.3.0 的质量改进工作已经取得了显著的进展：
 
 **成就**:
 - ✅ 消除所有 critical 安全漏洞

@@ -367,10 +367,10 @@ with open('execution_report.json', 'w') as f:
 **Goal**: Ensure all tasks integrate correctly
 
 ```python
-from lingflow_integration import LingFlowIntegration
+from lingflow_integration import lingflowIntegration
 
 # Run integration tests
-integration = LingFlowIntegration()
+integration = lingflowIntegration()
 test_result = integration.run_comprehensive_tests(
     dimensions=['functionality', 'integration', 'stability']
 )
@@ -390,7 +390,7 @@ else:
     print("⚠️ Quick tests failed - review needed")
 ```
 
-## LingFlow Integration
+## lingflow Integration
 
 ### Agent Coordinator Integration
 
@@ -437,13 +437,13 @@ async def execute_with_parallel_dispatch(plan):
 ### Test Engine Integration
 
 ```python
-from lingflow_integration import LingFlowIntegration
+from lingflow_integration import lingflowIntegration
 
 # After parallel execution, run comprehensive tests
 def verify_parallel_execution():
     """Verify that parallel execution produced correct results"""
     
-    integration = LingFlowIntegration()
+    integration = lingflowIntegration()
     
     # Run all test dimensions
     dimensions = [
@@ -525,7 +525,7 @@ verify_parallel_execution()  # Always verify!
 
 ### User: "Execute the user authentication plan in parallel"
 
-**LingFlow**:
+**lingflow**:
 "好的！让我分析实施计划并调度并行代理..."
 
 **Step 1: Loading plan...**
@@ -601,7 +601,7 @@ Execution report saved: execution_report.json"
 
 ### User: "Great! Show me the compression statistics"
 
-**LingFlow**:
+**lingflow**:
 "Compression Statistics:
 - Total compressions: 8
 - Total tokens saved: 32,400

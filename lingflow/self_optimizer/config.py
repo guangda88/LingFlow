@@ -1,5 +1,5 @@
 """
-LingFlow 自优化配置管理
+lingflow 自优化配置管理
 """
 
 from pathlib import Path

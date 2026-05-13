@@ -1,4 +1,4 @@
-# LingFlow Self-Learning 系统
+# lingflow Self-Learning 系统
 
 > **版本**: v3.9.0
 > **状态**: 生产就绪
@@ -219,7 +219,7 @@ self_learning:
 
 ```bash
 # 每周一凌晨2点运行自学习
-0 2 * * 1 /home/ai/LingFlow/scripts/schedule_self_learning.sh
+0 2 * * 1 /home/ai/lingflow/scripts/schedule_self_learning.sh
 ```
 
 ### 调度脚本
@@ -228,7 +228,7 @@ self_learning:
 #!/bin/bash
 # scripts/schedule_self_learning.sh
 
-PROJECT_ROOT="/home/ai/LingFlow"
+PROJECT_ROOT="/home/ai/lingflow"
 SCRIPT="$PROJECT_ROOT/scripts/activate_self_learning.py"
 LOG_DIR="$PROJECT_ROOT/.lingflow/logs"
 
@@ -395,4 +395,4 @@ class CustomAdapter(BaseAdapter):
 ---
 
 **更新时间**: 2026-04-04
-**维护者**: LingFlow Team
+**维护者**: lingflow Team

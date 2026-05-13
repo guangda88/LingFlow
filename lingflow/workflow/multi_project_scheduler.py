@@ -219,7 +219,7 @@ class MultiProjectScheduler:
         YAML 格式：
         tasks:
           - task_id: t1
-            project: LingFlow
+            project: lingflow
             skill: code-review
             priority: high
             depends_on: []

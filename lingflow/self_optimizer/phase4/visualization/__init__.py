@@ -1,5 +1,5 @@
 """
-LingFlow Phase 4: 参数优化可视化工具
+lingflow Phase 4: 参数优化可视化工具
 
 提供参数优化过程和结果的可视化功能。
 

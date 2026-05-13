@@ -1,13 +1,13 @@
 #!/bin/bash
-# LingFlow 启用脚本
+# lingflow 启用脚本
 
 # 添加到 PATH (建议添加到 ~/.bashrc)
-export PATH="/home/ai/LingFlow:$PATH"
+export PATH="/home/ai/lingflow:$PATH"
 
 # 创建别名
-alias lingflow='python /home/ai/LingFlow/cli.py'
+alias lingflow='python /home/ai/lingflow/cli.py'
 
-echo "LingFlow 已启用！"
+echo "lingflow 已启用！"
 echo ""
 echo "可用命令:"
 echo "  lingflow list-skills              # 列出所有技能"

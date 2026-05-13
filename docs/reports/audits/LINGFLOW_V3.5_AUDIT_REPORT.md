@@ -1,4 +1,4 @@
-# LingFlow V3.5 方案审核报告
+# lingflow V3.5 方案审核报告
 
 ## 审核依据
 - **参考文件**: `DEVELOPMENT_RULES.md` (V3.5.0)
@@ -138,7 +138,7 @@
 **位置**: LINGFLOW_V3.5_OPTIMIZATION_PLAN.md 第 364-515 行
 
 **设计**:
-- `LingFlowConfig` - dataclass
+- `lingflowConfig` - dataclass
 - `from_dict()` - 从字典创建
 - `from_file()` - 从文件加载
 - `to_file()` - 保存到文件
@@ -151,7 +151,7 @@
 **位置**: DEVELOPMENT_RULES.md 第 525-558 行
 
 **设计**:
-- `LingFlowConfig` - dataclass
+- `lingflowConfig` - dataclass
 - `from_dict()` - 从字典创建
 - `validate()` - 验证配置
 
@@ -180,7 +180,7 @@
 
 **设计**:
 ```python
-class LingFlow:
+class lingflow:
     def run_skill(self, skill_name: str, params: Optional[Dict] = None) -> Dict[str, Any]:
         """向后兼容：返回Dict"""
         result = self._run_skill_impl(skill_name, params)
@@ -286,7 +286,7 @@ def execute_skill_legacy(skill_name: str, params: Dict) -> Dict:
 def unwrap(self) -> T:
     """获取数据，失败时抛出异常"""
     if not self.success:
-        raise LingFlowError(self.error or "Unknown error", code=self.code)
+        raise lingflowError(self.error or "Unknown error", code=self.code)
     return self.data
 
 def unwrap_or(self, default: T) -> T:
@@ -340,7 +340,7 @@ def to_dict(self) -> Dict[str, Any]:
 **当前方案** (第 432-464 行):
 ```python
 @classmethod
-def from_file(cls, filepath: str) -> "LingFlowConfig":
+def from_file(cls, filepath: str) -> "lingflowConfig":
     """从文件加载配置"""
     # ... YAML/JSON 加载逻辑
     ...

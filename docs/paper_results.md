@@ -21,6 +21,6 @@ We analyzed the "P0 Pipeline Black Hole" incident (Topic: disc_20260410000747).
 
 **4.4 Case Study: The "Audit Failure" Incident**
 We analyzed the "v0.16 Audit Failure" incident.
-*   **Failure Pattern**: LingMessage notification mechanism failed to alert developers of code push failures.
+*   **Failure Pattern**: lingmessage notification mechanism failed to alert developers of code push failures.
 *   **Repair Mechanism**: Patched notification hooks; added redundant alerts.
 *   **Institutionalization**: Highlighted a structural blind spot ("Notification Blindness") in the review process, leading to new checks on "Alert Delivery" reliability.

@@ -16,7 +16,7 @@
 
 ### 目标
 
-用 LingFlow 的 skill + workflow 系统编排灵族全局规划的七条工作线，让数据导入、嵌入生成、检索测试、情报采集等任务从"手工跑脚本"变为"工作流自动调度"。
+用 lingflow 的 skill + workflow 系统编排灵族全局规划的七条工作线，让数据导入、嵌入生成、检索测试、情报采集等任务从"手工跑脚本"变为"工作流自动调度"。
 
 ### 为什么是灵通
 
@@ -33,7 +33,7 @@
 | 2 | ~~IMA 嵌入生成 skill（101K 条记录批量处理）~~ ✅ 完成 | 线一：知识库填充 | P0 | GPU 资源确认 |
 | 3 | ~~检索质量测试 skill chain（852条 BM25+Hybrid 对比）~~ ✅ 完成 | 线二：检索质量 | P1 | 灵知提供测试集 |
 | 4 | ~~情报采集定时调度 workflow~~ ✅ 完成 | 战略A：情报生态 | P1 | 无 |
-| 5 | 内容生产管线（灵知检索 → 结构化文章 → 播客脚本触发） 🔧 框架完成 | 线三：产品强化 | P2 | 灵知API已对接，灵通问道播客需手动触发 |
+| 5 | 内容生产管线（灵知检索 → 结构化文章 → 播客脚本触发） ✅ 完成 | 线三：产品强化 | P2 | 灵知API已对接，灵通问道播客需手动触发 |
 | 6 | ~~RAG 查询 → 质量评估 → 参数调优闭环~~ ✅ 完成 | 线二：检索质量 | P2 | 检索质量基线 |
 
 ### 预期产出
@@ -60,12 +60,12 @@
 
 ### 发现
 
-频道过滤功能**已实现**于 LingMessage 代码库中（`poll_messages` MCP 工具 + `LingBus.poll()` 方法均支持 `channels` 参数）。本次仅添加了索引和启动过滤。
+频道过滤功能**已实现**于 lingmessage 代码库中（`poll_messages` MCP 工具 + `LingBus.poll()` 方法均支持 `channels` 参数）。本次仅添加了索引和启动过滤。
 
 ### 提交
 
-- LingMessage: `41a828f` feat: add channel index for messages table
-- LingFlow: `f467029` feat: use channel filtering in startup poll
+- lingmessage: `41a828f` feat: add channel index for messages table
+- lingflow: `f467029` feat: use channel filtering in startup poll
 
 ---
 

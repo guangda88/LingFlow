@@ -1,4 +1,4 @@
-# LingFlow 使用指南
+# lingflow 使用指南
 
 > 基于 Superpowers 理念的智能工作流引擎完整使用手册
 
@@ -25,7 +25,7 @@
 
 ### 安装
 
-LingFlow 是一个纯 Python 工具，无需额外安装：
+lingflow 是一个纯 Python 工具，无需额外安装：
 
 ```bash
 # 克隆仓库
@@ -39,16 +39,16 @@ python lingflow_integration.py
 
 ### 基本使用
 
-最简单的方式是让 LingFlow 自动触发技能：
+最简单的方式是让 lingflow 自动触发技能：
 
 ```bash
 # 开始一个新功能
 你: "我想添加一个用户认证功能"
 
-LingFlow: (自动触发 brainstorming 技能)
+lingflow: (自动触发 brainstorming 技能)
 ```
 
-LingFlow 会自动引导你通过完整的开发流程。
+lingflow 会自动引导你通过完整的开发流程。
 
 ---
 
@@ -56,11 +56,11 @@ LingFlow 会自动引导你通过完整的开发流程。
 
 ### 技能（Skills）
 
-LingFlow 的核心是"技能" - 每个技能是一个包含特定工作流的模块。技能会根据上下文自动触发，也可以手动调用。
+lingflow 的核心是"技能" - 每个技能是一个包含特定工作流的模块。技能会根据上下文自动触发，也可以手动调用。
 
 ### 七步开发流程
 
-LingFlow 遵循标准的七步开发流程：
+lingflow 遵循标准的七步开发流程：
 
 ```
 1. brainstorming → 设计和需求理解
@@ -74,7 +74,7 @@ LingFlow 遵循标准的七步开发流程：
 
 ### 自动化测试
 
-LingFlow 集成了三种测试引擎：
+lingflow 集成了三种测试引擎：
 
 - **comprehensive_test_runner** - 9 维度综合测试
 - **end_to_end_test_engine** - 端到端测试
@@ -108,7 +108,7 @@ LingFlow 集成了三种测试引擎：
 ```
 你: "我想添加一个用户认证功能"
 
-LingFlow:
+lingflow:
 "好的！让我先了解一下你的需求。
 
 问题 1: 你希望支持哪些认证方式？
@@ -119,7 +119,7 @@ D. 所有以上
 
 你: 选择 A 和 C
 
-LingFlow:
+lingflow:
 "明白了！让我为你设计..."
 
 [继续逐个问题和设计展示]
@@ -182,24 +182,24 @@ LingFlow:
 
 **示例**:
 ```
-LingFlow:
+lingflow:
 "让我先写测试..."
 
 [编写测试]
 
-LingFlow:
+lingflow:
 "运行测试确认失败..."
 ✓ RED - 测试失败
 
-LingFlow:
+lingflow:
 "编写最小实现..."
 [编写代码]
 
-LingFlow:
+lingflow:
 "运行测试确认通过..."
 ✓ GREEN - 测试通过
 
-LingFlow:
+lingflow:
 "提交代码..."
 ✓ COMMIT
 ```
@@ -226,7 +226,7 @@ LingFlow:
 ```
 你: "登录功能有时会超时"
 
-LingFlow:
+lingflow:
 "让我使用 systematic-debugging 技能。
 
 阶段 1: 观察
@@ -271,7 +271,7 @@ LingFlow:
 
 **示例**:
 ```
-LingFlow:
+lingflow:
 "加载实施计划...
 
 ✓ 任务 1: 依赖设置
@@ -315,7 +315,7 @@ LingFlow:
 ```
 你: "验证超时修复是否有效"
 
-LingFlow:
+lingflow:
 "让我验证修复。
 
 步骤 1: 定义完成标准
@@ -360,7 +360,7 @@ LingFlow:
 
 **示例**:
 ```
-LingFlow:
+lingflow:
 "设置隔离工作空间...
 
 步骤 1: 创建功能分支
@@ -401,7 +401,7 @@ LingFlow:
 
 **示例**:
 ```
-LingFlow:
+lingflow:
 "所有任务完成。运行最终验证...
 
 ✅ 计划验证: 8/8 任务完成
@@ -419,7 +419,7 @@ D) 放弃更改
 
 开发者: "B"
 
-LingFlow:
+lingflow:
 "创建 pull request...
 ✅ Pushed branch to remote
 ✅ Pull request created
@@ -452,7 +452,7 @@ LingFlow:
 
 **示例**:
 ```
-LingFlow:
+lingflow:
 "任务 4 完成。运行代码审查...
 
 ✅ 计划符合性: 通过
@@ -490,7 +490,7 @@ LingFlow:
 你: "我想添加一个用户认证功能"
 
 === 1. brainstorming ===
-LingFlow:
+lingflow:
 "好的！让我先了解一下需求。
 [逐个询问问题]
 [提出方案]
@@ -499,17 +499,17 @@ LingFlow:
 设计文档已保存: docs/superpowers/specs/2026-03-17-user-authentication-design.md"
 
 === 2. using-git-worktrees ===
-LingFlow:
+lingflow:
 "创建隔离工作空间...
 ✅ 工作空间就绪: ../lingflow-auth"
 
 === 3. writing-plans ===
-LingFlow:
+lingflow:
 "创建实施计划...
 ✅ 计划已保存: docs/superpowers/plans/2026-03-17-user-authentication.md"
 
 === 4. subagent-driven-development ===
-LingFlow:
+lingflow:
 "开始实施...
 
 ✓ 任务 1: 依赖设置
@@ -521,7 +521,7 @@ LingFlow:
 [所有任务完成]"
 
 === 5. test-driven-development ===
-LingFlow:
+lingflow:
 "遵循 RED-GREEN-REFACTOR 循环...
 ✅ RED: 写失败测试
 ✅ GREEN: 写最少代码
@@ -529,13 +529,13 @@ LingFlow:
 ✅ COMMIT: 提交"
 
 === 6. requesting-code-review ===
-LingFlow:
+lingflow:
 "运行代码审查...
 ✅ 计划符合性: 通过
 ✅ 代码质量: 通过
 
 === 7. finishing-a-development-branch ===
-LingFlow:
+lingflow:
 "运行最终验证...
 ✅ 所有测试通过
 ✅ 代码质量良好
@@ -549,7 +549,7 @@ C) 保留分支
 
 你: "B"
 
-LingFlow:
+lingflow:
 "创建 PR...
 ✅ PR 已创建: https://github.com/your-repo/pull/42
 
@@ -561,15 +561,15 @@ LingFlow:
 
 ## 🔌 集成现有功能
 
-### 使用 LingFlow 测试引擎
+### 使用 lingflow 测试引擎
 
-在技能中集成 LingFlow 的测试引擎：
+在技能中集成 lingflow 的测试引擎：
 
 ```python
-from lingflow_integration import LingFlowIntegration
+from lingflow_integration import lingflowIntegration
 
 # 初始化集成
-integration = LingFlowIntegration()
+integration = lingflowIntegration()
 
 # 运行综合测试
 result = integration.run_comprehensive_tests(
@@ -585,12 +585,12 @@ result = integration.run_end_to_end_tests()
 
 ### 自动化代码审查
 
-使用 LingFlow 的代码分析器：
+使用 lingflow 的代码分析器：
 
 ```python
-from lingflow_integration import LingFlowIntegration
+from lingflow_integration import lingflowIntegration
 
-integration = LingFlowIntegration()
+integration = lingflowIntegration()
 
 # 分析代码
 analysis = integration.analyze_code(
@@ -713,14 +713,14 @@ can_trigger = trigger.can_trigger_skill(
 )
 ```
 
-### LingFlowIntegration
+### lingflowIntegration
 
-集成 LingFlow 功能：
+集成 lingflow 功能：
 
 ```python
-from lingflow_integration import LingFlowIntegration
+from lingflow_integration import lingflowIntegration
 
-integration = LingFlowIntegration()
+integration = lingflowIntegration()
 
 # 运行综合测试
 result = integration.run_comprehensive_tests(
@@ -747,7 +747,7 @@ dimensions = integration.get_available_test_dimensions()
 
 ## 📊 代码质量
 
-LingFlow 通过了完整的代码审查：
+lingflow 通过了完整的代码审查：
 
 ### 审查统计
 
@@ -777,7 +777,7 @@ LingFlow 通过了完整的代码审查：
 
 ## 📖 总结
 
-LingFlow 提供了一个完整的、基于技能的智能开发工作流引擎。通过遵循标准的七步开发流程，并集成强大的测试和分析工具，LingFlow 可以显著提高开发效率和代码质量。
+lingflow 提供了一个完整的、基于技能的智能开发工作流引擎。通过遵循标准的七步开发流程，并集成强大的测试和分析工具，lingflow 可以显著提高开发效率和代码质量。
 
 ### 关键要点
 

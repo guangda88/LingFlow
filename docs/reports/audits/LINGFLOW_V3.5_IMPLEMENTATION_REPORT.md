@@ -1,4 +1,4 @@
-# LingFlow V3.5 实施进度报告
+# lingflow V3.5 实施进度报告
 
 **日期**: 2026-03-25
 **版本**: V3.5.0
@@ -31,7 +31,7 @@
 
 **实现内容**:
 - ✅ `Result[T]` 泛型类型（简化设计，仅保留 5 个方法）
-- ✅ `LingFlowError` 异常类
+- ✅ `lingflowError` 异常类
 - ✅ 支持成功/失败状态
 - ✅ 类型安全
 - ✅ 向后兼容（`to_dict()` 方法）
@@ -44,7 +44,7 @@
 
 **API 示例**:
 ```python
-from lingflow.core import Result, LingFlowError
+from lingflow.core import Result, lingflowError
 
 # 创建成功结果
 result = Result.ok({"value": 42})
@@ -69,7 +69,7 @@ result: Result[int] = Result.ok(42)
 - `tests/test_config.py` (196 行)
 
 **实现内容**:
-- ✅ `LingFlowConfig` dataclass
+- ✅ `lingflowConfig` dataclass
 - ✅ 11 个配置字段（协调器、技能、代理、压缩、日志）
 - ✅ `validate()` 方法（配置验证）
 - ✅ `from_dict()` 方法（向后兼容）
@@ -84,7 +84,7 @@ result: Result[int] = Result.ok(42)
 **配置字段**:
 ```python
 @dataclass
-class LingFlowConfig:
+class lingflowConfig:
     # 协调器配置
     max_parallel: int = 2
     max_iterations: int = 100
@@ -109,16 +109,16 @@ class LingFlowConfig:
 
 **使用示例**:
 ```python
-from lingflow.core import LingFlowConfig
+from lingflow.core import lingflowConfig
 
 # 方式1: 默认配置
-config = LingFlowConfig()
+config = lingflowConfig()
 
 # 方式2: 自定义配置
-config = LingFlowConfig(max_parallel=4, skill_timeout=60.0)
+config = lingflowConfig(max_parallel=4, skill_timeout=60.0)
 
 # 方式3: 从字典（向后兼容）
-config = LingFlowConfig.from_dict({"max_parallel": 4})
+config = lingflowConfig.from_dict({"max_parallel": 4})
 
 # 方式4: 验证配置
 config.validate()
@@ -320,7 +320,7 @@ python -m pytest tests/test_result.py tests/test_config.py tests/test_skill.py -
 
 **任务清单**:
 - [ ] 创建 `lingflow/core/state.py`
-- [ ] 实现 `LingFlowState` 单例
+- [ ] 实现 `lingflowState` 单例
 - [ ] 修改 `AgentCoordinator` 隐藏内部状态
 - [ ] 实现依赖注入
 - [ ] 编写单元测试

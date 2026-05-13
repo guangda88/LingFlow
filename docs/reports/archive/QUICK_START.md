@@ -34,7 +34,7 @@ source ~/.bashrc
 ```bash
 # 添加到 PATH
 export PATH="$HOME/.local/bin:$PATH"
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 
 # 使用
 lingflow list-skills
@@ -45,7 +45,7 @@ lingflow workflow workflows/requirements-analysis.yaml
 ### 方式 3: 直接运行脚本
 
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 ./init.sh              # 初始化检查
 python3 cli.py list-skills
 ./lf.sh list-skills
@@ -93,9 +93,9 @@ lf context estimate <text>       # 估算 Token
 ## 🔧 故障排除
 
 ### 权限错误
-如果遇到日志权限错误，确保在 `/home/ai/LingFlow` 目录下运行:
+如果遇到日志权限错误，确保在 `/home/ai/lingflow` 目录下运行:
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 lf list-skills
 ```
 
@@ -113,7 +113,7 @@ export PATH="$HOME/bin:$PATH"
 
 ### 查看 Python 依赖
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 pip list | grep -E "click|pyyaml|flask|pytest"
 ```
 

@@ -1,6 +1,6 @@
 #!/bin/bash
-# LingFlow Quality Gate - Entry Point
-# 处理 GitHub Action 参数并执行 LingFlow 命令
+# lingflow Quality Gate - Entry Point
+# 处理 GitHub Action 参数并执行 lingflow 命令
 
 set -e
 
@@ -10,8 +10,8 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-echo "::group::LingFlow Quality Gate"
-echo "${GREEN}LingFlow AI-Powered Code Review${NC}"
+echo "::group::lingflow Quality Gate"
+echo "${GREEN}lingflow AI-Powered Code Review${NC}"
 echo "${GREEN}=============================${NC}"
 echo ""
 
@@ -40,8 +40,8 @@ mkdir -p "$OUTPUT_DIR"
 RESULT_FILE="$OUTPUT_DIR/result.json"
 MARKDOWN_FILE="$OUTPUT_DIR/result.md"
 
-# 执行 LingFlow 命令
-echo "${GREEN}Running LingFlow...${NC}"
+# 执行 lingflow 命令
+echo "${GREEN}Running lingflow...${NC}"
 echo ""
 
 if [ -n "$API_KEY" ]; then
@@ -64,7 +64,7 @@ case $COMMAND in
 esac
 
 echo ""
-echo "${GREEN}LingFlow completed${NC}"
+echo "${GREEN}lingflow completed${NC}"
 echo ""
 
 # 提取结果

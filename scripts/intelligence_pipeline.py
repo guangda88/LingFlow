@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LingFlow 情报系统统一运行脚本
+"""lingflow 情报系统统一运行脚本
 
 执行完整的情报采集、分析、报告流程。
 """
@@ -12,7 +12,7 @@ from lingflow.intelligence.analyzers import (
     AnalyzerPipeline,
 )
 from lingflow.intelligence.collectors import (
-    LingFlowMonitor,
+    lingflowMonitor,
     StarTracker,
     RedditCollector,
     HNCollector,
@@ -56,7 +56,7 @@ def collect_all(
     if enable_github:
         print("📋 GitHub 采集...")
         try:
-            monitor = LingFlowMonitor()
+            monitor = lingflowMonitor()
 
             issues = monitor.collect_issues(state="open", days=days)
             all_mentions.extend(issues)
@@ -82,7 +82,7 @@ def collect_all(
         try:
             reddit = RedditCollector()
             mentions = reddit.search_mentions(
-                keywords=["LingFlow", "lingflow-core"],
+                keywords=["lingflow", "lingflow-core"],
                 limit=100,
                 days=days
             )
@@ -103,7 +103,7 @@ def collect_all(
         try:
             hn = HNCollector()
             mentions = hn.search_mentions(
-                keywords=["LingFlow", "lingflow-core"],
+                keywords=["lingflow", "lingflow-core"],
                 limit=100,
                 days=days
             )
@@ -251,7 +251,7 @@ def track_stars() -> tuple[int, int]:
 def main():
     """主函数"""
     parser = argparse.ArgumentParser(
-        description="LingFlow 情报系统",
+        description="lingflow 情报系统",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例:
@@ -307,7 +307,7 @@ def main():
     start_time = datetime.now()
     print()
     print("╔════════════════════════════════════════════════════════════╗")
-    print("║         🕊️  LingFlow 情报系统 v2.0                        ║")
+    print("║         🕊️  lingflow 情报系统 v2.0                        ║")
     print(
         f"║         启动时间: {
             start_time.strftime('%Y-%m-%d %H:%M:%S')}               ║")

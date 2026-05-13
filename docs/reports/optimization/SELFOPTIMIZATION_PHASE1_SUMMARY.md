@@ -1,4 +1,4 @@
-# LingFlow 自优化系统 - Phase 1 完成总结
+# lingflow 自优化系统 - Phase 1 完成总结
 
 **日期**: 2026-03-30
 **状态**: ✅ 完成
@@ -108,7 +108,7 @@ demo_self_optimizer.py                            # 演示脚本
 **优化器类型**:
 - ✅ SynchronousOptimizer（同步）
 - ✅ ProcessIsolatedOptimizer（异步，进程隔离）
-- ✅ 降级到简单搜索（无LingMinOpt时）
+- ✅ 降级到简单搜索（无lingminopt时）
 
 ### 4. 报告生成 ✅
 
@@ -280,7 +280,7 @@ hook.on_code_review_complete(review_result)
 
 1. **语言支持**: 仅Python（AST解析）
 2. **优化目标**: Phase 1只实现结构优化
-3. **LingMinOpt**: 可选依赖，无则降级到简单搜索
+3. **lingminopt**: 可选依赖，无则降级到简单搜索
 4. **配置持久化**: 需手动保存到 ~/.lingflow/config.yaml
 
 ---
@@ -308,7 +308,7 @@ hook.on_code_review_complete(review_result)
 ## 🙏 关键技术
 
 - **Python AST**: 代码结构分析
-- **LingMinOpt**: 自优化框架
+- **lingminopt**: 自优化框架
 - **Multiprocessing**: 进程隔离
 - **Click**: CLI框架
 - **Pytest**: 测试框架
@@ -337,8 +337,8 @@ hook.on_code_review_complete(review_result)
 
 ---
 
-**LingFlow 自优化系统 v0.1.0**
+**lingflow 自优化系统 v0.1.0**
 
 让AI生成更高质量的代码，自动优化变得简单。
 
-© 2026 LingFlow Team
+© 2026 lingflow Team

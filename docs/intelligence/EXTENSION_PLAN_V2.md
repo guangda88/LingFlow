@@ -1,4 +1,4 @@
-# LingFlow 情报系统扩展方案 v2.0
+# lingflow 情报系统扩展方案 v2.0
 
 **版本**: v2.0
 **日期**: 2026-04-03
@@ -44,7 +44,7 @@ lingflow/intelligence/
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    LingFlow 情报系统 v2.0                        │
+│                    lingflow 情报系统 v2.0                        │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐     │
@@ -123,7 +123,7 @@ class RedditCollector(BaseCollector):
 
     def search_mentions(self, keywords: List[str],
                         limit: int = 100) -> List[RedditPost]:
-        """搜索提及LingFlow的帖子"""
+        """搜索提及lingflow的帖子"""
         # 使用Reddit搜索API或pushshift/snoofall
 ```
 
@@ -147,7 +147,7 @@ class HNCollector(BaseCollector):
 
     def search_mentions(self, keywords: List[str],
                         days: int = 7) -> List[HNPost]:
-        """搜索提及LingFlow的帖子"""
+        """搜索提及lingflow的帖子"""
 ```
 
 #### 中文社区采集器
@@ -313,7 +313,7 @@ def get_lingflow_mentions(
     days: int = 7,
     min_influence: float = 0.5
 ) -> List[Dict]:
-    """获取关于LingFlow的提及
+    """获取关于lingflow的提及
 
     Args:
         platform: 平台过滤 (all/github/reddit/hn)
@@ -417,7 +417,7 @@ def get_top_issues(
 ```yaml
 # .lingflow/intelligence/config.yaml
 intelligence:
-  repo: "guangda88/LingFlow"
+  repo: "guangda88/lingflow"
 
   collectors:
     github:
@@ -437,7 +437,7 @@ intelligence:
       enabled: true
       schedule: "0 */12 * * *"
       search_keywords:
-        - LingFlow
+        - lingflow
         - lingflow-core
 
   analyzers:
@@ -479,7 +479,7 @@ intelligence:
 
 ```
 ╔════════════════════════════════════════════════════════════╗
-║        📊 LingFlow 情报简报 - 2026-04-03                   ║
+║        📊 lingflow 情报简报 - 2026-04-03                   ║
 ╠════════════════════════════════════════════════════════════╣
 ║                                                            ║
 ║  📈 今日统计                                               ║
@@ -495,7 +495,7 @@ intelligence:
 ║    • 消极: ██░░░░░░░░░░░░░░░░░░░  5%                        ║
 ║                                                            ║
 ║  🔥 热门议题                                               ║
-║    1. "LingFlow 与 Cursor 对比" (12条讨论)                  ║
+║    1. "lingflow 与 Cursor 对比" (12条讨论)                  ║
 ║    2. "自优化系统效果如何?" (8条讨论)                       ║
 ║    3. "MCP 集成教程请求" (6条讨论)                          ║
 ║                                                            ║
@@ -513,9 +513,9 @@ intelligence:
 ### 6.2 MCP工具调用示例
 
 ```
-你: 获取LingFlow最近一周的声誉指标
+你: 获取lingflow最近一周的声誉指标
 
-灵誉: 📊 LingFlow 声誉指标 (最近7天)
+灵誉: 📊 lingflow 声誉指标 (最近7天)
 
 统计周期: 2026-03-27 至 2026-04-03
 

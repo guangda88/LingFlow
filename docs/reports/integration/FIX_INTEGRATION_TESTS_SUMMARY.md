@@ -27,7 +27,7 @@ ERROR tests/integration - ModuleNotFoundError: No module named 'tests.integratio
 ### 创建 `tests/integration/__init__.py`
 
 ```python
-"""LingFlow 集成测试套件
+"""lingflow 集成测试套件
 
 这个包包含端到端的集成测试，验证 Phase 4 (参数优化) 和 Phase 5 (AI 工具学习)
 的完整工作流。
@@ -126,6 +126,6 @@ $ python3 -m pytest tests/ --cov=lingflow --cov-report=term
 
 **任务状态**: ✅ **完成**
 
-**修复执行**: Claude Code + LingFlow工程流
+**修复执行**: Claude Code + lingflow工程流
 
 **众智混元，万法灵通** ⚡🚀

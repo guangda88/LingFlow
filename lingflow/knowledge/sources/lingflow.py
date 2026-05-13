@@ -1,7 +1,7 @@
 """
-LingFlow Knowledge Source
+lingflow Knowledge Source
 
-Provides access to LingFlow's internal knowledge including:
+Provides access to lingflow's internal knowledge including:
 - Project memory (MEMORY.md)
 - Architecture decisions
 - Design patterns
@@ -24,9 +24,9 @@ from lingflow.knowledge.query import (
 from lingflow.knowledge.sources.base import KnowledgeSource, SearchContext
 
 
-class LingFlowKnowledgeSource(KnowledgeSource):
+class lingflowKnowledgeSource(KnowledgeSource):
     """
-    Knowledge source for LingFlow project.
+    Knowledge source for lingflow project.
 
     Reads from:
     - .lingflow/knowledge.db (SQLite knowledge base)
@@ -38,14 +38,14 @@ class LingFlowKnowledgeSource(KnowledgeSource):
         super().__init__()
         self._project_root = project_root or Path.cwd()
         self._knowledge_db = self._project_root / ".lingflow" / "knowledge.db"
-        self._memory_file = self._project_root / ".claude" / "projects" / "-home-ai-LingFlow" / "memory" / "MEMORY.md"
+        self._memory_file = self._project_root / ".claude" / "projects" / "-home-ai-lingflow" / "memory" / "MEMORY.md"
         self._reports_dir = self._project_root / ".lingflow" / "reports"
         self._conn: Optional[sqlite3.Connection] = None
         self._memory_cache: Dict[str, Any] = {}
 
     @property
     def name(self) -> str:
-        return "LingFlow"
+        return "lingflow"
 
     @property
     def source_type(self) -> ResultSource:
@@ -85,7 +85,7 @@ class LingFlowKnowledgeSource(KnowledgeSource):
             pass
 
     async def search(self, query: KnowledgeQuery, context: Optional[SearchContext] = None) -> KnowledgeResult:
-        """Search LingFlow knowledge"""
+        """Search lingflow knowledge"""
         items = []
 
         # Search in database if available

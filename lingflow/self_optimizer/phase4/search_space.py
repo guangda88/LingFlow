@@ -1,5 +1,5 @@
 """
-LingMinOpt 搜索空间定义
+lingminopt 搜索空间定义
 支持离散、连续、分类参数
 """
 

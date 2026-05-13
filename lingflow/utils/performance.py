@@ -2,7 +2,7 @@
 Performance Monitoring and Metrics System
 
 This module provides performance monitoring, metrics collection, and caching mechanisms
-for LingFlow components.
+for lingflow components.
 
 Key Features:
 - Execution time tracking

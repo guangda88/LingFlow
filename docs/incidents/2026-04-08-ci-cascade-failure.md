@@ -14,7 +14,7 @@
 | 04-07 06:49 ~ 12:37 | 大量功能开发（宪章、council、session、mypy标注等） | 13 commits |
 | 04-08 05:58 ~ 14:59 | MCP router、审计文档恢复、multi-project scheduler | 3 commits |
 | 04-09 05:58 | HTTP/WS transports + notification 大功能包 | 9a49943 |
-| 04-09 10:20 | 集成三层审计到 LingYi | 9dc3d47 |
+| 04-09 10:20 | 集成三层审计到 lingyi | 9dc3d47 |
 | **04-09 20:09** | **第一次 CI 修复：black + isort** | 866e2b7, 49fd5fb |
 | **04-09 22:09** | **正式 incident 修复：13个文件** | d2b3da5 |
 | **04-10 01:03** | **合并修复到完整分支** | 7b375f9 |

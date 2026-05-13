@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LingFlow 新模块单元测试
+"""lingflow 新模块单元测试
 
 测试覆盖:
 - Session v2
@@ -413,7 +413,7 @@ def run_tests():
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("🧪 LingFlow 新模块单元测试")
+    print("🧪 lingflow 新模块单元测试")
     print("=" * 70)
     print()
 

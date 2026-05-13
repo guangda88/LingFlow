@@ -1,4 +1,4 @@
-# LingFlow v3.8.0 PyPI 发布成功报告
+# lingflow v3.8.0 PyPI 发布成功报告
 
 ## 🎉 发布概要
 
@@ -132,7 +132,7 @@ lingflow workflow <file>  # 运行工作流文件
 
 ## 🏆 里程碑
 
-LingFlow 现在是：
+lingflow 现在是：
 - ✅ PyPI 官方包
 - ✅ 全球可安装
 - ✅ 版本化管理
@@ -141,10 +141,10 @@ LingFlow 现在是：
 
 ## 📞 支持信息
 
-**项目主页**: https://github.com/guangda88/LingFlow
+**项目主页**: https://github.com/guangda88/lingflow
 **PyPI 页面**: https://pypi.org/project/lingflow-core/
-**问题反馈**: https://github.com/guangda88/LingFlow/issues
+**问题反馈**: https://github.com/guangda88/lingflow/issues
 
 ---
 
-**LingFlow v3.8.0 - 众智混元，万法灵通** 🚀
+**lingflow v3.8.0 - 众智混元，万法灵通** 🚀

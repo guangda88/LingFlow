@@ -2,7 +2,7 @@
 
 **Generated:** 2026-03-25
 **Auditor:** Performance Analysis Expert
-**Scope:** /home/ai/LingFlow codebase
+**Scope:** /home/ai/lingflow codebase
 **Focus:** Algorithmic complexity, I/O operations, memory leaks, data structures, parallelization, caching, and resource management
 
 ---

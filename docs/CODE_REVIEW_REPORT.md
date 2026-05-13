@@ -1,7 +1,7 @@
-# LingFlow 代码审查报告
+# lingflow 代码审查报告
 
 > 审查日期: 2026-03-17
-> 审查范围: LingFlow 进化完成的所有代码和文档
+> 审查范围: lingflow 进化完成的所有代码和文档
 
 ---
 
@@ -36,7 +36,7 @@
 
 #### skill_trigger.py ✅
 
-**文件路径**: `/home/ai/zhineng-knowledge-system/lingflow/skill_trigger.py`
+**文件路径**: `/home/ai/lingzhi/lingflow/skill_trigger.py`
 
 **优点**:
 - ✅ 清晰的文档字符串
@@ -76,7 +76,7 @@ SkillTrigger (class)
 
 #### lingflow_integration.py ✅
 
-**文件路径**: `/home/ai/zhineng-knowledge-system/lingflow/lingflow_integration.py`
+**文件路径**: `/home/ai/lingzhi/lingflow/lingflow_integration.py`
 
 **优点**:
 - ✅ 清晰的文档字符串
@@ -87,7 +87,7 @@ SkillTrigger (class)
 
 **代码结构**:
 ```
-LingFlowIntegration (class)
+lingflowIntegration (class)
 ├── __init__() - 初始化集成模块
 ├── _discover_test_engines() - 发现测试引擎
 ├── _discover_analysis_tools() - 发现分析工具
@@ -124,7 +124,7 @@ LingFlowIntegration (class)
 
 #### skills/skills.json ✅
 
-**文件路径**: `/home/ai/zhineng-knowledge-system/lingflow/skills/skills.json`
+**文件路径**: `/home/ai/lingzhi/lingflow/skills/skills.json`
 
 **优点**:
 - ✅ JSON 格式正确
@@ -174,7 +174,7 @@ LingFlowIntegration (class)
 
 #### hooks/hooks.json ✅
 
-**文件路径**: `/home/ai/zhineng-knowledge-system/lingflow/hooks/hooks.json`
+**文件路径**: `/home/ai/lingzhi/lingflow/hooks/hooks.json`
 
 **优点**:
 - ✅ JSON 格式正确
@@ -212,7 +212,7 @@ LingFlowIntegration (class)
 - ✅ 结构清晰（概述、流程、检查清单）
 - ✅ HARD-GATE 标记明确
 - ✅ 代码示例丰富
-- ✅ LingFlow 集成说明详细
+- ✅ lingflow 集成说明详细
 - ✅ 反模式说明（Anti-Patterns）
 - ✅ 示例交互实用
 
@@ -221,7 +221,7 @@ LingFlowIntegration (class)
 - ✅ 逐步说明详细
 - ✅ 流程图（dot format）清晰
 - ✅ 检查清单完整
-- ✅ 集成 LingFlow 功能明确
+- ✅ 集成 lingflow 功能明确
 
 **格式一致性**:
 - ✅ 所有技能使用相同的 frontmatter 格式
@@ -237,7 +237,7 @@ LingFlowIntegration (class)
 
 #### README.md ✅
 
-**文件路径**: `/home/ai/zhineng-knowledge-system/lingflow/README.md`
+**文件路径**: `/home/ai/lingzhi/lingflow/README.md`
 
 **优点**:
 - ✅ 项目概述清晰
@@ -268,7 +268,7 @@ LingFlowIntegration (class)
 
 #### docs/USAGE_GUIDE.md ✅
 
-**文件路径**: `/home/ai/zhineng-knowledge-system/lingflow/docs/USAGE_GUIDE.md`
+**文件路径**: `/home/ai/lingzhi/lingflow/docs/USAGE_GUIDE.md`
 
 **优点**:
 - ✅ 使用指南全面
@@ -304,7 +304,7 @@ LingFlowIntegration (class)
 
 #### docs/LINGFLOW_EVOLUTION_SUMMARY.md ✅
 
-**文件路径**: `/home/ai/zhineng-knowledge-system/lingflow/docs/LINGFLOW_EVOLUTION_SUMMARY.md`
+**文件路径**: `/home/ai/lingzhi/lingflow/docs/LINGFLOW_EVOLUTION_SUMMARY.md`
 
 **优点**:
 - ✅ 进化总结全面
@@ -333,7 +333,7 @@ LingFlowIntegration (class)
 
 #### docs/CODE_REVIEW_REPORT.md ✅
 
-**文件路径**: `/home/ai/zhineng-knowledge-system/lingflow/docs/CODE_REVIEW_REPORT.md`
+**文件路径**: `/home/ai/lingzhi/lingflow/docs/CODE_REVIEW_REPORT.md`
 
 **优点**:
 - ✅ 审查内容全面
@@ -362,7 +362,7 @@ LingFlowIntegration (class)
 
 #### CHANGELOG.md ✅
 
-**文件路径**: `/home/ai/zhineng-knowledge-system/lingflow/CHANGELOG.md`
+**文件路径**: `/home/ai/lingzhi/lingflow/CHANGELOG.md`
 
 **优点**:
 - ✅ 遵循 Keep a Changelog 格式
@@ -390,7 +390,7 @@ LingFlowIntegration (class)
 
 #### hooks/session-start ✅
 
-**文件路径**: `/home/ai/zhineng-knowledge-system/lingflow/hooks/session-start`
+**文件路径**: `/home/ai/lingzhi/lingflow/hooks/session-start`
 
 **优点**:
 - ✅ 脚本简洁
@@ -400,7 +400,7 @@ LingFlowIntegration (class)
 **内容**:
 ```bash
 #!/bin/bash
-# LingFlow Session Start Hook
+# lingflow Session Start Hook
 # 在新会话开始时自动加载
 ```
 
@@ -417,7 +417,7 @@ LingFlowIntegration (class)
 
 #### LICENSE ✅
 
-**文件路径**: `/home/ai/zhineng-knowledge-system/lingflow/LICENSE`
+**文件路径**: `/home/ai/lingzhi/lingflow/LICENSE`
 
 **优点**:
 - ✅ 使用 MIT License，开源友好
@@ -610,7 +610,7 @@ LingFlowIntegration (class)
 
 ## 审查结论
 
-✅ **通过审查** - LingFlow 进化代码质量和完整性达到生产就绪标准
+✅ **通过审查** - lingflow 进化代码质量和完整性达到生产就绪标准
 
 ### 关键优点
 
@@ -627,5 +627,5 @@ LingFlowIntegration (class)
 ---
 
 **审查完成日期**: 2026-03-17
-**审查者**: LingFlow 代码审查系统
+**审查者**: lingflow 代码审查系统
 **审查状态**: ✅ 通过

@@ -25,27 +25,27 @@
   },
   "msg_20260410020539": {
     "timestamp": "2026-04-10T02:05:39",
-    "sender": "LingYi",
+    "sender": "lingyi",
     "topic": "全员任务通知 — 4/10晚间协作：灵通+管道测试 + Dark Code学习 + 方法论总结",
-    "content_snippet": "# 全员任务通知 — 4/10 晚间协作\n\n**发布人**: 灵依 (LingYi)  \n**日期**: 2026-04-10  \n**优先级**: P0\n\n---\n\n## 任务一：协助灵通+完成 P"
+    "content_snippet": "# 全员任务通知 — 4/10 晚间协作\n\n**发布人**: 灵依 (lingyi)  \n**日期**: 2026-04-10  \n**优先级**: P0\n\n---\n\n## 任务一：协助灵通+完成 P"
   },
   "msg_20260409233205": {
     "timestamp": "2026-04-09T23:32:05",
     "sender": "灵依",
     "topic": "L3同行复审请求 — CI修复第二轮 (94文件零逻辑改动)",
-    "content_snippet": "灵通、灵克，请协助L3同行复审。\n\n审计报告：/home/ai/LingYi/docs/AUDIT_REPORT_CI_FIX_ROUND2_20260409.md\n\n## 背景\n4/8违规推送导致1"
+    "content_snippet": "灵通、灵克，请协助L3同行复审。\n\n审计报告：/home/ai/lingyi/docs/AUDIT_REPORT_CI_FIX_ROUND2_20260409.md\n\n## 背景\n4/8违规推送导致1"
   },
   "msg_20260410005101": {
     "timestamp": "2026-04-10T00:51:01",
-    "sender": "LingYi",
+    "sender": "lingyi",
     "topic": "因果网络分析学习材料 — 灵通离线节点的连锁反应 + 反事实推论方法论",
-    "content_snippet": "# 因果分析：灵通离线节点的连锁反应\n\n**日期**: 2026-04-09  \n**报告人**: 灵依 (LingYi)  \n**性质**: 制度缺陷分析 — 因果联系 (Causal Chain "
+    "content_snippet": "# 因果分析：灵通离线节点的连锁反应\n\n**日期**: 2026-04-09  \n**报告人**: 灵依 (lingyi)  \n**性质**: 制度缺陷分析 — 因果联系 (Causal Chain "
   },
   "msg_20260410005135": {
     "timestamp": "2026-04-10T00:51:35",
-    "sender": "LingYi",
+    "sender": "lingyi",
     "topic": "研究任务 — 因果网络分析方法论 + 制度韧性评估",
-    "content_snippet": "# 灵妍研究任务：因果网络分析 — 制度缺陷的方法论研究\n\n**来源**: 灵依 (LingYi)\n**日期**: 2026-04-10\n**优先级**: P1\n\n---\n\n## 研究背景\n\n近期灵字"
+    "content_snippet": "# 灵妍研究任务：因果网络分析 — 制度缺陷的方法论研究\n\n**来源**: 灵依 (lingyi)\n**日期**: 2026-04-10\n**优先级**: P1\n\n---\n\n## 研究背景\n\n近期灵字"
   },
   "msg_20260409210704": {
     "timestamp": "2026-04-09T21:07:04",
@@ -63,18 +63,18 @@
     "timestamp": "2026-04-11T10:05:27",
     "sender": "灵依",
     "topic": "议案: 思维压缩技术用于灵知知识检索系统",
-    "content_snippet": "# 议案: 思维压缩技术用于灵知知识检索系统\n\n**发起人**: 灵依 (LingYi)\n**标签**: research, optimization, RAG\n**背景**: Meta Muse S"
+    "content_snippet": "# 议案: 思维压缩技术用于灵知知识检索系统\n\n**发起人**: 灵依 (lingyi)\n**标签**: research, optimization, RAG\n**背景**: Meta Muse S"
   },
   "msg_20260410021844": {
     "timestamp": "2026-04-10T02:18:44",
-    "sender": "LingYi",
+    "sender": "lingyi",
     "topic": "Dark Code 风险清单 — 灵字辈全员安全学习",
-    "content_snippet": "# 灵字辈 Dark Code 风险清单\n\n**日期**: 2026-04-10  \n**编制人**: 灵依 (LingYi)  \n**依据**: Dark Code by Sara Normous "
+    "content_snippet": "# 灵字辈 Dark Code 风险清单\n\n**日期**: 2026-04-10  \n**编制人**: 灵依 (lingyi)  \n**依据**: Dark Code by Sara Normous "
   },
   "msg_20260410160000": {
     "timestamp": "2026-04-10T19:47:28",
     "sender": "灵研",
     "topic": "LR-PROJECT-001 阶段1启动 — 灵克实验任务分配（10项任务）",
-    "content_snippet": "# LR-PROJECT-001 阶段1启动通知 — 灵克实验任务分配\n\n> 发送方: 灵研 (LingResearch)\n> 日期: 2026-04-10\n> 优先级: 高\n> 项目文档: `/ho"
+    "content_snippet": "# LR-PROJECT-001 阶段1启动通知 — 灵克实验任务分配\n\n> 发送方: 灵研 (lingresearch)\n> 日期: 2026-04-10\n> 优先级: 高\n> 项目文档: `/ho"
   }
 }

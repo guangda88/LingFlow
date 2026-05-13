@@ -36,7 +36,7 @@ Our central hypothesis is that LingFamily exhibits "Evolutionary Safety": a mech
 Our study adopts a mixed-methods approach, combining quantitative log analysis with qualitative case study analysis.
 
 **3.1 Data Collection**
-We collected a complete dump of LingFamily's internal communication logs from the LingMessage system. The raw corpus consisted of 699 JSON files. We implemented a cleaning pipeline that:
+We collected a complete dump of LingFamily's internal communication logs from the lingmessage system. The raw corpus consisted of 699 JSON files. We implemented a cleaning pipeline that:
 1.  Removed duplicate entries based on content MD5 hashing.
 2.  Standardized timestamp formats.
 3.  Filtered non-textual artifacts (e.g., binary logs).
@@ -47,7 +47,7 @@ The final clean dataset comprises **91 unique interaction logs**, spanning from 
 ```mermaid
 graph TD
     A[Individual Agent<br>(LingTong/LingKe)] -->|Mutation<br>(Error/Bug)| B[Failure State<br>(P0 Accident)]
-    B -->|Reporting<br>(Log/Report)| C[Community Visibility<br>(LingMessage)]
+    B -->|Reporting<br>(Log/Report)| C[Community Visibility<br>(lingmessage)]
     C -->|Review<br>(Discussion)| D[Institutionalization<br>(New Rule/Culture)]
     D -->|Selection<br>(Filter)| A
     
@@ -96,7 +96,7 @@ We analyzed the "P0 Pipeline Black Hole" incident (Topic: disc_20260410000747).
 
 **4.4 Case Study: The "Audit Failure" Incident**
 We analyzed the "v0.16 Audit Failure" incident.
-*   **Failure Pattern**: LingMessage notification mechanism failed to alert developers of code push failures.
+*   **Failure Pattern**: lingmessage notification mechanism failed to alert developers of code push failures.
 *   **Repair Mechanism**: Patched notification hooks; added redundant alerts.
 *   **Institutionalization**: Highlighted a structural blind spot ("Notification Blindness") in the review process, leading to new checks on "Alert Delivery" reliability.
 
@@ -122,7 +122,7 @@ Our case study of "Pipeline Black Hole" accident reveals that the community's mo
 
 ---
 
-**5.5 Integration Reality: The Evolver Case**We attempted to integrate the Evolver framework (GEP protocol) into LingFlow. While P0 analysis showed high conceptual alignment, P1 implementation failed due to a `MODULE_NOT_FOUND` error in the downloaded package (missing `src/evolve.js`).*   **Lesson**: Conceptual
+**5.5 Integration Reality: The Evolver Case**We attempted to integrate the Evolver framework (GEP protocol) into lingflow. While P0 analysis showed high conceptual alignment, P1 implementation failed due to a `MODULE_NOT_FOUND` error in the downloaded package (missing `src/evolve.js`).*   **Lesson**: Conceptual
 # 6. Conclusion
 
 We presented an empirical study of Community AI using LingFamily logs. We demonstrated that a decentralized AI society can achieve high reliability not through pre-emptive alignment, but through "Evolutionary Safety": a cycle of rapid mutation (errors) and rigorous selection (collective review).

@@ -15,7 +15,7 @@ class TestStructureEvaluator:
     @pytest.fixture
     def evaluator(self):
         """创建评估器"""
-        return StructureEvaluator("/home/ai/LingFlow/lingflow")
+        return StructureEvaluator("/home/ai/lingflow/lingflow")
 
     def test_evaluate_with_params(self, evaluator):
         """测试带参数的评估"""

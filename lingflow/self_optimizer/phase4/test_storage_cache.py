@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-LingFlow Phase 4: 参数存储和缓存测试
+lingflow Phase 4: 参数存储和缓存测试
 
 验证参数持久化存储和缓存机制的功能。
 """
@@ -440,7 +440,7 @@ def test_cached_store():
 def main():
     """运行所有测试"""
     print("\n" + "=" * 60)
-    print("LingFlow Phase 4: 存储和缓存测试套件")
+    print("lingflow Phase 4: 存储和缓存测试套件")
     print("=" * 60)
 
     tests = [

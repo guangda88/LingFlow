@@ -1,6 +1,6 @@
-"""LingFlow 配置管理模块
+"""lingflow 配置管理模块
 
-Single source of truth for LingFlow configuration.
+Single source of truth for lingflow configuration.
 Loading priority: LINGFLOW_ env vars > config.yaml > DEFAULT_CONFIG.
 """
 

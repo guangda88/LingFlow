@@ -21,7 +21,7 @@
 
 ### 1. test_constitution.py - 参数化安全检查测试 ✅
 
-**文件**: `/home/ai/LingFlow/tests/test_constitution.py`
+**文件**: `/home/ai/lingflow/tests/test_constitution.py`
 **测试类**: `TestParameterizedSecurityChecks`
 **新增测试**: 25个
 
@@ -72,7 +72,7 @@
 
 ### 2. test_compressor.py - 并发安全测试 ✅
 
-**文件**: `/home/ai/LingFlow/tests/test_compressor.py`
+**文件**: `/home/ai/lingflow/tests/test_compressor.py`
 **测试类**: `TestCompressorConcurrentSafety`
 **新增测试**: 5个
 
@@ -226,13 +226,13 @@ assert set(results) == set(range(50))
 
 ### 修改的文件
 
-1. **`/home/ai/LingFlow/tests/test_constitution.py`**
+1. **`/home/ai/lingflow/tests/test_constitution.py`**
    - 添加 `TestParameterizedSecurityChecks` 类
    - 3个参数化测试方法
    - 25个测试用例
    - +110 行
 
-2. **`/home/ai/LingFlow/tests/test_compressor.py`**
+2. **`/home/ai/lingflow/tests/test_compressor.py`**
    - 添加 `import asyncio`
    - 添加 `TestCompressorConcurrentSafety` 类
    - 5个并发安全测试方法

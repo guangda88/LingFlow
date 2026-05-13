@@ -1,4 +1,4 @@
-# LingFlow v3.6.0 发布完成报告
+# lingflow v3.6.0 发布完成报告
 
 **发布日期**: 2026-03-31
 **版本**: v3.6.0
@@ -73,7 +73,7 @@ Hooks集成:   5/5 通过 ✅
 
 **提交信息**:
 ```
-feat: LingFlow v3.6.0 重大更新 - 工程流系统定位与P0问题修复
+feat: lingflow v3.6.0 重大更新 - 工程流系统定位与P0问题修复
 
 - 产品定位重构
 - P0问题全部修复 (6/6)
@@ -117,7 +117,7 @@ feat: LingFlow v3.6.0 重大更新 - 工程流系统定位与P0问题修复
 
 | 功能 | 状态 | 说明 |
 |------|------|------|
-| 自优化系统 | ✅ | 基于LingMinOpt |
+| 自优化系统 | ✅ | 基于lingminopt |
 | Hooks系统 | ✅ | 4个集成点 |
 | P0问题修复 | ✅ | 6/6全部 |
 | 产品定位 | ✅ | 三层架构 |
@@ -158,7 +158,7 @@ feat: LingFlow v3.6.0 重大更新 - 工程流系统定位与P0问题修复
 
 ### 3. 自优化系统
 
-**基于**: LingMinOpt框架
+**基于**: lingminopt框架
 **目标**: 3个（结构/性能/简洁）
 **触发**: 6类自动条件
 **效果**: 60%代码质量改进
@@ -233,12 +233,12 @@ feat: LingFlow v3.6.0 重大更新 - 工程流系统定位与P0问题修复
 
 ### 发布成果
 
-✅ **LingFlow v3.6.0 成功发布！**
+✅ **lingflow v3.6.0 成功发布！**
 
 **关键更新**:
 1. 产品定位重构 - 工程流系统
 2. P0问题全部修复 - 6/6
-3. 自优化系统实现 - 基于LingMinOpt
+3. 自优化系统实现 - 基于lingminopt
 4. Hooks系统集成 - 4个集成点
 5. 文档体系完善 - 5个核心文档
 
@@ -280,12 +280,12 @@ feat: LingFlow v3.6.0 重大更新 - 工程流系统定位与P0问题修复
 
 ## 📞 联系方式
 
-**GitHub**: https://github.com/guangda88/LingFlow
-**Issues**: https://github.com/guangda88/LingFlow/issues
+**GitHub**: https://github.com/guangda88/lingflow
+**Issues**: https://github.com/guangda88/lingflow/issues
 
 ---
 
-**LingFlow v3.6.0** - 众智混元，万法灵通 ⚡
+**lingflow v3.6.0** - 众智混元，万法灵通 ⚡
 
 ---
 

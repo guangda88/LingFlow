@@ -1,6 +1,6 @@
 # Gitea Protected Branch 配置指南
 
-本文档说明如何为 LingFlow 项目配置 Gitea 的 Protected Branch，实现四层防护机制。
+本文档说明如何为 lingflow 项目配置 Gitea 的 Protected Branch，实现四层防护机制。
 
 ## 📋 目录
 
@@ -25,7 +25,7 @@
 
 #### 1. 进入仓库设置
 
-访问：`http://zhinenggitea.iepose.cn/guangda/LingFlow/settings/branches`
+访问：`http://zhinenggitea.iepose.cn/guangda/lingflow/settings/branches`
 
 #### 2. 添加 Protected Branch
 
@@ -106,8 +106,8 @@ Protected Branch: master
 
 ```bash
 # 在服务器上执行
-cd /var/lib/gitea/repositories/guangda/LingFlow.git/hooks
-curl -o pre-receive https://raw.githubusercontent.com/guangda/LingFlow/master/.gitea/hooks/pre-receive
+cd /var/lib/gitea/repositories/guangda/lingflow.git/hooks
+curl -o pre-receive https://raw.githubusercontent.com/guangda/lingflow/master/.gitea/hooks/pre-receive
 chmod +x pre-receive
 chown git:git pre-receive
 ```
@@ -115,7 +115,7 @@ chown git:git pre-receive
 #### 3. 验证 Hook 权限
 
 ```bash
-ls -la /var/lib/gitea/repositories/guangda/LingFlow.git/hooks/pre-receive
+ls -la /var/lib/gitea/repositories/guangda/lingflow.git/hooks/pre-receive
 # 应显示：-rwxr-xr-x 1 git git ...
 ```
 
@@ -164,7 +164,7 @@ remote: Required format: (feat|fix|docs|refactor|chore|test|perf|style): descrip
 
 #### 2. 在 Gitea 中启用 CI
 
-访问：`http://zhinenggitea.iepose.cn/guangda/LingFlow/settings/actions`
+访问：`http://zhinenggitea.iepose.cn/guangda/lingflow/settings/actions`
 
 确保 **"Enable Repository Actions"** 已启用。
 
@@ -211,7 +211,7 @@ git push origin feature/test-ci
 
 ```bash
 # 运行配置脚本
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 chmod +x .gitea/setup-gpg.sh
 ./.gitea/setup-gpg.sh --configure
 ```
@@ -371,8 +371,8 @@ jobs:
 
 **A**:
 ```bash
-cd /var/lib/gitea/repositories/guangda/LingFlow.git/hooks
-curl -o pre-receive https://raw.githubusercontent.com/guangda/LingFlow/master/.gitea/hooks/pre-receive
+cd /var/lib/gitea/repositories/guangda/lingflow.git/hooks
+curl -o pre-receive https://raw.githubusercontent.com/guangda/lingflow/master/.gitea/hooks/pre-receive
 chmod +x pre-receive
 ```
 
@@ -391,5 +391,5 @@ chmod +x pre-receive
 
 ---
 
-**维护者**: LingFlow Team
+**维护者**: lingflow Team
 **最后更新**: 2026-04-13

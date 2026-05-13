@@ -44,31 +44,31 @@ class LingFamilyHealthCheck:
 
     KNOWN_DIRS = [
         {
-            "dir": "LingFlow",
+            "dir": "lingflow",
             "pkg": "lingflow",
             "tests_cmd": "python -m pytest tests/test_coordinator.py tests/test_coordinator_extended2.py tests/test_auto_executor.py tests/test_auto_executor_regression.py tests/test_escape_hatch.py tests/test_crash_recovery.py tests/test_context_preloader.py tests/test_worktree_manager.py tests/test_verification.py -q --tb=no",
             "key_files": ["lingflow/__init__.py", "lingflow/coordination/coordinator.py"],
         },
         {
-            "dir": "LingClaude",
+            "dir": "lingclaude",
             "pkg": "lingclaude",
             "tests_cmd": "timeout 30 python -m pytest tests/test_core.py tests/test_behavior.py -q --tb=no",
             "key_files": ["lingclaude/__init__.py", "lingclaude/cli/__main__.py"],
         },
         {
-            "dir": "LingMinOpt",
+            "dir": "lingminopt",
             "pkg": "lingminopt",
             "tests_cmd": "timeout 15 python -m pytest lingminopt/tests/ -q --tb=no",
             "key_files": ["lingminopt/__init__.py", "lingminopt/meta_optimizer/__init__.py"],
         },
         {
-            "dir": "LingMessage",
+            "dir": "lingmessage",
             "pkg": "lingmessage",
             "tests_cmd": "timeout 15 python -m pytest tests/ -q --tb=no",
             "key_files": ["lingmessage/__init__.py", "lingmessage/lingbus.py"],
         },
         {
-            "dir": "LingYi",
+            "dir": "lingyi",
             "pkg": "src/lingyi",
             "tests_cmd": "timeout 30 python -m pytest tests/test_basic.py -q --tb=no",
             "key_files": ["src/lingyi/__init__.py", "src/lingyi/agent.py"],

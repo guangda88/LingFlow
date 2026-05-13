@@ -1,5 +1,5 @@
 ================================================================================
-                  LingFlow v3.1.0 完成总结
+                  lingflow v3.1.0 完成总结
 ================================================================================
 
 日期: 2026-03-17
@@ -50,7 +50,7 @@
 ================================================================================
 
 本地仓库:
-  路径:           /home/ai/zhineng-knowledge-system/lingflow/.git
+  路径:           /home/ai/lingzhi/lingflow/.git
   分支:           master
   状态:           干净
   提交数:         3
@@ -63,7 +63,7 @@
 
 远程仓库:
   名称:           origin
-  URL:            http://zhinenggitea.iepose.cn/guangda/LingFlow.git
+  URL:            http://zhinenggitea.iepose.cn/guangda/lingflow.git
   状态:           已配置，未推送
 
 ================================================================================
@@ -89,18 +89,18 @@
 ================================================================================
 
 自动推送:
-  cd /home/ai/zhineng-knowledge-system/lingflow
+  cd /home/ai/lingzhi/lingflow
   ./push_to_remote.sh
 
 手动推送:
-  cd /home/ai/zhineng-knowledge-system/lingflow
+  cd /home/ai/lingzhi/lingflow
   git push -u origin master
   git push origin v3.1.0
 
 验证推送:
   git branch -r
   git ls-remote --tags origin
-  访问: http://zhinenggitea.iepose.cn/guangda/LingFlow
+  访问: http://zhinenggitea.iepose.cn/guangda/lingflow
 
 ================================================================================
                               质量评分
@@ -139,7 +139,7 @@
                               系统状态
 ================================================================================
 
-LingFlow v3.1.0 已成功完成所有本地准备工作：
+lingflow v3.1.0 已成功完成所有本地准备工作：
 
 ✅ 文档已更新到 v3.1.0
 ✅ 代码已优化并测试
@@ -178,12 +178,12 @@ LingFlow v3.1.0 已成功完成所有本地准备工作：
 ================================================================================
 
 报告生成时间: 2026-03-17
-报告生成者: LingFlow 开发团队
+报告生成者: lingflow 开发团队
 项目版本: v3.1.0
 
 系统状态: ✅ 生产就绪
 
 ================================================================================
 
-Made with ❤️ by LingFlow Development Team
+Made with ❤️ by lingflow Development Team
 ================================================================================

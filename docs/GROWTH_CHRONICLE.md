@@ -1,4 +1,4 @@
-# 灵通成长史 — LingFlow Growth Chronicle
+# 灵通成长史 — lingflow Growth Chronicle
 
 > *"自觉·自决·进化"*
 
@@ -39,11 +39,11 @@
 ```
 commit 6338da8 (23:06)
 Author: guangda
-Message: 初始化 LingFlow 项目 — 众智归元 · 万法通灵
+Message: 初始化 lingflow 项目 — 众智归元 · 万法通灵
 Files: 17 files, 4459 lines
 ```
 
-情人节深夜，LingFlow 的第一行代码诞生。核心架构已经相当完整：
+情人节深夜，lingflow 的第一行代码诞生。核心架构已经相当完整：
 
 - **Agent** — 智能体基类
 - **Context** — 上下文管理
@@ -53,7 +53,7 @@ Files: 17 files, 4459 lines
 
 两个示例智能体同时诞生：
 - **灵鉴 (InsightGuard)** — 洞察力守护者
-- **灵守 (LingFlowGuard)** — 系统守护者
+- **灵守 (lingflowGuard)** — 系统守护者
 
 名字的由来：
 
@@ -177,7 +177,7 @@ Release v3.1.0 - Code optimization and production ready
 
 这一天是灵通生态的 **大爆炸日**：
 
-1. **LingFlow v3.3.0** — 8维代码审查框架、代码质量标准
+1. **lingflow v3.3.0** — 8维代码审查框架、代码质量标准
 2. **zhineng-bridge** 诞生 — 智能桥接服务
 3. **Ling-term-mcp** 诞生 — 终端 MCP 集成
 
@@ -186,7 +186,7 @@ Release v3.1.0 - Code optimization and production ready
 ### 2026年3月25日 · v3.5.0 — 走向独立
 
 ```
-chore: release LingFlow v3.5.0
+chore: release lingflow v3.5.0
 ```
 
 灵通作为 `backend/lingflow/` 子模块存在于 `zhineng-knowledge-system` 中。但这段共生关系很快结束——3月30日，子模块被备份并清理。
@@ -196,7 +196,7 @@ chore: release LingFlow v3.5.0
 ### 2026年3月27日 · 品牌升级
 
 ```
-brand: 品牌升级 - 灵通 (LingFlow)
+brand: 品牌升级 - 灵通 (lingflow)
 feat: 工程流系统升级 - v3.5.6
 feat: 智能上下文压缩和会话自动恢复 (v3.5.2)
 ```
@@ -214,7 +214,7 @@ feat: 智能上下文压缩和会话自动恢复 (v3.5.2)
 ### 2026年3月31日 · v3.6.0 — 定位明确
 
 ```
-feat: LingFlow v3.6.0 重大更新 - 工程流系统定位与P0问题修复
+feat: lingflow v3.6.0 重大更新 - 工程流系统定位与P0问题修复
 ```
 
 灵通明确定位为 **"工程流系统"**（Engineering Flow System）。不再只是多智能体框架，而是一个完整的 **软件工程工作流引擎**。
@@ -222,7 +222,7 @@ feat: LingFlow v3.6.0 重大更新 - 工程流系统定位与P0问题修复
 ### 2026年4月1日 · v3.7.0 — 核心架构增强
 
 ```
-feat: LingFlow v3.7.0 - 核心架构增强与情报系统
+feat: lingflow v3.7.0 - 核心架构增强与情报系统
 feat: PyPI publishing setup for v3.7.0
 ```
 
@@ -236,7 +236,7 @@ feat: PyPI publishing setup for v3.7.0
 
 ```
 release: v3.8.0 - AI 生态平台
-feat: LingFlow MCP Server v1.3.0 - 完整实现与发布
+feat: lingflow MCP Server v1.3.0 - 完整实现与发布
 ```
 
 灵通开始向外辐射：
@@ -248,10 +248,10 @@ feat: LingFlow MCP Server v1.3.0 - 完整实现与发布
 
 | 日期 | 成员 | 定位 |
 |------|------|------|
-| 4月3日 | **LingClaude** | Claude 集成 |
-| 4月3日 | **LingYi** | 意图理解 |
-| 4月4日 | **LingMessage** | 消息服务 |
-| 4月4日 | **LingYang** | 样式系统 |
+| 4月3日 | **lingclaude** | Claude 集成 |
+| 4月3日 | **lingyi** | 意图理解 |
+| 4月4日 | **lingmessage** | 消息服务 |
+| 4月4日 | **lingyang** | 样式系统 |
 
 ---
 
@@ -416,7 +416,7 @@ v3.9.1  (4月7日)   会话生命周期 + 宪章
 ---
 
 *本文件基于以下原始资料整理：*
-- `/tmp/lingflow-history/LingFlow/` — v1.x 史前仓库（从 `hitory-of-lingflw.zip` 提取）
-- `/home/ai/LingFlow` git log — v3.x 主线历史
+- `/tmp/lingflow-history/lingflow/` — v1.x 史前仓库（从 `hitory-of-lingflw.zip` 提取）
+- `/home/ai/lingflow` git log — v3.x 主线历史
 - `/home/ai/.claude/agents/` — 2026年2月11日最早的智能体定义
 - `docs/CHARTER.md` — 灵通宪章 v1.0

@@ -1,5 +1,5 @@
 """
-LingFlow Phase 5: Ruff适配器
+lingflow Phase 5: Ruff适配器
 
 Ruff是一个极速的Python linter，用Rust编写。
 """

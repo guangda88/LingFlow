@@ -7,14 +7,14 @@ for various knowledge sources in the federation.
 
 from lingflow.knowledge.sources.base import KnowledgeSource, SearchContext, SearchResult
 from lingflow.knowledge.sources.external import ExternalIntelligenceSource
-from lingflow.knowledge.sources.lingflow import LingFlowKnowledgeSource
-from lingflow.knowledge.sources.lingtongask import LingTongAskKnowledgeSource
+from lingflow.knowledge.sources.lingflow import lingflowKnowledgeSource
+from lingflow.knowledge.sources.lingtongask import lingtongaskKnowledgeSource
 
 __all__ = [
     "KnowledgeSource",
     "SearchContext",
     "SearchResult",
-    "LingFlowKnowledgeSource",
-    "LingTongAskKnowledgeSource",
+    "lingflowKnowledgeSource",
+    "lingtongaskKnowledgeSource",
     "ExternalIntelligenceSource",
 ]

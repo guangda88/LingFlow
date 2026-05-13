@@ -1,8 +1,8 @@
-# LingFlow 用户反馈系统指南
+# lingflow 用户反馈系统指南
 
 ## 概述
 
-LingFlow 用户反馈系统提供了完整的用户问题收集、跟踪和管理功能，帮助用户方便地报告问题并获得优化。
+lingflow 用户反馈系统提供了完整的用户问题收集、跟踪和管理功能，帮助用户方便地报告问题并获得优化。
 
 ## 功能特性
 
@@ -201,7 +201,7 @@ open → in_progress → resolved → closed
 
 ## 集成运维监控
 
-反馈系统与 LingFlow 的运维监控系统深度集成：
+反馈系统与 lingflow 的运维监控系统深度集成：
 
 ```python
 from lingflow.monitoring import get_operations_monitor, add_alert_rule

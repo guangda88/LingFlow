@@ -1,6 +1,6 @@
-# 🚀 LingFlow v3.8.0 部署指导 - 3个核心任务
+# 🚀 lingflow v3.8.0 部署指导 - 3个核心任务
 
-**目标**: 完成 LingFlow 生态的完整部署
+**目标**: 完成 lingflow 生态的完整部署
 **预计时间**: 30-45 分钟
 **难度**: 中等（需要一些平台账号）
 
@@ -163,7 +163,7 @@ railway login
 
 ```bash
 # 确保在 lingflow-api 目录
-cd /home/ai/LingFlow/lingflow-api
+cd /home/ai/lingflow/lingflow-api
 
 # 初始化项目
 railway init
@@ -185,7 +185,7 @@ railway up
 
 1. 访问: https://railway.app/new
 2. 点击 "Deploy from GitHub repo"
-3. 选择 `guangda88/LingFlow` 仓库
+3. 选择 `guangda88/lingflow` 仓库
 4. 设置 Root Directory 为 `lingflow-api`
 5. 点击 "Deploy Now"
 
@@ -280,10 +280,10 @@ curl -X POST https://你的URL.up.railway.app/api/v1/code/review \
 
 ```bash
 # 确保在主仓库
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 
 # 创建 Action 版本标签
-git tag -a actions/quality-gate/v1.0.0 -m "LingFlow Quality Gate v1.0.0
+git tag -a actions/quality-gate/v1.0.0 -m "lingflow Quality Gate v1.0.0
 
 - AI-powered code review
 - Quality gate automation
@@ -298,14 +298,14 @@ git push origin actions/quality-gate/v1.0.0
 
 **方法 A: Web 界面**
 
-1. 访问: https://github.com/guangda88/LingFlow/releases
+1. 访问: https://github.com/guangda88/lingflow/releases
 2. 点击 "Draft a new release"
 3. 选择标签: `actions/quality-gate/v1.0.0`
-4. Release title: `LingFlow Quality Gate v1.0.0`
+4. Release title: `lingflow Quality Gate v1.0.0`
 5. Description:
 
 ```markdown
-## 🎉 LingFlow Quality Gate v1.0.0
+## 🎉 lingflow Quality Gate v1.0.0
 
 AI-powered code review and quality gate for GitHub Actions.
 
@@ -319,15 +319,15 @@ AI-powered code review and quality gate for GitHub Actions.
 
 ```yaml
 steps:
-  - uses: guangda88/LingFlow/actions/quality-gate@v1.0.0
+  - uses: guangda88/lingflow/actions/quality-gate@v1.0.0
     with:
       github_token: ${{ secrets.GITHUB_TOKEN }}
       path: ./src
 ```
 
 ### Documentation
-- README: [actions/quality-gate/README.md](https://github.com/guangda88/LingFlow/tree/master/actions/quality-gate)
-- Examples: [actions/quality-gate/examples/](https://github.com/guangda88/LingFlow/tree/master/actions/quality-gate/examples)
+- README: [actions/quality-gate/README.md](https://github.com/guangda88/lingflow/tree/master/actions/quality-gate)
+- Examples: [actions/quality-gate/examples/](https://github.com/guangda88/lingflow/tree/master/actions/quality-gate/examples)
 ```
 
 6. 勾选 "Set as the latest release"
@@ -337,7 +337,7 @@ steps:
 
 ```bash
 gh release create actions/quality-gate/v1.0.0 \
-  --title "LingFlow Quality Gate v1.0.0" \
+  --title "lingflow Quality Gate v1.0.0" \
   --notes "AI-powered code review and quality gate for GitHub Actions."
 ```
 
@@ -354,7 +354,7 @@ git init
 # 创建 .github/workflows/test.yml
 mkdir -p .github/workflows
 cat > .github/workflows/test.yml <<EOF
-name: Test LingFlow Action
+name: Test lingflow Action
 on: push
 
 jobs:
@@ -363,8 +363,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run LingFlow Quality Gate
-        uses: guangda88/LingFlow/actions/quality-gate@v1.0.0
+      - name: Run lingflow Quality Gate
+        uses: guangda88/lingflow/actions/quality-gate@v1.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           path: .
@@ -373,7 +373,7 @@ EOF
 
 # 提交并推送
 git add .
-git commit -m "test: 测试 LingFlow Action"
+git commit -m "test: 测试 lingflow Action"
 gh repo create test-lingflow-action --public --source=.
 git push -u origin main
 ```
@@ -393,11 +393,11 @@ git push -u origin main
 2. 访问: https://github.com/marketplace/actions
 3. 点击 "Create a new Action"
 4. 填写表单:
-   - **Name**: LingFlow Quality Gate
+   - **Name**: lingflow Quality Gate
    - **Description**: AI-powered code review and quality gate
    - **Category**: Code Review
    - **Organization**: guangda88
-   - **Repository**: LingFlow
+   - **Repository**: lingflow
    - **Action**: actions/quality-gate
 
 5. 提交审核
@@ -448,7 +448,7 @@ curl https://你的URL.up.railway.app/docs
 ### 任务 3: GitHub Action
 ```bash
 # 验证方法
-# 访问: https://github.com/guangda88/LingFlow/actions
+# 访问: https://github.com/guangda88/lingflow/actions
 # 查看是否显示 Quality Gate Action
 ```
 
@@ -476,7 +476,7 @@ docker run -p 8000:8000 guangda88/lingflow-api:latest
 
 ### GitHub Actions
 ```yaml
-- uses: guangda88/LingFlow/actions/quality-gate@v1.0.0
+- uses: guangda88/lingflow/actions/quality-gate@v1.0.0
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
     path: ./src
@@ -485,14 +485,14 @@ docker run -p 8000:8000 guangda88/lingflow-api:latest
 
 ### 2. 创建 Demo 仓库
 
-展示 LingFlow 的实际使用:
+展示 lingflow 的实际使用:
 
 ```bash
 # 创建示例仓库
 mkdir /tmp/lingflow-demo
 cd /tmp/lingflow-demo
 
-# 添加 LingFlow GitHub Action
+# 添加 lingflow GitHub Action
 # 添加 Railway 部署配置
 # 添加使用示例
 ```
@@ -557,4 +557,4 @@ docker login
 
 ---
 
-*部署指导 v1.0 - LingFlow v3.8.0*
+*部署指导 v1.0 - lingflow v3.8.0*

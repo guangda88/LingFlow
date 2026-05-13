@@ -1,5 +1,5 @@
 """
-LingFlow 安全分析器测试套件
+lingflow 安全分析器测试套件
 
 测试AST-based代码安全分析器的各种检测能力。
 

@@ -2,7 +2,7 @@
 * [Quick Start](quickstart.md)
 
 * API Reference
-  * [LingFlow API](api/lingflow.md)
+  * [lingflow API](api/lingflow.md)
   * [Core Modules](api/CORE_MODULES_API.md)
   * [Coordination](api/coordination.md)
   * [Workflow](api/workflow.md)

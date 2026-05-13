@@ -1,4 +1,4 @@
-# LingFlow 过度开发审查报告
+# lingflow 过度开发审查报告
 
 **Date**: 2026-03-27
 **Auditor**: Claude Opus
@@ -211,7 +211,7 @@ testing/
 
 ## 结论
 
-LingFlow 项目存在**中度过度开发**，主要问题在 `testing/` 模块和文档报告堆积。
+lingflow 项目存在**中度过度开发**，主要问题在 `testing/` 模块和文档报告堆积。
 
 通过执行本报告的建议，可以：
 - 减少约 25% 的代码维护负担

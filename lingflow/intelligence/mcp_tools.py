@@ -7,7 +7,7 @@ import json
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-from .collectors.lingflow_monitor import LingFlowMonitor
+from .collectors.lingflow_monitor import lingflowMonitor
 from .logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -16,11 +16,11 @@ logger = get_logger(__name__)
 def _score_issue(mention, index: int) -> float:
     """为单个 issue 计算简化的影响力分数
 
-    LingFlowMonitor 返回自己的 MentionData（非 models.common.MentionData），
+    lingflowMonitor 返回自己的 MentionData（非 models.common.MentionData），
     因此使用独立的评分逻辑而非 InfluenceAnalyzer。
 
     Args:
-        mention: LingFlowMonitor.MentionData 实例
+        mention: lingflowMonitor.MentionData 实例
         index: 在列表中的位置（越新越高）
 
     Returns:
@@ -51,7 +51,7 @@ def _score_issue(mention, index: int) -> float:
 
 
 def get_top_issues(
-    repo: str = "guangda88/LingFlow",
+    repo: str = "guangda88/lingflow",
     token: Optional[str] = None,
     state: str = "open",
     days: int = 30,
@@ -69,7 +69,7 @@ def get_top_issues(
     Returns:
         包含 top issues 和摘要的字典
     """
-    monitor = LingFlowMonitor(repo=repo, token=token)
+    monitor = lingflowMonitor(repo=repo, token=token)
     mentions = monitor.collect_issues(state=state, days=days)
 
     if not mentions:
@@ -115,7 +115,7 @@ def get_top_issues(
 
 
 def get_issue_trends(
-    repo: str = "guangda88/LingFlow",
+    repo: str = "guangda88/lingflow",
     token: Optional[str] = None,
     days: int = 90,
 ) -> Dict[str, Any]:
@@ -129,7 +129,7 @@ def get_issue_trends(
     Returns:
         趋势分析结果
     """
-    monitor = LingFlowMonitor(repo=repo, token=token)
+    monitor = lingflowMonitor(repo=repo, token=token)
 
     open_issues = monitor.collect_issues(state="open", days=days)
     closed_issues = monitor.collect_issues(state="closed", days=days)
@@ -170,7 +170,7 @@ def main() -> None:
 
     parser = argparse.ArgumentParser(description="灵议 MCP 工具")
     parser.add_argument("command", choices=["top-issues", "trends"], help="命令")
-    parser.add_argument("--repo", default="guangda88/LingFlow", help="GitHub 仓库")
+    parser.add_argument("--repo", default="guangda88/lingflow", help="GitHub 仓库")
     parser.add_argument("--days", type=int, default=30, help="最近 N 天")
     parser.add_argument("--top-n", type=int, default=10, help="返回前 N 个")
     parser.add_argument("--state", default="open", help="Issue 状态")

@@ -1,12 +1,12 @@
 #!/bin/bash
-# LingFlow 初始化脚本
+# lingflow 初始化脚本
 
-echo "正在初始化 LingFlow 工程流系统..."
+echo "正在初始化 lingflow 工程流系统..."
 echo ""
 
-# 检查是否在 LingFlow 目录
+# 检查是否在 lingflow 目录
 if [ ! -f "pyproject.toml" ] || [ ! -d "lingflow" ]; then
-    echo "错误: 请在 LingFlow 项目根目录运行此脚本"
+    echo "错误: 请在 lingflow 项目根目录运行此脚本"
     echo "当前目录: $(pwd)"
     exit 1
 fi
@@ -28,7 +28,7 @@ chmod 755 logs
 echo "正在运行系统检查..."
 python3 cli.py list-skills > /dev/null 2>&1
 if [ $? -eq 0 ]; then
-    echo "✅ LingFlow 初始化成功!"
+    echo "✅ lingflow 初始化成功!"
     echo ""
     echo "版本信息:"
     cat VERSION

@@ -71,7 +71,7 @@
 ### 本地状态
 
 ```
-仓库: /home/ai/zhineng-knowledge-system/lingflow/.git
+仓库: /home/ai/lingzhi/lingflow/.git
 分支: master
 状态: 干净
 提交数: 2
@@ -111,7 +111,7 @@ Type: fetch, push
 已创建推送脚本 `push_to_remote.sh`，可以使用以下命令执行：
 
 ```bash
-cd /home/ai/zhineng-knowledge-system/lingflow
+cd /home/ai/lingzhi/lingflow
 ./push_to_remote.sh
 ```
 
@@ -128,7 +128,7 @@ cd /home/ai/zhineng-knowledge-system/lingflow
 #### 步骤 1: 推送代码
 
 ```bash
-cd /home/ai/zhineng-knowledge-system/lingflow
+cd /home/ai/lingzhi/lingflow
 git push -u origin master
 ```
 

@@ -1,4 +1,4 @@
-"""情感分析器 - 分析关于LingFlow的讨论情感
+"""情感分析器 - 分析关于lingflow的讨论情感
 
 使用简单规则基线，可扩展为ML模型。
 """
@@ -25,7 +25,7 @@ class SentimentAnalyzer:
     使用基于规则的方法分析文本情感倾向。
     """
 
-    # 正面词汇 (LingFlow/工具相关)
+    # 正面词汇 (lingflow/工具相关)
     POSITIVE_WORDS = [
         # 强正面
         "awesome",
@@ -257,7 +257,7 @@ def main():
 
     # 测试文本
     test_texts = [
-        "LingFlow is awesome! Very useful tool for automation.",
+        "lingflow is awesome! Very useful tool for automation.",
         "The documentation is confusing and hard to follow.",
         "Great project! The CLI is intuitive and powerful.",
         "Having some issues with the setup process.",

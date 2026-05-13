@@ -1,4 +1,4 @@
-# LingFlow 学习路径
+# lingflow 学习路径
 
 > 基于 VibeCoding 最佳实践的渐进式学习指南
 
@@ -21,28 +21,28 @@
 
 ---
 
-## 📘 基础篇：LingFlow 快速入门
+## 📘 基础篇：lingflow 快速入门
 
 > 适合人群：零基础用户、VibeCoding 初学者
 
 ### 学习目标
 
-- 理解 LingFlow 核心概念
+- 理解 lingflow 核心概念
 - 掌握基本使用方法
 - 完成第一个项目
 
 ### 章节结构
 
-#### 第 1 章：觉醒 —— 为什么选择 LingFlow
+#### 第 1 章：觉醒 —— 为什么选择 lingflow
 
 **学习内容**:
-- LingFlow 是什么
+- lingflow 是什么
 - VibeCoding 理念
 - 从 Coder 到 Commander
 
 **实践任务**:
 ```bash
-# 安装 LingFlow
+# 安装 lingflow
 pip install lingflow
 
 # 查看可用技能
@@ -55,7 +55,7 @@ lingflow run brainstorming --params '{"topic": "我的第一个项目"}'
 **预计时间**: 30 分钟
 
 **验收标准**:
-- [ ] 理解 LingFlow 的定位
+- [ ] 理解 lingflow 的定位
 - [ ] 成功安装并运行
 - [ ] 查看所有可用技能
 
@@ -122,7 +122,7 @@ lingflow run database-schema-designer \
 #### 第 4 章：实战 —— 第一个项目
 
 **学习内容**:
-- 使用 LingFlow 技能链完成项目
+- 使用 lingflow 技能链完成项目
 - 代码审查和质量保证
 - 测试驱动开发
 
@@ -447,11 +447,11 @@ lingflow run deployment-automation \
 
 ### demo-01: 基础智能体示例
 
-**项目目标**: 展示 LingFlow 核心能力
+**项目目标**: 展示 lingflow 核心能力
 
 **技术栈**:
 - Python 3.8+
-- LingFlow v3.5+
+- lingflow v3.5+
 
 **功能点**:
 - ✅ 需求分析
@@ -462,8 +462,8 @@ lingflow run deployment-automation \
 **学习内容**:
 ```bash
 # 克隆示例项目
-git clone https://github.com/guangda88/LingFlow
-cd LingFlow/examples/demo-01-basic-agent
+git clone https://github.com/guangda88/lingflow
+cd lingflow/examples/demo-01-basic-agent
 
 # 运行示例
 python main.py
@@ -485,7 +485,7 @@ python main.py
 **技术栈**:
 - Python 3.8+
 - asyncio
-- LingFlow v3.5+
+- lingflow v3.5+
 
 **功能点**:
 - ✅ 并行任务执行
@@ -595,7 +595,7 @@ lingflow run code-refactor \
 
 ### 基础篇完成后，你应该能够：
 
-- [ ] 理解 VibeCoding 和 LingFlow 的核心理念
+- [ ] 理解 VibeCoding 和 lingflow 的核心理念
 - [ ] 使用 PRD 模板进行需求分析
 - [ ] 掌握三轮开发法
 - [ ] 完成第一个项目
@@ -614,7 +614,7 @@ lingflow run code-refactor \
 - [ ] 独立完成项目开发
 - [ ] 优化性能瓶颈
 - [ ] 处理生产问题
-- [ ] 指导他人使用 LingFlow
+- [ ] 指导他人使用 lingflow
 
 ---
 
@@ -652,7 +652,7 @@ lingflow run code-refactor \
 
 **文档版本**: v1.0.0
 **最后更新**: 2026-03-30
-**维护者**: LingFlow Team
+**维护者**: lingflow Team
 
 ---
 
@@ -705,7 +705,7 @@ lingflow run code-refactor \
   ├── 安全实践
   └── 大规模应用
   ↓
-成为 LingFlow 专家！
+成为 lingflow 专家！
 ```
 
-**记住**: 学习是一个持续的过程，重点是理解核心理念，而不是记住所有细节。LingFlow 的目标是让你用自然语言完成软件开发，让你从 Coder 转变为 Commander。
+**记住**: 学习是一个持续的过程，重点是理解核心理念，而不是记住所有细节。lingflow 的目标是让你用自然语言完成软件开发，让你从 Coder 转变为 Commander。

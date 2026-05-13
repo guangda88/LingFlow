@@ -2,7 +2,7 @@
 
 ## Overview
 
-LingFlow's agent coordination system provides advanced multi-agent orchestration with automatic agent registration, dependency-aware scheduling, parallel execution, and context compression.
+lingflow's agent coordination system provides advanced multi-agent orchestration with automatic agent registration, dependency-aware scheduling, parallel execution, and context compression.
 
 **Key Capabilities:**
 - Automatic agent registration from configuration
@@ -129,7 +129,7 @@ print(f"Workflow status: {coordinator.get_workflow_status()}")
 
 ### Agent Types
 
-LingFlow comes with 6 pre-configured agent types:
+lingflow comes with 6 pre-configured agent types:
 
 | Agent Type | Capabilities | Use Case |
 |------------|--------------|----------|
@@ -385,7 +385,7 @@ for result in results:
         # Handle failure appropriately
 ```
 
-## Integration with LingFlow Skills
+## Integration with lingflow Skills
 
 ### Subagent-Driven Development
 
@@ -407,13 +407,13 @@ if all(t.dependencies == [] for t in tasks):
 ### Test Verification
 
 ```python
-from lingflow_integration import LingFlowIntegration
+from lingflow_integration import lingflowIntegration
 
 # Run tests after parallel execution
 results = coordinator.execute_workflow(tasks)
 
-# Verify all implementations with LingFlow
-integration = LingFlowIntegration()
+# Verify all implementations with lingflow
+integration = lingflowIntegration()
 for result in results:
     if result.success:
         verification = integration.run_tests(result.task_id)

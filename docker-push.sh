@@ -1,5 +1,5 @@
 #!/bin/bash
-# LingFlow 多仓库 Docker 镜像推送脚本 v2.0
+# lingflow 多仓库 Docker 镜像推送脚本 v2.0
 # 支持: Docker Hub, 阿里云, GitHub CR
 # 使用: ./docker-push.sh [version]
 
@@ -61,7 +61,7 @@ retry_push() {
 
 # 主流程
 echo ""
-echo "🐳 LingFlow 多仓库镜像推送"
+echo "🐳 lingflow 多仓库镜像推送"
 echo "========================================"
 log_info "源镜像: $SOURCE_IMAGE"
 log_info "版本: $VERSION"

@@ -83,7 +83,7 @@ class HandoffDocument:
     def to_markdown(self) -> str:
         """生成交接文档的 Markdown 表示"""
         parts = [
-            "# LingFlow 会话交接文档",
+            "# lingflow 会话交接文档",
             "",
             f"**版本**: {self.version}",
             f"**时间**: {self.timestamp}",

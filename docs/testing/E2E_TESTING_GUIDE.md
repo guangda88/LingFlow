@@ -17,7 +17,7 @@ Ensure the following are available:
 
 ```bash
 # From project directory
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 
 # Set up environment and run tests
 export PATH="/tmp/node-v22.12.0-linux-x64/bin:$PATH"

@@ -1,4 +1,4 @@
-"""LingFlow 定时调度器
+"""lingflow 定时调度器
 
 支持 cron / interval / delay 三类定时任务，
 具备失败重试、分布式锁、执行上下文隔离能力。
@@ -120,7 +120,7 @@ class TaskExecution:
 
 
 class LingScheduler:
-    """LingFlow 定时调度器
+    """lingflow 定时调度器
 
     用法：
         scheduler = LingScheduler()

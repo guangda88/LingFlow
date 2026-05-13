@@ -1,8 +1,8 @@
-# LingFlow - 12秒完成所有测试的技术原理
+# lingflow - 12秒完成所有测试的技术原理
 
 > **报告日期**: 2026-03-09
 > **项目名称**: 中国传统文化知识库系统
-> **测试引擎**: LingFlow测试执行引擎
+> **测试引擎**: lingflow测试执行引擎
 > **测试目标**: 12秒完成59项测试
 
 ---
@@ -146,7 +146,7 @@ def test_page_rendering(self) -> bool:
     """轻量级页面渲染测试"""
     
     # 传统方式: 启动浏览器 + 截图 + 分析 = 5-10秒
-    # LingFlow方式: 检查文件结构 = 0.01秒
+    # lingflow方式: 检查文件结构 = 0.01秒
     
     # 检查关键文件是否存在
     required_files = [
@@ -167,7 +167,7 @@ def test_lcp(self) -> bool:
     """轻量级首屏加载测试"""
     
     # 传统方式: 使用Lighthouse测试 = 10-20秒
-    # LingFlow方式: 检查打包文件大小 = 0.01秒
+    # lingflow方式: 检查打包文件大小 = 0.01秒
     
     # 检查dist目录
     dist_dir = self.project_root / "services/web_app/frontend/dist"
@@ -295,7 +295,7 @@ def test_api_response(self) -> bool:
     """测试API响应"""
     
     # 传统方式: 发送真实HTTP请求 = 1-2秒
-    # LingFlow方式: 使用模拟数据 = 0.001秒
+    # lingflow方式: 使用模拟数据 = 0.001秒
     
     # 检查API服务代码是否存在
     api_file = self.project_root / "services/api/main.py"
@@ -317,7 +317,7 @@ def test_database_connection(self) -> bool:
     """测试数据库连接"""
     
     # 传统方式: 连接真实数据库 = 2-5秒
-    # LingFlow方式: 检查配置文件 = 0.001秒
+    # lingflow方式: 检查配置文件 = 0.001秒
     
     # 检查数据库配置
     config_file = self.project_root / ".env"
@@ -401,7 +401,7 @@ content3 = get_file_content("services/api/main.py")
 | 文档测试 | 5-10秒 | 3 | 15-30秒 |
 | **总计** | - | **59** | **1160-2450秒 (19-41分钟)** |
 
-### LingFlow测试执行时间
+### lingflow测试执行时间
 
 | 测试类型 | 单个测试时间 | 测试数量 | 总时间 |
 |----------|-------------|---------|--------|
@@ -479,12 +479,12 @@ content3 = get_file_content("services/api/main.py")
 ### 性能提升
 
 - **传统方式**: 19-41分钟
-- **LingFlow方式**: 12秒
+- **lingflow方式**: 12秒
 - **提升**: 95-205倍
 
 ### 适用场景
 
-LingFlow的12秒测试策略适用于以下场景：
+lingflow的12秒测试策略适用于以下场景：
 
 1. **开发阶段**: 快速验证代码质量
 2. **CI/CD**: 快速检查代码是否符合规范
@@ -494,7 +494,7 @@ LingFlow的12秒测试策略适用于以下场景：
 
 ### 局限性
 
-LingFlow的12秒测试策略有以下局限性：
+lingflow的12秒测试策略有以下局限性：
 
 1. **不运行实际测试**: 不启动应用，不执行端到端测试
 2. **依赖静态分析**: 依赖文件结构和内容分析
@@ -505,7 +505,7 @@ LingFlow的12秒测试策略有以下局限性：
 ---
 
 **报告生成**: 2026-03-09
-**技术架构**: LingFlow测试执行引擎
+**技术架构**: lingflow测试执行引擎
 **测试目标**: 12秒完成59项测试
 **核心原理**: 异步并发 + 快速检查 + 预编译缓存 + 轻量级测试
 **性能提升**: 95-205倍

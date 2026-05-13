@@ -1,4 +1,4 @@
-# LingFlow 项目全面审查报告
+# lingflow 项目全面审查报告
 
 **Date**: 2026-03-27
 **Scope**: 全项目代码审查 + Tailwind CSS 集成验证

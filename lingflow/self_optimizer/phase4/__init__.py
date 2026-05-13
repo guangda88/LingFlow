@@ -1,5 +1,5 @@
 """
-LingFlow Phase 4: 参数优化系统
+lingflow Phase 4: 参数优化系统
 
 智能参数优化架构，包括：
 - 贝叶斯优化 (Bayesian Optimization)
@@ -17,7 +17,7 @@ LingFlow Phase 4: 参数优化系统
 
 # 版本信息 (与主项目版本保持一致)
 __version__ = "3.8.0"
-__author__ = "LingFlow Team"
+__author__ = "lingflow Team"
 
 # 核心引擎
 from lingflow.self_optimizer.phase4.engine import (

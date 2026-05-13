@@ -82,7 +82,7 @@ class KnowledgeSync:
         self._reports_dir = self._project_root / ".lingflow" / "reports"
         self._research_dir = self._reports_dir / "research"
         self._github_dir = self._reports_dir / "github_trends"
-        self._memory_file = self._project_root / ".claude" / "projects" / "-home-ai-LingFlow" / "memory" / "MEMORY.md"
+        self._memory_file = self._project_root / ".claude" / "projects" / "-home-ai-lingflow" / "memory" / "MEMORY.md"
         self._stats = SyncStats()
 
     async def sync_from_research(self) -> SyncResult:

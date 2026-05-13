@@ -1,5 +1,5 @@
 """
-LingFlow Phase 4: 参数持久化存储
+lingflow Phase 4: 参数持久化存储
 
 YOLO实现：简单、快速、有效
 """

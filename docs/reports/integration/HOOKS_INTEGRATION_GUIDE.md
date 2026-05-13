@@ -1,4 +1,4 @@
-# LingFlow 自优化钩子系统 - 使用指南
+# lingflow 自优化钩子系统 - 使用指南
 
 **集成日期**: 2026-03-31
 **状态**: ✅ 已启用
@@ -7,7 +7,7 @@
 
 ## 🎯 系统概述
 
-自优化钩子系统已成功集成到LingFlow启动流程中。该系统会在特定事件自动触发，检查代码质量，并在必要时提示用户运行优化。
+自优化钩子系统已成功集成到lingflow启动流程中。该系统会在特定事件自动触发，检查代码质量，并在必要时提示用户运行优化。
 
 ### 集成验证
 
@@ -20,12 +20,12 @@ $ python test_hooks_integration.py
 
 ## 🚀 自动启动
 
-Hooks系统现在在LingFlow启动时自动初始化：
+Hooks系统现在在lingflow启动时自动初始化：
 
 ```python
 from lingflow.bootstrap import bootstrap
 
-# 启动LingFlow（hooks默认启用）
+# 启动lingflow（hooks默认启用）
 status = bootstrap()
 # status['hooks'] 包含钩子实例
 ```
@@ -367,7 +367,7 @@ print(f'Trigger: {should}, Reason: {info.reason}')
 
 ## 🎉 总结
 
-LingFlow自优化钩子系统现已完全集成并可正常工作。
+lingflow自优化钩子系统现已完全集成并可正常工作。
 
 **关键特性**:
 - ✅ 自动检测代码质量问题
@@ -383,4 +383,4 @@ LingFlow自优化钩子系统现已完全集成并可正常工作。
 
 ---
 
-*LingFlow 自优化系统 - 让代码质量持续改进* 🚀
+*lingflow 自优化系统 - 让代码质量持续改进* 🚀

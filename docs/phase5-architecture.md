@@ -1,4 +1,4 @@
-# LingFlow Phase 5: AI工具学习系统架构设计
+# lingflow Phase 5: AI工具学习系统架构设计
 
 **版本**: v1.0
 **日期**: 2026-03-31
@@ -24,7 +24,7 @@
 
 ## 系统概述
 
-Phase 5 AI工具学习系统旨在让LingFlow从外部AI代码分析工具（如SonarQube、CodeQL、Semgrep等）中学习，提取有价值的规则和模式，并将这些知识自动集成到LingFlow的代码审查和优化流程中。
+Phase 5 AI工具学习系统旨在让lingflow从外部AI代码分析工具（如SonarQube、CodeQL、Semgrep等）中学习，提取有价值的规则和模式，并将这些知识自动集成到lingflow的代码审查和优化流程中。
 
 ### 核心理念
 
@@ -41,7 +41,7 @@ Phase 5 AI工具学习系统旨在让LingFlow从外部AI代码分析工具（如
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        LingFlow 系统                             │
+│                        lingflow 系统                             │
 ├─────────────────────────────────────────────────────────────────┤
 │  现有组件:                                                        │
 │  ├── code-review技能 (8维代码审查)                               │
@@ -548,7 +548,7 @@ class ExtractedRule:
     enabled: bool = True             # 是否启用
 
     def to_lingflow_rule(self) -> Dict[str, Any]:
-        """转换为LingFlow代码审查规则"""
+        """转换为lingflow代码审查规则"""
         return {
             "rule_id": self.id,
             "name": self.name,
@@ -1351,7 +1351,7 @@ class Checkpoint:
 ```
 外部AI工具 → 适配器 → 标准化反馈 → 学习引擎 → 知识库
                                               ↓
- LingFlow系统 ← 集成层 ← 应用层 ← 安全检查 ← 建议生成
+ lingflow系统 ← 集成层 ← 应用层 ← 安全检查 ← 建议生成
                                               ↑
                                            用户确认
 ```
@@ -1721,4 +1721,4 @@ rollback:
 
 **文档版本**: v1.0
 **最后更新**: 2026-03-31
-**维护者**: LingFlow团队
+**维护者**: lingflow团队

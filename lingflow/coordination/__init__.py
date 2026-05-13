@@ -1,4 +1,4 @@
-"""LingFlow Coordination模块"""
+"""lingflow Coordination模块"""
 
 from .agent import Agent
 from .base import BaseAgent, BaseCoordinator

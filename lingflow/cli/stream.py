@@ -1,4 +1,4 @@
-"""Stream command for LingFlow - multi-project streaming responses."""
+"""Stream command for lingflow - multi-project streaming responses."""
 
 import asyncio
 import json
@@ -6,9 +6,9 @@ from pathlib import Path
 
 import click
 
-from lingflow import LingFlow
+from lingflow import lingflow
 
-lf = LingFlow()
+lf = lingflow()
 
 
 @click.command()
@@ -19,7 +19,7 @@ lf = LingFlow()
 def stream(project, message, thread, timeout):
     """流式响应 - 支持多工程流
 
-    用于实时流式返回LingFlow的响应内容。
+    用于实时流式返回lingflow的响应内容。
     """
     async def _stream():
         # 发送特殊标记以标识流开始
@@ -27,7 +27,7 @@ def stream(project, message, thread, timeout):
 
         try:
             # 这里模拟流式响应
-            # 在实际实现中，应该从LingFlow获取流式输出
+            # 在实际实现中，应该从lingflow获取流式输出
             result = lf.run_skill("default", {"message": message})
 
             # 将结果分割成块来模拟流式输出

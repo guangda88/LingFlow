@@ -1,6 +1,6 @@
 # 产品需求文档 (PRD) 模板
 
-> 基于 VibeCoding 最佳实践 - 灵通工程流系统 (LingFlow Engineering Flow)
+> 基于 VibeCoding 最佳实践 - 灵通工程流系统 (lingflow Engineering Flow)
 
 **项目名称**: [项目名称]
 **版本**: v1.0.0
@@ -427,7 +427,7 @@ GET /api/endpoint2
 
 **模板版本**: v1.0.0
 **最后更新**: 2026-03-30
-**维护者**: LingFlow Team
+**维护者**: lingflow Team
 
 **使用说明**:
 1. 复制此模板到你的项目目录
@@ -437,6 +437,6 @@ GET /api/endpoint2
 5. 随项目进展持续更新
 
 **相关资源**:
-- [LingFlow 开发规范](../DEVELOPMENT_RULES.md)
+- [lingflow 开发规范](../DEVELOPMENT_RULES.md)
 - [VibeCoding 最佳实践](./VIBECODING_BEST_PRACTICES.md)
 - [示例 PRD](./examples/)

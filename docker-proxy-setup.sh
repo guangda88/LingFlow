@@ -1,5 +1,5 @@
 #!/bin/bash
-# Docker 代理配置脚本 - LingFlow
+# Docker 代理配置脚本 - lingflow
 # 用于网络不稳定时推送 Docker 镜像
 
 echo "🌐 Docker 代理配置助手"

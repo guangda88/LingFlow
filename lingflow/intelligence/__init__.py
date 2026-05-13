@@ -1,10 +1,10 @@
-"""LingFlow 情报系统
+"""lingflow 情报系统
 
-智能采集、分析、报告LingFlow相关的网络情报。
+智能采集、分析、报告lingflow相关的网络情报。
 """
 
 __version__ = "2.0.0"
-__author__ = "LingFlow Team"
+__author__ = "lingflow Team"
 
 from .collectors.base import BaseCollector, CollectorManager
 from .collectors.hackernews import HNCollector
@@ -99,8 +99,8 @@ def create_collector_manager(
         manager.register("hackernews", HNCollector(config))
 
     # GitHub采集器需要单独导入
-    # 目前暂不集成，因为LingFlowMonitor不是BaseCollector子类
+    # 目前暂不集成，因为lingflowMonitor不是BaseCollector子类
     # if enable_github:
-    #     from .collectors.lingflow_monitor import LingFlowMonitor
+    #     from .collectors.lingflow_monitor import lingflowMonitor
 
     return manager

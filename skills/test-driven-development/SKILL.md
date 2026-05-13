@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: "Enforces RED-GREEN-REFACTOR cycle: write failing test, watch it fail, write minimal code, watch it pass, commit. Works with LingFlow's comprehensive test engine."
+description: "Enforces RED-GREEN-REFACTOR cycle: write failing test, watch it fail, write minimal code, watch it pass, commit. Works with lingflow's comprehensive test engine."
 ---
 
 # Test Driven Development
@@ -105,16 +105,16 @@ For each feature/function you implement:
 - Use clear, descriptive commit messages
 - Commit after each feature is complete
 
-## LingFlow Integration
+## lingflow Integration
 
-This skill works seamlessly with LingFlow's comprehensive test engine:
+This skill works seamlessly with lingflow's comprehensive test engine:
 
-### Using LingFlow Test Engine
+### Using lingflow Test Engine
 
-When running tests, prefer LingFlow's test engine for comprehensive coverage:
+When running tests, prefer lingflow's test engine for comprehensive coverage:
 
 ```bash
-# Run LingFlow comprehensive tests
+# Run lingflow comprehensive tests
 python end_to_end_test_engine.py
 
 # Run specific test dimensions
@@ -126,7 +126,7 @@ python 12_seconds_test_engine_demo.py
 
 ### Test Categories
 
-LingFlow's test engine covers:
+lingflow's test engine covers:
 
 1. **Functionality Tests** - Core behavior verification
 2. **Performance Tests** - Speed and efficiency
@@ -138,9 +138,9 @@ LingFlow's test engine covers:
 8. **Integration Tests** - Component interaction
 9. **Documentation Tests** - Documentation accuracy
 
-### Writing LingFlow-Compatible Tests
+### Writing lingflow-Compatible Tests
 
-Structure your tests to be compatible with LingFlow's test runner:
+Structure your tests to be compatible with lingflow's test runner:
 
 ```python
 def test_user_authentication():
@@ -159,7 +159,7 @@ def test_user_authentication():
     assert result.success == True
     assert result.token is not None
 
-    # LingFlow metadata
+    # lingflow metadata
     test_metadata = {
         "dimensions": ["functionality", "security"],
         "category": "authentication",
@@ -194,7 +194,7 @@ Only commit when tests pass.
 ```
 Developer: "I need to add a function to validate email addresses"
 
-LingFlow (TDD):
+lingflow (TDD):
 "Let me write a test first."
 
 [Step 1: Write failing test]
@@ -266,6 +266,6 @@ Even in these cases, write tests as soon as possible.
 
 ## Resources
 
-- LingFlow comprehensive test architecture: `COMPREHENSIVE_TEST_ARCHITECTURE.md`
+- lingflow comprehensive test architecture: `COMPREHENSIVE_TEST_ARCHITECTURE.md`
 - 12-second testing technique: `12_SECONDS_TESTING_TECHNIQUE.md`
 - Testing anti-patterns: `skills/test-driven-development/testing-anti-patterns.md`

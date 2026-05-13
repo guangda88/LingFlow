@@ -12,7 +12,7 @@
 |------|------------|-------|-------|------------|----------------|---------|
 | `lingflow/testing/fixtures/optional_deps.py` | NEW | ✅ `require()` wraps `pytest.importorskip` correctly; `require_batch()` iterates with fallback reason | ✅ `require(module_name: str, reason: str) -> Any`; `require_batch(*module_names) -> dict` | ✅ Empty reason falls back to default message | ✅ Delegates to pytest's skip mechanism | **PASS** |
 | `lingflow/coordination/coordinator.py` | MODIFIED | ✅ Audit gate enforces no-bypass; `LING_SKIP_AUDIT=1` deprecated → minimal; `skip` rejected → minimal | ✅ `_check_audit_gate() -> Dict[str, Any]` with `passed`, `reason`, `level` | ✅ skill_name nonexistent, params not dict, SecurityAnalyzer import fails | ✅ All branches return dict with `passed` key; `execute_skill` uses `.get("passed", True)` | **PASS** |
-| `.scripts/ci_simulate.py` | NEW | ✅ `parent.parent` resolves to repo root; hard blocks (black/isort/collection) vs soft warnings (flake8/tests) | ✅ `run() -> bool`, `main() -> int` | ✅ Non-LingFlow repo detected; empty staged files handled | ✅ `subprocess.run` with capture; exit codes 0/1 | **PASS** |
+| `.scripts/ci_simulate.py` | NEW | ✅ `parent.parent` resolves to repo root; hard blocks (black/isort/collection) vs soft warnings (flake8/tests) | ✅ `run() -> bool`, `main() -> int` | ✅ Non-lingflow repo detected; empty staged files handled | ✅ `subprocess.run` with capture; exit codes 0/1 | **PASS** |
 | `skills/ci-health-monitor/implementation.py` | NEW | ✅ 6-category classification; RED/YELLOW/GREEN status; fix suggestions per category | ✅ `execute_skill(params: Dict) -> Dict`; internal functions typed | ✅ Empty output → GREEN; no matches → empty classified | ✅ `_run_local_ci` falls back to `_run_basic_checks`; `execute_skill` wraps local CI in try/except | **PASS** |
 | `lingflow-api/tests/test_api.py` | MODIFIED | ✅ `pytest.importorskip("fastapi")` at module level skips entire file when fastapi missing | ✅ No type changes | ✅ `importorskip` handles ModuleNotFoundError | ✅ Skipped module means no further execution | **PASS** |
 | `skills/skills.json` | MODIFIED | ✅ `ci-health-monitor` entry with correct path and triggers | ✅ JSON valid | ✅ — | ✅ — | **PASS** |
@@ -68,7 +68,7 @@
 | **SYNTAX** | All new files exist, parse correctly, import without error | ✅ PASS |
 | **SEMANTIC** | Each file does what it claims (audit gate blocks bypass, deps isolate, CI sim catches issues, health monitor classifies failures) | ✅ PASS |
 | **INTENT** | Overall change prevents the CI cascade failure from recurring — addresses all 4 systemic root causes | ✅ PASS |
-| **BOUNDARY** | Edge cases handled: empty module_name, SecurityAnalyzer unavailable, non-LingFlow repo, empty CI output, `gh` command missing | ✅ PASS |
+| **BOUNDARY** | Edge cases handled: empty module_name, SecurityAnalyzer unavailable, non-lingflow repo, empty CI output, `gh` command missing | ✅ PASS |
 
 ---
 

@@ -21,7 +21,7 @@ def execute_skill(params):
     result = {
         'skill': 'skill-integration',
         'status': 'ready',
-        'description': '将新技能集成到 LingFlow 系统',
+        'description': '将新技能集成到 lingflow 系统',
         'steps': [
             '1. 验证技能目录结构',
             '2. 检查依赖关系',

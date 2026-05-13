@@ -127,13 +127,13 @@ After saving the plan:
 - Execute plan in current session using superpowers:executing-plans
 - Batch execution with checkpoints for review
 
-## LingFlow Integration
+## lingflow Integration
 
-This skill integrates with LingFlow's existing capabilities:
+This skill integrates with lingflow's existing capabilities:
 
-- **Comprehensive Testing**: Include LingFlow's test engine in the testing steps
+- **Comprehensive Testing**: Include lingflow's test engine in the testing steps
 - **Code Analysis**: Use code analysis to understand existing code before planning modifications
-- **Documentation**: Leverage LingFlow's documentation generation for creating docs
+- **Documentation**: Leverage lingflow's documentation generation for creating docs
 - **Token Optimization**: Plans are designed to be concise while being complete
 
 ## Example Plan

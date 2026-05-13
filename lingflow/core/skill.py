@@ -1,6 +1,6 @@
-"""LingFlow Skill System Module
+"""lingflow Skill System Module
 
-This module provides a standardized skill interface for LingFlow.
+This module provides a standardized skill interface for lingflow.
 Supports both class-based and function-based skills.
 """
 

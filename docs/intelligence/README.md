@@ -1,6 +1,6 @@
-# LingFlow 情报系统
+# lingflow 情报系统
 
-智能采集、分析、报告LingFlow相关的网络情报。
+智能采集、分析、报告lingflow相关的网络情报。
 
 ## 系统架构
 
@@ -43,20 +43,20 @@ python scripts/intelligence_pipeline.py --no-reddit
 
 ```python
 from lingflow.intelligence.collectors import (
-    LingFlowMonitor,
+    lingflowMonitor,
     RedditCollector,
     HNCollector,
 )
 
 # GitHub采集
-monitor = LingFlowMonitor()
+monitor = lingflowMonitor()
 issues = monitor.collect_issues(state="open", days=7)
 discussions = monitor.collect_discussions(days=7)
 
 # Reddit采集
 reddit = RedditCollector()
 mentions = reddit.search_mentions(
-    keywords=["LingFlow"],
+    keywords=["lingflow"],
     limit=100,
     days=7
 )
@@ -64,7 +64,7 @@ mentions = reddit.search_mentions(
 # Hacker News采集
 hn = HNCollector()
 mentions = hn.search_mentions(
-    keywords=["LingFlow"],
+    keywords=["lingflow"],
     limit=100,
     days=7
 )
@@ -81,7 +81,7 @@ from lingflow.intelligence.analyzers import (
 
 # 情感分析
 sentiment = SentimentAnalyzer()
-result = sentiment.analyze("LingFlow is awesome!")
+result = sentiment.analyze("lingflow is awesome!")
 
 # 影响力分析
 influence = InfluenceAnalyzer()
@@ -150,7 +150,7 @@ class DailyReport:
 
 ```
 ╔════════════════════════════════════════════════════════════╗
-║        📊 LingFlow 情报简报 - 2026-04-03                   ║
+║        📊 lingflow 情报简报 - 2026-04-03                   ║
 ╠════════════════════════════════════════════════════════════╣
 ║                                                            ║
 ║  📋 摘要                                                  ║
@@ -174,7 +174,7 @@ class DailyReport:
 ║    3. installation                                         ║
 ║                                                            ║
 ║  ✅ 亮点                                                  ║
-║    • "LingFlow: The Future of Automation" (150👍)          ║
+║    • "lingflow: The Future of Automation" (150👍)          ║
 ║    • "Best tool for AI automation" (45👍)                  ║
 ║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
@@ -189,7 +189,7 @@ class DailyReport:
 crontab -e
 
 # 添加以下行 (每天早上8点运行)
-0 8 * * * cd /path/to/LingFlow && python scripts/intelligence_pipeline.py >> .lingflow/logs/intelligence.log 2>&1
+0 8 * * * cd /path/to/lingflow && python scripts/intelligence_pipeline.py >> .lingflow/logs/intelligence.log 2>&1
 ```
 
 ### 使用 systemd timer
@@ -198,12 +198,12 @@ crontab -e
 
 ```ini
 [Unit]
-Description=LingFlow Intelligence System
+Description=lingflow Intelligence System
 After=network.target
 
 [Service]
 Type=oneshot
-WorkingDirectory=/path/to/LingFlow
+WorkingDirectory=/path/to/lingflow
 ExecStart=/usr/bin/python3 scripts/intelligence_pipeline.py
 ```
 
@@ -211,7 +211,7 @@ ExecStart=/usr/bin/python3 scripts/intelligence_pipeline.py
 
 ```ini
 [Unit]
-Description=LingFlow Intelligence Timer
+Description=lingflow Intelligence Timer
 
 [Timer]
 OnCalendar=daily
@@ -295,7 +295,7 @@ export REDDIT_CLIENT_SECRET=your_client_secret
 ```yaml
 # .lingflow/intelligence/config.yaml
 intelligence:
-  repo: "guangda88/LingFlow"
+  repo: "guangda88/lingflow"
 
   collectors:
     github:

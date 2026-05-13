@@ -1,4 +1,4 @@
-name: LingFlow Quality Gate
+name: lingflow Quality Gate
 
 # 触发条件
 on:
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run LingFlow Review
+      - name: Run lingflow Review
         uses: lingflow/actions/quality-gate@v1
         with:
           command: review

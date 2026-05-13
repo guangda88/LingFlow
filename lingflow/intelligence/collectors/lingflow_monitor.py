@@ -1,6 +1,6 @@
-"""LingFlow 项目监控器 - 监控GitHub上的Issues、Discussions和评价
+"""lingflow 项目监控器 - 监控GitHub上的Issues、Discussions和评价
 
-收集网络世界对LingFlow系统的讨论和评价。
+收集网络世界对lingflow系统的讨论和评价。
 """
 
 import json
@@ -53,16 +53,16 @@ class MentionData:
         }
 
 
-class LingFlowMonitor:
-    """LingFlow项目监控器
+class lingflowMonitor:
+    """lingflow项目监控器
 
-    监控GitHub上关于LingFlow的讨论和评价，包括Issues和Discussions。
+    监控GitHub上关于lingflow的讨论和评价，包括Issues和Discussions。
     """
 
     # 搜索关键词 - 用于在第三方平台搜索
-    SEARCH_KEYWORDS = ["LingFlow", "lingflow-core", "lingflow.ai", "灵通工程流"]
+    SEARCH_KEYWORDS = ["lingflow", "lingflow-core", "lingflow.ai", "灵通工程流"]
 
-    def __init__(self, repo: str = "guangda88/LingFlow", token: Optional[str] = None):
+    def __init__(self, repo: str = "guangda88/lingflow", token: Optional[str] = None):
         """初始化监控器
 
         Args:
@@ -321,11 +321,11 @@ class LingFlowMonitor:
 def main():
     """主函数 - 测试监控器"""
     print("=" * 60)
-    print("🔍 LingFlow 项目监控器")
+    print("🔍 lingflow 项目监控器")
     print("=" * 60)
     print()
 
-    monitor = LingFlowMonitor()
+    monitor = lingflowMonitor()
 
     # 采集最近7天的数据
     all_mentions = []

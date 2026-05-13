@@ -1,4 +1,4 @@
-"""LingFlow Tool Interface Standard (ToolSpec v1.0)
+"""lingflow Tool Interface Standard (ToolSpec v1.0)
 
 灵字辈统一的工具描述协议。所有灵字辈成员（灵依、灵克、灵知）的工具
 都应通过 ToolSpec 注册，实现跨项目互操作。

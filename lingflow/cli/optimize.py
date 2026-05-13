@@ -8,7 +8,7 @@ import click
 
 @click.group()
 def optimize():
-    """自优化系统（基于LingMinOpt）"""
+    """自优化系统（基于lingminopt）"""
 
 
 @optimize.command()
@@ -240,7 +240,7 @@ def generate_config(report, output):
     config = {"structure_optimization": params}
 
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write("# LingFlow 自优化配置\n")
+        f.write("# lingflow 自优化配置\n")
         f.write(f"# 从报告生成: {report}\n")
         f.write(f"# 时间: {Path(report).stat().st_mtime}\n\n")
         yaml.dump(config, f, default_flow_style=False, allow_unicode=True)

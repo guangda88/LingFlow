@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LingFlow PromptRouter - 使用示例和测试"""
+"""lingflow PromptRouter - 使用示例和测试"""
 
 import sys
 from pathlib import Path
@@ -17,7 +17,7 @@ from lingflow.core.prompt_router import (
 )
 
 print("=" * 70)
-print("🔀 LingFlow PromptRouter - 使用示例")
+print("🔀 lingflow PromptRouter - 使用示例")
 print("=" * 70)
 print()
 

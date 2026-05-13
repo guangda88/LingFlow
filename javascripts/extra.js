@@ -1,4 +1,4 @@
-// LingFlow自定义JavaScript
+// lingflow自定义JavaScript
 
 // 复制代码按钮
 document.addEventListener('DOMContentLoaded', function() {

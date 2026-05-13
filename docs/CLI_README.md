@@ -1,4 +1,4 @@
-# LingFlow CLI 使用指南
+# lingflow CLI 使用指南
 
 ## 快速开始
 

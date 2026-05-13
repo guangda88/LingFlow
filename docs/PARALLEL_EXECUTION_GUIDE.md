@@ -2,7 +2,7 @@
 
 ## Overview
 
-LingFlow's parallel execution system enables concurrent task execution with dependency-aware scheduling, automatic agent selection, and real-time monitoring. This provides 2-4x speedup for workflows with independent tasks.
+lingflow's parallel execution system enables concurrent task execution with dependency-aware scheduling, automatic agent selection, and real-time monitoring. This provides 2-4x speedup for workflows with independent tasks.
 
 **Key Capabilities:**
 - Parallel task execution (2-4x speedup)
@@ -465,7 +465,7 @@ optimal_agents = get_optimal_parallel_agents()
 coordinator = AgentCoordinator(max_parallel_agents=optimal_agents)
 ```
 
-## Integration with LingFlow
+## Integration with lingflow
 
 ### Skill-Based Execution
 
@@ -500,13 +500,13 @@ if are_tasks_independent(tasks):
 ### Test Verification
 
 ```python
-from lingflow_integration import LingFlowIntegration
+from lingflow_integration import lingflowIntegration
 
 # Run parallel tasks
 results = await coordinator.execute_tasks_parallel(tasks)
 
-# Verify with LingFlow test engine
-integration = LingFlowIntegration()
+# Verify with lingflow test engine
+integration = lingflowIntegration()
 verifications = []
 
 for result in results:

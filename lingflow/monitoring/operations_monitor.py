@@ -1,4 +1,4 @@
-"""LingFlow Operations Monitoring Module
+"""lingflow Operations Monitoring Module
 
 整合应用级监控和系统级性能追踪。
 

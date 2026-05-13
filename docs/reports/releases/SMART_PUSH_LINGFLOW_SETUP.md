@@ -1,9 +1,9 @@
-# LingFlow 项目 - Smart Push v3.0 部署文档
+# lingflow 项目 - Smart Push v3.0 部署文档
 
 ## ✓ 部署完成
 
 **部署日期**: 2026-03-29
-**项目**: LingFlow
+**项目**: lingflow
 **版本**: Smart Push v3.0
 
 ---
@@ -13,8 +13,8 @@
 ### 远程仓库
 | 远程名称 | 地址 | 用途 |
 |---------|------|------|
-| **github** | git@github.com:guangda88/LingFlow.git | GitHub 主仓库 |
-| **origin** | http://zhinenggitea.iepose.cn/guangda/LingFlow.git | Gitea 内部仓库 |
+| **github** | git@github.com:guangda88/lingflow.git | GitHub 主仓库 |
+| **origin** | http://zhinenggitea.iepose.cn/guangda/lingflow.git | Gitea 内部仓库 |
 
 ### 当前分支
 - master（与 origin/master 同步）
@@ -25,7 +25,7 @@
 
 ### 基础使用
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 
 # 推送到默认远程（origin）
 git smart-push
@@ -112,8 +112,8 @@ git status
 创建快捷别名：
 ```bash
 # 添加到 ~/.bashrc 或 ~/.zshrc
-alias lf-push='cd /home/ai/LingFlow && git smart-push github origin'
-alias lf-debug='cd /home/ai/LingFlow && DEBUG=1 git smart-push'
+alias lf-push='cd /home/ai/lingflow && git smart-push github origin'
+alias lf-debug='cd /home/ai/lingflow && DEBUG=1 git smart-push'
 
 # 使用
 lf-push      # 推送到双仓库
@@ -133,7 +133,7 @@ lf-debug     # 调试模式推送
 
 ### 项目本地 Hooks
 ```bash
-/home/ai/LingFlow/.git/hooks/smart-push  # 项目本地版本
+/home/ai/lingflow/.git/hooks/smart-push  # 项目本地版本
 ```
 
 ### 共享资源
@@ -180,7 +180,7 @@ DEBUG=1 git smart-push github origin
 
 ## 性能基准
 
-### LingFlow 项目测试
+### lingflow 项目测试
 
 | 连接方式 | GitHub | Gitea | 状态 |
 |---------|--------|-------|------|

@@ -1,4 +1,4 @@
-"""LingFlow Monitoring Module
+"""lingflow Monitoring Module
 
 Provides operations monitoring, health checks, and alerting capabilities.
 """

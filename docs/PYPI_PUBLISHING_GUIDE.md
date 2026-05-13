@@ -1,4 +1,4 @@
-# LingFlow PyPI 发布指南
+# lingflow PyPI 发布指南
 
 ## 📦 当前状态
 
@@ -75,7 +75,7 @@ pip install --index-url https://test.pypi.org/simple/ lingflow-core
 
 ```bash
 # 确保在项目根目录
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 
 # 发布
 twine upload dist/* --token __your_pypi_token__
@@ -209,7 +209,7 @@ pip install lingflow-core[intelligence]
 
 **准备好发布了吗？** 只需运行：
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 twine upload dist/* --token __your_token_here__
 ```
 

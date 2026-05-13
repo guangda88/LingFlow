@@ -4,7 +4,7 @@
 Usage:
     python scripts/session_index.py              # Full index, sorted by date
     python scripts/session_index.py --recent 10  # Last 10 sessions
-    python scripts/session_index.py --project LingFlow  # Filter by project
+    python scripts/session_index.py --project lingflow  # Filter by project
     python scripts/session_index.py --json       # Output as JSON
 """
 
@@ -18,7 +18,7 @@ SESSIONS_ROOT = Path.home() / ".claude" / "projects"
 
 
 def extract_project_name(dir_name: str) -> str:
-    """Convert '-home-ai-LingFlow' to 'LingFlow'."""
+    """Convert '-home-ai-lingflow' to 'lingflow'."""
     parts = dir_name.lstrip("-").split("-")
     # Skip 'home', 'ai' prefix
     if len(parts) > 2 and parts[0] == "home" and parts[1] == "ai":

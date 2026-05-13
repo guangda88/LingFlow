@@ -1,4 +1,4 @@
-# LingFlow 2周冲刺 - 完成报告
+# lingflow 2周冲刺 - 完成报告
 
 **日期**: 2026-04-02
 **状态**: ✅ 全部完成
@@ -155,9 +155,9 @@ API 代码:                     ~800 行
 ### 场景 1: Python 开发者使用 SDK
 
 ```python
-from lingflow_sdk import LingFlowClient
+from lingflow_sdk import lingflowClient
 
-client = LingFlowClient()
+client = lingflowClient()
 
 # 执行代码生成
 result = client.skills.execute(
@@ -186,7 +186,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: guangda88/LingFlow/actions/quality-gate@v1
+      - uses: guangda88/lingflow/actions/quality-gate@v1
         with:
           command: review
           path: ./src
@@ -283,7 +283,7 @@ const skills = await response.json();
 **核心理念**:
 > **"众智混元，万法灵通"**
 
-从本地工具到 AI 生态平台，LingFlow 完成了华丽转身！
+从本地工具到 AI 生态平台，lingflow 完成了华丽转身！
 
 ---
 
@@ -291,4 +291,4 @@ const skills = await response.json();
 **日期**: 2026-04-02
 **版本**: v1.0.0
 
-*LingFlow - AI 增强的软件工程流系统*
+*lingflow - AI 增强的软件工程流系统*

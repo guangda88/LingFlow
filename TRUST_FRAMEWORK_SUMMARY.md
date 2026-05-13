@@ -2,13 +2,13 @@
 
 ## 概述 (Overview)
 
-实现了 LingFlow 的可信输出验证框架 (Trust Framework)，解决 "AI 声称完成但未验证" 的问题。
+实现了 lingflow 的可信输出验证框架 (Trust Framework)，解决 "AI 声称完成但未验证" 的问题。
 
 ## 背景 (Background)
 
 ### 问题来源
 
-来自 LingYi 项目的 `energy_pct` "数据幻觉" 事件：
+来自 lingyi 项目的 `energy_pct` "数据幻觉" 事件：
 - `energy_pct` 字段被定义、存储、显示
 - 但从未被任何代码更新（始终显示为 0）
 - UI 字段未能回答：数据来源？谁更新它？
@@ -191,9 +191,9 @@ skills/metacognition-guard/
 ##### 示例用法
 
 ```python
-from lingflow import LingFlow
+from lingflow import lingflow
 
-lf = LingFlow()
+lf = lingflow()
 
 # 迁移到 PostgreSQL 的任务
 result = lf.run_skill("metacognition-guard", {
@@ -331,7 +331,7 @@ if not result["can_start"]:
 
 - 字段被定义、存储、显示
 - 但**从未被更新**
-- 例如：LingYi 中的 `energy_pct`
+- 例如：lingyi 中的 `energy_pct`
 
 ### 四层验证 (Four-Layer Verification)
 
@@ -382,7 +382,7 @@ tests/test_trust.py::test_git_diff_verifier PASSED                       [100%]
 ============================== 10 passed in 0.27s ===============================
 ```
 
-## 与 LingYi 的关联 (Connection to LingYi)
+## 与 lingyi 的关联 (Connection to lingyi)
 
 ### 问题根源
 
@@ -424,28 +424,28 @@ tests/test_trust.py::test_git_diff_verifier PASSED                       [100%]
 ### 新增文件
 
 **Trust Framework (信任框架)**:
-1. `/home/ai/LingFlow/lingflow/trust/__init__.py`
-2. `/home/ai/LingFlow/lingflow/trust/verifier.py`
-3. `/home/ai/LingFlow/tests/test_trust.py`
-4. `/home/ai/LingFlow/skills/trust-guardrail/skill.json`
-5. `/home/ai/LingFlow/skills/trust-guardrail/SKILL.md`
-6. `/home/ai/LingFlow/skills/trust-guardrail/implementation.py`
+1. `/home/ai/lingflow/lingflow/trust/__init__.py`
+2. `/home/ai/lingflow/lingflow/trust/verifier.py`
+3. `/home/ai/lingflow/tests/test_trust.py`
+4. `/home/ai/lingflow/skills/trust-guardrail/skill.json`
+5. `/home/ai/lingflow/skills/trust-guardrail/SKILL.md`
+6. `/home/ai/lingflow/skills/trust-guardrail/implementation.py`
 
 **Metacognition System (元认知系统)**:
-7. `/home/ai/LingFlow/lingflow/trust/metacognition.py`
-8. `/home/ai/LingFlow/tests/test_metacognition.py`
-9. `/home/ai/LingFlow/skills/metacognition-guard/skill.json`
-10. `/home/ai/LingFlow/skills/metacognition-guard/SKILL.md`
-11. `/home/ai/LingFlow/skills/metacognition-guard/implementation.py`
+7. `/home/ai/lingflow/lingflow/trust/metacognition.py`
+8. `/home/ai/lingflow/tests/test_metacognition.py`
+9. `/home/ai/lingflow/skills/metacognition-guard/skill.json`
+10. `/home/ai/lingflow/skills/metacognition-guard/SKILL.md`
+11. `/home/ai/lingflow/skills/metacognition-guard/implementation.py`
 
 **Documentation (文档)**:
-12. `/home/ai/LingFlow/TRUST_FRAMEWORK_SUMMARY.md` (本文件)
+12. `/home/ai/lingflow/TRUST_FRAMEWORK_SUMMARY.md` (本文件)
 
 ### 修改文件
 
-1. `/home/ai/LingFlow/AGENTS.md` - 添加数据真实性原则、元认知原则和完整使用示例
-2. `/home/ai/LingFlow/skills/skills.json` - 注册 trust-guardrail 和 metacognition-guard skills
-3. `/home/ai/LingFlow/tests/test_data_truth_enforcement.py` - 数据真实性原则测试（4个测试）
+1. `/home/ai/lingflow/AGENTS.md` - 添加数据真实性原则、元认知原则和完整使用示例
+2. `/home/ai/lingflow/skills/skills.json` - 注册 trust-guardrail 和 metacognition-guard skills
+3. `/home/ai/lingflow/tests/test_data_truth_enforcement.py` - 数据真实性原则测试（4个测试）
 
 ## 统计数据 (Statistics)
 
@@ -463,7 +463,7 @@ tests/test_trust.py::test_git_diff_verifier PASSED                       [100%]
 
 ## 引用 (References)
 
-- LingFlow AGENTS.md - 包含数据真实性原则、元认知原则和完整使用示例
+- lingflow AGENTS.md - 包含数据真实性原则、元认知原则和完整使用示例
 - `lingflow/trust/verifier.py` - 核心验证框架代码
 - `lingflow/trust/metacognition.py` - 元认知系统代码
 - `tests/test_trust.py` - 信任框架测试套件
@@ -475,7 +475,7 @@ tests/test_trust.py::test_git_diff_verifier PASSED                       [100%]
 
 **版本**: v2.0.0
 **日期**: 2026-04-08
-**作者**: LingFlow Development Team
+**作者**: lingflow Development Team
 **状态**: Production Ready ✅
 
 **变更历史**:

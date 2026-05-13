@@ -1,4 +1,4 @@
-# LingFlow 架构文档索引
+# lingflow 架构文档索引
 
 **最后更新**: 2026-03-31
 
@@ -75,7 +75,7 @@
 ## 🔍 审计与审查
 
 ### 综合审计
-- [LingFlow综合审计](../LINGFLOW_COMPREHENSIVE_AUDIT_FINAL.md) 最终审计
+- [lingflow综合审计](../LINGFLOW_COMPREHENSIVE_AUDIT_FINAL.md) 最终审计
 - [综合审计V2](../COMPREHENSIVE_AUDIT_REPORT_V2.md) V2版本
 
 ### 专项审计
@@ -93,7 +93,7 @@
 ### API站点
 - [工作流API](../../site/api/workflow/index.html) 工作流API
 - [协调API](../../site/api/coordination/index.html) 协调API
-- [LingFlow API](../../site/api/lingflow/index.html) 主API
+- [lingflow API](../../site/api/lingflow/index.html) 主API
 
 ---
 

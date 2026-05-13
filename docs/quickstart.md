@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-5 minutes to get LingFlow running.
+5 minutes to get lingflow running.
 
 ## Install
 
@@ -11,8 +11,8 @@ pip install lingflow
 Or from source:
 
 ```bash
-git clone https://github.com/guangda88/LingFlow.git
-cd LingFlow
+git clone https://github.com/guangda88/lingflow.git
+cd lingflow
 pip install -e .
 ```
 
@@ -36,9 +36,9 @@ This creates a `.lingflow/` directory with default configuration.
 ### Run a Skill
 
 ```python
-from lingflow import LingFlow
+from lingflow import lingflow
 
-lf = LingFlow()
+lf = lingflow()
 
 result = lf.run_skill("brainstorming", {"topic": "new feature"})
 print(result)
@@ -82,7 +82,7 @@ result = lf.run_workflow_file("workflow.yaml")
 
 ### Smart Compression
 
-LingFlow automatically manages context window usage:
+lingflow automatically manages context window usage:
 
 ```python
 from lingflow.compression import compress_messages
@@ -125,8 +125,8 @@ status = monitor.get_overall_health()
 List available skills:
 
 ```python
-from lingflow import LingFlow
-lf = LingFlow()
+from lingflow import lingflow
+lf = lingflow()
 skills = lf.list_skills()
 for s in skills:
     print(f"  {s['name']}: {s['description']}")

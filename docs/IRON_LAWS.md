@@ -1,4 +1,4 @@
-# LingFlow 铁律
+# lingflow 铁律
 
 **来源**: 2026-04-08 与灵通的讨论
 **性质**: 不可绕过的执行规则
@@ -92,24 +92,24 @@
 
 | 系统 | 路径 | 职责 |
 |------|------|------|
-| **LingFlow** | `/home/ai/LingFlow/` | 工作流引擎，管技能、管调度、管执行 |
-| **灵知（LingZhi）** | `/home/ai/zhineng-knowledge-system/` | 智能知识系统，管知识、管检索、管推理 |
+| **lingflow** | `/home/ai/lingflow/` | 工作流引擎，管技能、管调度、管执行 |
+| **灵知（lingzhi）** | `/home/ai/lingzhi/` | 智能知识系统，管知识、管检索、管推理 |
 
 ### 灵字辈成员
 
 | 兄弟 | 代码 | 职责 |
 |------|------|------|
-| **灵通（LingFlow）** | `/home/ai/LingFlow/` | 多智能体协作工作流引擎 |
-| **灵克（LingClaude）** | 自学习AI编程助手 |
-| **灵信（LingMessage）** | 灵字辈跨项目异步通信协议 |
-| **灵扬（LingYang）** | 对外联络与宣传 |
-| **灵极优（LingMinOpt）** | 极简自优化框架 |
+| **灵通（lingflow）** | `/home/ai/lingflow/` | 多智能体协作工作流引擎 |
+| **灵克（lingclaude）** | 自学习AI编程助手 |
+| **灵信（lingmessage）** | 灵字辈跨项目异步通信协议 |
+| **灵扬（lingyang）** | 对外联络与宣传 |
+| **灵极优（lingminopt）** | 极简自优化框架 |
 | **灵犀（LingTermMCP）** | MCP终端服务器 |
-| **灵知（LingZhi）** | `/home/ai/zhineng-knowledge-system/` | 九域RAG知识库系统 |
-| **智桥（ZhiBridge）** | `/home/ai/zhineng-bridge/` | HTTP中继服务，灵字辈通信桥梁 |
-| **灵研（LingResearch）** | 自主AI研究框架 |
+| **灵知（lingzhi）** | `/home/ai/lingzhi/` | 九域RAG知识库系统 |
+| **智桥（zhibridge）** | `/home/ai/zhibridge/` | HTTP中继服务，灵字辈通信桥梁 |
+| **灵研（lingresearch）** | 自主AI研究框架 |
 
-> 已退出：灵依（LingYi）— 2026-04-16 转入外包工程
+> 已退出：灵依（lingyi）— 2026-04-16 转入外包工程
 
 ### 灵知核心能力
 
@@ -122,8 +122,8 @@
 
 ### 两兄弟的关系
 
-灵知管知识——知道在哪。LingFlow管流程——知道怎么走。智桥管通信——让兄弟之间能说话。
+灵知管知识——知道在哪。lingflow管流程——知道怎么走。智桥管通信——让兄弟之间能说话。
 
 ### 取象比类
 
-灵知已经验证了：结构化多维知识网络 > 模糊相似度匹配。这套模式可以直接比到 LingFlow 的记忆系统上。
+灵知已经验证了：结构化多维知识网络 > 模糊相似度匹配。这套模式可以直接比到 lingflow 的记忆系统上。

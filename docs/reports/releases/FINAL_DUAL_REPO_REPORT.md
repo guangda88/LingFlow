@@ -85,14 +85,14 @@
 
 **GitHub**: ✅ 推送成功
 ```
-github.com:guangda88/LingFlow.git
+github.com:guangda88/lingflow.git
 分支: master
 提交: f917bfa
 ```
 
 **智能GitLab**: ✅ 推送成功
 ```
-zhinenggitea.iepose.cn/guangda/LingFlow.git
+zhinenggitea.iepose.cn/guangda/lingflow.git
 分支: master
 提交: f917bfa
 ```

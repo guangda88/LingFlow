@@ -1,7 +1,7 @@
 """
-LingFlow Utility Modules
+lingflow Utility Modules
 
-This package provides utility functions and classes for LingFlow.
+This package provides utility functions and classes for lingflow.
 """
 
 from lingflow.utils.performance import (

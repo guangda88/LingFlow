@@ -61,7 +61,7 @@ def record_violation(
         "correction": correction,
         "root_cause": root_cause,
         "tags": tags or [],
-        "session_source": "LingFlow",
+        "session_source": "lingflow",
     }
 
     with open(filepath, "w", encoding="utf-8") as f:

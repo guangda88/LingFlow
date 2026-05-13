@@ -1,9 +1,9 @@
-# LingFlow Hooks 系统 v1.2.0 部署报告
+# lingflow Hooks 系统 v1.2.0 部署报告
 
 **部署日期**: 2026-03-29
 **部署状态**: ✅ 成功
 **测试状态**: ✅ 通过 (9/9)
-**适用项目**: LingFlow 多智能体系统
+**适用项目**: lingflow 多智能体系统
 
 ---
 
@@ -80,7 +80,7 @@ git config core.hooksPath .githooks
 
 ```
 ========================================
-  LingFlow Hooks 系统测试 v1.0
+  lingflow Hooks 系统测试 v1.0
 ========================================
 
 [TEST] 检查 Hooks 配置
@@ -295,4 +295,4 @@ check_something_new() {
 
 ---
 
-**签名**: LingFlow Hooks 系统 v1.2.0 部署完成 ✅
+**签名**: lingflow Hooks 系统 v1.2.0 部署完成 ✅

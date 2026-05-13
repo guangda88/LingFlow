@@ -8,7 +8,7 @@ from lingflow.common.exceptions import (
     AgentNotFoundError,
     CompressionError,
     ConfigurationError,
-    LingFlowError,
+    lingflowError,
     SkillError,
     SkillExecutionError,
     SkillLoadError,
@@ -20,32 +20,32 @@ from lingflow.common.exceptions import (
 )
 
 
-class TestLingFlowError:
+class TestlingflowError:
     def test_basic(self):
-        e = LingFlowError("test error")
+        e = lingflowError("test error")
         assert str(e) == "[LF_ERROR] test error"
         assert e.code == "LF_ERROR"
         assert e.details == {}
 
     def test_custom_code(self):
-        e = LingFlowError("msg", code="CUSTOM_001")
+        e = lingflowError("msg", code="CUSTOM_001")
         assert e.code == "CUSTOM_001"
         assert "[CUSTOM_001]" in str(e)
 
     def test_with_details(self):
-        e = LingFlowError("msg", details={"key": "val"})
+        e = lingflowError("msg", details={"key": "val"})
         assert e.details == {"key": "val"}
 
     def test_is_exception(self):
-        with pytest.raises(LingFlowError):
-            raise LingFlowError("boom")
+        with pytest.raises(lingflowError):
+            raise lingflowError("boom")
 
 
 class TestSkillErrors:
     def test_skill_not_found(self):
         e = SkillNotFoundError("skill-x")
         assert isinstance(e, SkillError)
-        assert isinstance(e, LingFlowError)
+        assert isinstance(e, lingflowError)
 
     def test_skill_load(self):
         e = SkillLoadError("load failed")
@@ -78,10 +78,10 @@ class TestAgentErrors:
 
 class TestOtherErrors:
     def test_compression(self):
-        assert isinstance(CompressionError("c"), LingFlowError)
+        assert isinstance(CompressionError("c"), lingflowError)
 
     def test_configuration(self):
-        assert isinstance(ConfigurationError("c"), LingFlowError)
+        assert isinstance(ConfigurationError("c"), lingflowError)
 
     def test_validation(self):
-        assert isinstance(ValidationError("c"), LingFlowError)
+        assert isinstance(ValidationError("c"), lingflowError)

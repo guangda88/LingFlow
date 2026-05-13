@@ -206,7 +206,7 @@ class TestKnowledgeFederation:
         federation = KnowledgeFederation()
         result = await federation.initialize()
 
-        # Should have at least LingFlow source
+        # Should have at least lingflow source
         assert result is True
         assert len(federation.get_available_sources()) >= 1
 

@@ -176,8 +176,8 @@ class NPMTrendCollector:
         return all_packages
 
 
-class LingFlowRelevanceAnalyzer:
-    """LingFlow相关性分析器 - npm版本"""
+class lingflowRelevanceAnalyzer:
+    """lingflow相关性分析器 - npm版本"""
 
     def __init__(self):
         # 核心关键词（高权重）
@@ -360,7 +360,7 @@ class TrendReporter:
         if high_value:
             report_lines.append("  1. 深入研究高价值包的功能和API")
             report_lines.append("  2. 查看其README和文档")
-            report_lines.append("  3. 评估是否可用于LingFlow的TypeScript/JavaScript部分")
+            report_lines.append("  3. 评估是否可用于lingflow的TypeScript/JavaScript部分")
         else:
             report_lines.append("  本次未发现特别高价值的包")
 
@@ -422,8 +422,8 @@ def main():
         return
 
     # 分析相关性
-    print(f"\n🔍 分析LingFlow相关性...")
-    analyzer = LingFlowRelevanceAnalyzer()
+    print(f"\n🔍 分析lingflow相关性...")
+    analyzer = lingflowRelevanceAnalyzer()
 
     analysis = {
         'high_value': [],

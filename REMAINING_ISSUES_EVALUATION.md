@@ -1,4 +1,4 @@
-# LingFlow v3.8.0 未完成问题评估
+# lingflow v3.8.0 未完成问题评估
 
 **评估日期**: 2026-04-02
 **基准**: P0 已全部修复，评估 P1-P3 问题
@@ -23,41 +23,41 @@
 ### P1.1 双配置系统并存
 
 **位置**:
-- `lingflow/core/config.py` - `LingFlowConfig` (dataclass)
+- `lingflow/core/config.py` - `lingflowConfig` (dataclass)
 - `lingflow/common/config.py` - `ConfigManager` (dict+env)
 
 **问题**:
 ```python
 # 两个配置系统共存
-# LingFlowConfig 被 2 处使用
+# lingflowConfig 被 2 处使用
 # ConfigManager 被 4 处生产代码使用
 ```
 
 **影响**:
 - 🔴 开发者困惑：不知道用哪个配置系统
 - 🟡 维护成本：需要同时维护两套配置
-- 🟡 代码冗余：`LingFlowConfig` 实质是死代码
+- 🟡 代码冗余：`lingflowConfig` 实质是死代码
 
 **使用统计**:
 ```bash
-LingFlowConfig:  2 处 (core/__init__.py + 1 测试)
+lingflowConfig:  2 处 (core/__init__.py + 1 测试)
 ConfigManager:   4 处生产代码
 ```
 
 **修复难度**: ⭐⭐⭐ (中高)
 - 需要设计讨论：保留哪个？
-- 需要迁移所有使用 `LingFlowConfig` 的代码
+- 需要迁移所有使用 `lingflowConfig` 的代码
 - 需要更新文档
 
 **建议修复**:
 ```yaml
 方案 A - 废弃 dataclass:
-  1. 给 LingFlowConfig 添加 @deprecated 装饰器
+  1. 给 lingflowConfig 添加 @deprecated 装饰器
   2. 迁移所有使用到 ConfigManager
-  3. v3.9.0 移除 LingFlowConfig
+  3. v3.9.0 移除 lingflowConfig
 
 方案 B - 统一到 dataclass:
-  1. 将 ConfigManager 逻辑迁移到 LingFlowConfig
+  1. 将 ConfigManager 逻辑迁移到 lingflowConfig
   2. 保持向后兼容
   3. 逐步废弃 ConfigManager
 
@@ -132,12 +132,12 @@ self._coordinator.execute_skill_async(...)
 **建议修复**:
 ```python
 # 方案 A - 添加公共方法
-class LingFlow:
+class lingflow:
     def execute_skill_async(self, skill_name, params):
         """异步执行技能"""
         return self._coordinator.execute_skill_async(skill_name, params)
 
-# 方案 B - 使用 LingFlow 公共接口
+# 方案 B - 使用 lingflow 公共接口
 result = lingflow.run_skill(skill_name, params)
 ```
 
@@ -638,4 +638,4 @@ P3 问题: ⚠️  3 (P3.3 建议修复)
 
 ---
 
-*LingFlow v3.8.0 - 未完成问题评估*
+*lingflow v3.8.0 - 未完成问题评估*

@@ -31,7 +31,7 @@ git remote -v
 ### 1. 准备工作
 
 ```bash
-cd /home/ai/LingFlow
+cd /home/ai/lingflow
 
 # 检查当前状态
 git status

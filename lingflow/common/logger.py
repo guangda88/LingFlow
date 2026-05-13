@@ -1,4 +1,4 @@
-"""LingFlow 日志模块"""
+"""lingflow 日志模块"""
 
 import logging
 import os
