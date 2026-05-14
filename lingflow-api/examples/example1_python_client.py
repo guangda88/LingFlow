@@ -6,7 +6,7 @@ import requests
 import json
 
 API_BASE = "http://localhost:8000"
-API_KEY = os.environ.get("LINGFLOW_API_KEY", "dev-key-12345")
+API_KEY = os.environ["LINGFLOW_API_KEY"]
 
 headers = {
     "X-API-Key": API_KEY,

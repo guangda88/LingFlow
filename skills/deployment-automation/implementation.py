@@ -581,7 +581,7 @@ test:
   variables:
     POSTGRES_DB: test_db
     POSTGRES_USER: test_user
-    POSTGRES_PASSWORD: test_pass
+    POSTGRES_PASSWORD: $CI_POSTGRES_PASSWORD
   script:
     - pytest tests/ -v --cov=app
   coverage: '/TOTAL.*\\s+(\\d+%)$/'
