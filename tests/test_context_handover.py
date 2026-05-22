@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""会话交接文档测试
+"""会话传递文档测试
 
-测试 HandoffDocument 的各项功能:
+测试 HandoverDocument 的各项功能:
 1. 创建与序列化
 2. Markdown/JSON 生成
 3. 从 ContextSnapshot 创建
@@ -10,7 +10,7 @@
 
 import json
 
-from lingflow.context.handoff import HandoffDocument
+from lingflow.context.handover import HandoverDocument
 from lingflow.context.manager import ContextSnapshot
 
 
@@ -18,14 +18,14 @@ class TestHandoffCreation:
     """创建测试"""
 
     def test_default_creation(self):
-        doc = HandoffDocument()
+        doc = HandoverDocument()
         assert doc.version == "1.0"
         assert doc.session_id == ""
         assert doc.tasks_completed == []
         assert doc.tasks_pending == []
 
     def test_full_creation(self):
-        doc = HandoffDocument(
+        doc = HandoverDocument(
             session_id="test-abc",
             reason="token_limit",
             current_task="implement feature X",
@@ -50,7 +50,7 @@ class TestHandoffSerialization:
     """序列化测试"""
 
     def test_to_dict(self):
-        doc = HandoffDocument(
+        doc = HandoverDocument(
             session_id="s1",
             tasks_completed=["task1"],
         )
@@ -61,7 +61,7 @@ class TestHandoffSerialization:
         assert "timestamp" in d
 
     def test_to_json(self):
-        doc = HandoffDocument(
+        doc = HandoverDocument(
             session_id="s2",
             reason="degradation",
         )
@@ -77,7 +77,7 @@ class TestHandoffSerialization:
             "tasks_pending": ["c"],
             "version": "1.0",
         }
-        doc = HandoffDocument.from_dict(data)
+        doc = HandoverDocument.from_dict(data)
         assert doc.session_id == "s3"
         assert doc.tasks_completed == ["a", "b"]
 
@@ -86,17 +86,17 @@ class TestHandoffSerialization:
             "session_id": "s4",
             "unknown_field": "should be ignored",
         }
-        doc = HandoffDocument.from_dict(data)
+        doc = HandoverDocument.from_dict(data)
         assert doc.session_id == "s4"
 
     def test_from_json(self):
         j = '{"session_id": "s5", "reason": "manual"}'
-        doc = HandoffDocument.from_json(j)
+        doc = HandoverDocument.from_json(j)
         assert doc.session_id == "s5"
         assert doc.reason == "manual"
 
     def test_roundtrip(self):
-        doc = HandoffDocument(
+        doc = HandoverDocument(
             session_id="roundtrip",
             reason="test",
             tasks_completed=["t1"],
@@ -104,7 +104,7 @@ class TestHandoffSerialization:
             key_decisions=[{"decision": "d1", "rationale": "r1"}],
         )
         j = doc.to_json()
-        doc2 = HandoffDocument.from_json(j)
+        doc2 = HandoverDocument.from_json(j)
         assert doc2.session_id == doc.session_id
         assert doc2.tasks_completed == doc.tasks_completed
         assert doc2.key_decisions == doc.key_decisions
@@ -114,17 +114,17 @@ class TestHandoffMarkdown:
     """Markdown 生成测试"""
 
     def test_basic_markdown(self):
-        doc = HandoffDocument(
+        doc = HandoverDocument(
             session_id="md-test",
             reason="token_limit",
         )
         md = doc.to_markdown()
-        assert "# lingflow 会话交接文档" in md
+        assert "# lingflow 会话传递文档" in md
         assert "md-test" in md
         assert "token_limit" in md
 
     def test_markdown_with_tasks(self):
-        doc = HandoffDocument(
+        doc = HandoverDocument(
             tasks_completed=["task A", "task B"],
             tasks_pending=["task C"],
             tasks_in_progress=["task D"],
@@ -137,7 +137,7 @@ class TestHandoffMarkdown:
         assert "task C" in md
 
     def test_markdown_with_decisions(self):
-        doc = HandoffDocument(
+        doc = HandoverDocument(
             key_decisions=[
                 {"decision": "use PostgreSQL", "rationale": "better JSON support"},
                 {"decision": "adopt TDD", "rationale": ""},
@@ -149,7 +149,7 @@ class TestHandoffMarkdown:
         assert "better JSON support" in md
 
     def test_markdown_with_constraints(self):
-        doc = HandoffDocument(
+        doc = HandoverDocument(
             constraints=["Python 3.8+"],
             known_issues=["memory leak"],
             failed_approaches=["approach X"],
@@ -160,7 +160,7 @@ class TestHandoffMarkdown:
         assert "已失败的方案" in md
 
     def test_markdown_with_next_steps(self):
-        doc = HandoffDocument(
+        doc = HandoverDocument(
             next_steps=["step 1", "step 2"],
             context_for_next_step="Module at 80%",
         )
@@ -170,10 +170,10 @@ class TestHandoffMarkdown:
         assert "Module at 80%" in md
 
     def test_markdown_with_degradation(self):
-        doc = HandoffDocument(
+        doc = HandoverDocument(
             degradation_detected=True,
             degradation_types=["repetition_collapse", "instruction_drift"],
-            token_usage_at_handoff=150000,
+            token_usage_at_handover=150000,
         )
         md = doc.to_markdown()
         assert "退化检测" in md
@@ -181,7 +181,7 @@ class TestHandoffMarkdown:
         assert "150000" in md
 
     def test_empty_sections_omitted(self):
-        doc = HandoffDocument()
+        doc = HandoverDocument()
         md = doc.to_markdown()
         assert "已完成任务" not in md
         assert "待完成任务" not in md
@@ -199,7 +199,7 @@ class TestHandoffFromSnapshot:
             tasks_pending=["task2"],
             key_decisions=["decision1"],
         )
-        doc = HandoffDocument.from_context_snapshot(snap)
+        doc = HandoverDocument.from_context_snapshot(snap)
         assert doc.session_id == "snap-123"
         assert doc.tasks_completed == ["task1"]
         assert doc.tasks_pending == ["task2"]
@@ -210,7 +210,7 @@ class TestHandoffFromSnapshot:
             session_id="snap-456",
             key_decisions=["use Python", "use pytest"],
         )
-        doc = HandoffDocument.from_context_snapshot(snap)
+        doc = HandoverDocument.from_context_snapshot(snap)
         assert len(doc.key_decisions) == 2
         assert doc.key_decisions[0]["decision"] == "use Python"
         assert doc.key_decisions[1]["decision"] == "use pytest"
@@ -220,7 +220,7 @@ class TestHandoffFromSnapshot:
             timestamp="2026-01-01",
             session_id="snap-789",
         )
-        doc = HandoffDocument.from_context_snapshot(
+        doc = HandoverDocument.from_context_snapshot(
             snap,
             reason="manual",
             current_task="testing",
@@ -234,7 +234,7 @@ class TestHandoffFromSnapshot:
             session_id="snap-files",
             important_files={"main.py": "entry", "config.yaml": "config"},
         )
-        doc = HandoffDocument.from_context_snapshot(snap)
+        doc = HandoverDocument.from_context_snapshot(snap)
         assert doc.important_files == {"main.py": "entry", "config.yaml": "config"}
 
 
@@ -242,15 +242,15 @@ class TestHandoffDegradationFields:
     """退化相关字段测试"""
 
     def test_no_degradation_by_default(self):
-        doc = HandoffDocument()
+        doc = HandoverDocument()
         assert doc.degradation_detected is False
         assert doc.degradation_types == []
 
     def test_degradation_with_types(self):
-        doc = HandoffDocument(
+        doc = HandoverDocument(
             degradation_detected=True,
             degradation_types=["repetition_collapse", "attention_dilution"],
-            token_usage_at_handoff=120000,
+            token_usage_at_handover=120000,
         )
         assert doc.degradation_detected is True
         assert len(doc.degradation_types) == 2

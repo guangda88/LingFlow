@@ -162,10 +162,10 @@ class ContextManager:
         summary = mgr.load_last_session_summary()
         if summary is not None:
             logger.info(
-                "检测到上一会话交接: session_id=%s, tokens=%s, reason=%s",
+                "检测到上一会话传递: session_id=%s, tokens=%s, reason=%s",
                 summary.session_id,
                 f"{summary.total_tokens:,}",
-                summary.handoff_reason,
+                summary.handover_reason,
             )
             if summary.tasks_pending:
                 for t in summary.tasks_pending:
@@ -280,7 +280,7 @@ class ContextManager:
         if budget_status.level.value == "emergency":
             logger.warning("Token 使用率 %s，紧急交接", budget_status.usage_ratio)
             self.compress_now()
-            self.generate_handoff(reason="emergency_token_limit")
+            self.generate_handover(reason="emergency_token_limit")
         elif budget_status.level.value == "critical":
             logger.warning("Token 使用率 %s，严重退化，立即压缩", budget_status.usage_ratio)
             self.compress_now()
@@ -337,17 +337,17 @@ class ContextManager:
             important_files=self.snapshot.important_files,
             next_steps=self.snapshot.next_steps,
             context_summary=self.snapshot.context_summary,
-            handoff_reason="lifecycle_expired",
+            handover_reason="lifecycle_expired",
         )
         self._lifecycle_manager.save_session_summary(summary)
 
-        # 2. 生成交接文档
-        self.generate_handoff(reason="lifecycle_expired")
+        # 2. 生成传递文档
+        self.generate_handover(reason="lifecycle_expired")
 
         # 3. 保存过渡指令
-        handoff_instructions = self._lifecycle_manager.get_handoff_instructions(summary)
-        handoff_path = self.storage_dir / "SESSION_HANDOFF_INSTRUCTIONS.md"
-        handoff_path.write_text(handoff_instructions, encoding="utf-8")
+        handover_instructions = self._lifecycle_manager.get_handover_instructions(summary)
+        handover_path = self.storage_dir / "SESSION_HANDOVER_INSTRUCTIONS.md"
+        handover_path.write_text(handover_instructions, encoding="utf-8")
 
         # 4. 重置内部状态
         self.session_id = self._generate_session_id()
@@ -548,18 +548,18 @@ class ContextManager:
         # 如果没有恢复文件，生成当前摘要
         return self.compress_now()
 
-    def generate_handoff(self, reason: str = "token_limit") -> "HandoffDocument":  # noqa: F821
-        """生成交接文档
+    def generate_handover(self, reason: str = "token_limit") -> "HandoverDocument":  # noqa: F821
+        """生成传递文档
 
-        当上下文接近退化阈值时调用，生成结构化的交接文档。
+        当上下文接近退化阈值时调用，生成结构化的传递文档。
 
         Args:
-            reason: 交接原因
+            reason: 传递原因
 
         Returns:
-            HandoffDocument 实例
+            HandoverDocument 实例
         """
-        from .handoff import HandoffDocument
+        from .handover import HandoverDocument
 
         degradation_types = []
         if self._messages:
@@ -571,7 +571,7 @@ class ContextManager:
             if report.health.value != "healthy":
                 degradation_types = [t.value for t in report.detected_types]
 
-        doc = HandoffDocument.from_context_snapshot(
+        doc = HandoverDocument.from_context_snapshot(
             self.snapshot,
             reason=reason,
             tasks_in_progress=[
@@ -579,16 +579,16 @@ class ContextManager:
             ],
             degradation_detected=len(degradation_types) > 0,
             degradation_types=degradation_types,
-            token_usage_at_handoff=self.estimated_tokens,
+            token_usage_at_handover=self.estimated_tokens,
         )
 
-        handoff_file = self.storage_dir / "HANDOFF.md"
-        handoff_file.write_text(doc.to_markdown(), encoding="utf-8")
+        handover_file = self.storage_dir / "HANDOVER.md"
+        handover_file.write_text(doc.to_markdown(), encoding="utf-8")
 
-        handoff_json = self.storage_dir / "handoff.json"
-        handoff_json.write_text(doc.to_json(), encoding="utf-8")
+        handover_json = self.storage_dir / "handover.json"
+        handover_json.write_text(doc.to_json(), encoding="utf-8")
 
-        logger.info("交接文档已生成: %s", handoff_file)
+        logger.info("传递文档已生成: %s", handover_file)
         return doc
 
     def get_status(self) -> Dict[str, Any]:

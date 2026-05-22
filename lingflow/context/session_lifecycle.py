@@ -73,7 +73,7 @@ class SessionSummary:
     important_files: Dict[str, str] = field(default_factory=dict)
     next_steps: List[str] = field(default_factory=list)
     context_summary: str = ""
-    handoff_reason: str = ""
+    handover_reason: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -86,7 +86,7 @@ class SessionSummary:
             f"- **时间**: {self.created_at} → {self.ended_at}",
             f"- **Token 使用**: {self.total_tokens:,}",
             f"- **消息数**: {self.total_messages}",
-            f"- **交接原因**: {self.handoff_reason}",
+            f"- **传递原因**: {self.handover_reason}",
             "",
         ]
         if self.tasks_completed:
@@ -179,10 +179,10 @@ class SessionLifecycleManager:
             )
         elif current_tokens >= self.warning_threshold:
             phase = LifecyclePhase.WARNING
-            action = "prepare_handoff"
+            action = "prepare_handover"
             message = (
                 f"会话已达 {current_tokens:,} tokens（警戒线 {self.warning_threshold:,}），"
-                f"建议准备会话交接。阈值 {self.critical_threshold:,} tokens。"
+                f"建议准备会话传递。阈值 {self.critical_threshold:,} tokens。"
             )
         else:
             phase = LifecyclePhase.HEALTHY
@@ -225,7 +225,7 @@ class SessionLifecycleManager:
         important_files: Optional[Dict[str, str]] = None,
         next_steps: Optional[List[str]] = None,
         context_summary: str = "",
-        handoff_reason: str = "lifecycle_threshold",
+        handover_reason: str = "lifecycle_threshold",
     ) -> SessionSummary:
         """创建会话摘要
 
@@ -239,7 +239,7 @@ class SessionLifecycleManager:
             important_files: 重要文件
             next_steps: 下一步计划
             context_summary: 上下文摘要
-            handoff_reason: 交接原因
+            handover_reason: 传递原因
 
         Returns:
             会话摘要
@@ -257,7 +257,7 @@ class SessionLifecycleManager:
             important_files=important_files or {},
             next_steps=next_steps or [],
             context_summary=context_summary,
-            handoff_reason=handoff_reason,
+            handover_reason=handover_reason,
         )
 
     def save_session_summary(self, summary: SessionSummary) -> Path:
@@ -277,7 +277,7 @@ class SessionLifecycleManager:
         json_path = self.storage_dir / f"lifecycle_{summary.session_id}.json"
         json_path.write_text(json.dumps(summary.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
 
-        md_path = self.storage_dir / "SESSION_HANDOFF.md"
+        md_path = self.storage_dir / "SESSION_HANDOVER.md"
         md_path.write_text(summary.to_markdown(), encoding="utf-8")
 
         logger.info("会话摘要已保存: %s", json_path)
@@ -292,7 +292,7 @@ class SessionLifecycleManager:
         if self.storage_dir is None:
             return None
 
-        md_path = self.storage_dir / "SESSION_HANDOFF.md"
+        md_path = self.storage_dir / "SESSION_HANDOVER.md"
         if not md_path.exists():
             return None
 
@@ -307,17 +307,17 @@ class SessionLifecycleManager:
             logger.warning("加载会话摘要失败: %s", e)
             return None
 
-    def get_handoff_instructions(self, summary: SessionSummary) -> str:
-        """生成新会话的交接指令
+    def get_handover_instructions(self, summary: SessionSummary) -> str:
+        """生成新会话的传递指令
 
         Args:
             summary: 上一会话的摘要
 
         Returns:
-            交接指令文本
+            传递指令文本
         """
         parts = [
-            "## 会话交接指令",
+            "## 会话传递指令",
             "",
             f"上一会话（{summary.session_id}）因 token 限制（{summary.total_tokens:,}）而结束。",
             "",

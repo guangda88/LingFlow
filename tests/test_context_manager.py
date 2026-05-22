@@ -295,20 +295,20 @@ class TestGetRecoverySummary:
         assert summary == "existing recovery content"
 
 
-class TestGenerateHandoff:
-    def test_generate_handoff(self, cm):
-        with patch("lingflow.context.handoff.HandoffDocument") as mock_hd:
+class TestGenerateHandover:
+    def test_generate_handover(self, cm):
+        with patch("lingflow.context.handover.HandoverDocument") as mock_hd:
             mock_doc = MagicMock()
             mock_doc.to_markdown.return_value = "# Handoff"
             mock_doc.to_json.return_value = '{"handoff": true}'
             mock_hd.from_context_snapshot.return_value = mock_doc
-            doc = cm.generate_handoff(reason="test")
+            doc = cm.generate_handover(reason="test")
             assert doc is mock_doc
 
-    def test_generate_handoff_with_messages(self, cm):
+    def test_generate_handover_with_messages(self, cm):
         cm.record_message("user", "hello world")
         with (
-            patch("lingflow.context.handoff.HandoffDocument") as mock_hd,
+            patch("lingflow.context.handover.HandoverDocument") as mock_hd,
             patch("lingflow.context.degradation.DegradationDetector") as mock_dd,
         ):
             mock_report = MagicMock()
@@ -319,7 +319,7 @@ class TestGenerateHandoff:
             mock_doc.to_markdown.return_value = "# Handoff"
             mock_doc.to_json.return_value = "{}"
             mock_hd.from_context_snapshot.return_value = mock_doc
-            doc = cm.generate_handoff()
+            doc = cm.generate_handover()
             assert doc is mock_doc
 
 

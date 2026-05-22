@@ -107,13 +107,13 @@ class TestCompactAndHandoff:
         bm = ContextBudgetManager(max_tokens=100000)
         assert bm.should_compact(45000) is True
 
-    def test_should_handoff_below_threshold(self):
+    def test_should_handover_below_threshold(self):
         bm = ContextBudgetManager(max_tokens=100000)
-        assert bm.should_handoff(70000) is False
+        assert bm.should_handover(70000) is False
 
-    def test_should_handoff_above_threshold(self):
+    def test_should_handover_above_threshold(self):
         bm = ContextBudgetManager(max_tokens=100000)
-        assert bm.should_handoff(85000) is True
+        assert bm.should_handover(85000) is True
 
 
 class TestTargetTokens:

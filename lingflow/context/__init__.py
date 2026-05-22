@@ -8,7 +8,7 @@
 
 from .budget import BudgetLevel, BudgetStatus, ContextBudgetManager
 from .degradation import DegradationDetector, DegradationReport, HealthStatus
-from .handoff import HandoffDocument
+from .handover import HandoverDocument
 from .manager import (
     ContextManager,
     ContextSnapshot,
@@ -36,7 +36,7 @@ __all__ = [
     "DegradationDetector",
     "DegradationReport",
     "HealthStatus",
-    "HandoffDocument",
+    "HandoverDocument",
     "SessionLifecycleManager",
     "LifecyclePhase",
     "SessionSummary",

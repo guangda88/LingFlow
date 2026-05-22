@@ -132,8 +132,8 @@ class ContextBudgetManager:
 
         if ratio >= self.EMERGENCY_RATIO:
             level = BudgetLevel.EMERGENCY
-            action = "handoff"
-            message = f"Token 使用率 {ratio:.1%} 超过紧急阈值 {self.EMERGENCY_RATIO:.0%}，" "必须进行会话交接"
+            action = "handover"
+            message = f"Token 使用率 {ratio:.1%} 超过紧急阈值 {self.EMERGENCY_RATIO:.0%}，" "必须进行会话传递"
         elif ratio >= self.CRITICAL_RATIO:
             level = BudgetLevel.CRITICAL
             action = "compress_aggressive"
@@ -175,7 +175,7 @@ class ContextBudgetManager:
         ratio = current_tokens / self.max_tokens if self.max_tokens > 0 else 0.0
         return ratio >= self.WARNING_RATIO
 
-    def should_handoff(self, current_tokens: int) -> bool:
+    def should_handover(self, current_tokens: int) -> bool:
         """是否需要进行会话交接
 
         Args:

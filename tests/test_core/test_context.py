@@ -53,7 +53,7 @@ class TestContextBudgetManager:
         budget = ContextBudgetManager(max_tokens=1000)
         status = budget.check_budget(850)
         assert status.level.value == "emergency"
-        assert budget.should_handoff(850) is True
+        assert budget.should_handover(850) is True
 
 
 class TestDegradationType:

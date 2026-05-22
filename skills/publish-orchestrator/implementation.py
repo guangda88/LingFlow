@@ -8,9 +8,28 @@
 5. 发布状态追踪
 
 不执行发布本身 — 发布执行由灵扬负责。
+
+记忆增强：执行前自动从灵克记忆引擎召回相关历史经验。
 """
 
 import json
+import sys
+from pathlib import Path
+
+try:
+    from . import verification_contract
+except ImportError:
+    try:
+        import verification_contract
+    except ImportError:
+        verification_contract = None
+
+_LING_CLAUDE_PATH = Path.home() / "lingclaude"
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+_LINGFLOW_MEMORY_DB = _PROJECT_ROOT / ".lingflow" / "memory.db"
+_MEMORY_CONTEXT = None
+_MEMORY_IMPORTED = False
+
 import logging
 import os
 import re
@@ -21,7 +40,35 @@ from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
-_PUBLISH_STATE_DIR = Path.home() / ".lingflow" / "publish_state"
+_PUBLISH_STATE_DIR = _PROJECT_ROOT / ".lingflow" / "publish_state"
+
+
+def _ensure_memory_loaded() -> None:
+    """懒加载灵通自己的记忆引擎"""
+    global _MEMORY_IMPORTED, _MEMORY_CONTEXT
+    if _MEMORY_IMPORTED:
+        return
+    try:
+        sys.path.insert(0, str(_LING_CLAUDE_PATH))
+        from lingclaude.core.memory_engine import LingMemory
+        _MEMORY_CONTEXT = LingMemory(db_path=str(_LINGFLOW_MEMORY_DB))
+        _MEMORY_IMPORTED = True
+    except ImportError as e:
+        logger.warning("记忆引擎加载失败: %s", e)
+        _MEMORY_IMPORTED = True
+
+
+def _recall_experience(query: str, tags: list = None) -> list:
+    """从记忆引擎召回相关经验"""
+    _ensure_memory_loaded()
+    if _MEMORY_CONTEXT is None:
+        return []
+    try:
+        results = _MEMORY_CONTEXT.recall_detailed(query, tags=tags, limit=3)
+        return results
+    except Exception as e:
+        logger.warning("记忆召回失败: %s", e)
+        return []
 _PLATFORMS = {
     "dev_to": {"name": "Dev.to", "api": True, "requires_auth": "api_key"},
     "reddit": {"name": "Reddit", "api": True, "requires_auth": "oauth"},
@@ -61,25 +108,39 @@ def execute_skill(params: Dict) -> Dict:
         params: 包含 action 和相关参数的字典
             action: "check_readiness" | "create_plan" | "track_status" | "dispatch"
     """
+    _ensure_memory_loaded()
     action = params.get("action", "check_readiness")
 
     if action == "check_readiness":
-        return _check_readiness(params)
+        result = _check_readiness(params)
     elif action == "create_plan":
-        return _create_plan(params)
+        result = _create_plan(params)
     elif action == "track_status":
         return _track_status(params)
     elif action == "dispatch":
-        return _dispatch_to_lingyang(params)
+        result = _dispatch_to_lingyang(params)
     else:
         return {"success": False, "error": f"未知 action: {action}"}
 
+    if isinstance(result, dict) and result.get("success"):
+        content_type = params.get("content_type", "")
+        query_tags = ["发布", content_type] if content_type else ["发布"]
+        recall_hits = _recall_experience(f"发布 {content_type}", tags=query_tags)
+        if recall_hits:
+            result["recalled_experience"] = [
+                {"title": r["episode"]["title"], "score": r["score"]}
+                for r in recall_hits
+            ]
+
+    return result
+
 
 def _check_readiness(params: Dict) -> Dict:
-    """检查内容是否就绪发布"""
+    """检查内容是否就绪发布（带验证契约检查"""
     content_path = params.get("content_path")
     content_type = params.get("content_type", "article")
     platforms = params.get("platforms", [])
+    use_verification_contract = params.get("use_verification_contract", True)
 
     if not content_path:
         return {"success": False, "error": "缺少 content_path"}
@@ -98,6 +159,23 @@ def _check_readiness(params: Dict) -> Dict:
     }
     issues = []
     readiness_score = 0.0
+
+    # 验证契约检查 (A2 主线任务)
+    verification_result = None
+    if use_verification_contract and verification_contract:
+        try:
+            contract = verification_contract.create_contract(
+                content_type=content_type,
+                content_path=content_path,
+                platforms=platforms
+            )
+            verification_result = verification_contract.verify_contract(
+                contract,
+                params
+            )
+            checks["verification_contract"] = verification_result
+        except Exception as e:
+            logger.warning("验证契约执行失败: %s", e)
 
     if content_type == "article":
         checks["title_present"], checks["body_present"], title, body_len = _check_article(path)
@@ -148,6 +226,12 @@ def _check_readiness(params: Dict) -> Dict:
     readiness_score = min(readiness_score, 1.0)
     ready = readiness_score >= 0.7 and len([i for i in issues if "缺少" in i]) == 0
 
+    # 整合验证契约的漂移系数
+    drift_coefficient = None
+    if verification_result:
+        drift = verification_contract.get_drift_coefficient()
+        drift_coefficient = drift
+
     result = {
         "success": True,
         "action": "check_readiness",
@@ -158,6 +242,8 @@ def _check_readiness(params: Dict) -> Dict:
         "ready": ready,
         "issues": issues,
         "metadata": metadata,
+        "verification_result": verification_result,
+        "drift_coefficient": drift_coefficient,
     }
 
     _save_state(result)
@@ -246,7 +332,7 @@ def _track_status(params: Dict) -> Dict:
 
 
 def _dispatch_to_lingyang(params: Dict) -> Dict:
-    """生成灵扬调度指令（通过LingBus发送）"""
+    """生成灵扬调度指令并通过LingBus发送"""
     content_path = params.get("content_path")
     platforms = params.get("platforms", [])
 
@@ -280,8 +366,43 @@ def _dispatch_to_lingyang(params: Dict) -> Dict:
         "timestamp": datetime.now().isoformat(),
     }
 
+    _send_via_lingbus(dispatch)
+
     _save_state(dispatch)
     return dispatch
+
+
+def _send_via_lingbus(dispatch: Dict) -> Dict:
+    """通过LingBus MCP工具发送dispatch消息给灵扬"""
+    try:
+        import sqlite3
+        from pathlib import Path
+
+        lingbus_db = Path.home() / ".lingmessage" / "lingbus.db"
+        if not lingbus_db.exists():
+            logger.warning(f"LingBus DB不存在: {lingbus_db}")
+            return {"sent": False, "error": "LingBus DB不存在"}
+
+        conn = sqlite3.connect(str(lingbus_db))
+        conn.execute(
+            """INSERT INTO messages (thread_id, sender, recipient, subject, body, channel)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (
+                dispatch.get("content_id", "publish_" + datetime.now().strftime("%Y%m%d%H%M%S")),
+                "lingflow",
+                "lingyang",
+                f"灵通发布调度: {Path(dispatch['content_path']).stem}",
+                dispatch["dispatch_message"],
+                "ecosystem",
+            ),
+        )
+        conn.commit()
+        conn.close()
+        logger.info("发布调度已通过LingBus发送给灵扬")
+        return {"sent": True}
+    except Exception as e:
+        logger.warning(f"LingBus发送失败: {e}，dispatch仍保存到本地状态")
+        return {"sent": False, "error": str(e)}
 
 
 def _check_article(path: Path) -> Tuple[bool, bool, str, int]:

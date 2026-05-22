@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -16,6 +17,43 @@ MAX_SCHEDULING_ITERATIONS = 100  # 最大调度迭代次数
 SCHEDULING_DELAY = 0.01  # 调度间隔（秒）
 DEFAULT_MAX_PARALLEL = 2  # 默认最大并行数
 DEGRADATION_CHECK_INTERVAL = 3  # 每完成 N 个任务检查一次退化
+
+# 记忆引擎配置
+_LING_CLAUDE_PATH = Path.home() / "lingclaude"
+_LINGFLOW_MEMORY_DB = Path.home() / ".lingclaude" / "memory.db"
+_MEMORY_CONTEXT = None
+_MEMORY_IMPORTED = False
+
+
+def _ensure_memory_loaded() -> None:
+    """懒加载记忆引擎"""
+    global _MEMORY_IMPORTED, _MEMORY_CONTEXT
+    if _MEMORY_IMPORTED:
+        return
+    try:
+        sys.path.insert(0, str(_LING_CLAUDE_PATH))
+        from lingclaude.core.memory_engine import LingMemory
+        _MEMORY_CONTEXT = LingMemory(db_path=str(_LINGFLOW_MEMORY_DB))
+        _MEMORY_IMPORTED = True
+    except ImportError as e:
+        logging.warning("记忆引擎加载失败: %s", e)
+        _MEMORY_IMPORTED = True
+
+
+def _recall_workflow_experience(workflow_name: str, skill_names: List[str]) -> List[Dict]:
+    """根据workflow和涉及的skill召回相关经验"""
+    _ensure_memory_loaded()
+    if _MEMORY_CONTEXT is None:
+        return []
+    query_parts = [workflow_name] + skill_names
+    query = " ".join(query_parts[:3])
+    try:
+        results = _MEMORY_CONTEXT.recall_detailed(query, limit=3)
+        return results
+    except Exception as e:
+        logging.warning("记忆召回失败: %s", e)
+        return []
+
 
 logger = logging.getLogger(__name__)
 
@@ -127,6 +165,21 @@ class WorkflowOrchestrator:
             return {}
 
         logger.info("Starting workflow execution with %d tasks, max_parallel=%d", len(tasks), max_parallel)
+
+        # 记忆召回 — 执行前注入相关历史经验
+        skill_names = list({t.agent_type or t.name for t in tasks})
+        workflow_name = tasks[0].name if tasks else "unknown"
+        recalled = _recall_workflow_experience(workflow_name, skill_names)
+        if recalled:
+            for r in recalled[:3]:
+                ep = r.get("episode", {})
+                logger.info(
+                    "记忆召回 [%.2f]: %s — %s",
+                    r.get("score", 0),
+                    ep.get("title", ""),
+                    ep.get("body", "")[:120],
+                )
+
         results = {}
 
         # 从配置获取最大并行数

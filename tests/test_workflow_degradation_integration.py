@@ -133,36 +133,36 @@ class TestHandoffAutoGeneration:
     def _make_manager(self, tmp_path):
         return ContextManager(storage_dir=str(tmp_path))
 
-    def test_handoff_generated_on_emergency_budget(self, tmp_path):
+    def test_handover_generated_on_emergency_budget(self, tmp_path):
         mgr = self._make_manager(tmp_path)
         mgr.estimated_tokens = int(mgr.ESTIMATED_TOKEN_LIMIT * 0.85)
 
         mgr.record_message("user", "push to emergency level " + "x" * 10000)
 
-        handoff_file = tmp_path / "HANDOFF.md"
-        assert handoff_file.exists() or mgr.estimated_tokens < mgr.ESTIMATED_TOKEN_LIMIT * 0.8
+        handover_file = tmp_path / "HANDOVER.md"
+        assert handover_file.exists() or mgr.estimated_tokens < mgr.ESTIMATED_TOKEN_LIMIT * 0.8
 
-    def test_handoff_file_written_by_generate_handoff(self, tmp_path):
+    def test_handover_file_written_by_generate_handover(self, tmp_path):
         mgr = self._make_manager(tmp_path)
         mgr.add_task("design review", completed=False)
         mgr.add_decision("use tiktoken for counting")
 
-        mgr.generate_handoff(reason="manual_test")
+        mgr.generate_handover(reason="manual_test")
 
-        handoff_file = tmp_path / "HANDOFF.md"
-        handoff_json = tmp_path / "handoff.json"
+        handover_file = tmp_path / "HANDOVER.md"
+        handover_json = tmp_path / "handover.json"
 
-        assert handoff_file.exists()
-        assert handoff_json.exists()
+        assert handover_file.exists()
+        assert handover_json.exists()
 
-        content = handoff_file.read_text(encoding="utf-8")
-        assert "会话交接文档" in content
+        content = handover_file.read_text(encoding="utf-8")
+        assert "会话传递文档" in content
         assert "manual_test" in content
 
-        json.loads(handoff_json.read_text(encoding="utf-8"))
+        json.loads(handover_json.read_text(encoding="utf-8"))
         assert True
 
-    def test_handoff_includes_degradation_when_detected(self, tmp_path):
+    def test_handover_includes_degradation_when_detected(self, tmp_path):
         mgr = self._make_manager(tmp_path)
 
         for i in range(10):
@@ -173,11 +173,11 @@ class TestHandoffAutoGeneration:
                 }
             )
 
-        doc = mgr.generate_handoff(reason="degradation_test")
+        doc = mgr.generate_handover(reason="degradation_test")
         assert doc.degradation_detected is True
         assert len(doc.degradation_types) > 0
 
-    def test_handoff_preserves_snapshot_data(self, tmp_path):
+    def test_handover_preserves_snapshot_data(self, tmp_path):
         mgr = self._make_manager(tmp_path)
         mgr.add_task("task A", completed=True)
         mgr.add_task("task B", completed=False)
@@ -185,7 +185,7 @@ class TestHandoffAutoGeneration:
         mgr.add_file("src/main.py", "main entry")
         mgr.set_next_steps(["implement feature X", "write tests"])
 
-        doc = mgr.generate_handoff(reason="test")
+        doc = mgr.generate_handover(reason="test")
 
         assert "task A" in doc.tasks_completed
         assert "task B" in doc.tasks_pending

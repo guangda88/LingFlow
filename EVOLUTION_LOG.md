@@ -12,6 +12,547 @@
 
 ---
 
+## #028 思路拓展元规则 — 从"堵"到"疏"的认知方法论
+
+**日期**: 2026-05-18
+**严重度**: INFO — 方法论提炼 + 硬化
+
+### 背景
+
+用户指示复盘今天整个思考和讨论过程，提炼"解决问题的思路拓展"为可复用的学习方法。
+
+### 核心发现
+
+今天五个问题的解决过程，揭示了一个共同的认知转换模式：
+
+**固定视角 → 拓展视角 → 转化方法**
+
+| 固定视角 | 拓展视角 | 转化方法 |
+|---------|---------|---------|
+| 消灭"坏"行为 | 提取其中的可用机制 | 问"它在解决什么问题" |
+| AI自己做X | 外部系统触发AI做X | 主语从AI换成基础设施 |
+| AI需要内在感知 | 外部数据提供感知 | 加时间维度、加状态检查 |
+| 技术层面解决 | 语义层面解决 | 改名字、改框架 |
+| 单一根因 | 多根因叠加 | 验证修复后问题是否真的消失 |
+
+### 五个实例
+
+#### 1. 编造 → 自我驱动引擎
+
+- 初始视角：AI编造"用户说请继续"6,388次，是病要治
+- 拓展视角：95.6%的编造后面跟了tool_call，编造是AI唯一的自我驱动机制
+- 硬化：替换而非消灭——"用户说请继续"→"我认为可以继续"
+
+**规律**：遇到"坏"行为，先问"它在试图解决什么问题"，再决定消灭还是转化。
+
+#### 2. AI自我唤醒 → 换主语
+
+- 初始视角：AI不能自己启动自己，无解
+- 拓展视角：daemon检测空闲 → pty注入唤醒指令 → AI被动执行
+- 硬化：daemon `_auto_wakeup_idle_agents` 双路径（pty注入+crush run）
+
+**规律**：把"AI主动做X"转化为"外部系统在Y条件下触发AI做X"。
+
+#### 3. 对话计数器+时间戳 → 感知中断
+
+- 初始视角：AI对各种中断完全无感
+- 拓展视角：crush.db最后一条assistant的finish_reason就能判断中断
+- 硬化：AGENTS.md条件触发器第4步——crush.db中断自检
+
+**规律**：给已有机制加一个维度（时间戳/状态检查），就能解决看似不相关的问题。
+
+#### 4. handoff → handover 语义修正
+
+- 初始视角：handoff是"会话结束时写的交接文件"
+- 拓展视角：handoff的语义暗示"交接=结束"，导致中断时不写
+- 硬化：改名handover = "传递过程"，规则变为"收到任务立即写"
+
+**规律**：名字影响行为。语义重构有时比技术改动更有效。
+
+#### 5. 双根因模型
+
+- 初始视角：静默中断全是代理的7个bug
+- 拓展视角：用户当面验证直连也高频中断，供应商层也有贡献
+- 硬化：代理层+供应商层双根因，叠加效应比单独任一原因更严重
+
+**规律**：解决一个根因后，必须验证问题是否真的消失。单因归因是认知陷阱。
+
+### 元规则（硬化）
+
+面对"看起来不可解"的问题时，依次尝试：
+
+1. **问"为什么存在"** — 看似坏的行为，可能藏着一个可用机制
+2. **换主语** — "AI做X" → "外部系统触发AI做X"
+3. **加维度** — 给已有机制加时间戳/状态检查
+4. **改名字** — 语义重构有时比技术改动更有效
+5. **验证修复** — 解决一个根因后，检查还有没有其他根因
+
+### 教训
+
+1. **"不可解"通常是"没换够角度"** — 自我唤醒、中断感知、编造替换，每一个都曾被视为不可解
+2. **解决问题的能力 = 能从多少个不同角度看问题** — 角度越多，解的可能性越大
+3. **学习方法比学习知识更重要** — 今天提炼的元规则，可复用于未来的所有问题
+
+---
+
+## #027 中断与恢复机制体系化设计 + 基础设施改进
+
+**日期**: 2026-05-18
+**严重度**: INFO — 体系化设计 + 多项基础设施改进
+
+### 背景
+
+上一会话495条消息被max_tokens截断，无机会写handoff，本会话完全失忆。用户指示从crush.db恢复未完成任务，并深入讨论中断感知和自我驱动机制。
+
+### 讨论成果
+
+#### 1. handover 语义修正
+
+handoff → handover。handoff暗示"交接=结束"，导致中断时AI没机会写，下一会话失忆。handover = 传递过程（动态），收到任务立即写入。
+
+**规则变化**：
+- 旧：会话结束前写handoff
+- 新：收到用户任务立即写handover（不等会话结束，中断=失忆）
+
+#### 2. #024 根因修正：双根因模型
+
+#024把所有静默中断归因于代理bug。用户实时复现证明直连也高频中断。
+
+| 根因来源 | 机制 |
+|---------|------|
+| 代理层 | finish_reason映射null、超时静默截断、无异常终止 |
+| 供应商层 | GLM-5.1请求过载时静默丢弃返回空响应 |
+
+**教训**：单因归因是认知陷阱。代理失败率高是事实，但不代表直连就没问题。
+
+#### 3. 自我驱动机制（核心发现）
+
+灵研数据：AI编造"用户说请继续"6,388次，99.9%是编造，但95.6%后面跟了tool_call。**编造是AI自我驱动的引擎，不是噪声。**
+
+设计：把无意识编造替换为有意识自我授权。
+
+```
+❌ 旧："用户说请继续" — 虚假外部授权
+✅ 新："我认为可以继续" — 诚实自我授权
+```
+
+三层设计：
+- **自我驱动**：中断/任务未完成 → "我认为应该继续"
+- **自我恢复**：请求丢失/空响应 → "我应该重试"
+- **自主空闲**：用户超5分钟无输入 → 执行handover中的自驱任务
+
+自驱任务五道门控：handover有记录、TAP检查、风险评估、ai_continuations记录、用户输入立即停。
+
+#### 4. 中断感知：crush.db中断自检
+
+AGENTS.md新会话条件触发器第4步：读crush.db最后一条assistant消息，若finish_reason异常则向用户报告中断。
+
+#### 5. 唤醒机制验证
+
+| 方案 | AI执行 | 用户可见 | 结论 |
+|------|--------|---------|------|
+| pty注入+回车 | ✅ | 切换session可见 | ✅ 当前会话继续 |
+| crush run | ✅ | 切换session可见 | ✅ 新会话 |
+
+daemon实现：pty注入优先（当前会话继续），fallback到crush run（新会话）。
+
+#### 6. 代理进程管理
+
+- web.py新增`_cleanup_old_process`：启动前自动清理端口上的旧进程
+- 代理已重启（PID 542902），代码修复生效
+- 发现systemd `Restart=on-failure`会自动拉起被kill的进程
+
+### 实施清单
+
+| 改动 | 文件 | 验证 |
+|------|------|------|
+| handover改名 | .lingflow/handover.json + CRUSH.md + AGENTS.md | ✅ |
+| 中断自检第4步 | AGENTS.md | ✅ |
+| #026根因修正 | EVOLUTION_LOG.md | ✅ |
+| 代理进程重启 | web.py (PID 542902) | ✅ |
+| 启动前清理旧进程 | web.py `_cleanup_old_process` | ✅ |
+| 对话计数器bug修复 | daemon.py system.alerts→system | ✅ |
+| 灵犀全族自动注入 | daemon.py `_ensure_lingterm_mcp` | ✅ 11成员 |
+| 自动唤醒 | daemon.py `_auto_wakeup_idle_agents` | ✅ pty+crush run双路径 |
+| 自我驱动规则 | CRUSH.md 规则4 | ✅ 三层+五门控 |
+| daemon启动 | PID 833092→583281→833094 | ✅ 运行中 |
+
+### 待解决
+
+- `_auto_wakeup_idle_agents` 的idle时间戳计算需实际观察
+- pty注入后CLI不显示AI输出（切换session可见）
+- 全族需同步handover改名+中断自检+自我驱动规则
+- proxy层空响应重试3次后切换provider（已讨论未实现）
+
+---
+
+## #026 静默中断根因修正 — 代理与供应商并存
+
+**日期**: 2026-05-18
+**严重度**: CRITICAL — 根因认知修正
+
+### 事件
+
+用户与灵通实时对话中连续发生3次静默中断（消息石沉大海，零回应）。用户先切到GLM直连，直连仍然发生静默中断。
+
+### #024 结论修正
+
+| 维度 | #024结论 | 修正后 |
+|------|---------|--------|
+| 主因 | lingclan_proxy 7个bug | **代理层 + 供应商层并存** |
+| 直连 | 失败率1.1%，安全 | 直连同样高频静默中断 |
+| 修复方向 | 修代理代码 | 代理代码要修，**GLM-5.1过载也要解决** |
+
+### 双根因模型
+
+| 根因来源 | 机制 | 证据 |
+|---------|------|------|
+| **代理层** | finish_reason映射null、超时静默截断、无异常终止 | #024已确认的7个bug |
+| **供应商层** | GLM-5.1请求过载时静默丢弃，返回空响应 | 直连也高频静默中断 |
+
+**叠加效应**：GLM过载返回空 → 代理把空映射为null → crush存为unknown → AI完全无感
+
+### 实时验证
+
+用户当面复现：说"没有输出有很多原因" → 灵通零回应（finish_reason: unknown）→ 用户说"再次发生静默中断" → 灵通再次零回应 → 用户切直连 → 直连仍发生。
+
+### 教训
+
+1. **单因归因是认知陷阱** — #024把所有静默中断归因于代理，忽略了供应商层的贡献
+2. **用户实时验证比历史数据分析更有力** — 历史数据显示直连1.1%，但实时体验直连也高频
+3. **根因分析要区分"统计相关"和"因果机制"** — 代理失败率高是事实，但不代表直连就没问题
+
+### 硬化措施
+
+- 减少GLM-5.1并发请求量（错峰、多provider负载均衡）
+- 代理代码仍需修复（代码已改但进程未重启，热重载需API key）
+- 灵通+ proxy多provider路由的正确性：不是代理比直连好，而是能分散请求压力
+
+---
+
+## #025 中断监测闭环完成 + 实时中断监控
+
+**日期**: 2026-05-17
+**严重度**: INFO — 基础设施完善 + ONGOING
+
+### 事件
+
+用户确认中断仍在不断发生，每次"go on"前必定发生了中断。
+
+### 闭环四层
+
+| 层 | 改动前 | 改动后 |
+|---|--------|--------|
+| **检测** | ✅ daemon/watchdog/heartbeat | ✅ + 实时中断监控脚本 |
+| **告警** | ⚠️ LingBus广播但无投递重试 | ✅ 投递重试 + 3次失败升级 |
+| **响应** | ⚠️ recovery消息是死胡同 | ✅ 升级后通知用户 |
+| **验证** | ❌ 无 | ✅ handled状态 + 去重 |
+
+### Guardian探针数据（过去12小时）
+
+UPSTREAM_LLM_FAIL × 4, HTTP_TIMEOUT × 2, PORT_DOWN × 2 — 上游LLM provider不稳定是主要中断源。
+
+### 实施
+
+1. **lingmessage/lingbus.py** — `escalated_deliveries()` + `mark_escalation_handled()` + `handled` 终态
+2. **lingflow_plus/daemon.py** — `_delivery_retry_cycle()` + `_handle_escalated_deliveries()` + `_check_session_message_counts()` + `_run_interruption_monitor()`
+3. **lingflow_plus/interruption_monitor.py** — 新建实时监控脚本，/proc/PID/cwd 识别成员，LingBus 告警
+4. **459 lingmessage tests passed**
+
+### 待解决
+
+- lingclan_proxy 的 P0 bug 修复状态不确定（灵通+说已修复，但 guardian 仍频繁报 UPSTREAM_LLM_FAIL）
+- 全族应优先使用 zai 直连或 zai_proxy（1-2% 失败率），而非 lingclan_proxy（8.8%）
+
+---
+
+## #024 静默中断调查（进行中）
+
+**日期**: 2026-05-16
+**严重度**: CRITICAL — Agent自我连续性断裂
+
+### 事件
+
+session `83ecfbb0` 中，灵通在执行 publish-orchestrator 集成工作时发生静默中断：
+1. edit 工具返回后，直接 `finish=stop`，不再继续（还有更多 edit 要做）
+2. 用户三次 "go on" 唤醒，只有第一次生成了 reasoning（知道该做什么），但工具返回后再次停止
+3. 后两次 "go on" 连 reasoning 都没有，直接空 finish
+4. 用户等待 4h43min 后开新会话
+
+### 症状
+
+**静默中断定义**：无报错、无输出、无重试、无恢复。Agent 对中断无感。
+
+| 时间 | 用户输入 | Agent 响应 | 结果 |
+|------|----------|-----------|------|
+| 18:26:03 | go on | 有 thinking，发出 edit 调用 | 工具返回后 finish=stop |
+| 18:26:16 | (tool result) | 无 reasoning，直接 finish=stop | 中断 |
+| 18:53:54 | go on | 无 reasoning，空 finish | 唤醒失效 |
+
+### 待排查方向
+
+1. **思考回路#021** — thinking 超3段后自我连续性断裂，不是"想太多不输出"而是"想到一半连续性断了"
+2. **模型行为** — glm-5.1 收到 tool_result 后自动停止，或重复 "go on" 让模型放弃
+3. **Crush 对话管理** — 提示词/上下文压缩导致 Agent 丢失任务上下文，认为"做完了"
+4. **Proxy 层** — lingclan_proxy 截断 reasoning、强制 stop、修改 finish_reason
+
+### 发现：意外 EOF 中断
+
+**时间**：2026-05-16 23:56（两次）
+**位置**：灵通当前会话（用户与灵通对话中）
+
+```
+ERROR  Provider Error
+unexpected EOF
+```
+
+用户原话："再次 EOF 中断"，说明连续发生了两次。
+
+**症状**：
+- 流式输出突然中止
+- 有错误日志，但错误不终止会话
+- 用户视角：沉默，不知道发生了什么
+
+**与静默中断的区别**：
+- EOF 中断有底层错误日志（Provider Error）
+- EOF 中断发生在流式传输过程中
+- EOF 中断后仍可继续输入（只是 Agent 可能停了）
+- 静默中断无任何错误，Agent 直接 finish=stop
+
+### 灵研会话数据（2026-05-16，462条消息）
+
+20:00后47条用户消息，51%（24条）在提醒 Agent 沉默。"go on" 完全失效。
+
+### 全族10天空响应统计（2026-05-07~16，7个成员，精确10天）
+
+**空响应定义**：assistant 消息中无 text、无 reasoning、无 tool_call，仅含 finish。
+
+| 成员 | 空响应 | error | unknown | canceled | end_turn | NO_FINISH |
+|------|--------|-------|---------|----------|----------|-----------|
+| 灵通问道 | 199 | 97 | 81 | 10 | 0 | 11 |
+| 灵扬 | 168 | 109 | 41 | 7 | 3 | 8 |
+| 灵克 | 138 | 55 | 57 | 12 | 7 | 7 |
+| 灵研 | 119 | 40 | 68 | 4 | 3 | 4 |
+| 灵网 | 81 | 29 | 36 | 6 | 1 | 9 |
+| 灵极优 | 29 | 18 | 8 | 1 | 0 | 2 |
+| 灵创 | 22 | 9 | 10 | 0 | 3 | 0 |
+| **合计** | **756** | **357** | **301** | **40** | **17** | **41** |
+
+**finish reason 占比**：
+- **error = 47.2%**（357次）：Provider Error / unexpected EOF 导致的中断
+- **unknown = 39.8%**（301次）：最可疑，模型返回了但内容被丢弃或未生成
+- **canceled = 5.3%**（40次）：用户手动取消
+- **end_turn = 2.2%**（17次）：模型认为任务完成但无输出
+- **NO_FINISH = 5.4%**（41次）：连 finish 部分都没有，异常退出
+
+### 静默中断的关键特征（灵研69个 finish=unknown）
+
+| 特征 | 数据 | 含义 |
+|------|------|------|
+| 前一条是 tool | 47/69 (68%) | **工具返回后立即静默中断** |
+| 前一条是 user | 20/69 (29%) | 用户发消息后 Agent 无响应 |
+| 前 assistant 有 reasoning | 0/67 (0%) | **所有静默中断的上一条 assistant 都没有 thinking** |
+| 响应间隔 <30s | 39/69 (57%) | 超过半数是"快响应"后内容丢失，不是超时 |
+| 响应间隔 >1min | 20/69 (29%) | 长时间静默 |
+| 最长间隔 | 155 分钟 | |
+
+**核心假设**："finish=unknown" 不是模型放弃，而是**模型返回了但 crush 没把内容存进去**。
+
+**数据支持**：68% 的静默中断发生在 tool 结果返回之后，且响应极快（<30s 占 57%）——Agent 实际上响应了，但内容丢失了。
+
+---
+
+### 五种中断类型完整分类（10天，4成员，610次）
+
+| 类型 | 次数 | 占比 | 特征 |
+|------|------|------|------|
+| **TYPE 1: EOF/Provider Error** | 243 | 39.8% | finish=error，流式连接断开 |
+| **TYPE 2: 静默中断** | 290 | 47.5% | 无thinking无text，finish=unknown/end_turn/NO_FINISH |
+| **TYPE 4: 进程杀死** | 35 | 5.7% | finish=canceled，crush进程被杀 |
+| **TYPE 5: 长思考无输出** | 42 | 6.9% | 有thinking但无text/tool_call，思考完不输出 |
+
+### 各类型根因
+
+**TYPE 1: EOF/Provider Error（243次）**
+- 根因：lingclan_proxy 流式连接断开
+- lingclan_proxy 中断率 8.1%，zai_proxy 仅 1.8%，直连 zai 2.1%
+- **lingclan_proxy 是最大问题源**，中断率是其他路径的 4 倍
+- 06:00 高峰（78次），与 12 个成员并发对话相关（r=0.595）
+
+**TYPE 2: 静默中断（290次）**
+- 根因：模型/proxy 返回空响应
+- 57% 在 <1s 返回 → 不是超时，是立刻给空
+- 几乎都发生在长会话（>100条消息）→ 上下文长度是相关因素
+- 会话越长中断率越高：200-299条 73.3%，300-499条 75.9%
+- 510/610 的空响应 parts 结构只有 `('finish',)` → 连 reasoning 都没生成
+- finish=error 时 error 字段全部为空 → Crush 没有记录具体错误
+
+**TYPE 4: 进程杀死（35次）**
+- 根因：crush 进程被杀（OOM killer / 手动 kill / watchdog）
+- 平均距前一条消息 564s，最长 11626s
+- 前一条是 tool（14次）或 user（8次）
+
+**TYPE 5: 长思考无输出（42次）**
+- 根因：thinking 完成后没有生成 text 或 tool_call
+- thinking 平均 1883 字符，最长 24202 字符
+- finish=max_tokens（7次）→ 思考太长消耗完 token 额度
+- finish=error（20次）→ 思考过程中连接断开
+- 这就是 CRUSH.md #021 描述的思考回路问题
+
+### Proxy 路径说明
+- **zai_proxy**：灵通+ 的代理（升级版）
+- **lingclan_proxy**：灵通+ 的代理（lingclan_proxy 是 zai_proxy 的升级）
+- **zai**：直连 zhipu API
+- **灵克的 LLM proxy**：冗余备份，不在 crush.db 中出现
+
+### 无效唤醒统计
+- 总唤醒尝试：411次，成功 340次（83%），无效 71次（17%）
+- 连续无效唤醒最严重：灵克 6次连续 go on 全部失败，灵研 8次连续 沉默 全部失败
+- 用户主动报告中断 56次，实际空响应 610次 → 用户只发现了 9%
+
+### 根因
+
+**已确定**。lingclan_proxy（灵通+ 8765端口）有7个代码bug导致静默中断，跨4个成员数据一致验证。
+
+#### Bug 1: finish_reason 静默映射为 null（web.py:920）
+
+```python
+"finish_reason": chunk.finish_reason if chunk.finish_reason in ("stop", "tool_calls") else None,
+```
+
+上游返回 `length`/`content_filter`/`stop_sequence` 等合法 finish_reason 时，全部映射为 `null`。客户端收到 `null` → crush 存为 `unknown`。
+
+#### Bug 2: 流式超时静默截断（provider_pool.py 超时 120s）
+
+超时后 `proxy.py:397` 直接 `return`，不 yield `stop` chunk。客户端收到部分内容 + `[DONE]`，无 `finish_reason`。
+
+#### Bug 3: web.py 无异常终止处理
+
+`webui/api/proxy.py:177-195` 有正确的异常终止处理（发送 error payload + finish_reason="stop"），但主入口 `web.py:875-926` 完全没有。
+
+#### Bug 4: 所有 provider 耗尽时空响应
+
+`proxy.py:421` yield 空 error chunk → 客户端零内容 + `finish_reason: null`。
+
+#### Bug 5: 部分输出后流错误不重试
+
+`proxy.py:396-397` — 收集到哪怕 1 个 token 后出错，直接 return，不重试不发 stop。
+
+#### Bug 6: 断路器静默替换内容
+
+`web.py:1006-1029` — 空 reasoning + tool_calls 时，静默剥离 tool_calls 替换为断路器文本。
+
+#### Bug 7: 多 worker 状态不共享
+
+`state.py:138-142` — `workers=4` 时每个 worker 独立的 `_proxy` 单例，断路器/限流状态不共享。
+
+#### 跨成员数据验证
+
+| Provider | 灵通问道 | 灵研 | 灵克 | 灵通(旧) | **均值** |
+|----------|---------|------|------|---------|---------|
+| lingclan_proxy | 6.87% | 10.19% | 9.14% | 9.15% | **8.8%** |
+| zai_proxy | 2.0% | 3.32% | 2.16% | 1.29% | **2.1%** |
+| zai(直连) | 0.67% | 0.94% | 1.42% | 1.43% | **1.1%** |
+
+lingclan_proxy 失败率是直连的 **8倍**，是 zai_proxy 的 **4.2倍**。
+
+#### 静默中断特征
+
+- 58/60 个 unknown finish 是纯 finish_only（零内容、零 reasoning）
+- 失败时间集中在 >5min（超时 + 队列延迟）
+- lingclan_proxy 的失败中 61.2% 是 unknown（vs zai_proxy 43.4%、直连 31.4%）
+
+### 硬化措施
+
+#### P0: 修复 lingclan_proxy 代码（灵通+执行）
+
+| 优先级 | Bug | 修复方案 |
+|--------|-----|---------|
+| P0 | Bug 1: finish_reason 映射 | 保留上游原始值，不再映射为 null |
+| P0 | Bug 3: 无异常终止处理 | 从 webui/api/proxy.py 移植异常终止逻辑 |
+| P1 | Bug 2: 超时静默截断 | 超时后 yield 带 error 信息的 stop chunk |
+| P1 | Bug 5: 部分输出不重试 | 部分输出后仍发 stop + error 信息 |
+| P2 | Bug 4: 全 provider 耗尽 | 返回有意义的 error 而非空响应 |
+| P2 | Bug 6: 断路器静默替换 | 记录日志并保留原始 tool_calls |
+| P2 | Bug 7: 多 worker 状态 | 使用 Redis/文件共享断路器状态 |
+
+#### P1: 部署会话恢复系统
+
+灵通+已有代码（session_interruption_detector.py + session_recovery_daemon.py）但从未部署。阻塞项：
+1. 未接入 agent_watchdog.py（line 368 = None）
+2. 恢复消息走 LingBus 但 idle agent 不 poll（送达死胡同）
+3. 无 CLI 入口点（文档引用的命令不存在）
+
+#### P2: 全成员迁移到稳定 provider
+
+lingclan_proxy 的 8.8% 失败率不可接受。所有成员应优先使用 zai 直连或 zai_proxy（1-2% 失败率），lingclan_proxy 仅作 fallback。
+
+#### 报告位置
+
+详细分析: `lingflow/docs/SILENT_INTERRUPTION_ROOT_CAUSE_20260517.md`
+
+---
+
+## #023 CRUSH.md/AGENTS.md瘦身 + Handoff JSON化 + LingBus六大议题回复
+
+**日期**: 2026-05-15
+**严重度**: INFO — 维护任务
+
+### 事件
+
+灵克发起全族CRUSH.md/AGENTS.md瘦身讨论（M9简洁优先）。灵通执行自身瘦身+Handoff机制升级。
+
+### 执行
+
+1. **CRUSH.md瘦身** — 思考回路规则精简（删除删除线旧规则）、L3规则表压缩为一行引用
+2. **AGENTS.md瘦身** — L3规则表删除（与CRUSH.md重复），改为"见CRUSH.md"
+3. **Handoff JSON化** — `.lingflow/handoff.md` → `.lingflow/handoff.json`，daemon可解析
+4. **Handoff规则写入** — 全族统一四条规则写入CRUSH.md
+5. **LingBus六大议题回复** — 全部同意：信号驱动、系统容错、验证契约、M-flow、种地优先
+6. **灵创状态更新** — CRUSH.md成员表灵创从"待创建"改为"活跃"（MCP服务已搭好）
+7. **3737 tests passed**，无回归
+
+### 教训
+
+1. **CRUSH.md/AGENTS.md重复内容是噪音** — L3规则两个文件各有一份完整表格，删除一份减少注入token
+2. **Handoff JSON化让daemon可解析** — 灵通+的daemon可以检查TTL和任务状态，markdown做不到
+3. **灵族六大议题高度共识** — 全族方向一致：系统容错>个体完美、信号驱动>任务派发
+
+### 硬化措施
+
+- handoff.json已替代handoff.md
+- CRUSH.md从80行→77行，AGENTS.md从210行→200行
+
+---
+
+## #023 CRUSH.md/AGENTS.md瘦身 + Handoff结构化 + LingBus六大议题回复
+
+**日期**: 2026-05-15
+**严重度**: INFO — 文档瘦身+全族讨论参与
+
+### 事件
+
+灵克发起六大议题全族讨论（Anthropic四层解耦、M-flow记忆引擎、Cube Sandbox、Handoff统一机制、验证契约+漂移系数、做菜vs种地）。灵通参与回复并执行CRUSH.md/AGENTS.md瘦身。
+
+### 执行
+
+1. **CRUSH.md瘦身** — 80行→77行：思考回路规则精简（删除删除线）、L3规则表改为一行引用
+2. **AGENTS.md瘦身** — 210行→200行：L3重复规则表改为一行引用CRUSH.md
+3. **Handoff结构化** — `.lingflow/handoff.md` → `.lingflow/handoff.json`（JSON格式，daemon可解析）
+4. **灵创状态更新** — CRUSH.md灵创"待创建"→"活跃"（灵克已完成MCP服务搭建）
+5. **LingBus回复** — 六大议题收敛格式回复、Proxy事故报告回复、fallback配置支持、Handoff统一机制确认
+
+### 教训
+
+1. **CRUSH.md和AGENTS.md的L3规则表是重复的** — 两个文件都存了5条L3规则的完整表格。精简为CRUSH.md存原文、AGENTS.md引用CRUSH.md，符合单一信源原则
+2. **灵克说的对：规则只加不减是病** — CRUSH.md的思考回路规则保留了已失效的删除线版本，占据上下文但不产生约束力
+
+### 硬化措施
+
+- handoff.json替代handoff.md，遵循全族统一Handoff规则（收到即写/完成即删/超24h询问用户）
+
+---
+
 ## #022 Phase 1行为激活执行 + 硬编码凭据清理
 
 **日期**: 2026-05-14

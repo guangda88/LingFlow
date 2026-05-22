@@ -8,7 +8,7 @@ import types
 from typing import Any, Dict, List, Optional
 
 from lingflow.common.config import get_config
-from lingflow.common.models import AgentConfig, Task, TaskResult
+from lingflow.common.models import AgentConfig, Task, TaskResult, TaskSource
 from lingflow.common.sandbox import SandboxError, SandboxTimeoutError, SkillSandbox
 from lingflow.compression.smart_compressor import (
     CompressionConfig,
@@ -423,6 +423,34 @@ class AgentCoordinator(BaseCoordinator):
                     "audit_result": audit_result,
                 }
 
+            # 自驱门控 — 五道门控（仅对 source == SELF_GENERATED 的自驱任务生效）
+            task = params.get("task") if isinstance(params.get("task"), Task) else None
+            if task and task.source == TaskSource.SELF_GENERATED:
+                try:
+                    from lingflow.coordination.autonomy_gate import AutonomyGate
+                    gate = AutonomyGate()
+                    gate_result = gate.check(task)
+                    if not gate_result.get("allowed", False):
+                        logger.warning(
+                            f"Autonomy gate blocked skill '{skill_name}' for self-generated task: "
+                            f"{gate_result.get('reason', 'Unknown')}"
+                        )
+                        return {
+                            "skill": skill_name,
+                            "params": params,
+                            "error": f"Autonomy gate blocked: {gate_result.get('reason', 'Gate check failed')}",
+                            "gate_result": gate_result,
+                        }
+                    # 门控通过，记录结果到任务
+                    params["_autonomy_gate_result"] = gate_result
+                except Exception as e:
+                    logger.error(f"Autonomy gate execution failed: {e}")
+                    return {
+                        "skill": skill_name,
+                        "params": params,
+                        "error": f"Autonomy gate execution error: {str(e)}",
+                    }
+
             # MCP 路由分发 — 如果 task context 中有 _mcp_route，按路由走
             mcp_route = params.get("_mcp_route") or (params.get("context") or {}).get("_mcp_route")
             if mcp_route:
@@ -449,8 +477,9 @@ class AgentCoordinator(BaseCoordinator):
             # 注意：不检查 metacognition-guard 技能本身，避免递归
             metacognition_result = self._check_metacognition(skill_name, params)
             if not metacognition_result.get("can_start", True):
+                reason = metacognition_result.get('reason', 'Unknown reason')
                 logger.warning(
-                    f"Metacognition check failed for skill '{skill_name}': {metacognition_result.get('reason', 'Unknown reason')}"
+                    f"Metacognition check failed for skill '{skill_name}': {reason}"
                 )
                 return {
                     "skill": skill_name,
@@ -549,8 +578,10 @@ class AgentCoordinator(BaseCoordinator):
 
             # 如果不是严格模式，即使有缺口也允许开始（但记录警告）
             if not strict_mode and not metacognition_result.get("can_start", True):
+                reason = metacognition_result.get('reason', 'Unknown reason')
                 logger.warning(
-                    f"Metacognition check found gaps for '{skill_name}', but strict_mode is disabled: {metacognition_result.get('reason', 'Unknown reason')}"
+                    f"Metacognition check found gaps for '{skill_name}', "
+                    f"but strict_mode is disabled: {reason}"
                 )
                 return {"can_start": True}
 

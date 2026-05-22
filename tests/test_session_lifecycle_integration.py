@@ -92,10 +92,10 @@ class TestLifecycleTransition:
 
         mgr._check_lifecycle()
 
-        assert (storage / "SESSION_HANDOFF.md").exists()
-        assert (storage / "SESSION_HANDOFF_INSTRUCTIONS.md").exists()
-        assert (storage / "HANDOFF.md").exists()
-        assert (storage / "handoff.json").exists()
+        assert (storage / "SESSION_HANDOVER.md").exists()
+        assert (storage / "SESSION_HANDOVER_INSTRUCTIONS.md").exists()
+        assert (storage / "HANDOVER.md").exists()
+        assert (storage / "handover.json").exists()
 
         lifecycle_files = list(storage.glob("lifecycle_*.json"))
         assert len(lifecycle_files) >= 1
@@ -109,11 +109,11 @@ class TestLifecycleTransition:
 
         mgr._check_lifecycle()
 
-        md = (storage / "SESSION_HANDOFF.md").read_text(encoding="utf-8")
+        md = (storage / "SESSION_HANDOVER.md").read_text(encoding="utf-8")
         assert "pending task" in md
         assert "key decision X" in md
 
-        instructions = (storage / "SESSION_HANDOFF_INSTRUCTIONS.md").read_text(encoding="utf-8")
+        instructions = (storage / "SESSION_HANDOVER_INSTRUCTIONS.md").read_text(encoding="utf-8")
         assert "pending task" in instructions
         assert "key decision X" in instructions
 
@@ -174,7 +174,7 @@ class TestPreviousSessionLoading:
         new_mgr = ContextManager(storage_dir=str(storage))
 
         assert new_mgr._previous_session is not None
-        assert new_mgr._previous_session.handoff_reason == "lifecycle_expired"
+        assert new_mgr._previous_session.handover_reason == "lifecycle_expired"
 
     def test_new_manager_injects_pending_tasks(self, storage):
         """上一会话的待完成任务被注入到新会话"""

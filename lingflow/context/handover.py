@@ -1,10 +1,10 @@
-"""会话交接文档
+"""会话传递文档
 
-当上下文接近 LLM 退化阈值时，生成结构化的交接文档，
+当上下文接近 LLM 退化阈值时，生成结构化的传递文档，
 使新会话能够无缝继承前一会话的关键信息。
 
 设计依据:
-- 保持交接文档在 40% 安全线内（< 72K tokens for 180K model）
+- 保持传递文档在 40% 安全线内（< 72K tokens for 180K model）
 - 优先保留不可重建的信息（决策、状态、约束）
 - 可重建信息（代码、文件内容）仅保留引用
 """
@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class HandoffDocument:
-    """会话交接文档
+class HandoverDocument:
+    """会话传递文档
 
     当上下文接近退化阈值时，生成此文档以支持会话无缝切换。
     """
@@ -57,38 +57,38 @@ class HandoffDocument:
     context_for_next_step: str = ""
 
     # 健康状态
-    token_usage_at_handoff: int = 0
+    token_usage_at_handover: int = 0
     degradation_detected: bool = False
     degradation_types: List[str] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert the handoff document to a dictionary.
+        """Convert the handover document to a dictionary.
 
         Returns:
-            Dict[str, Any]: Dictionary representation of the handoff document.
+            Dict[str, Any]: Dictionary representation of the handover document.
         """
         return asdict(self)
 
     def to_json(self, indent: int = 2) -> str:
-        """Convert the handoff document to JSON string.
+        """Convert the handover document to JSON string.
 
         Args:
             indent: JSON indentation level.
 
         Returns:
-            str: JSON string representation of the handoff document.
+            str: JSON string representation of the handover document.
         """
         return json.dumps(self.to_dict(), ensure_ascii=False, indent=indent)
 
     def to_markdown(self) -> str:
-        """生成交接文档的 Markdown 表示"""
+        """生成传递文档的 Markdown 表示"""
         parts = [
-            "# lingflow 会话交接文档",
+            "# lingflow 会话传递文档",
             "",
             f"**版本**: {self.version}",
             f"**时间**: {self.timestamp}",
             f"**会话 ID**: {self.session_id}",
-            f"**交接原因**: {self.reason}",
+            f"**传递原因**: {self.reason}",
             "",
         ]
 
@@ -170,7 +170,7 @@ class HandoffDocument:
                 [
                     "## 退化检测",
                     "",
-                    f"- Token 使用量: {self.token_usage_at_handoff}",
+                    f"- Token 使用量: {self.token_usage_at_handover}",
                     f"- 检测到的退化类型: {', '.join(self.degradation_types) or '无'}",
                     "",
                 ]
@@ -179,28 +179,28 @@ class HandoffDocument:
         return "\n".join(parts)
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "HandoffDocument":
-        """Create a HandoffDocument from a dictionary.
+    def from_dict(cls, data: Dict[str, Any]) -> "HandoverDocument":
+        """Create a HandoverDocument from a dictionary.
 
         Args:
-            data: Dictionary containing handoff document data.
+            data: Dictionary containing handover document data.
 
         Returns:
-            HandoffDocument: New handoff document instance.
+            HandoverDocument: New handover document instance.
         """
         known_fields = {f.name for f in cls.__dataclass_fields__.values()}
         filtered = {k: v for k, v in data.items() if k in known_fields}
         return cls(**filtered)
 
     @classmethod
-    def from_json(cls, json_str: str) -> "HandoffDocument":
-        """Create a HandoffDocument from a JSON string.
+    def from_json(cls, json_str: str) -> "HandoverDocument":
+        """Create a HandoverDocument from a JSON string.
 
         Args:
-            json_str: JSON string containing handoff document data.
+            json_str: JSON string containing handover document data.
 
         Returns:
-            HandoffDocument: New handoff document instance.
+            HandoverDocument: New handover document instance.
 
         Raises:
             json.JSONDecodeError: If the JSON string is invalid.
@@ -208,15 +208,15 @@ class HandoffDocument:
         return cls.from_dict(json.loads(json_str))
 
     @classmethod
-    def from_context_snapshot(cls, snapshot: Any, **kwargs: Any) -> "HandoffDocument":
-        """从 ContextSnapshot 创建交接文档
+    def from_context_snapshot(cls, snapshot: Any, **kwargs: Any) -> "HandoverDocument":
+        """从 ContextSnapshot 创建传递文档
 
         Args:
             snapshot: ContextSnapshot 实例
             **kwargs: 额外字段覆盖
 
         Returns:
-            HandoffDocument 实例
+            HandoverDocument 实例
         """
         doc = cls(
             session_id=getattr(snapshot, "session_id", ""),

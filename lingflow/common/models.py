@@ -35,6 +35,32 @@ class TaskPriority(Enum):
     LOW = 3
 
 
+class TaskSource(Enum):
+    """任务来源枚举
+
+    区分任务是用户指令还是 AI 自驱生成：
+    - USER: 用户直接指令（最高优先级，跳过自驱门控）
+    - SELF_GENERATED: AI 自驱生成的任务（需要经过五道门控）
+    """
+
+    USER = "user"
+    SELF_GENERATED = "self_generated"
+
+
+class RiskLevel(Enum):
+    """任务风险等级枚举
+
+    自驱任务的风险评估等级：
+    - LOW: 只读操作，不影响系统（grep、view、glob）
+    - MEDIUM: 写操作但在当前项目内（edit、write）
+    - HIGH: 外部操作/跨项目/系统级（git push、curl、rm -rf）
+    """
+
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+
+
 @dataclass
 class AgentConfig:
     """代理配置数据类
@@ -75,6 +101,10 @@ class Task:
         dependencies: 任务依赖列表，默认为空
         context: 任务上下文数据，默认为空字典
         is_read_only: 是否为只读任务（只读任务可完全并行，写任务需串行），默认为True
+        source: 任务来源（用户指令/自驱生成），默认为 USER
+        user_confirmation: 用户是否确认过此任务（自驱任务默认为False），诚实标注
+        tap_check_result: TAP锚定协议检查结果
+        risk_level: 风险评估等级
     """
 
     task_id: str
@@ -87,6 +117,10 @@ class Task:
     dependencies: List[str] = field(default_factory=list)
     context: Dict[str, Any] = field(default_factory=dict)
     is_read_only: bool = True
+    source: TaskSource = TaskSource.USER
+    user_confirmation: bool = False
+    tap_check_result: Optional[Dict[str, Any]] = None
+    risk_level: RiskLevel = RiskLevel.LOW
 
 
 @dataclass

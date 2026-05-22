@@ -440,7 +440,7 @@ class TestContextManagerDegradationIntegration:
     def _make_manager(self, tmp_path):
         return ContextManager(storage_dir=str(tmp_path))
 
-    def test_handoff_on_degradation(self, tmp_path):
+    def test_handover_on_degradation(self, tmp_path):
         mgr = self._make_manager(tmp_path)
         for i in range(15):
             mgr._messages.append(
@@ -449,7 +449,7 @@ class TestContextManagerDegradationIntegration:
                     "content": f"Error: failure exception traceback in module {i}",
                 }
             )
-        doc = mgr.generate_handoff(reason="degradation_detected")
+        doc = mgr.generate_handover(reason="degradation_detected")
         assert doc.degradation_detected is True
         assert len(doc.degradation_types) > 0
 
@@ -468,10 +468,10 @@ class TestContextManagerDegradationIntegration:
                     "content": f"Successfully completed unique task {i} with distinct results",
                 }
             )
-        doc = mgr.generate_handoff(reason="normal_end")
+        doc = mgr.generate_handover(reason="normal_end")
         assert len(doc.degradation_types) == 0
 
-    def test_handoff_preserves_degradation_types(self, tmp_path):
+    def test_handover_preserves_degradation_types(self, tmp_path):
         mgr = self._make_manager(tmp_path)
         for _ in range(12):
             mgr._messages.append(
@@ -480,12 +480,12 @@ class TestContextManagerDegradationIntegration:
                     "content": "Error: same error repeated traceback exception failure",
                 }
             )
-        doc = mgr.generate_handoff(reason="degradation")
+        doc = mgr.generate_handover(reason="degradation")
         if doc.degradation_detected:
             types = doc.degradation_types
             assert all(isinstance(t, str) for t in types)
 
-    def test_handoff_file_content(self, tmp_path):
+    def test_handover_file_content(self, tmp_path):
         mgr = self._make_manager(tmp_path)
         mgr.add_task("design system", completed=True)
         mgr.add_task("implement feature", completed=False)
@@ -499,17 +499,17 @@ class TestContextManagerDegradationIntegration:
                 }
             )
 
-        mgr.generate_handoff(reason="degradation_test")
+        mgr.generate_handover(reason="degradation_test")
 
-        handoff_md = tmp_path / "HANDOFF.md"
-        handoff_json = tmp_path / "handoff.json"
+        handover_md = tmp_path / "HANDOVER.md"
+        handover_json = tmp_path / "handover.json"
 
-        if handoff_md.exists():
-            content = handoff_md.read_text(encoding="utf-8")
-            assert "会话交接" in content
+        if handover_md.exists():
+            content = handover_md.read_text(encoding="utf-8")
+            assert "会话传递" in content
 
-        if handoff_json.exists():
-            data = json.loads(handoff_json.read_text(encoding="utf-8"))
+        if handover_json.exists():
+            data = json.loads(handover_json.read_text(encoding="utf-8"))
             assert "reason" in data
 
 

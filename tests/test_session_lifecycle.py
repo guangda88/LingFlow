@@ -59,7 +59,7 @@ class TestSessionLifecycleManager:
         assert status.current_tokens == 200_000
         assert status.warning_threshold == 200_000
         assert status.critical_threshold == 300_000
-        assert status.recommended_action == "prepare_handoff"
+        assert status.recommended_action == "prepare_handover"
 
     def test_expired_recommended_action(self):
         mgr = SessionLifecycleManager()
@@ -122,7 +122,7 @@ class TestSessionSummary:
             key_decisions=["decide X"],
             important_files={"/tmp/f.py": "test file"},
             next_steps=["do Y"],
-            handoff_reason="lifecycle_expired",
+            handover_reason="lifecycle_expired",
         )
         assert summary.session_id == "test-123"
         assert summary.total_tokens == 250_000
@@ -138,7 +138,7 @@ class TestSessionSummary:
             total_messages=100,
             tasks_completed=["task1"],
             tasks_pending=["task2"],
-            handoff_reason="test",
+            handover_reason="test",
         )
         md = summary.to_markdown()
         assert "# 会话交接摘要" in md
@@ -158,7 +158,7 @@ class TestSessionSummary:
             key_decisions=["c"],
             important_files={"/f.py": "desc"},
             next_steps=["d"],
-            handoff_reason="expired",
+            handover_reason="expired",
         )
         d = summary.to_dict()
         restored = SessionSummary.from_dict(d)
@@ -191,14 +191,14 @@ class TestSaveAndLoad:
             total_messages=150,
             tasks_completed=["task1"],
             tasks_pending=["task2"],
-            handoff_reason="lifecycle_expired",
+            handover_reason="lifecycle_expired",
         )
         path = mgr.save_session_summary(summary)
         assert path.exists()
         data = json.loads(path.read_text(encoding="utf-8"))
         assert data["session_id"] == "save-test"
 
-        md_path = tmp_path / "SESSION_HANDOFF.md"
+        md_path = tmp_path / "SESSION_HANDOVER.md"
         assert md_path.exists()
         assert "save-test" in md_path.read_text(encoding="utf-8")
 
@@ -210,7 +210,7 @@ class TestSaveAndLoad:
             ended_at="2026-01-01T01:00:00",
             total_tokens=300_000,
             total_messages=100,
-            handoff_reason="test",
+            handover_reason="test",
         )
         mgr.save_session_summary(summary)
         loaded = mgr.load_last_session_summary()
@@ -240,10 +240,10 @@ class TestSaveAndLoad:
 
 
 class TestHandoffInstructions:
-    def test_generate_handoff_instructions(self):
+    def test_generate_handover_instructions(self):
         mgr = SessionLifecycleManager()
         summary = SessionSummary(
-            session_id="handoff-test",
+            session_id="handover-test",
             created_at="2026-01-01T00:00:00",
             ended_at="2026-01-01T01:00:00",
             total_tokens=300_000,
@@ -251,10 +251,10 @@ class TestHandoffInstructions:
             tasks_pending=["finish feature"],
             next_steps=["write tests", "deploy"],
             key_decisions=["use async"],
-            handoff_reason="expired",
+            handover_reason="expired",
         )
-        instructions = mgr.get_handoff_instructions(summary)
-        assert "handoff-test" in instructions
+        instructions = mgr.get_handover_instructions(summary)
+        assert "handover-test" in instructions
         assert "finish feature" in instructions
         assert "write tests" in instructions
         assert "use async" in instructions
@@ -272,7 +272,7 @@ class TestManagerViaCreateSessionSummary:
             key_decisions=["decided X"],
             important_files={"/path/to/file.py": "main module"},
             next_steps=["do next"],
-            handoff_reason="lifecycle_expired",
+            handover_reason="lifecycle_expired",
         )
         assert summary.session_id == "create-test"
         assert summary.total_tokens == 250_000

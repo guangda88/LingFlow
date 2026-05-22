@@ -465,10 +465,10 @@ class ContextBudgetManager:
     def should_compact(self, current_tokens: int) -> bool:
         """是否需要压缩"""
 
-    def should_handoff(self, current_tokens: int) -> bool:
+    def should_handover(self, current_tokens: int) -> bool:
         """是否需要会话交接"""
 
-    def generate_handoff(self, context) -> str:
+    def generate_handover(self, context) -> str:
         """生成结构化交接文档"""
 ```
 
