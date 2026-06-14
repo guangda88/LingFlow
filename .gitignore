@@ -66,3 +66,26 @@ data/data.db-wal
 scripts/rename.py
 *.jsonl
 crush.db
+
+# === 灵族统一安全规则 2026-06-14 ===
+# 内部运维文件 — 禁止提交
+CRUSH.md
+AGENTS.md
+SELF_PORTRAIT.md
+handover.md
+handover.json
+handover.*.md
+handover.*.json
+.ling*/
+.crush/
+.audit/
+.mental_health/
+.lingfamily/
+*.db
+*.sqlite
+*.jsonl
+.env
+.env.*
+*.key
+*.pem
+api_keys.json
