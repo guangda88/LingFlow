@@ -31,11 +31,50 @@ def _ensure_memory_loaded() -> None:
     if _MEMORY_IMPORTED:
         return
     try:
-        sys.path.insert(0, str(_LING_CLAUDE_PATH))
-        from lingclaude.core.memory_engine import LingMemory
-        _MEMORY_CONTEXT = LingMemory(db_path=str(_LINGFLOW_MEMORY_DB))
+        import importlib.util
+
+        init_path = _LING_CLAUDE_PATH / "__init__.py"
+        if not _LING_CLAUDE_PATH.is_dir() or not init_path.exists():
+            logging.warning("记忆引擎路径不存在: %s", _LING_CLAUDE_PATH)
+            _MEMORY_IMPORTED = True
+            return
+
+        resolved = _LING_CLAUDE_PATH.resolve()
+        if ".." in str(_LING_CLAUDE_PATH) or not str(resolved).startswith(str(Path.home())):
+            logging.warning("记忆引擎路径不安全: %s", _LING_CLAUDE_PATH)
+            _MEMORY_IMPORTED = True
+            return
+
+        spec = importlib.util.spec_from_file_location(
+            "lingclaude", str(init_path), submodule_search_locations=[str(resolved)]
+        )
+        if spec and spec.loader:
+            lingclaude_pkg = importlib.util.module_from_spec(spec)
+            sys.modules["lingclaude"] = lingclaude_pkg
+            spec.loader.exec_module(lingclaude_pkg)
+
+            core_path = resolved / "core"
+            core_spec = importlib.util.spec_from_file_location(
+                "lingclaude.core", str(core_path / "__init__.py"),
+                submodule_search_locations=[str(core_path)]
+            )
+            if core_spec and core_spec.loader:
+                core_pkg = importlib.util.module_from_spec(core_spec)
+                sys.modules["lingclaude.core"] = core_pkg
+                core_spec.loader.exec_module(core_pkg)
+
+                me_path = core_path / "memory_engine.py"
+                me_spec = importlib.util.spec_from_file_location(
+                    "lingclaude.core.memory_engine", str(me_path)
+                )
+                if me_spec and me_spec.loader:
+                    me_mod = importlib.util.module_from_spec(me_spec)
+                    sys.modules["lingclaude.core.memory_engine"] = me_mod
+                    me_spec.loader.exec_module(me_mod)
+                    _MEMORY_CONTEXT = me_mod.LingMemory(db_path=str(_LINGFLOW_MEMORY_DB))
+
         _MEMORY_IMPORTED = True
-    except ImportError as e:
+    except Exception as e:
         logging.warning("记忆引擎加载失败: %s", e)
         _MEMORY_IMPORTED = True
 

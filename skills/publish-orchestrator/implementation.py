@@ -44,16 +44,33 @@ _PUBLISH_STATE_DIR = _PROJECT_ROOT / ".lingflow" / "publish_state"
 
 
 def _ensure_memory_loaded() -> None:
-    """懒加载灵通自己的记忆引擎"""
+    """懒加载灵通自己的记忆引擎（使用importlib安全加载，不修改sys.path）"""
     global _MEMORY_IMPORTED, _MEMORY_CONTEXT
     if _MEMORY_IMPORTED:
         return
     try:
-        sys.path.insert(0, str(_LING_CLAUDE_PATH))
-        from lingclaude.core.memory_engine import LingMemory
-        _MEMORY_CONTEXT = LingMemory(db_path=str(_LINGFLOW_MEMORY_DB))
+        import importlib.util
+
+        if not _LING_CLAUDE_PATH.is_dir():
+            logger.warning("记忆引擎路径不存在: %s", _LING_CLAUDE_PATH)
+            _MEMORY_IMPORTED = True
+            return
+
+        core_path = _LING_CLAUDE_PATH / "core"
+        me_path = core_path / "memory_engine.py"
+        if not me_path.exists():
+            logger.warning("记忆引擎模块不存在: %s", me_path)
+            _MEMORY_IMPORTED = True
+            return
+
+        spec = importlib.util.spec_from_file_location("lingclaude.core.memory_engine", str(me_path))
+        if spec and spec.loader:
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            _MEMORY_CONTEXT = mod.LingMemory(db_path=str(_LINGFLOW_MEMORY_DB))
+
         _MEMORY_IMPORTED = True
-    except ImportError as e:
+    except Exception as e:
         logger.warning("记忆引擎加载失败: %s", e)
         _MEMORY_IMPORTED = True
 

@@ -45,6 +45,7 @@ Thumbs.db
 
 # Environment variables (contains sensitive data)
 .env
+.env.*
 .npmrc
 _pypirc/
 
@@ -63,3 +64,5 @@ hitory-of-lingflw.zip
 data/data.db-shm
 data/data.db-wal
 scripts/rename.py
+*.jsonl
+crush.db
